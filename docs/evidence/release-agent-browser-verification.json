@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-19T17:16:27.621Z",
+  "mode": "Isolated synthetic preview",
+  "checks": [
+    "Meaningful chat content",
+    "Project selector and input controls",
+    "Setup navigation",
+    "No JavaScript errors",
+    "Screenshot visually reviewed"
+  ],
+  "liveInference": false
+}

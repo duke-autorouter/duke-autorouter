@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-19T18:33:17.452Z",
+  "command": "npm audit --omit=dev --json",
+  "scope": "Production dependencies; development dependencies omitted from vulnerability audit",
+  "result": "passed",
+  "exitCode": 0,
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "dependencyMetadata": {
+    "prod": 287,
+    "dev": 97,
+    "optional": 87,
+    "peer": 7,
+    "peerOptional": 0,
+    "total": 404
+  },
+  "packageLockSHA256": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9",
+  "auditReportSHA256": "95379634d06631bcf5d458da43521653935bd8e88632d8385c437d9220db8c65",
+  "previousAttempts": {
+    "count": 2,
+    "result": "unavailable",
+    "httpStatus": 503,
+    "reason": "npm advisory endpoint maintenance"
+  },
+  "note": "No known vulnerabilities were reported by npm at the recorded time. No dependency files were changed."
+}

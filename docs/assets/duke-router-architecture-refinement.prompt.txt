@@ -1,0 +1,11 @@
+Refine the attached Duke Router architecture diagram into a clean publication-quality final. Preserve the arrangement of the cards, all valid card labels, the local/remote boundary, and the exact one-to-one mapping of the three worker adapters to their remote services.
+
+Apply this focused technical-cleanup pass:
+1. Replace EVERY blurry texture, glow, vignette, gradient, dark haze and background shadow with a perfectly flat warm ivory background. All cards must be flat pale sage, lavender or ochre with sharp outlines. Make the entire main title "Duke Router" solid dark forest green with excellent contrast. Use crisp typography throughout. No translucent text.
+2. Correct the lavender line label from "Observer first" to exactly "Observe first".
+3. Delete the SOLID vertical arrow from the bottom of "Policy router" directly into "Shared tools + approvals". Execution must pass through "Worker adapters". Keep the horizontal router-to-adapters arrow and the adapter-group-to-tools connector. Use one clear downward arrow from the Worker adapters GROUP to Shared tools + approvals; all three adapter rows belong to that group.
+4. Delete the floating "Checkpoint / retry" return arrow and that label entirely. Recovery is already accurately named in the task engine card; do not replace it with another floating connector.
+5. Delete the dotted connector between "Outputs + verification" and "macOS Keychain". Outputs do not flow into secret storage. The macOS Keychain card should be a clean separate local support card with no arrow implying generated outputs go into it.
+6. Preserve all other exact wording, especially the subscription/API accounting note and footer about live validation pending. The Jev dashed connection must still terminate at the Policy router and the TypeSafe Jev cloud card. Do not connect Jev to workers or tools.
+
+Retain the wide landscape layout, maintain generous whitespace, and improve fine-text sharpness. This is a precise flat vector-style architecture illustration, not a photograph, textured poster, or glossy 3D graphic.

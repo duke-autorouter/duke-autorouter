@@ -1,0 +1,7 @@
+Edit the attached DUKE Autorouter architecture map to accurately show Jev doing task difficulty assessment and automatic worker model selection. Preserve the existing composition, 1536x1024 canvas, palette, typography, identity, all other nodes and arrows, and the footer stating live validation is pending. Make only these text changes:
+1. Purple connection label "Task classification + confidence" becomes "Assess difficulty → select model".
+2. Smaller purple line "Brief + tool needs only" becomes "Task brief + eligible model profiles".
+3. In the TypeSafe Jev box replace "Optional task classification" with "Difficulty + model selection", fitting neatly inside.
+4. Policy router subtitle "Eligibility → quality → capacity → cost" becomes "Permissions • quality • capacity • cost".
+5. Purple legend "Optional classification" becomes "Jev routing decisions".
+Keep "Code enforces permissions and budgets". Keep the API-limits block removed; do not add any spending card or numerical spending limits. Do not add Observation mode or recommendations. All text must be crisp and legible without overlap.

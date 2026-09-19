@@ -1,0 +1,109 @@
+{
+  "at": "2026-09-19T17:32:25.451352+00:00",
+  "status": "Local checks and production dependency audit passed",
+  "platform": "Apple Silicon macOS; source checks used Node 26.0.0",
+  "routingPolicy": "duke-routing-v5",
+  "efficiencyPolicy": "duke-efficiency-v2",
+  "implementationAndTestsSHA256": "1157c8d169d094a41313d64330dc59d387c384ead216158a29791e81ea5ad083",
+  "implementationFilesCompared": 943,
+  "sourceMismatches": [],
+  "checks": [
+    {
+      "command": "npm run check",
+      "result": "passed"
+    },
+    {
+      "command": "npm test",
+      "passed": 109,
+      "failed": 0,
+      "result": "passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:browser",
+      "workflows": 12,
+      "browserErrors": 0,
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:importer",
+      "checks": 11,
+      "browserErrors": 0,
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:sandbox",
+      "checks": 6,
+      "result": "passed"
+    },
+    {
+      "command": "npm run eval",
+      "cases": 80,
+      "liveInference": false,
+      "result": "corpus validated"
+    },
+    {
+      "command": "npm ci; npm run check; npm test; npm run build; npm run eval",
+      "environment": "Allowlisted clean source directory on the development Mac",
+      "result": "passed",
+      "tests": 109
+    },
+    {
+      "command": "npx playwright install chromium; npm run package:mac",
+      "result": "passed",
+      "nodeDownload": "Fetched pinned official runtime with matching published SHA-256; no preexisting runtime cache in the clean source snapshot"
+    },
+    {
+      "command": "npm run test:standalone",
+      "checks": 10,
+      "result": "passed"
+    },
+    {
+      "tool": "agent-browser",
+      "result": "passed",
+      "scope": "Isolated synthetic preview; meaningful content, navigation, controls, errors and screenshot inspection"
+    }
+  ],
+  "dependencyAudit": {
+    "command": "npm audit --omit=dev --json",
+    "result": "passed",
+    "at": "2026-09-19T18:33:17.452Z",
+    "exitCode": 0,
+    "attempts": 3,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "packageLockSHA256": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9",
+    "receipt": "dependency-audit.json",
+    "previousAttempts": {
+      "count": 2,
+      "result": "unavailable",
+      "httpStatus": 503,
+      "reason": "npm advisory endpoint maintenance"
+    }
+  },
+  "liveInference": false,
+  "published": false,
+  "limits": [
+    "Model responses in workflow checks are synthetic.",
+    "No live coding, research, writing or document acceptance result.",
+    "No comparative model-quality or resource-savings benchmark.",
+    "Clean source directory is not a fresh physical Mac.",
+    "Binary is ad hoc signed; public signing, notarization and distribution review remain.",
+    "GitHub Actions is configured but has not run on a published repository."
+  ],
+  "notes": [
+    "Standalone check was corrected to create its output directory on first use.",
+    "Installed app update verified native quit/relaunch, signature, unchanged saved database and account-profile files.",
+    "Source exporter writes inspected bytes without machine-specific file metadata; its complete output is checked against the manifest."
+  ],
+  "updatedAt": "2026-09-19T18:33:52.536Z"
+}

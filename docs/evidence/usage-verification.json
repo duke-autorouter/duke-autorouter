@@ -1,0 +1,121 @@
+{
+  "at": "2026-09-19T20:37:27.706771+00:00",
+  "result": "passed",
+  "scope": "Interface typography, optional header usage, Codex and Claude allowance display",
+  "checks": [
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm test",
+      "result": "passed",
+      "tests": 116
+    },
+    {
+      "command": "npm run test:browser",
+      "result": "passed",
+      "workflows": 12,
+      "browserErrors": 0,
+      "note": "Ran before the final sentence-case label and usage-panel layout polish."
+    },
+    {
+      "command": "node --import tsx scripts/usage-browser-check.ts",
+      "result": "passed",
+      "workflows": 6,
+      "browserErrors": 0,
+      "mode": "Synthetic account readings; real UI, API and SQLite; no inference"
+    },
+    {
+      "command": "npm run test:importer",
+      "result": "passed",
+      "checks": 11
+    },
+    {
+      "command": "node --import tsx scripts/package-macos.ts --refresh",
+      "result": "passed",
+      "dependencies": "Reused unchanged locked and previously verified bundled dependencies"
+    },
+    {
+      "command": "npm run test:standalone",
+      "result": "passed",
+      "checks": 11,
+      "additionalAssertion": "Saved usage display preference survives restart"
+    },
+    {
+      "check": "Installed app update",
+      "result": "passed",
+      "databaseUnchanged": true,
+      "providerProfileHashesUnchanged": true,
+      "signatureVerified": true
+    },
+    {
+      "check": "Installed interface via agent-browser",
+      "result": "passed",
+      "providers": [
+        "Codex",
+        "Claude"
+      ],
+      "meters": 3,
+      "defaultDisplay": "compact",
+      "horizontalOverflow": false,
+      "mode": "Chromium verification of installed local web interface; native window not inspected"
+    }
+  ],
+  "subscriptionMetadata": {
+    "at": "2026-09-19T20:35:54.753Z",
+    "mode": "Installed Mac app account metadata endpoint using connected official runtimes",
+    "modelPromptsSubmitted": 0,
+    "tasksAndSpendingUnchanged": true,
+    "settingsAndDisplayPreferenceUnchanged": true,
+    "results": [
+      {
+        "provider": "codex",
+        "connected": true,
+        "success": true,
+        "reportedWindows": 1,
+        "windowsWithPercent": 1,
+        "windowsWithReset": 1,
+        "experimental": false
+      },
+      {
+        "provider": "claude",
+        "connected": true,
+        "success": true,
+        "reportedWindows": 2,
+        "windowsWithPercent": 2,
+        "windowsWithReset": 2,
+        "experimental": true
+      }
+    ]
+  },
+  "auditedLockfileUnchanged": true,
+  "files": {
+    "src/main.tsx": "72a1a4cc7e0d317253d84ed2e45c4c6a3f44a8d511d57971ed8e3a4720747170",
+    "src/style.css": "e49c621526ca0c7c51ccd05ce09abada5528f24d74d474e8359c5257ab9282f6",
+    "src/UsageControl.tsx": "738951f6f3cc7992c5f12b3132b94e45095ef97d2adf79bec73fbc11b2728d94",
+    "shared/usage-display.ts": "ff10f1f853c06063484cebc497e9d40489e083967702905e8d710c44e1d7501e",
+    "server/app.ts": "3f2ac8bf6f1c4e6ea827eff4f5cfaad37bc20a59b89c81dddc6e9a14b38d262d",
+    "server/types.ts": "050305fe0e37f6ec219718a12df4b74a5f53b8d11d3240928a7833e5876a16e0",
+    "server/engine.ts": "d887290260d424be6fedf0980457d50c44bb20991b328eb021e8e65899538a23",
+    "server/claude-usage.ts": "ee141df7e05cf4b42bb88dba4164c833524d1adf9578d79f78e2be917e88ea8d",
+    "server/subscription-refresh.ts": "c643291c921c71beb0b23482ad6e5865a3c94c5946caefdd137087ae3e0ab12d",
+    "server/adapters/codex.ts": "815bafbebbcc5436d0cc61400a276dab350149d18dd2b18cf5c15e36c51f5b0b",
+    "server/adapters/claude.ts": "e4967a111e5fd83491580fe29c686a1aca562ad5cc0c880f61de565489530c4b",
+    "tests/usage-display.test.ts": "27572259bfdc81cc06b8dd0f4f1d7626ffe19f7f0722cd4f379b9391579d9c49",
+    "scripts/usage-browser-check.ts": "c742d629250456648582e13c669400a9a5c44a05ed44408277e00a603d1e5531",
+    "scripts/standalone-check.ts": "09bb77561863dfc199810e6ff64b413e3f5e0b329481d5f4f876bdf1af2e4d68",
+    "scripts/export-source.ts": "3f7018f4c0609c5abaf613c9a45d20b7d87610a1b81cd286a311f77e9b2e538a",
+    "package.json": "473061adbe6b54a6a080487b3a99e1dccacbf00c7595002a189d25a2d6248479",
+    "package-lock.json": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9"
+  },
+  "modelPromptsSubmitted": 0,
+  "published": false,
+  "limits": [
+    "Claude SDK usage interface is experimental and may change; readings can be unavailable.",
+    "Codex first direct metadata attempt timed out; diagnostic retry and installed endpoint both returned allowance data.",
+    "Account telemetry checks do not validate routed model tasks, model quality, token savings or every subscription plan.",
+    "Anthropic prior-approval requirement for offering third-party subscription login is tracked in RELEASE_READINESS.md.",
+    "No fresh physical Mac installation, notarization or native on-screen layout validation claimed."
+  ]
+}

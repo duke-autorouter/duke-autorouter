@@ -1,0 +1,204 @@
+# Architecture
+
+![DUKE Autorouter architecture map](assets/duke-autorouter-architecture-v3.png)
+
+[Open the full-resolution map](assets/duke-autorouter-architecture-v3.png).
+Created with the built-in image generation tool from the
+[saved prompt set](assets/README.md).
+The image predates automatic content checks. The current routing and verification
+loop, evidence policy and limits are described in [Routing policy](ROUTING_POLICY.md).
+
+```mermaid
+flowchart TD
+    App[Mac launcher and bundled runtimes] --> UI[Local chat interface]
+    App --> API[Fastify and local session]
+    UI --> API
+    API --> Engine[Task engine and checkpoint routing]
+    Engine --> Eligible[Permission, tools, capacity and budget eligibility]
+    Eligible --> Assessment[Jev assesses task family and difficulty]
+    Assessment --> Qualified[Check evaluated profiles or provider descriptions]
+    Qualified --> Select[Jev chooses a model from eligible profiles]
+    Select --> Validate[Recheck current eligibility]
+    Validate --> Codex[Codex app-server]
+    Validate --> Claude[Claude Agent SDK]
+    Validate --> OR[OpenRouter tool loop]
+    Assessment -. Unavailable or uncertain .-> Rules[Automatic rules fallback]
+    Select -. Unavailable or uncertain .-> Rules
+    Rules --> Validate
+    Codex --> Tools[Shared tool and approval service]
+    Claude --> Tools
+    OR --> Tools
+    Tools --> Files[Workspace and artifacts]
+    Tools --> Shell[Separate SRT shell sandbox]
+    Tools --> Browser[Isolated Chromium]
+    Engine --> DB[SQLite events and budget ledger]
+    Tools --> DB
+    Files --> Verify[File, test and source checks]
+    Verify --> Review[Jev reviews bounded evidence]
+    Review --> Outcome[Passed, failed or incomplete receipt]
+    Outcome --> DB
+    Outcome -. Failed checks within recovery limit .-> Assessment
+    DB -. Scoped outcome history .-> Qualified
+```
+
+## Execution boundaries
+
+`Engine` owns task state, route selection, fallback, verification, and stage
+boundaries. `Store` commits events before broadcasting notifications. SQLite WAL
+and immediate budget transactions prevent reservations from racing. One running
+instance per data directory and a serial task queue prevent concurrent writers.
+
+Codex 0.155.0 is embedded as an app-server subprocess. Its generated experimental
+protocol types are checked in. Codex uses client-handled dynamic tools rather
+than a separate MCP bridge: this exposes the same broker directly, with fewer
+credentials and processes. Native environment access is disabled, the runtime
+cwd is isolated, native shell features are disabled, native approval requests
+are rejected, and only broker tools have workspace write authority.
+
+Claude uses Agent SDK 0.3.275 and an in-process MCP server. Built-in tools are
+disabled, settings sources are empty, and pre-tool hooks enforce the exact
+task-scoped tool set. Only first-party subscription authentication is accepted.
+Provider terms and entitlement must be rechecked before upgrading or releasing.
+
+OpenRouter uses its Chat Completions tool protocol in a bounded loop. It pins one
+eligible provider endpoint, disables provider fallbacks, requires tool parameter
+support, limits output tokens, and sets token-price caps. Events and tool progress
+stream to the UI; OpenRouter text currently appears after each model completion.
+The adapter does not assume compatibility with Codex's Responses protocol.
+
+## Difficulty assessment and automatic model selection
+
+Jev is the decision component for **assess difficulty → choose a suitable model →
+automatically execute**. Automatic routing is the default. Manual
+selection under Task options remains available for evaluation trials or an explicit override.
+
+1. DUKE builds the eligible roster from enabled models, workspace provider
+   permissions, required tools, recently known capacity, and API budget. Paid
+   candidates need known catalog prices; a tool-capable endpoint is selected within
+   those caps before a paid call, unless the user explicitly pins one. The engine uses the same
+   first-request byte bound as the paid worker and checks again after Jev.
+2. A Jev request asks **Choice** questions for task family and work type, and a **Score** against three
+   concrete difficulty levels: routine, standard, and complex. It sees at most
+   6,000 prompt characters, 1,000 expected-result characters, requested tools,
+   attachment excerpts, project structure counts, checkpoint progress, and whether
+   context is incomplete. The private imported setup library is not copied into
+   this payload. Truncated context conservatively requires complex-work coverage.
+3. Evaluated profiles must meet the task-family quality floor and reviewed difficulty
+   coverage. Provider-described profiles are also eligible immediately, with their
+   user-declared quality sent as null. Only user-selected roster profiles are eligible. Their descriptions, optional work preferences and user-feedback counts
+   inform selection; neither is relabeled as benchmark evidence. Legacy evaluated
+   profiles without difficulty coverage qualify for routine work only.
+4. A second Jev **Choice** selects a candidate using the task assessment and model
+   profiles: scoped quality/whole-task token observations, work preference, difficulty
+   coverage, tools, context limit, billing, prices, and optional routing notes. This is a separate request because questions
+   within one request are evaluated independently. The explicit roster is limited
+   to 32 models, with a rules-fallback option.
+5. DUKE checks the returned candidate against the current roster, permissions,
+   availability, and budget, then invokes its worker automatically. The task record
+   saves the assessed difficulty, chosen model, decision source, and concise reason.
+   Worker failure removes that model before automatic reselection and recovery.
+
+The implementation uses the official `POST /v1/systemone` format and validates
+answer types, confidence ranges, distributions, score consistency, and candidate
+membership. Difficulty and selection confidence must reach 0.8. This is a
+configurable-code threshold to evaluate, **not a measured correctness guarantee**.
+An uncertain difficulty assessment uses a complex-capable rules fallback; an
+uncertain or failed selection retains any valid difficulty assessment and lets
+rules select automatically. If no model qualifies, execution blocks with the
+missing requirement rather than treating an unevaluated worker as proven.
+
+**Automatic selection** applies Jev decisions from first use when connected.
+**Shadow test** runs and records the same two decisions without applying them;
+it is an optional evaluation setting, not Jev's architectural role. **Off** uses
+local rules. The persisted mode names remain `assist`, `observe`, and `off` for
+compatibility, under Advanced routing diagnostics. Manual overrides skip Jev and
+its API cost. Jev is part of normal routing across projects; no per-project switch
+is required, and legacy `jevAllowed` values no longer disable it. Worker provider
+permissions and the global operating mode still apply.
+
+Rules estimate difficulty from task text and use conservative treatment of long
+briefs and incomplete context. Demonstrated capability takes precedence. Once
+quality requirements are met, complete scoped efficiency
+evidence, lower whole-task tokens, starting preferences, adequate difficulty coverage
+and defaults guide the fallback. See ROUTING_POLICY.md for the full ordering.
+Local automatic outcomes are scoped to family, work type, difficulty and brief size;
+they never rewrite benchmark scores. Failed attempts, routing and review tokens
+remain part of cumulative task usage. Unknown usage cannot establish efficiency.
+Jev receives early observations and related work at the same difficulty as tentative
+guidance, while hard qualification still requires exact evidence. Per-model
+execution keys preserve compatible history across roster and preference edits.
+The local composer preview uses only these rules, never Jev inference. Actual
+execution may choose a different model. Events `jev_assessment`, `jev_selection`,
+`jev_unavailable`, and `route` distinguish assessment, proposed dispatch, failure,
+and the final validated route. No model-selection accuracy has been established
+by the synthetic tests.
+
+Codex capacity checks share one interpreter for the pinned runtime's multi-bucket
+usage response, model-specific buckets, and `ordinaryUsageAllowed` account gate.
+Missing telemetry remains unknown. The worker refreshes Codex capacity before and
+after execution, with bounded metadata requests. Task receipts retain observed
+account-window changes separately from tokens and API costs. A reset or missing
+snapshot prevents a comparable delta; other apps may contribute to an account's
+change. The local preview uses cached telemetry. Claude's remaining subscription
+quota is still unavailable. Both adapters are optimized for the same resource goal.
+
+## State and recovery
+
+Task states: queued → routing → running → verifying → completed. A tool can move
+a task to awaiting_approval. Failures become blocked; explicit cancellation
+becomes cancelled. Startup converts active states to interrupted and expires
+pending approvals. Queued tasks retain their original authorization.
+
+Stages use fresh native sessions and explicit checkpoints. This avoids restoring
+stale tools or permission scopes from provider-native sessions. Session IDs are
+kept for traceability. Artifacts have content hashes; previews refuse a changed
+file rather than showing a different version under an old record.
+
+Uncertain network responses retain budget reservations. External browser actions
+are journaled before execution. An uncertain external action halts automatic
+recovery and requires reconciliation. Local file writes are recoverable through
+retained backups. Cancellation stops worker process trees and closes browsers.
+
+## Guardrails and practical limits
+
+The server binds to loopback, rejects unexpected Host and Origin headers, and
+requires a private HttpOnly SameSite session for API access. Keychain entries are
+only used by server-side provider adapters. Shell environments are allowlisted.
+Public fetches validate destinations and pin DNS resolution to a public address;
+browser requests also reject private destinations and non-HTTPS navigation.
+
+An application on the same Mac with the same user's filesystem authority can
+read local state. This is a single-user application, not a hostile-user isolation
+boundary. Browser automation is limited to a fresh profile; complex transactional
+workflows still require explicit receipt verification by the worker and user.
+
+Document creation provides basic text-first layouts. PDF output uses the standard
+Helvetica character set; unsupported characters fail explicitly. DOCX/XLSX are
+downloaded for native review. Layout-heavy documents still need human inspection.
+
+## Sources checked during implementation
+
+- [Codex app-server](https://learn.chatgpt.com/docs/app-server)
+- [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference)
+- [Claude Agent SDK permissions](https://code.claude.com/docs/en/agent-sdk/permissions)
+- [Claude subscription notice](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan)
+- [TypeSafe Score](https://docs.typesafe.ai/primitives/score)
+- [TypeSafe Choice](https://docs.typesafe.ai/primitives/choice)
+- [TypeSafe official SDK wire formats](https://github.com/typesafe-ai/typesafe-sdk-python)
+- [OpenRouter provider routing](https://openrouter.ai/docs/guides/routing/provider-selection)
+- [OpenRouter endpoint catalog](https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model)
+- [Anthropic sandbox runtime](https://github.com/anthropics/sandbox-runtime)
+
+## Standalone application
+
+A Swift launcher starts the packaged Node service from an application-owned data
+folder and opens its private launch link in the browser. A menu bar item reopens
+the interface or quits. The service stops if its launcher exits unexpectedly.
+The bundle includes production modules, Codex, Claude’s native runtime, and
+pinned Playwright browsers. Resource paths are independent of the working folder.
+Application state stays outside the bundle so updates do not replace user data.
+
+Account setup invokes provider-owned browser sign-in. Project selection uses a
+native folder picker. Provider model catalogs are discovered automatically after
+connection but remain unselected until chosen in My models. Starting work preferences
+are optional and do not bypass policy gates. Preview and submission share the complete composer input.

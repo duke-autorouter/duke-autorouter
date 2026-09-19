@@ -1,0 +1,18 @@
+{
+  "file": "duke-autorouter-architecture-v2.png",
+  "width": 1536,
+  "height": 1024,
+  "sha256": "bb4a6207b0dbcd1ad21fbb1e7ae7b781827a0674af15efe94f281d94c55cf3d7",
+  "source_image": "duke-router-architecture-v1.png",
+  "method": "Existing generated architecture map updated through three built-in image edits",
+  "changes": [
+    "Adopted DUKE Autorouter, acronym expansion, and tagline",
+    "Removed the API-limits panel",
+    "Replaced Observation mode with Task classification + confidence"
+  ],
+  "prompts": [
+    "duke-autorouter-branding.prompt.txt",
+    "duke-autorouter-footer.prompt.txt",
+    "duke-autorouter-role.prompt.txt"
+  ]
+}

@@ -1,0 +1,284 @@
+# Selected models, efficiency and automatic checks
+
+Implemented September 19, 2026. Policy identifiers: `duke-routing-v5`, `duke-efficiency-v2` and
+`duke-review-v1`. This document describes implemented behavior, not measured
+live-model accuracy. Live acceptance and comparison runs remain on hold.
+
+## Decision flow
+
+```mermaid
+flowchart TD
+  Roster[User selects models and optional work preferences] --> Candidates
+  Task[Task, allowed tools and bounded context] --> Assess[Jev: work type and difficulty]
+  Assess --> Candidates[Suitable profiles, capacity and budget]
+  Candidates --> Choose[Jev selects the worker]
+  Assess -. Uncertain or unavailable .-> Fallback[Quality gates, preference and efficiency rules]
+  Choose -. Uncertain or unavailable .-> Fallback
+  Choose --> Gate[Recheck permissions and availability]
+  Fallback --> Gate
+  Gate --> Work[Worker executes through shared tools]
+  Work --> Checks[Files, test commands and source receipts]
+  Checks --> Review[Jev reviews the evidence]
+  Review --> Result{Check result}
+  Result -->|Passed| Save[Return work and record checked outcome]
+  Result -->|Incomplete| Unknown[Return work with checks incomplete]
+  Result -->|Failed| Retry[Exclude failed worker, raise difficulty floor]
+  Retry -->|Within recovery limit| Assess
+  Retry -->|No suitable alternative or limit reached| Block[Preserve work and explain the issue]
+  Save --> History[Scoped quality and whole-task token history]
+  History --> Candidates
+```
+
+### Task assessment
+
+Jev classifies coding, research, writing or documents, identifies the specific work type (for example UI, debugging or editing), and scores routine,
+standard or complex reasoning. The normal path uses two sequential requests:
+assessment, then model choice. A third request reviews completed work. Independent
+review questions are batched together. Diagnostic Off/Shadow and explicit manual
+worker selections do not perform an automatic Jev content review.
+
+Routing includes up to 6,000 prompt characters, 1,000 expected-result characters,
+selected attachment excerpts (2,000 each / 8,000 total), root-level project
+structure counts, and checkpoint progress. An attachment alone no longer forces
+complexity. Truncation, unsupported binary input, uncertain assessment or an
+unavailable assessor use a conservative complex-work fallback. A quality retry
+raises the previous difficulty requirement by one level, capped at complex.
+
+The `0.8` thresholds concern Jev's answer distributions. They are not an 80%
+prediction of successful work. Calibration requires the held-out comparison.
+
+### Candidate policy
+
+- Workspace permissions, tool capabilities, model enablement and available
+  budget remain hard gates. Known disconnected/exhausted states persist until
+  a reset or refreshed status. Stale health is refreshed before execution where
+  the adapter supports it; a failed refresh cannot clear a known block.
+- Explicit difficulty coverage is enforced even for provider-described profiles.
+  Legacy evaluated profiles without coverage retain routine-only eligibility.
+  A writing evaluation does not establish document capability.
+- User-declared scores must meet the family quality floor. Provider descriptions let
+  new accounts start without manual qualification. Unknown quality stays unknown.
+- A user-selected roster of at most 32 models bounds the decision. Connecting an
+  account discovers available choices without activating them. OpenRouter is an
+  optional connector; its catalog is searchable only when choosing models.
+- Optional work preferences are starting points, never measured capability or
+  hard assignments. A preference cannot activate an unselected model or bypass
+  quality, difficulty, tool, workspace, capacity or affordability requirements.
+- Jev chooses the least necessary resources to finish useful work at the required
+  quality. This objective applies equally to subscription allowance and API use.
+  Whole-task reported tokens are one practical proxy, including retries and tool
+  loops. A stronger model can be efficient when a weaker model would need recovery.
+  Jev assessment, selection and review remain normal product functions. Reducing
+  Jev calls or bypassing it to save small API amounts is not this build's objective.
+- The rules fallback ranks demonstrated adequate quality ahead of unmeasured
+  profiles. Within that tier, the explicit work preference comes first. Then
+  complete scoped efficiency evidence precedes missing evidence; lower observed
+  tokens per successful task wins. Missing consumption is unknown, never free.
+  Adequate difficulty coverage, provider default, optional feedback and stable ID
+  break remaining ties. Jev can choose any qualified model, including a model
+  without sufficient efficiency history. Quality above the required floor is not maximized.
+  Subscription billing alone no longer gives a candidate preference.
+- No generic model-name ranking or invented token-efficiency scores are used.
+  With sparse evidence, routing relies on descriptions and preferences. This is a
+  cold-start policy, not proof that DUKE has found the best model.
+- Catalog refresh updates ordinary prices/context limits. Explicit edits and
+  pinned endpoint caps remain pinned. A changed/unavailable API endpoint can
+  fall back to another worker without exceeding those caps.
+
+The engine rechecks permission, availability and budget after Jev responds.
+Feedback and automatic evidence are selected using Jev's assessed family rather
+than the earlier keyword guess.
+
+Each routing request has a five-second deadline. Content review has thirty
+seconds because it examines a larger evidence payload. Cancellation still stops
+both. A timeout leaves its API reservation uncertain and review incomplete.
+
+## What verification establishes
+
+Every completed attempt receives a receipt with passed, failed or unverified
+checks. A claimed success or a nonempty file alone cannot produce a checked
+success. Deterministic failures are handled before asking Jev to judge content.
+
+| Work | Checks |
+| --- | --- |
+| Coding | Required outputs and the explicit verification command, or a recognized read-only test command rerun after the worker finishes. No observed test means checks incomplete. |
+| Research | Source URLs must have retrieved-body receipts from `web_read` or `browser` when web/browser research is requested; Jev assesses whether the excerpts support material claims. Search snippets alone do not qualify. |
+| Writing | Jev checks the requested brief, factual support and completeness against bounded task inputs and outputs. |
+| Documents | Required files, core Office XML/text or PDF page structure; Jev checks readable content against the brief. Generated PDF text is used only while its bytes match the generation receipt. |
+
+Office ZIP inspection bounds compressed/expanded sizes, validates inspected XML
+checksums, and never extracts files or executes macros. Binary formats, oversized
+inputs and insufficient excerpts remain unverified. File hashes are rechecked
+after the remote review so outside edits cannot create stale positive evidence.
+
+These checks do **not** establish rendered document layout, recalculated spreadsheet
+formula correctness, adherence to private operating instructions withheld from
+Jev, or the independence of tests authored by the worker. Those limitations appear
+in the receipt. A Jev content judgment can also be wrong; it is not the release
+benchmark's final judge.
+
+Failed checks use the existing recovery limit (two retries by default) and preserve
+files, checkpoint and external-action ledger. Permission failures and uncertain
+external actions remain blocked; they cannot trigger an authority-bypassing retry.
+An unavailable, cancelled, malformed, low-confidence or unaffordable review does
+not count as a quality failure. Incomplete checks never count as positive evidence.
+
+## Local outcome history
+
+Automatic receipts do not rewrite manual benchmark scores or mark a model as
+evaluated. Routing uses at most the last 50 distinct tasks per model, family, work type, brief-size band and
+difficulty from the last 90 days, under the current review policy. Retries/resumes
+of the same task do not multiply its evidence. Routine successes cannot establish
+complex-work coverage, and results do not transfer between model identifiers.
+New receipts also record the model's execution configuration. Changing that model's
+version, endpoint, output/context limits or tools separates its evidence. Changing
+a description, work preference or unrelated roster entry does not.
+
+Jev receives the first checked outcome immediately as tentative guidance. Alongside
+exact evidence, it receives up to four relevant neighboring groups from the same
+family and difficulty. Matching work/size has weight 1; another work category or
+an adjacent size band each halves that guidance weight. Short-to-long transfer,
+cross-family transfer and routine-to-complex transfer are excluded. These weights
+are explicit policy heuristics, not calibrated probabilities. Groups may contain
+overlapping tasks and are never summed into independent sample counts. Related
+evidence cannot establish exact-task qualification or override a hard gate.
+
+A Wilson interval prevents a few successes from becoming a perfect success-rate
+claim. A positive capability estimate requires at least five checked outcomes
+and a conservative bound that meets the quality floor. At the default 0.8 floor,
+five successes are insufficient; twenty successes with no failures clear it.
+Legacy observations without the new work/size scope do not establish quality for a new scoped task. Three or more observations whose upper bound is below the quality floor exclude
+that profile for that family/difficulty. These are provisional heuristics over
+automated judgments, not calibrated population-accuracy guarantees.
+
+Benchmark tasks are explicitly marked `evaluation: true`; their receipts and
+optional feedback are excluded from normal routing history. The benchmark records
+its starting profile hash to reject comparisons made under different profiles.
+
+## Whole-task resource accounting
+
+The usage ledger separates routing, worker and review calls. Codex cumulative
+snapshots replace previous snapshots within the fresh worker session. Claude uses
+its per-model totals, including auxiliary calls; cached reads/writes join its
+input count. OpenRouter adds each request once, keyed by reservation. Jev reports
+input tokens. Cached input and reasoning subsets are not counted twice.
+
+A task's total includes every attempt, stage and same-brief continuation. Its
+latest efficiency record contains the cumulative total and retains the original
+model's attribution, even when another model finishes recovery. Changed briefs,
+manual/benchmark runs, incompatible execution settings and cancelled runs do not
+provide comparison evidence. Incomplete usage or unverified results remain
+visible and cannot make a route look inexpensive. Interrupted provider calls
+without final totals remain incomplete even if some counts were received. A pending
+run is persisted before worker execution. Active work is excluded from learning;
+after a crash its unknown result remains visible and blocks false savings claims.
+
+For the same model execution configuration, Jev mode/version, tool/recovery limits,
+work family, work type, difficulty and brief-size band, DUKE uses the last 50
+distinct tasks within 90 days. Roster and preference changes retain compatible
+history, including same-brief continuations. Changed roster context is counted
+explicitly: costs include the recovery paths actually taken, and removing a fallback
+can make that history less predictive. Raw history is retained, not erased.
+Legacy v1 cost receipts lack per-model configuration, so they can be reused only
+while their original full configuration still matches.
+
+An estimate becomes available after the first fully reported accepted task:
+
+`tokens per accepted task = tokens from complete, reviewed tasks, including failures / accepted tasks in that subset`
+
+The summary also reports total tasks, successful tasks, sampled tasks/successes,
+incomplete tasks, every known token and tokens from incomplete tasks. One unknown
+report no longer suppresses all the complete observations. It does prevent a hard
+efficiency ranking or savings claim. Jev sees the coverage and uses early/partial
+evidence as tentative guidance. The rules fallback still requires five fully
+reported accepted tasks and no incomplete results before ranking by exact-scope
+tokens. Related evidence is guidance for Jev, never a hard efficiency ranking.
+
+Brief size is a rough byte band for briefs and attachments, not a claim that all
+workloads within a band are equivalent.
+
+This observational estimate is provisional and subject to selection bias. It is
+not a randomized comparison or a guaranteed success probability. Tokenizers and
+subscription charging differ, so reported tokens are a practical resource proxy,
+not interchangeable quota units or actual dollars saved. Quality gates remain
+separate. No training updates are made to Jev itself.
+
+### Subscription allowance
+
+Codex's adapter reads account limits immediately before execution and again when
+the worker finishes. The metadata read has a three-second timeout and makes no
+inference request. A failed final read does not fail completed work. Each worker
+attempt records its own snapshots; task receipts and restart recovery preserve them.
+Provider token totals are also separated by provider and by routing/worker/review.
+
+The UI and benchmark show the observed change in each account limit/window. They
+never add percentages from different providers, limits, durations or reset periods.
+Missing endpoints, reset boundaries, decreased percentages and changed windows
+make the change unknown. An unchanged percentage may reflect rounding or delayed
+updates. Other applications on the account may contribute, so this is not an exact
+quota debit attributable to DUKE. Claude allowance remains unknown when its runtime
+does not expose it; its reported tokens still contribute to resource accounting.
+
+## Upgrade behavior
+
+The first run of this version moves legacy automatically enabled catalog models
+back into available choices. It retains their prior IDs in the local roster
+record and asks the user to choose once. Accounts, setup imports and model
+settings are retained. Manually created profiles retain their selection. Later
+refreshes preserve selected IDs and leave new discoveries unselected. The
+selection and preference endpoints require the authenticated local session.
+
+## Data sent to Jev
+
+Routing and review send bounded task briefs, selected attachment excerpts,
+checkpoint progress, project structure counts, model profiles, task-file excerpts
+read by the worker, deliverable excerpts, retrieved source excerpts and check results.
+The private imported setup library and account credentials are not copied into
+those requests. Material quoted into a task deliverable can be included in its
+review. All Jev requests pass through the existing API reservation/budget ledger.
+
+## Evidence needed before release
+
+The expanded corpus contains 80 fixtures: 20 for each work type, split equally
+between development and held-out cases. Default small runs rotate across all
+four types. Comparison requires matching profiles/cases, independent acceptance
+review and at least five held-out cases per type. It reports per-type acceptance,
+critical failures, total latency, retries/stages, settled API cost, unresolved
+reservations, whole-task tokens by provider/role, and subscription-window changes
+with telemetry coverage. Token reduction is reported only for complete usage and
+no observed per-family acceptance regression or critical failure. API cost per
+accepted task is withheld while any request remains unsettled. Overlapping account
+intervals cannot be added into a quota total. There is no combined token/dollar/quota
+score and no fabricated subscription-dollar conversion.
+Confidence bands are compared with outcomes without treating confidence as a
+success probability. Subscription fees are not counted as per-task API spend.
+
+The corpus is an initial foundation: small coding utilities and document fixtures
+still need broader real-project and adversarial coverage. No quality, cost-saving
+or general superiority claim is established until approved live runs and independent
+review produce evidence. The normal user never has to score models to start DUKE.
+See [benchmark protocol](BENCHMARK_PROTOCOL.md) for the next development pass.
+
+
+## Uncertain API charges
+
+A timeout or ambiguous provider failure retains its reservation in the original
+calendar window. It does not permanently consume every future month's budget.
+After a task stops, an authenticated user can record a provider-verified amount
+and billing reference in the request ledger. This creates an immutable correction
+receipt with the original reserve, verified amount, note and timestamp. A repeated
+or stale correction is rejected; delayed settlement cannot erase it. Zero is an
+explicit billing finding, never the automatic default for an uncertain request.
+Costs include settled and manually reconciled entries. Saved evaluation reports
+are snapshots; later ledger corrections do not silently rewrite prior reports.
+
+## Reading recovery evidence
+
+Efficiency measures the whole task starting with the initial model choice,
+including every recovery worker, stage, routing call and review. An accepted task
+that recovered does not mean the first model succeeded alone. New records flag
+recovery; legacy records without that flag are labeled unknown. This annotation
+does not change the token denominator or retroactively discard failed attempts.
+The usage page separates eligible history, complete token coverage and recovered
+successes. These counts describe retained compatible evidence, not all historical
+tasks and not measured routing superiority.

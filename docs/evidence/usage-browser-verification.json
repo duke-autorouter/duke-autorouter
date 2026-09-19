@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-19T20:33:57.613Z",
+  "mode": "Synthetic account telemetry; real UI, API and SQLite",
+  "checks": [
+    "Quiet default header and readable DM Sans input",
+    "Keyboard opening, distinct provider windows, model-specific limits, Escape and focus return",
+    "All four display modes survive reload without changing budgets or routing",
+    "Refresh cooldown and usable mobile popover without horizontal overflow",
+    "Stale and unavailable telemetry is explicit and cannot masquerade as current capacity",
+    "Capacity attention remains available in compact mode; settings link works and no inference or charges occur"
+  ],
+  "inferenceCalls": 0,
+  "providerMetadataCalls": 2,
+  "errors": []
+}

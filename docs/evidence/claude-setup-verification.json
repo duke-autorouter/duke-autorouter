@@ -1,0 +1,122 @@
+{
+  "at": "2026-09-19T21:16:08.170385+00:00",
+  "result": "passed",
+  "scope": "Optional official Claude account setup; subscription routing retained",
+  "checks": [
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm test",
+      "tests": 123,
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:browser",
+      "workflows": 12,
+      "result": "passed",
+      "note": "Before the final API-account usage labels; focused usage and setup workflows ran afterward."
+    },
+    {
+      "command": "node --import tsx scripts/claude-setup-browser-check.ts",
+      "workflows": 4,
+      "result": "passed",
+      "mode": "Synthetic official-process fixture; no account sign-in performed"
+    },
+    {
+      "command": "node --import tsx scripts/usage-browser-check.ts",
+      "workflows": 6,
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:importer",
+      "checks": 11,
+      "result": "passed"
+    },
+    {
+      "command": "node --import tsx scripts/package-macos.ts --refresh",
+      "result": "passed",
+      "lockfileUnchanged": true
+    },
+    {
+      "command": "npm run test:standalone",
+      "checks": 11,
+      "result": "passed",
+      "liveInference": false
+    },
+    {
+      "check": "Native setup launcher",
+      "result": "passed",
+      "mode": "Generated command executed with a substitute executable; actual provider setup not opened"
+    },
+    {
+      "check": "Installed app interface",
+      "result": "passed",
+      "mode": "Isolated browser session against installed service; optional account choices inspected without activating sign-in"
+    }
+  ],
+  "installed": {
+    "savedStateUnchanged": true,
+    "connections": [
+      {
+        "provider": "claude",
+        "ready": true,
+        "billing": "subscription"
+      },
+      {
+        "provider": "codex",
+        "ready": true
+      },
+      {
+        "provider": "jev",
+        "ready": true
+      },
+      {
+        "provider": "openrouter",
+        "ready": true
+      }
+    ],
+    "claudeUsageWindows": 2,
+    "tasksUnchanged": true,
+    "spendingUnchanged": true,
+    "selectedModelsUnchanged": true
+  },
+  "runtimeIntegrity": {
+    "signatureVerified": true,
+    "claudeBinaryUnchanged": true,
+    "claudeBinarySHA256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b"
+  },
+  "files": {
+    "shared/claude-connection.ts": "787d1134ff1f5fb3998b7b0a0397fb062d979f38a55df8bc1806ef6239faa151",
+    "shared/usage-display.ts": "0aae63ec89f218c79e1ddc6b8a05739f4e0653f1ab6b8ccb43749ae8c4c051ec",
+    "server/claude-auth.ts": "aaa8d341ad529237d0826bc39cd5907972b32571cd6b0397a7b7606b8087cab1",
+    "server/claude-login.ts": "305fe7826e2586608f23a797c3711dd315ad59cc4609ebecfabb865f79653d49",
+    "server/claude-setup.ts": "e5674e20524f7a879832dea98d33a981b4570a8cb20004362748f1b5f83f785f",
+    "server/adapters/claude.ts": "42f728afa84fa0a1b490a186d7a94aa3173332656c35309c5715426455cb7aee",
+    "server/app.ts": "1827debc6f506408a58202f5339084a259c8bd245f7a1067c763473b17475ec8",
+    "server/types.ts": "a63a908d4b589b0d8ba6016e56dffd321fac6ff753dcfda56a3d209c9e0a5ebb",
+    "src/main.tsx": "80553164afbc9262ed9c4552e623d1c1a36fec923c879fdad24e445ec822e1f7",
+    "src/style.css": "12ad801542ea3c1a497953ba2eac0bc02aa3480e3bc98c0aabf258ac67af9e11",
+    "src/UsageControl.tsx": "bb097dad7cce9cf5d344cd02902986e40eb202001877d8c7fbb16e0fbcdcb1c2",
+    "tests/claude-auth.test.ts": "0d44fcb7583ff5453a6324b5103ffeca142b0d70d10e17716c479f43cd7636fb",
+    "tests/claude-login.test.ts": "35f5103c7823a23e1bd02292f9da3d38216dfa12ef0fb7ebc0b6e133d02ba900",
+    "tests/usage-display.test.ts": "3b868ebdea5a7728104702c242ca463f69b0da4cbb2da2c9d8e52e39db1fe76c",
+    "scripts/claude-setup-browser-check.ts": "c7cb1a030d1c4a86187416009bf806c23ce603efceb11458e76dbc7f510be832",
+    "package-lock.json": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9"
+  },
+  "modelPromptsSubmitted": 0,
+  "published": false,
+  "limits": [
+    "Console, SSO and cloud account setup were not exercised with real accounts.",
+    "The full native setup window is separate from DUKE task execution; its launch was emulated in browser tests.",
+    "DUKE Claude task execution continues to require subscription authentication; direct Claude API/cloud billing remains unsupported.",
+    "No live routed task, benchmark, fresh-machine installation or notarization is claimed.",
+    "Authentication choices do not resolve the documented SDK distribution-policy ambiguity."
+  ],
+  "source": {
+    "implementationFiles": 967,
+    "implementationAndTestsSHA256": "9b15542c134c5c8a41dde0eb1a2731075513da6b0b8dd0dd2f0d4461406d364e",
+    "digestMethod": "SHA256 of sorted path\\0sha\\n entries excluding docs and narrative root markdown/license"
+  }
+}

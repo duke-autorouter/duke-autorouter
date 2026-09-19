@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-19T17:20:00.727Z",
+  "checks": [
+    "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+    "Project setup persists in a separate application data directory",
+    "Packaged roster and work preferences save through the authenticated API without inference",
+    "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+    "A duplicate service cannot take over the active application state",
+    "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+    "Sandboxed coding task can use bundled Node",
+    "Graceful shutdown removes the launch receipt and releases state",
+    "Relaunch restores the saved project and creates a new authenticated local session",
+    "Application signature remains valid after bundled workers, browser and restart"
+  ],
+  "liveInference": false,
+  "minimalEnvironment": true
+}

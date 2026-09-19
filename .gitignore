@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.router/
+.env*
+!.env.example
+outputs/
+work/
+test-results/
+*.log
+*.tsbuildinfo
+.DS_Store
+.build/
+release/
+
+# Local build/review history; curated public evidence lives in docs/evidence.
+docs/reviews/
+docs/RELEASE_PASS.md
+docs/name-screen-2026-09-18.md

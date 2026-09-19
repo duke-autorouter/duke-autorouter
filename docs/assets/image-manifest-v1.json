@@ -1,0 +1,12 @@
+{
+  "file": "duke-router-architecture-v1.png",
+  "width": 1536,
+  "height": 1024,
+  "sha256": "c4bfd1123383892af72675e1953a7b346887087567cbf1bbb4091250a5038334",
+  "method": "Built-in image generation followed by two edits",
+  "prompts": [
+    "duke-router-architecture.prompt.txt",
+    "duke-router-architecture-refinement.prompt.txt",
+    "duke-router-architecture-label.prompt.txt"
+  ]
+}

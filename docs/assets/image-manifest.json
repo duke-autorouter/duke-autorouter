@@ -1,0 +1,17 @@
+{
+  "file": "duke-autorouter-architecture-v3.png",
+  "width": 1536,
+  "height": 1024,
+  "sha256": "d317274f34663186459aa84343ee3f40a638fc3e92aa5260a642499fd04dfc93",
+  "source_image": "duke-autorouter-architecture-v2.png",
+  "method": "Existing generated map corrected using the built-in image editing tool",
+  "changes": [
+    "Jev assesses difficulty and selects a model",
+    "Eligible model profiles feed selection",
+    "API-limits panel remains removed",
+    "Live-validation note retained"
+  ],
+  "prompts": [
+    "duke-autorouter-difficulty.prompt.txt"
+  ]
+}

@@ -1,0 +1,61 @@
+Create a polished, high-resolution architecture map IMAGE for an implemented personal AI tool named Duke Router. Use an infographic-diagram approach: precise vector-like geometry, generous whitespace, crisp very legible typography, sophisticated editorial layout. Landscape 16:10, at least 2400 pixels wide if available. Warm ivory background, deep forest green headings and lines, soft sage local system cards, muted lavender ONLY for Jev, small ochre accents for approval and paid API. Flat professional diagram, no 3D, no gradients, no decorative tech imagery, no company logos. The diagram should be beautiful enough for a technical portfolio and understandable to an interested non-engineer.
+
+Title at upper left, exactly: "Duke Router"
+Subtitle exactly: "Local task execution across subscription and API models"
+Small upper-right version pill: "ARCHITECTURE v0.1"
+
+LAYOUT AND BOUNDARIES:
+A large lightly tinted rounded boundary marked "ON YOUR MAC" occupies roughly the left 76 percent of the main canvas. A separate narrow region on the right marked "REMOTE MODEL SERVICES" contains the cloud service cards. Make the local/remote boundary unambiguous: the adapters execute locally; inference executes in the remote services. Keep all type large enough to read at normal display size. Arrange the local cards in a coherent top-to-bottom execution flow with clear orthogonal arrows and no tangled crossing connectors.
+
+LOCAL FLOW (inside ON YOUR MAC):
+Top row two cards linked left to right:
+1. "Task + workspace" / smaller "Goal • files • permissions"
+2. "Local UI + task engine" / smaller "Stages • checkpoints • recovery"
+Arrow from the task engine down into:
+3. "Policy router" / smaller "Eligibility → quality → capacity → cost"
+Arrow from Policy router right into:
+4. Group titled "Worker adapters", containing THREE distinct stacked rows:
+   "Codex app-server"
+   "Claude Agent SDK"
+   "OpenRouter tool loop"
+Each adapter connects horizontally to its ONE corresponding remote model service, using separate clean bidirectional arrows:
+   Codex app-server ↔ "OpenAI" / smaller "ChatGPT subscription"
+   Claude Agent SDK ↔ "Anthropic" / smaller "Claude subscription"
+   OpenRouter tool loop ↔ "OpenRouter" / smaller "Paid API models"
+The remote service cards must be outside ON YOUR MAC.
+
+JEV:
+A fourth remote service card near the top of the REMOTE MODEL SERVICES column is lavender, titled "TypeSafe Jev", smaller "Optional task classification".
+Connect Jev to Policy router with a clearly dashed lavender line, labeled "Observe first". A small label on this path says "Brief + tool needs only".
+Jev is a classifier sidecar, never a fourth worker. Do NOT draw Jev into the Worker adapters group or connect it to tools. Near the dashed line, concise text: "Code enforces permissions and budgets".
+
+TOOLS AND APPROVALS (inside ON YOUR MAC):
+From the three Worker adapters, converge cleanly into a broad shared layer beneath them:
+5. "Shared tools + approvals"
+Five concise tool labels within this card, as evenly spaced chips or columns:
+"Workspace files" | "Sandboxed shell" | "Public web" | "Isolated browser" | "Documents"
+Below this card, small supporting text: "External actions and shell writes require approval"
+A small ochre "Human approval" card at the left connects to this shared tools layer.
+The shared tools layer points down to:
+6. "Outputs + verification" / smaller "Artifacts • checks • execution evidence"
+A restrained return arrow from Outputs + verification back toward the task engine is labeled "Checkpoint / retry".
+
+LOCAL STATE:
+Along the lower portion INSIDE ON YOUR MAC, create a quiet two-card support band:
+7. "SQLite + local files" / smaller "Tasks • checkpoints • approvals • spend • artifacts"
+8. "macOS Keychain" / smaller "API keys"
+Use light connectors from task engine to SQLite and from shared tools to local files only if they do not clutter the diagram. Do not portray subscriptions as stored in Keychain.
+
+BUDGET NOTE:
+A clear small callout below the main flow reads exactly:
+"API limits: $5/day • $25/month"
+Directly below, smaller:
+"Jev + OpenRouter share this budget. Subscription quotas are separate."
+
+FOOTER:
+Small but readable footer across the bottom:
+"Local v0.1 implemented • Live provider and routing-quality validation pending"
+Tiny visual legend: solid line "Execution" and dashed lavender line "Optional classification".
+
+QUALITY CONSTRAINTS:
+All visible words must be spelled correctly. Use only the requested labels, no fake code, decorative illegible text, model benchmark scores, extra components, invented APIs, or unsupported performance claims. Prioritize legibility and the architecture relationship over visual density. Every adapter maps to exactly one matching cloud service. Human approval stays local. Jev observes task classification; the deterministic router owns model selection. The result should feel calm, exact, and premium.

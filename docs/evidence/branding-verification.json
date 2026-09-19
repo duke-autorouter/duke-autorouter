@@ -1,0 +1,115 @@
+{
+  "at": "2026-09-19T20:06:26.624Z",
+  "result": "passed",
+  "scope": "Branding assets, local interface and standalone Mac package",
+  "checks": [
+    {
+      "command": "npm run brand:icons",
+      "result": "passed",
+      "source": "Committed SVGs",
+      "network": false,
+      "macIconRepresentations": 10,
+      "menuBarRepresentations": 2
+    },
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test:browser",
+      "result": "passed",
+      "workflows": 12,
+      "browserErrors": 0
+    },
+    {
+      "command": "npm run test:importer",
+      "result": "passed",
+      "checks": 11
+    },
+    {
+      "command": "node --import tsx scripts/package-macos.ts --refresh",
+      "result": "passed",
+      "dependencies": "Reused unchanged lockfile and previously verified bundled runtimes"
+    },
+    {
+      "command": "npm run test:standalone",
+      "result": "passed",
+      "checks": 11
+    },
+    {
+      "tool": "agent-browser",
+      "result": "passed",
+      "checks": [
+        "Desktop navigation and task options",
+        "Wordmark and favicon load",
+        "Compact D mark at 390px width",
+        "Accessible home link",
+        "No horizontal overflow",
+        "No JavaScript errors",
+        "Visual inspection of chat, setup, brand sheet and narrow layout"
+      ]
+    },
+    {
+      "tool": "AppKit",
+      "result": "passed",
+      "checks": [
+        "Installed app icon loads all ten representations",
+        "Installed menu bar template loads 1x and 2x representations"
+      ]
+    },
+    {
+      "scope": "Installed Mac app",
+      "result": "passed",
+      "checks": [
+        "Idle before replacement",
+        "Native Quit and relaunch",
+        "Signature verified",
+        "Branded interface and favicon served",
+        "Saved database unchanged",
+        "Codex and Claude profile files unchanged",
+        "Previous app preserved"
+      ]
+    }
+  ],
+  "textContrastRatios": {
+    "primaryAction": 12.37,
+    "sidebarNavigation": 13.35,
+    "mainIntro": 5.03
+  },
+  "svgLettering": "Outlined paths; no embedded bitmap or external font dependency",
+  "packageLockSHA256": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9",
+  "filesSHA256": {
+    "src/main.tsx": "7f66d91f22d5c61d773c0d398880d7d7db569e9991bda252df4eba1cd5c209d0",
+    "src/style.css": "33dd22739adbd7e334342a7b6ded53aa9ccf7d85ebc0b91851096eae6304d188",
+    "index.html": "6d65a80d2467c9271e9e198cf91090e47946a138c7b77d0f04a738dd340f850f",
+    "desktop/Launcher.swift": "2fa5164bf8b4dda9472993b4709c9c2b23d9d597906445ac88004ac9ee51c2db",
+    "scripts/package-macos.ts": "2a6430c717944c69c85a40302636adda1fc210c03801ae4ab7a3a4912549e00f",
+    "scripts/standalone-check.ts": "99df96c495f7157d390da17e020f9060a01ab0d2d6aa3f7c152028c4e9d3ac87",
+    "scripts/build-brand-icons.ts": "bba05b4a1cf9b03e5c748a2c0ca95292de98b26774afb525d5f3e7dbce43aa16",
+    "scripts/export-source.ts": "325ca3e29510ee29d052cf7ddadd5045af4d67ce696eb158d35efe451806509b",
+    "package.json": "473061adbe6b54a6a080487b3a99e1dccacbf00c7595002a189d25a2d6248479",
+    "src/brand/DM-Sans-OFL.txt": "6fbd040a29c2037a765dfb9f2561e9965b5c95c6dcb5dce516089d63d5f17af7",
+    "src/brand/app-icon.svg": "a93e0117305a9555d8b397b7dff72b150cf1bb7f8932ab37374a71a99ccfee46",
+    "src/brand/mark-ink.svg": "b921c806389e25387362cde77251309bb964a929ec3889215609be5a2107d471",
+    "src/brand/mark-mono.svg": "66915780be0ed1d0e2f5bfe8fa82a13c6804a780dc6a067d54cb65809135575c",
+    "src/brand/mark.svg": "66c03129eab3dda818af84b7e6441a6352f5d9785cc07da65bebe5430f2b07f7",
+    "src/brand/menu-bar.svg": "f4c79c106596e2252c3ba748b417a7cdc638514c29438e41c2bda3100426eafc",
+    "src/brand/wordmark-ink.svg": "3ad4cffd598720f2c400d7d26e037bb0ac0b6fa8749878462f00203aecd064d2",
+    "src/brand/wordmark-mono.svg": "4b00e1aee3eb12abaa80620d1b92004d96beedd1e18d5c9b733dfdf083757899",
+    "src/brand/wordmark.svg": "8d04f5f9535ef4d1421963f80fffef6ba2bb80aa49622be4542820bcc776ea7d",
+    "desktop/Assets/AppIcon.icns": "8d4f1e1a293bdf99f0f3b00a4656f39e5e66f8bdce777b28f92b7df378f2f48c",
+    "desktop/Assets/MenuBarTemplate.png": "4cf26639d0d585b6b70ec15b3cddcf3bc46dae6518461214326a2027446c786f",
+    "desktop/Assets/MenuBarTemplate@2x.png": "24aeb348041b089676a1eb77347f383b74931f2f8d99235540b9c1412ccaec77"
+  },
+  "liveInference": false,
+  "published": false,
+  "limits": [
+    "Checks use synthetic model responses.",
+    "On-screen native menu bar inspection was unavailable because the Mac was locked; bundle resources were verified through AppKit.",
+    "Public distribution and real model quality remain unvalidated."
+  ],
+  "notes": [
+    "The original browser and importer commands passed after slow dependency source-map reads completed.",
+    "The local preview was additionally started with source-map loading disabled for inspection; application behavior was unchanged."
+  ]
+}
