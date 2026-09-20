@@ -23,6 +23,7 @@ They are local application interfaces, not a remote service contract.
 | GET `/api/tasks/:id` | Persisted task, complete ordered event history, artifacts |
 | POST `/api/tasks/:id/cancel` | Stop the worker and retain evidence |
 | POST `/api/tasks/:id/resume` | Resume from checkpoint with optional follow-up |
+| POST `/api/tasks/:id/review` | Queue a retry of incomplete checks on a saved result; no worker execution |
 | POST `/api/approvals/:id` | Resolve one live approval with its operation hash |
 | PUT `/api/models/:id` | Edit a profile or record user-declared evaluation evidence |
 | GET `/api/models/:id/endpoints` | Discover exact OpenRouter providers and prices |

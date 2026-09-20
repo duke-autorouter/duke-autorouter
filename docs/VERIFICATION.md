@@ -1,8 +1,8 @@
 # Verification
 
-The 0.1.1 source passes **167 automated tests** after the
-[adversarial-review corrections](ADVERSARIAL_REVIEW_20260920.md).
-The interface passed **14 browser workflows**, and the final signed release
+The 0.1.2 source passes **182 automated tests** after the
+[workflow patch](WORKFLOW_PATCH.md).
+The interface passed **15 browser workflows**, and the final signed release
 passed **12 standalone package checks** with the hardened runtime. Live Codex and Claude workers
 completed bounded checks of coding, research, writing, and documents. These runs
 found defects; the [tool audit](TOOL_AUDIT.md) records the corrections and limits.
@@ -26,13 +26,18 @@ private-network redirects, runner status, rounded distributions, economical
 fallbacks and case-insensitive credential paths. Nine native sandbox checks pass.
 Earlier live task and interface receipts keep their original dates and scope.
 
+The [workflow patch](WORKFLOW_PATCH.md) adds local coverage for task revisions,
+phase deadlines, late callbacks, review-only retries and mixed-precision responses.
+Its new Jev judgments use synthetic transport; no additional live model quality
+or savings claim follows from these tests.
+
 ## Current checks
 
 | Check | Result and scope |
 | --- | --- |
 | TypeScript and build | Passed locally; includes the native document helper. |
-| Automated tests | 167 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks, probability boundaries and evidence limits. |
-| Browser workflows | 14 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, rendered deliverables, usage, recovery and narrow screens. |
+| Automated tests | 182 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks, probability boundaries and evidence limits. |
+| Browser workflows | 15 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, rendered deliverables, usage, recovery and narrow screens. |
 | Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and Developer ID signature checks under the hardened runtime. |
 | Installed Mac app | Signed update preserved accounts, model choices, settings, two projects and 14 tasks. PDF, Word and both workbook sheets displayed; native quit/relaunch retained state and left a valid signature. |
 | Evaluation corpus | 80 cases validate, 20 per work family. This checks the corpus, without calling models. |

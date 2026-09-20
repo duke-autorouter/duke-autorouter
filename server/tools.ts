@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { readFile, writeFile, readdir, stat, rename, mkdir, copyFile } from 'node:fs/promises';
+import { readFile, writeFile, readdir, stat, rename, mkdir, copyFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, extname } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import { researchBrowser } from './research-browser.js';
@@ -150,7 +150,9 @@ export class ToolService {
   setups: SetupImporter;
   browsers = new Map<
     string,
-    Awaited<ReturnType<typeof researchBrowser>> & { permit?: { origin: string } }
+    Awaited<ReturnType<typeof researchBrowser>> & {
+      permit?: { origin: string };
+    }
   >();
   constructor(
     public store: Store,
@@ -255,16 +257,16 @@ export class ToolService {
         if (Buffer.byteLength(next) > 500000) throw new Error('Edited file would exceed 500 KB.');
         await this.backup(taskId, p);
         signal.throwIfAborted();
-        await writeFile(p, next, { mode: 0o600 });
-        result = await this.recordArtifact(taskId, workspace.path, p);
+        await this.saveFile(p, next, signal);
+        result = await this.recordArtifact(taskId, workspace.path, p, signal);
         break;
       }
       case 'write_file': {
         const p = await path();
         await this.backup(taskId, p);
         signal.throwIfAborted();
-        await writeFile(p, args.content, { mode: 0o600 });
-        result = await this.recordArtifact(taskId, workspace.path, p);
+        await this.saveFile(p, args.content, signal);
+        result = await this.recordArtifact(taskId, workspace.path, p, signal);
         break;
       }
       case 'remove_file': {
@@ -283,6 +285,7 @@ export class ToolService {
           throw new Blocked('File changed after approval.');
         const target = join(this.stateDir, 'backups', taskId, randomUUID());
         await mkdir(resolve(target, '..'), { recursive: true });
+        signal.throwIfAborted();
         await rename(p, target);
         result = { removed: args.path, recovery: target };
         break;
@@ -324,23 +327,27 @@ export class ToolService {
         await this.backup(taskId, p);
         signal.throwIfAborted();
         if (args.format === 'markdown' || args.format === 'html')
-          await writeFile(p, args.content, { mode: 0o600 });
+          await this.saveFile(p, args.content, signal);
         if (args.format === 'docx') {
-          await writeFile(p, await wordArtifact(args.content));
+          await this.saveFile(p, await wordArtifact(args.content), signal);
         }
         if (args.format === 'xlsx') {
           const workbook = await makeSpreadsheet(args.content, args.rows, args.sheets, signal);
-          await writeFile(p, workbook.bytes);
+          await this.saveFile(p, workbook.bytes, signal);
           result = { calculation: workbook.calculation };
         }
         if (args.format === 'pdf') {
-          await writeFile(p, await pdfArtifact(args.content, signal));
+          await this.saveFile(p, await pdfArtifact(args.content, signal), signal);
         }
-        result = { ...(await this.recordArtifact(taskId, workspace.path, p)), ...result };
+        result = {
+          ...(await this.recordArtifact(taskId, workspace.path, p, signal)),
+          ...result,
+        };
         break;
       }
       case 'checkpoint': {
         for (const a of args.artifacts) await scoped(workspace.path, a);
+        signal.throwIfAborted();
         const old = this.store.task(taskId).checkpoint;
         this.store.update(taskId, {
           checkpoint: {
@@ -372,7 +379,18 @@ export class ToolService {
       if (e.code !== 'ENOENT') throw e;
     }
   }
-  async recordArtifact(taskId: string, root: string, path: string) {
+  private async saveFile(path: string, bytes: string | Uint8Array, signal: AbortSignal) {
+    signal.throwIfAborted();
+    const staging = `${path}.duke-${randomUUID()}.tmp`;
+    try {
+      await writeFile(staging, bytes, { mode: 0o600, flag: 'wx', signal });
+      signal.throwIfAborted();
+      await rename(staging, path);
+    } finally {
+      await rm(staging, { force: true });
+    }
+  }
+  async recordArtifact(taskId: string, root: string, path: string, signal?: AbortSignal) {
     root = await scoped(root, '.');
     const data = await readFile(path),
       a = {
@@ -383,6 +401,7 @@ export class ToolService {
         sha256: createHash('sha256').update(data).digest('hex'),
         at: now(),
       };
+    signal?.throwIfAborted();
     this.store.put('artifact', a.id, a);
     this.store.event(taskId, 'artifact', a);
     return a;

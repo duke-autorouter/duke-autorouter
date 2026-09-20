@@ -15,15 +15,16 @@ and savings have not yet been measured.
 
 ## Version 0.1
 
-The current prerelease is **0.1.1 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.1/DUKE-Autorouter-0.1.1-mac-arm64.dmg).
+The current prerelease is **0.1.2 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
 
-Version 0.1.1 fixes a browser redirect boundary defect, incomplete-check scoring,
-rounded Jev responses and fallback exclusions. Update from 0.1.0 before using
-browser research. The [review response](docs/ADVERSARIAL_REVIEW_20260920.md) records
-the fixes, tests and remaining limits.
+Version 0.1.2 updates follow-up requirements, bounds stalled preparation, and adds
+**Retry checks** for saved results with incomplete verification. It also accepts
+valid mixed-precision Jev probabilities. The [workflow patch](docs/WORKFLOW_PATCH.md)
+records the changes and their verification scope. The [0.1.1 review response](docs/ADVERSARIAL_REVIEW_20260920.md)
+records the earlier browser-boundary and scoring fixes.
 
 - **A native Mac window.** The installed app manages its own background process.
   Open it from Applications; no terminal or Codex desktop app is needed after
@@ -63,6 +64,9 @@ automatically escalate to a more powerful one.
 After execution, DUKE checks files, test results, and retrieved sources where
 applicable. Jev reviews the available content. Failed checks can trigger another
 attempt with a suitable model; unfinished checks stay visible in the result.
+Use **Retry checks** to review saved work without starting another worker.
+Follow-ups preserve previous results and keep relevant requirements; explicit
+changes can supersede an earlier output format.
 
 New setups begin with provider model descriptions and your optional preferences.
 As tasks finish, DUKE records outcomes and total usage, including retries and
@@ -95,9 +99,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.1 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.1/DUKE-Autorouter-0.1.1-mac-arm64.dmg)**
+**[Download DUKE 0.1.2 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -162,8 +166,8 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The release passes 167 automated tests and 12 standalone package checks. Another
-14 browser workflows exercise the app and files with synthetic workers. Live
+The release passes 182 automated tests and 12 standalone package checks. Another
+15 browser workflows exercise the app and files with synthetic workers. Live
 Codex and Claude checks cover coding, sourced research, writing, basic documents,
 fallback, and cancellation/resume. Nine live Jev diagnostic reviews passed their
 expected outcomes after a [scoring correction](docs/REVIEW_SCORING.md).

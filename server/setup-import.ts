@@ -784,7 +784,8 @@ export class SetupImporter {
     }
     return files;
   }
-  async snapshot(taskId: string, workspace: Workspace) {
+  async snapshot(taskId: string, workspace: Workspace, signal?: AbortSignal) {
+    signal?.throwIfAborted();
     const existing = this.store.get<SetupSnapshot>('setup_snapshot', taskId);
     if (existing) return existing;
     const snapshot: SetupSnapshot = { taskId, at: now(), files: [], warnings: [] };
@@ -797,6 +798,7 @@ export class SetupImporter {
       if (!selected.length) continue;
       // Read only context scoped to this task. A broken unrelated project cannot block it.
       const files = await this.current({ ...setup, files: selected });
+      signal?.throwIfAborted();
       for (const f of files) {
         if (
           snapshot.files.length >= MAX_FILES ||
@@ -829,6 +831,7 @@ export class SetupImporter {
       }
     }
     snapshot.warnings = [...new Set(snapshot.warnings)];
+    signal?.throwIfAborted();
     this.store.put('setup_snapshot', taskId, snapshot);
     if (snapshot.files.length || snapshot.warnings.length)
       this.store.event(taskId, 'setup_context', snapshotReceipt(snapshot));

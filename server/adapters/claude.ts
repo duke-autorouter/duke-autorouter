@@ -54,7 +54,8 @@ export class ClaudeWorker implements Worker {
       q.close();
     }
   }
-  async health(): Promise<Health> {
+  async health(signal?: AbortSignal): Promise<Health> {
+    signal?.throwIfAborted();
     if (this.authenticating())
       return {
         provider: 'claude',
@@ -62,13 +63,28 @@ export class ClaudeWorker implements Worker {
         message: 'Sign-in in progress. Finish in the browser.',
       };
     let q: ReturnType<typeof query> | undefined;
+    const controller = new AbortController();
+    const abort = () => {
+      controller.abort();
+      q?.close();
+    };
+    signal?.addEventListener('abort', abort, { once: true });
     try {
-      const connection = await claudeConnection(this.stateDir);
+      const connection = await claudeConnection(this.stateDir, signal);
+      signal?.throwIfAborted();
       const ready = connection.signedIn && connection.billing === 'subscription';
       // Keep pre-sign-in model discovery. This is a control request only;
       // the query is never iterated and cannot submit a model prompt.
-      q = query({ prompt: '', options: { ...this.options(), maxTurns: 1 } });
+      q = query({
+        prompt: '',
+        options: {
+          ...this.options(),
+          maxTurns: 1,
+          abortController: controller,
+        },
+      });
       const models = await q.supportedModels();
+      signal?.throwIfAborted();
       return {
         provider: 'claude',
         ready,
@@ -79,8 +95,14 @@ export class ClaudeWorker implements Worker {
         version: 'SDK 0.3.275',
       };
     } catch (e) {
-      return { provider: 'claude', ready: false, message: (e as Error).message };
+      signal?.throwIfAborted();
+      return {
+        provider: 'claude',
+        ready: false,
+        message: (e as Error).message,
+      };
     } finally {
+      signal?.removeEventListener('abort', abort);
       q?.close();
     }
   }
@@ -94,6 +116,7 @@ export class ClaudeWorker implements Worker {
       throw new Unavailable(
         'Claude subscription authentication is required; API credentials are not used.',
       );
+    ctx.signal.throwIfAborted();
     const controller = new AbortController();
     let toolFailure: Error | undefined;
     const defs = definitions(ctx.task.required),

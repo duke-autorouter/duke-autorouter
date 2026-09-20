@@ -12,14 +12,16 @@ export class OpenRouterWorker implements Worker {
     public secrets: Secrets,
     public transport: typeof fetch = fetch,
   ) {}
-  async health(): Promise<Health> {
+  async health(signal?: AbortSignal): Promise<Health> {
+    signal?.throwIfAborted();
     const key = await this.secrets.get('openrouter');
+    signal?.throwIfAborted();
     if (!key)
       return { provider: 'openrouter', ready: false, message: 'Add your OpenRouter API key.' };
     try {
       const r = await this.transport('https://openrouter.ai/api/v1/key', {
         headers: { Authorization: `Bearer ${key}` },
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(10000)]),
       });
       if (!r.ok) throw new Error(`OpenRouter returned ${r.status}`);
       return {
@@ -29,7 +31,12 @@ export class OpenRouterWorker implements Worker {
         quota: (await r.json()).data,
       };
     } catch (e) {
-      return { provider: 'openrouter', ready: false, message: (e as Error).message };
+      signal?.throwIfAborted();
+      return {
+        provider: 'openrouter',
+        ready: false,
+        message: (e as Error).message,
+      };
     }
   }
   async models() {

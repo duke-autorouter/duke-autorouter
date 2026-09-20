@@ -96,6 +96,16 @@ export type Task = z.infer<typeof TaskInput> & {
   review?: TaskReview;
   usage?: TaskUsage;
   subscriptionUsage?: SubscriptionUsage;
+  revision?: number;
+  continuation?: {
+    text: string;
+    previousLength: number;
+    resolved: boolean;
+    uncertain?: boolean;
+    supersededFiles: string[];
+  };
+  phase?: { name: string; startedAt: string; deadlineAt?: string };
+  pendingOperation?: 'review';
 };
 export const ModelInput = z.object({
   id: z.string().min(1),
@@ -169,6 +179,11 @@ export type TaskReview = {
   limitations: string[];
   at: string;
   policy: string;
+  evidence?: {
+    inputKey: string;
+    files: { path: string; sha256: string }[];
+    complete: boolean;
+  };
 };
 export type Outcome = {
   id: string;
@@ -309,7 +324,13 @@ export type Checkpoint = {
   session?: { provider: Provider; id: string; model: string };
   at: string;
 };
-export type Event = { id: number; taskId: string; kind: string; data: any; at: string };
+export type Event = {
+  id: number;
+  taskId: string;
+  kind: string;
+  data: any;
+  at: string;
+};
 export type Approval = {
   id: string;
   taskId: string;
@@ -376,7 +397,7 @@ export interface WorkerContext {
 }
 export interface Worker {
   run(context: WorkerContext): Promise<string>;
-  health?(): Promise<Health>;
+  health?(signal?: AbortSignal): Promise<Health>;
   subscription?(): Promise<SubscriptionStatus>;
 }
 export class Blocked extends Error {}

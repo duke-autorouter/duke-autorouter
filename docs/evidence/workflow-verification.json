@@ -1,0 +1,53 @@
+{
+  "version": "0.1.2",
+  "at": "2026-09-20T18:36:32.358087+00:00",
+  "baseCommit": "11ba274afa2ea1fce1ce69807b807d016078626e",
+  "checks": {
+    "automated": {
+      "passed": 182,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browser": {
+      "passed": 15,
+      "mode": "Synthetic model transport; actual UI, server, store and files"
+    },
+    "macSandbox": {
+      "passed": 9
+    },
+    "typecheck": "passed",
+    "build": "passed",
+    "evaluationCorpus": {
+      "cases": 80,
+      "modelCalls": 0
+    }
+  },
+  "apiSpendUSD": 0,
+  "limits": [
+    "Follow-up model judgments use synthetic transport in this patch.",
+    "No new live worker or efficiency benchmark.",
+    "No second physical Mac.",
+    "The specific original live stall was not reproduced."
+  ],
+  "sourceHashes": {
+    "server/adapters/claude.ts": "c2a5a0063c0916434157fcd09787207e7e8a58f7a3919bcf6b7e17a2a8762308",
+    "server/adapters/codex.ts": "cc26dff59dbe9544111ba1fbbecc359f4c9d84c62932bc5b13026106a86cd5e7",
+    "server/adapters/jev.ts": "f55f7f13457e13ba12e8a7a797d2d44ac7e3dbb760e95a2f341a0d18c9236742",
+    "server/adapters/openrouter.ts": "4f043718fccd4d08efb2881419668bfd028bc310ced45acd6969ddbced912607",
+    "server/app.ts": "bcc2d0263d7536560621f404a1f80bac5755bca8179ce4e19672ab50b75cf168",
+    "server/engine.ts": "7965d4c075e0d660ed25267e9c2508af72faa229eda04e338504fff9ba0a772e",
+    "server/file-content.ts": "13bafde990d61a0d508a4d80e9c16fa6af9abce7aaed16b7413f1b6f4b321df6",
+    "server/outcomes.ts": "91c53323010359c7f62b30ea96f71c71b38c29a33d68f7f0b138ed71dc2ab676",
+    "server/setup-import.ts": "a0a33e3eac739a993c32a2753b882cb8f413a55f668b98833b02fa09d90626e3",
+    "server/task-evidence.ts": "7e48141047386d7efdfb8f2d06d202b011c35ea0016aa9da130971516bd7fb0b",
+    "server/tools.ts": "4943ef919ae706af0a7541e0315c9de6d1711d97e34a869a5991e9709bad9f4d",
+    "server/types.ts": "02942fe84d8971fcf1f92b70a27aab1d9e5b72561dab30f768ec8b305e5d7da4",
+    "server/verification.ts": "030066a7047c5611d23df3ffaff39d4fc686a33856d774d9c7adbb7069fd2f7f",
+    "src/main.tsx": "14a71207f3022b1cf9142715912dd66a86e9a99651a21ba9790af36005462a9b",
+    "tests/jev-routing.test.ts": "61a2614f45f0ccc9a382615ab58b80f3ca1485c9374052278205106078a655b2",
+    "tests/verification.test.ts": "49fe96b92c9d7031da84d5b99008022f7f6a9689083b2ba8cfb5240865323d31",
+    "server/deadline.ts": "c1b59366d9d9d8227b38fcb9f5ff75eaae4862830868d01738c2670617beadaa",
+    "server/task-revisions.ts": "8848383d17a15dd71b2fafc8872eaeae172de28b56f8ad33b690c6c8b4aa4f39",
+    "tests/workflow.test.ts": "df5e06ccee92977449a730beb20731319bf2d3e84e8631a8a72cedfbb12f8894"
+  }
+}

@@ -2,7 +2,7 @@
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
 The source and Mac downloads are available in the
-[0.1.1 public prerelease](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1).
+[0.1.2 public prerelease](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2).
 This page records what was checked and the limits that early users need to know.
 
 The [0.1.1 review response](ADVERSARIAL_REVIEW_20260920.md) records fixes for
@@ -11,8 +11,8 @@ exclusions. Update from 0.1.0 before using browser research.
 
 ## Completed checks
 
-- 167 automated tests pass for the release source. The interface passed
-  14 browser workflows; the final package passed 12 signed standalone checks.
+- 182 automated tests pass for the release source. The interface passed
+  15 browser workflows; the final package passed 12 signed standalone checks.
   Browser workflows use synthetic workers; the [verification record](VERIFICATION.md)
   distinguishes them from live tasks and native-window checks.
 - Live Codex and Claude tasks cover coding, research, writing and basic documents.
@@ -59,10 +59,12 @@ cover normal installation. Security reports can use GitHub's private
   macOS download path. Do not prescribe removing quarantine.
 - **Automatic reviews can remain incomplete.** Five of six installed live tasks kept
   that status under the earlier policy. The [scoring correction](REVIEW_SCORING.md)
-  fixes the probability cutoff. Image evidence, conflicting criteria after a
-  cancellation follow-up, and zero-budget review remain separate limits. One
+  fixes the probability cutoff. The [0.1.2 workflow patch](WORKFLOW_PATCH.md) adds requirement reconciliation,
+  bounded preparation and review-only retries. Image evidence, ambiguous follow-up
+  requirements and zero-budget review can still leave checks incomplete. One
   initial routing attempt stalled and completed after restart and resume; its
-  cause remains unresolved. Search produced irrelevant results
+  specific cause remains unresolved. Local regression tests now exercise the
+  bounded wait paths and cancellation. Search produced irrelevant results
   in one run, and the worker recovered through direct source URLs.
 - **Savings and broader reliability are unmeasured.** No paired routing benchmark,
   multi-day reliability result, Intel build, Windows build or Linux build is claimed.

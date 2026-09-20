@@ -420,7 +420,10 @@ try {
   );
   await page.getByRole('group', { name: 'Automatic checks' }).locator(':scope > summary').click();
   await page
-    .getByText('No repeatable test command was provided or run by the worker.', { exact: true })
+    .getByText(
+      'Executable behavior needs checking, but no repeatable test command was provided or run. Continue the task to add an appropriate check.',
+      { exact: true },
+    )
     .last()
     .waitFor();
   assert.equal(r.store.tasks()[0].review?.status, 'unverified');
@@ -428,6 +431,27 @@ try {
   await page.screenshot({ path: 'outputs/jev-automatic-selection.png', fullPage: false });
   console.log(
     'PASS Jev difficulty assessment, automatic selection and dispatch through the UI, zero preview inference',
+  );
+  const beforeRetry = r.store.tasks()[0];
+  const beforeEvents = r.store.events(beforeRetry.id);
+  await page.getByRole('button', { name: 'Retry checks', exact: true }).click();
+  await waitFor(
+    async () =>
+      r.store.events(beforeRetry.id).filter((e) => e.kind === 'verification').length === 2 &&
+      r.store.task(beforeRetry.id).status === 'completed',
+  );
+  assert.equal(jevCalls, 4);
+  assert.equal(r.store.task(beforeRetry.id).usage?.reportedTokens, 140);
+  assert.equal(
+    r.store.events(beforeRetry.id).filter((e) => e.kind === 'route').length,
+    beforeEvents.filter((e) => e.kind === 'route').length,
+  );
+  assert.equal(
+    r.store.events(beforeRetry.id).filter((e) => e.kind === 'artifact').length,
+    beforeEvents.filter((e) => e.kind === 'artifact').length,
+  );
+  console.log(
+    'PASS Retry checks reviews saved work without another worker, route or artifact write',
   );
   await page.getByRole('button', { name: 'Usage & routing' }).click();
   await page.screenshot({ path: 'outputs/usage.png', fullPage: false });
@@ -462,7 +486,7 @@ try {
       {
         at: new Date().toISOString(),
         mode: 'Synthetic Jev transport and workers; real server, UI, SQLite, file tools, artifact creation, approvals and cancellation',
-        checks: 13,
+        checks: 15,
         errors,
       },
       null,

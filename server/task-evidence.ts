@@ -26,7 +26,11 @@ export type RoutingContext = {
     excerpt: string;
     truncated: boolean;
   }[];
-  project: { entries: number; fileTypes: Record<string, number>; hasTests: boolean };
+  project: {
+    entries: number;
+    fileTypes: Record<string, number>;
+    hasTests: boolean;
+  };
   progress?: { summary: string; remaining: string };
   privateGuidancePresent?: boolean;
   incomplete: boolean;
@@ -45,7 +49,9 @@ export async function routingContext(
   task: Task,
   workspace: Workspace,
   attachments: { path: string; content: string; truncated?: boolean }[],
+  signal?: AbortSignal,
 ): Promise<RoutingContext> {
+  signal?.throwIfAborted();
   let budget = 8000;
   const bounded = attachments.map((a) => {
     const binary = /\x00|\uFFFD/.test(a.content);
@@ -63,6 +69,7 @@ export async function routingContext(
   const entries = (await readdir(workspace.path, { withFileTypes: true })).filter(
     (e) => !sensitive(e.name) && !e.name.startsWith('.') && !e.isSymbolicLink(),
   );
+  signal?.throwIfAborted();
   const fileTypes: Record<string, number> = {};
   for (const e of entries)
     if (e.isFile()) {

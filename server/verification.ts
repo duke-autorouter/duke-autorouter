@@ -7,6 +7,7 @@ import { marked } from 'marked';
 import { scoped } from './paths.js';
 import { inspectFile, type ReviewEvidence, type RoutingContext } from './task-evidence.js';
 import { REVIEW_POLICY } from './outcomes.js';
+import { currentEvents, taskInputKey } from './task-revisions.js';
 import { Blocked, now, type Task, type Workspace, type TaskReview, type Check } from './types.js';
 
 function urlKey(raw: string) {
@@ -42,6 +43,30 @@ function repeatableTest(command: string) {
   );
 }
 
+export async function assertReviewEvidence(task: Task, workspace: Workspace, signal: AbortSignal) {
+  const evidence = task.review?.evidence;
+  if (!evidence) return false;
+  if (evidence.inputKey !== taskInputKey(task))
+    throw new Blocked(
+      'The task requirements changed. Continue the task before checking the result again.',
+    );
+  for (const file of evidence.files) {
+    signal.throwIfAborted();
+    const path = await scoped(workspace.path, file.path);
+    if (
+      (await stat(path)).size > 2_000_000 ||
+      createHash('sha256')
+        .update(await readFile(path, { signal }))
+        .digest('hex') !== file.sha256
+    )
+      throw new Blocked(
+        `${file.path} changed after the last review. Describe the change in a follow-up before checking it again.`,
+      );
+  }
+  signal.throwIfAborted();
+  return evidence.complete;
+}
+
 export async function verifyTask(
   store: Store,
   tools: ToolService,
@@ -55,9 +80,13 @@ export async function verifyTask(
   const checks: Check[] = [],
     limitations: string[] = [];
   const events = store.events(task.id);
+  const revisionEvents = currentEvents(events);
   const lastRoute = events.findLastIndex((e) => e.kind === 'route');
   const stageEvents = events.slice(lastRoute + 1);
   const artifacts = store.list<any>('artifact').filter((a) => a.taskId === task.id);
+  const touched = new Set(
+    revisionEvents.filter((e) => e.kind === 'artifact').map((e) => e.data.path),
+  );
   const removed = (path: string) => {
     const removal = events.findLastIndex(
       (e) =>
@@ -72,10 +101,16 @@ export async function verifyTask(
     ...new Set([
       ...task.verification.files,
       ...[...artifacts.map((a) => a.path), ...(task.checkpoint?.artifacts ?? [])].filter(
-        (p) => !removed(p),
+        (p) => !removed(p) && (!task.continuation || touched.has(p)),
       ),
     ]),
   ];
+  const receipt: NonNullable<TaskReview['evidence']> = {
+    inputKey: taskInputKey(task),
+    files: [],
+    complete: false,
+  };
+  store.put('review_evidence', task.id, receipt);
   const evidence: ReviewEvidence = {
     result: result.slice(0, 12000),
     files: [],
@@ -91,12 +126,18 @@ export async function verifyTask(
   };
   if (evidence.incomplete)
     limitations.push('Some task or response context exceeds the review excerpt limits.');
+  if (task.continuation?.uncertain) {
+    evidence.incomplete = true;
+    limitations.push(
+      'The follow-up could not be reconciled confidently with earlier completion requirements. Those requirements were retained; clarify which result, files, or tests the follow-up replaces.',
+    );
+  }
   if (context?.privateGuidancePresent)
     limitations.push(
       'Private operating instructions were kept with the worker; adherence to those instructions was not independently assessed.',
     );
   const inputs = new Map<string, string>();
-  for (const event of events)
+  for (const event of revisionEvents)
     if (
       event.kind === 'tool_completed' &&
       event.data.name === 'read_file' &&
@@ -144,6 +185,9 @@ export async function verifyTask(
       textBudget -= file.text?.length ?? 0;
       evidence.incomplete ||= file.incomplete;
       evidence.files.push(file);
+      signal.throwIfAborted();
+      if (file.sha256) receipt.files.push({ path, sha256: file.sha256 });
+      store.put('review_evidence', task.id, receipt);
       checks.push({
         name: path,
         status: file.incomplete ? 'unverified' : 'passed',
@@ -184,6 +228,9 @@ export async function verifyTask(
       });
     }
   }
+  receipt.complete = paths.length <= 20 && receipt.files.length === paths.length;
+  signal.throwIfAborted();
+  store.put('review_evidence', task.id, receipt);
   const previousTest = stageEvents.findLast(
     (e) =>
       e.kind === 'tool_started' &&
@@ -192,9 +239,22 @@ export async function verifyTask(
       repeatableTest(e.data.args.command),
   );
   const command = task.verification.command || previousTest?.data.args.command;
-  if (command) {
-    if (!task.required.includes('shell'))
-      throw new Blocked('The verification command requires the shell capability.');
+  const sourcePath =
+    /\.(?:[cm]?[jt]sx?|py|pyw|rb|go|rs|swift|java|kt|c|cc|cpp|h|hpp|cs|sh|bash|zsh|sql|vue|svelte)$/i;
+  const changedCode = revisionEvents.some(
+    (e) =>
+      (e.kind === 'artifact' && sourcePath.test(e.data.path ?? '')) ||
+      (e.kind === 'tool_completed' &&
+        e.data.name === 'remove_file' &&
+        sourcePath.test(e.data.result?.removed ?? '')) ||
+      (e.kind === 'tool_started' && e.data.name === 'shell' && e.data.args?.writable),
+  );
+  const requestedBehavior =
+    task.route?.kind === 'coding' &&
+    /\b(?:implement|debug|fix|repair|refactor|test)\b[^.!?\n]{0,120}\b(?:code|function|script|bug|test|application|app|api|endpoint|component|module|system|server)\b/i.test(
+      task.continuation?.text ?? task.prompt,
+    );
+  if (command && task.required.includes('shell')) {
     const test = await tools.shell(workspace, command, false, signal);
     checks.push({
       name: 'Tests',
@@ -207,13 +267,16 @@ export async function verifyTask(
         `Test execution was incomplete (${test.status}); this is not a model quality failure.`,
       );
     }
-  } else if (task.route?.kind === 'coding') {
+  } else if (command || changedCode || requestedBehavior) {
     checks.push({
       name: 'Tests',
       status: 'unverified',
-      detail: 'No repeatable test command was provided or run by the worker.',
+      detail: !task.required.includes('shell')
+        ? 'Executable checks need shell access, which this task does not allow.'
+        : 'Executable behavior needs checking, but no repeatable test command was provided or run. Continue the task to add an appropriate check.',
     });
     evidence.incomplete = true;
+    limitations.push('Executable behavior has not been verified.');
   }
   const readSources = events
     .filter((e) => e.kind === 'tool_completed' && ['web_read', 'browser'].includes(e.data.name))
@@ -301,19 +364,21 @@ export async function verifyTask(
     }
   }
   signal.throwIfAborted();
-  const status = changedDuringReview
-    ? 'unverified'
-    : checks.some((c) => c.status === 'failed')
-      ? 'failed'
-      : evidence.incomplete || checks.some((c) => c.status === 'unverified')
-        ? 'unverified'
-        : 'passed';
+  const status =
+    changedDuringReview || task.continuation?.uncertain
+      ? 'unverified'
+      : checks.some((c) => c.status === 'failed')
+        ? 'failed'
+        : evidence.incomplete || checks.some((c) => c.status === 'unverified')
+          ? 'unverified'
+          : 'passed';
   return {
     status,
     checks,
     limitations: [...new Set(limitations)],
     at: now(),
     policy: REVIEW_POLICY,
+    evidence: receipt,
     summary:
       status === 'failed'
         ? checks
@@ -323,6 +388,6 @@ export async function verifyTask(
             .slice(0, 2500)
         : status === 'passed'
           ? 'Automatic checks passed for the inspected work.'
-          : 'The work is saved; some checks could not be completed.',
+          : 'The result is saved; some checks could not be completed.',
   };
 }

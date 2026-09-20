@@ -289,6 +289,10 @@ export async function createApp(
     engine.resume((req.params as any).id, b.reconciled, b.followup);
     return { ok: true };
   });
+  app.post('/api/tasks/:id/review', async (req) => {
+    engine.retryReview((req.params as { id: string }).id);
+    return { ok: true };
+  });
   app.post('/api/approvals/:id', async (req) => {
     const b = z.object({ hash: z.string(), allow: z.boolean() }).parse(req.body);
     approvals.decide((req.params as any).id, b.hash, b.allow);

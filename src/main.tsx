@@ -816,17 +816,26 @@ function TaskView({ detail, approvals, busy, act }: any) {
           role="status"
           className={
             'status-chip ' +
-            (t.status === 'completed' && t.review?.status === 'unverified'
-              ? 'unverified'
-              : t.status)
+            (t.status === 'completed' && t.review?.status === 'failed'
+              ? 'blocked'
+              : t.status === 'completed' && t.review?.status === 'unverified'
+                ? 'unverified'
+                : t.status)
           }
         >
-          {t.status === 'completed' && t.review?.status === 'unverified'
-            ? 'Saved · checks incomplete'
-            : statusLabel(t.status)}
+          {t.status === 'completed' && t.review?.status === 'failed'
+            ? 'Saved · checks found issues'
+            : t.status === 'completed' && t.review?.status === 'unverified'
+              ? 'Saved · checks incomplete'
+              : statusLabel(t.status)}
           {['queued', 'routing', 'running', 'verifying'].includes(t.status) && <WorkingDots />}
         </span>
       </div>
+      {!terminal && t.phase && (
+        <p className="quiet" role="status">
+          {t.phase.name}…
+        </p>
+      )}
       {t.route && (
         <div className="route-card">
           <div className="route-icon">↗</div>
@@ -970,6 +979,14 @@ function TaskView({ detail, approvals, busy, act }: any) {
               {note}
             </p>
           ))}
+          {t.status === 'completed' && t.review.status === 'unverified' && (
+            <button
+              disabled={busy}
+              onClick={() => act(() => api('/tasks/' + t.id + '/review', {}))}
+            >
+              Retry checks
+            </button>
+          )}
         </details>
       )}
       {t.result && !history.some((e) => e.kind === 'completed') && terminal && (

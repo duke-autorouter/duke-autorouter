@@ -471,11 +471,41 @@ test('rounded distributions retain Jev routing across a nine-option choice', asy
   }
 });
 
+test('mixed-precision probabilities retain the allowance of each rounded value', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('quick', 'routine'));
+    f.answer((body) =>
+      body.questions.difficulty
+        ? {
+            ...assessment(0),
+            kind: {
+              ...choice(['coding', 'research', 'writing', 'documents'], 'coding'),
+              probabilities: {
+                coding: 0.810001,
+                research: 0.06,
+                writing: 0.06,
+                documents: 0.06,
+              },
+            },
+          }
+        : {
+            model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
+          },
+    );
+    const task = await f.run();
+    assert.equal(task.route?.selectionSource, 'jev');
+    assert.equal(task.route?.modelId, 'quick');
+  } finally {
+    await f.close();
+  }
+});
+
 test('rounding allowance cannot accept empty mass, wrong keys or invalid high-precision totals', async () => {
   for (const probabilities of [
     { coding: 0, research: 0, writing: 0, documents: 0 },
     { coding: 0.9, research: 0.09, writing: 0, extra: 0 },
-    { coding: 0.5001, research: 0.2, writing: 0.15, documents: 0.14 },
+    { coding: 0.5001, research: 0.2001, writing: 0.1501, documents: 0.1401 },
     { coding: 0.5, research: 0.1, writing: 0.1, documents: 0.1 },
   ]) {
     const f = await fixture();

@@ -18,7 +18,13 @@ export async function fileContent(
   workspace: Workspace,
   path: string,
   signal?: AbortSignal,
-): Promise<{ content: string; format: string; truncated: boolean; notes: string[] }> {
+): Promise<{
+  content: string;
+  format: string;
+  truncated: boolean;
+  notes: string[];
+}> {
+  signal?.throwIfAborted();
   const target = await scoped(workspace.path, path),
     metadata = await stat(target),
     format = extname(path).toLowerCase();
@@ -34,7 +40,8 @@ export async function fileContent(
     content = result.text;
     truncated = result.incomplete;
     notes.push(result.detail);
-  } else content = decodeText(await readFile(target));
+  } else content = decodeText(await readFile(target, { signal }));
+  signal?.throwIfAborted();
   if (content.length > 200000) {
     content = content.slice(0, 200000);
     truncated = true;

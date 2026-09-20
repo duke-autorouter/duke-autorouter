@@ -754,7 +754,12 @@ test('research requires retrieved citation receipts and gives source excerpts to
         prompt: 'Research and cite the value',
         required: ['web', 'files'],
       });
-      assert.equal(task.review?.status, retrieved ? 'passed' : 'failed');
+      // The source citation can pass independently of the untested executable example.
+      assert.equal(
+        task.review?.checks.find((c) => c.name === 'Citations')?.status,
+        retrieved ? 'passed' : 'failed',
+      );
+      assert.equal(task.review?.status, retrieved ? 'unverified' : 'failed');
       if (retrieved) assert.match(f.calls.at(-1).state.evidence.sources[0].text, /42/);
       else assert.match(task.review!.summary, /not read/);
     } finally {

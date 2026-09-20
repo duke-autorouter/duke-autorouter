@@ -18,7 +18,11 @@ export class CodexRPC extends EventEmitter {
   seq = 0;
   pending = new Map<
     number,
-    { resolve: (x: any) => void; reject: (e: Error) => void; timer: NodeJS.Timeout }
+    {
+      resolve: (x: any) => void;
+      reject: (e: Error) => void;
+      timer: NodeJS.Timeout;
+    }
   >();
   closed = false;
   constructor(public stateDir: string) {
@@ -129,8 +133,11 @@ export class CodexWorker implements Worker {
       rpc.close();
     }
   }
-  async health(): Promise<Health> {
+  async health(signal?: AbortSignal): Promise<Health> {
+    signal?.throwIfAborted();
     const rpc = this.connect(this.stateDir);
+    const abort = () => rpc.close();
+    signal?.addEventListener('abort', abort, { once: true });
     try {
       await rpc.init();
       const a = await rpc.request('account/read', { refreshToken: false });
@@ -139,6 +146,7 @@ export class CodexWorker implements Worker {
       try {
         quota = await rpc.request('account/rateLimits/read');
       } catch {}
+      signal?.throwIfAborted();
       return {
         provider: 'codex',
         ready: a.account?.type === 'chatgpt',
@@ -151,12 +159,15 @@ export class CodexWorker implements Worker {
         version: '0.155.0',
       };
     } catch (e) {
+      signal?.throwIfAborted();
       return { provider: 'codex', ready: false, message: (e as Error).message };
     } finally {
+      signal?.removeEventListener('abort', abort);
       rpc.close();
     }
   }
   async run(ctx: WorkerContext) {
+    ctx.signal.throwIfAborted();
     const effort = workerEffort(ctx.model);
     const rpc = this.connect(this.stateDir);
     let output = '';
