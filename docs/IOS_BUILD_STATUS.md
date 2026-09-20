@@ -20,6 +20,8 @@ Base: `v0.1.2` at `bcc9ab0ac67d3f18576f8416eef53726c4f4fa77`
 - Credentials persist in the device-only Keychain. Closing the app does not
   cancel Mac work; foreground polling rebuilds state from the Mac.
 - A synthetic fixture exercises the client without provider calls.
+- Production pairing now binds the device credential to the authenticated
+  Tailscale Serve login by default.
 
 ## Verification log
 
@@ -43,7 +45,9 @@ the host state; the client now also applies the returned task state immediately.
 ## Open validation and product gates
 
 - No physical iPhone or cellular test has run.
-- No Tailscale installation or configuration has been authorized or performed.
+- The official standalone Tailscale 1.102.4 package was downloaded for the
+  authorized private beta and verified as Apple-notarized and signed by
+  Tailscale Inc. Installation still requires macOS administrator approval.
 - No hosted connection service has been selected or implemented.
 - Push notifications, TestFlight and App Store publication are not implemented.
 - No live provider request or paid benchmark is part of this build.

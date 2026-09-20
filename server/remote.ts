@@ -22,6 +22,7 @@ type RemoteDevice = {
   id: string;
   name: string;
   credentialHash: string;
+  tailscaleLogin?: string;
   allowedWorkspaceIds: string[];
   createdAt: string;
   lastSeenAt?: string;
@@ -70,7 +71,7 @@ export class RemoteAccess {
     return { code, expiresAt: challenge.expiresAt, allowedWorkspaceIds: ids };
   }
 
-  exchange(code: string, name: string) {
+  exchange(code: string, name: string, tailscaleLogin?: string) {
     const codeHash = sha256(code);
     const challenge = this.store
       .list<PairingChallenge>('remote_pairing_challenge')
@@ -85,6 +86,7 @@ export class RemoteAccess {
       id: randomUUID(),
       name: name.trim(),
       credentialHash: sha256(secret),
+      tailscaleLogin,
       allowedWorkspaceIds: challenge.allowedWorkspaceIds,
       createdAt: now(),
     };
@@ -99,7 +101,7 @@ export class RemoteAccess {
     };
   }
 
-  authenticate(authorization?: string) {
+  authenticate(authorization?: string, tailscaleLogin?: string) {
     const value = /^Bearer\s+(.+)$/i.exec(authorization ?? '')?.[1] ?? '';
     const dot = value.indexOf('.');
     if (dot < 1) throw new RemoteUnauthorized('Pair this device with the Mac.');
@@ -108,6 +110,8 @@ export class RemoteAccess {
     const device = this.store.get<RemoteDevice>('remote_device', id);
     if (!device || device.revokedAt || !same(device.credentialHash, sha256(secret)))
       throw new RemoteUnauthorized('This device is not authorized.');
+    if (device.tailscaleLogin && device.tailscaleLogin !== tailscaleLogin)
+      throw new RemoteUnauthorized('This device is not connected through its paired Tailscale login.');
     const updated = { ...device, lastSeenAt: now() };
     this.store.put('remote_device', id, updated);
     return updated;
@@ -128,7 +132,7 @@ export class RemoteAccess {
   }
 
   publicDevice(device: RemoteDevice) {
-    const { credentialHash: _, ...safe } = device;
+    const { credentialHash: _, tailscaleLogin: __, ...safe } = device;
     return safe;
   }
 }
@@ -177,6 +181,7 @@ export function createRemoteApp(options: {
   approvals: Approvals;
   access: RemoteAccess;
   allowInsecureForTests?: boolean;
+  requireTailscaleIdentity?: boolean;
 }) {
   const { store, engine, approvals, access } = options;
   const app = Fastify({
@@ -189,8 +194,16 @@ export function createRemoteApp(options: {
     const forwarded = String(request.headers['x-forwarded-proto'] ?? '')
       .split(',')[0]
       .trim();
-    if (!options.allowInsecureForTests && request.protocol !== 'https' && forwarded !== 'https')
+    const tailscaleLogin = String(request.headers['tailscale-user-login'] ?? '').trim();
+    if (
+      !options.allowInsecureForTests &&
+      request.protocol !== 'https' &&
+      forwarded !== 'https' &&
+      !(options.requireTailscaleIdentity && tailscaleLogin)
+    )
       return reply.code(426).send({ error: 'The iPhone connection requires private HTTPS.' });
+    if (options.requireTailscaleIdentity && !tailscaleLogin)
+      return reply.code(401).send({ error: 'The iPhone connection requires Tailscale identity.' });
   });
   app.addHook('onSend', async (_request, reply, payload) => {
     reply.header('Cache-Control', 'no-store');
@@ -217,12 +230,23 @@ export function createRemoteApp(options: {
       })
       .strict()
       .parse(request.body);
-    return access.exchange(body.code, body.deviceName);
+    return access.exchange(
+      body.code,
+      body.deviceName,
+      options.requireTailscaleIdentity
+        ? String(request.headers['tailscale-user-login']).trim()
+        : undefined,
+    );
   });
 
   app.addHook('preHandler', async (request) => {
     if (request.url === '/remote/v1/pair') return;
-    (request as any).remoteDevice = access.authenticate(request.headers.authorization);
+    (request as any).remoteDevice = access.authenticate(
+      request.headers.authorization,
+      options.requireTailscaleIdentity
+        ? String(request.headers['tailscale-user-login']).trim()
+        : undefined,
+    );
   });
 
   const deviceFor = (request: any) => request.remoteDevice as RemoteDevice;

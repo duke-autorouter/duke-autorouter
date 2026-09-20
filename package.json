@@ -19,6 +19,7 @@
   "scripts": {
     "dev": "node --import tsx server/index.ts",
     "dev:ios-fixture": "node --import tsx scripts/ios-companion-fixture.ts",
+    "dev:ios-private-beta": "DUKE_FIXTURE_TAILSCALE=1 node --import tsx scripts/ios-companion-fixture.ts",
     "start": "node --import tsx server/index.ts",
     "build": "tsc --noEmit && vite build && node --import tsx scripts/build-document-tools.ts",
     "package:mac": "npm run build && node --import tsx scripts/package-macos.ts",

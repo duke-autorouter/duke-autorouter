@@ -52,6 +52,8 @@ The iPhone gateway is a separate, opt-in Fastify listener. It binds to loopback
 and requires private HTTPS termination in front of it. It is disabled unless
 `DUKE_REMOTE_ENABLE=1`. The production gateway rejects plaintext requests; the
 synthetic development fixture is the only code path that permits local HTTP.
+The default production mode also requires Tailscale Serve's authenticated
+`Tailscale-User-Login` header and binds the device credential to that identity.
 
 `POST /remote/v1/pair` exchanges a valid one-use challenge for a random
 per-device bearer credential. Other routes require that credential and apply

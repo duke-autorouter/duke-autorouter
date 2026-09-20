@@ -7,7 +7,13 @@ const { app, engine, approvals, remoteAccess, store, launchToken, stateDir } = a
 const url = await app.listen({ host: '127.0.0.1', port: Number(process.env.PORT ?? 4318) });
 const remoteApp =
   process.env.DUKE_REMOTE_ENABLE === '1'
-    ? createRemoteApp({ store, engine, approvals, access: remoteAccess })
+    ? createRemoteApp({
+        store,
+        engine,
+        approvals,
+        access: remoteAccess,
+        requireTailscaleIdentity: process.env.DUKE_REMOTE_REQUIRE_TAILSCALE !== '0',
+      })
     : undefined;
 if (remoteApp) {
   await remoteApp.listen({

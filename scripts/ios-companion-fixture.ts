@@ -76,13 +76,17 @@ const remote = createRemoteApp({
   approvals: core.approvals,
   access: core.remoteAccess,
   allowInsecureForTests: true,
+  requireTailscaleIdentity: process.env.DUKE_FIXTURE_TAILSCALE === '1',
 });
 await remote.listen({ host: '127.0.0.1', port: 4339 });
 console.log(
   JSON.stringify({
     server: 'http://127.0.0.1:4339',
     pairingCode: challenge.code,
-    note: 'Synthetic simulator fixture only. No provider calls are made.',
+    note:
+      process.env.DUKE_FIXTURE_TAILSCALE === '1'
+        ? 'Synthetic private-beta fixture. Tailscale identity is required; no provider calls are made.'
+        : 'Synthetic simulator fixture only. No provider calls are made.',
   }),
 );
 

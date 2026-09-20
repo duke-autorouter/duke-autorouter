@@ -51,8 +51,10 @@ still listens only on `127.0.0.1`, using port `4319` unless
 forward to that loopback port.
 
 Tailscale Serve is compatible with this shape and is the current private-beta
-recommendation. It has not been selected, installed or configured by this work.
-No router port, public listener or hosted relay is required by the implementation.
+recommendation. The gateway requires its authenticated user identity header by
+default and binds each new phone credential to that login. A future non-Tailscale
+private transport requires the explicit `DUKE_REMOTE_REQUIRE_TAILSCALE=0`
+override. No router port, public listener or hosted relay is required.
 
 ## Not yet established
 

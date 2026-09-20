@@ -21,6 +21,11 @@ the desktop application. A private HTTPS transport such as Tailscale Serve may
 forward to that loopback port. The gateway never exposes account, key, model,
 routing-policy, project-import or arbitrary-path administration routes.
 
+The private beta defaults to Tailscale identity enforcement. Pairing records the
+authenticated Serve login with the device, without returning or displaying that
+login, and later requests must arrive with the same identity. A future private
+transport can disable this check only with an explicit environment override.
+
 Pairing starts from the authenticated Mac interface. It creates an expiring,
 one-use random challenge for an explicit set of existing projects. A successful
 exchange issues one random per-device bearer credential. Only its SHA-256 hash

@@ -130,6 +130,7 @@ test('production remote routes require HTTPS before pairing or authentication', 
     engine: f.engine,
     approvals: f.approvals,
     access: f.remoteAccess,
+    requireTailscaleIdentity: true,
   });
   try {
     const challenge = f.remoteAccess.createChallenge(['w1']);
@@ -148,11 +149,35 @@ test('production remote routes require HTTPS before pairing or authentication', 
         await secureOnly.inject({
           method: 'POST',
           url: '/remote/v1/pair',
-          headers: { 'x-forwarded-proto': 'https' },
+          headers: {
+            'x-forwarded-proto': 'https',
+            'tailscale-user-login': 'owner@example.com',
+          },
           payload: { code: challenge.code, deviceName: 'Private HTTPS phone' },
         })
       ).statusCode,
       200,
+    );
+    const paired = f.remoteAccess.createChallenge(['w1']);
+    const response = await secureOnly.inject({
+      method: 'POST',
+      url: '/remote/v1/pair',
+      headers: { 'tailscale-user-login': 'owner@example.com' },
+      payload: { code: paired.code, deviceName: 'Bound phone' },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.equal(
+      (
+        await secureOnly.inject({
+          method: 'GET',
+          url: '/remote/v1/state',
+          headers: {
+            authorization: `Bearer ${response.json().credential}`,
+            'tailscale-user-login': 'someone-else@example.com',
+          },
+        })
+      ).statusCode,
+      401,
     );
   } finally {
     await secureOnly.close();
