@@ -7,7 +7,7 @@ macOS 14 or newer.
 
 The [0.1.1 release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
 includes a DMG, ZIP, checksums and release manifest. The
-[distribution receipt](evidence/distribution-verification.json) identifies the
+[distribution receipt](evidence/distribution-0.1.1-verification.json) identifies the
 files that passed notarization, stapling, signature and Gatekeeper checks.
 
 ## Maintainer preparation

@@ -1,0 +1,154 @@
+{
+  "at": "2026-09-20T16:20:20.724037+00:00",
+  "release": "0.1.1",
+  "status": "Signed, notarized and checked; GitHub records publication status.",
+  "releaseURL": "https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1",
+  "platform": "Apple Silicon macOS 14+",
+  "implementationCommit": "4ddc7a48ffc402d7f93d6ea6ccbe05b620580c44",
+  "sourceScope": "Runtime and build inputs match this commit. Later release-receipt edits do not change the packaged runtime.",
+  "packageLockSHA256": "c630848d9d54fb8bf40cfc5eec73de6d88f5630846e405cdd52962d5d78a7e10",
+  "checks": {
+    "typescript": "passed",
+    "build": "passed",
+    "automatedTests": 167,
+    "automatedFailures": 0,
+    "nativeSandboxChecks": 9,
+    "evaluationCorpus": 80,
+    "evaluationModelCalls": 0,
+    "implementationCI": "https://github.com/duke-autorouter/duke-autorouter/actions/runs/35521853109",
+    "signature": "passed",
+    "staple": "passed",
+    "gatekeeper": "passed",
+    "dmgMountAndApplicationsShortcut": "passed",
+    "claudePublisherSignatureAndUpstreamBytes": "passed",
+    "appleArchiveHashMatches": true,
+    "assetChecksums": "passed"
+  },
+  "standalone": {
+    "at": "2026-09-20T16:02:44.654Z",
+    "checks": [
+      "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
+      "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+      "Project setup persists in a separate application data directory",
+      "Packaged roster and work preferences save through the authenticated API without inference",
+      "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+      "A duplicate service cannot take over the active application state",
+      "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+      "Sandboxed coding task can use bundled Node",
+      "Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools",
+      "Graceful shutdown removes the launch receipt and releases state",
+      "Relaunch restores the saved project and creates a new authenticated local session",
+      "Application signature remains valid after bundled workers, browser and restart"
+    ],
+    "liveInference": false,
+    "minimalEnvironment": true
+  },
+  "native": {
+    "at": "2026-09-20T16:18:28.017613+00:00",
+    "version": "0.1.1",
+    "installedUpdate": "passed",
+    "savedStatePreserved": true,
+    "counts": {
+      "tasks": 14,
+      "workspaces": 2,
+      "setups": 0,
+      "models": 91,
+      "artifacts": 29
+    },
+    "nativeWindow": "Home screen and saved coding task rendered in the installed native window. The code-file preview offered its expected download link.",
+    "nativeQuitAndRelaunch": "passed; launch receipt removed on quit, UI rendered after relaunch",
+    "signatureAfterRelaunch": "passed",
+    "additionalModelInference": false,
+    "scope": "Development Mac; no second-machine installation. Earlier document-preview and live-worker checks retain their original dates."
+  },
+  "signing": {
+    "version": "0.1.1",
+    "signedAt": "2026-09-20T15:59:48.515Z",
+    "archiveSHA256": "830df4008c5ba5ee320799e38f40883f3444b9a17e4084748cefdecd0e59de87",
+    "binaries": 57,
+    "signedBinaries": 56,
+    "bundles": 10,
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    },
+    "status": "Accepted",
+    "id": "2fa57c9e-774a-4924-8d6f-e90807160af5",
+    "submittedAt": "2026-09-20T16:04:49.974594+00:00",
+    "checkedAt": "2026-09-20T16:09:59.269Z"
+  },
+  "downloads": {
+    "name": "DUKE Autorouter",
+    "version": "0.1.1",
+    "platform": "darwin-arm64",
+    "minimumMacOS": "14",
+    "notarization": "Accepted and stapled",
+    "submissionId": "2fa57c9e-774a-4924-8d6f-e90807160af5",
+    "createdAt": "2026-09-20T16:11:44.013Z",
+    "assets": [
+      {
+        "path": "DUKE-Autorouter-0.1.1-mac-arm64.dmg",
+        "sha256": "ca2f5dec23e990d01ded79cd74ae4876b0c6e99e1d572f87bc3320669ff66b29"
+      },
+      {
+        "path": "DUKE-Autorouter-0.1.1-mac-arm64.zip",
+        "sha256": "5b8681a12c4792719e16df0767b0430b679387c6fc9e8c790058a6dfb83cc86a"
+      }
+    ],
+    "sourceLockHash": "c630848d9d54fb8bf40cfc5eec73de6d88f5630846e405cdd52962d5d78a7e10",
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    }
+  },
+  "credentialAudit": {
+    "at": "2026-09-20T16:13:14.153597+00:00",
+    "credentialsCompared": 8,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1484,
+        "bytes": 19679483,
+        "errors": []
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19750,
+        "bytes": 1484463142,
+        "errors": []
+      },
+      {
+        "scope": "download-metadata",
+        "files": 3,
+        "bytes": 1424,
+        "errors": []
+      }
+    ],
+    "exactMatches": 0,
+    "firstPartyPatternFiles": 943,
+    "patternFindings": 0,
+    "zipPayloadsMatched": 19775,
+    "zipResourceMetadataScanned": 0,
+    "downloadChecksums": "passed",
+    "limits": "Claude Keychain tokens were not extracted for exact comparison. Pattern/history checks and credential-path exclusions are separate coverage."
+  },
+  "apiSpendThisPassUSD": 0,
+  "limits": [
+    "No physical second-Mac installation.",
+    "OpenRouter live completion remains unverified.",
+    "No comparative routing, savings or multi-day reliability benchmark.",
+    "The independent adversarial review remains incomplete outside its stated scope.",
+    "Follow-ups keep original verification criteria; historical task review statuses remain unchanged."
+  ],
+  "supportingEvidence": [
+    "adversarial-fixes-verification.json",
+    "installed-acceptance.json",
+    "review-scoring-verification.json",
+    "secret-audit.json",
+    "distribution-verification.json"
+  ]
+}

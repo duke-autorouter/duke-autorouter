@@ -118,15 +118,18 @@ These receipts retain their original dates and scope:
 
 ## Distribution and remaining coverage
 
-The 0.1 release passed Developer ID verification, Apple notarization,
+The 0.1.1 release passed Developer ID verification, Apple notarization,
 stapling and Gatekeeper. The delivered DMG and ZIP preserve Anthropic's original
 Claude executable and signature. All 12 standalone checks passed again, and the
 corrected runtime recognized the existing Claude subscription without inference.
-The [distribution receipt](evidence/distribution-verification.json) identifies
-the exact assets and final native-window check. The installed update retained
-14 tasks, two projects, account connections and saved settings. Earlier live
+The [distribution receipt](evidence/distribution-0.1.1-verification.json) identifies
+the exact assets, updated package audit and native-window check. The installed update retained
+14 tasks, two projects, account connections and saved settings. The native home
+screen and a saved task rendered after updating; quit and relaunch preserved state.
+The [0.1.0 receipt](evidence/distribution-verification.json) retains its earlier
+document-preview checks. Earlier live
 checks retain their recorded scope; packaging did not rerun model inference.
-The [public release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0)
+The [public release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
 includes checksums for the DMG and ZIP.
 
 OpenRouter live completion and a second physical Mac installation remain

@@ -17,12 +17,13 @@ exclusions. Update from 0.1.0 before using browser research.
   distinguishes them from live tasks and native-window checks.
 - Live Codex and Claude tasks cover coding, research, writing and basic documents.
   Installed checks cover previews, cancellation, resume and saved-state restart.
-- The [credential audit](evidence/secret-audit.json) covers source history,
-  document contents, screenshot text and the packaged app. No credentials were
-  found. CI scans source and history on each push.
+- The [original credential audit](evidence/secret-audit.json) covers source history,
+  document contents and screenshot text. The [0.1.1 package audit](evidence/distribution-0.1.1-verification.json)
+  checks the updated app, known credential values and download contents. No
+  credentials were found in these scopes. CI scans source and history on each push.
 - The published DMG and ZIP passed notarization, stapling, signature and Gatekeeper
   checks. Claude retains Anthropic's published bytes and signature. See the
-  [distribution receipt](evidence/distribution-verification.json).
+  [distribution receipt](evidence/distribution-0.1.1-verification.json).
 - The [review-scoring correction](REVIEW_SCORING.md) passed nine live Jev diagnostic
   cases: four correct outputs passed and five incorrect outputs failed.
 - The [dependency audit](evidence/dependency-audit.json) reports zero known
@@ -35,7 +36,7 @@ exclusions. Update from 0.1.0 before using browser research.
 ## Distribution
 
 The release includes an Apple Silicon DMG, ZIP, SHA-256 checksums and a manifest.
-The app includes the scoring correction and preserves existing tasks, projects,
+The app includes the review corrections and preserves existing tasks, projects,
 accounts and settings when updated. The final native launch and disposable-profile
 checks ran on the development Mac. GitHub checks scan source history for secrets
 and run the core build, tests and evaluation-corpus validation.

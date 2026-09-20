@@ -45,3 +45,7 @@ concurrency or accounting. Existing coverage is listed in [Verification](VERIFIC
 
 [ADR 0014](adr/0014-boundaries-and-incomplete-checks.md) records the alternatives
 and tradeoffs behind these changes.
+
+The [0.1.1 distribution receipt](evidence/distribution-0.1.1-verification.json)
+records Apple notarization, the final package audit and the installed native
+update. It does not extend the scope of the independent review.
