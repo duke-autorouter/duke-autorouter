@@ -35,7 +35,8 @@ They are local application interfaces, not a remote service contract.
 | POST `/api/discover/:provider` | Discover models and descriptions; new entries remain unselected |
 | GET `/api/spending` | Reservations, settlements and audited corrections |
 | POST `/api/spending/:id/reconcile` | Record `actualUSD`, expected `reservedMicros` and a billing `note` for a stopped task; rejects stale or duplicate corrections |
-| GET `/api/artifacts/:id` | Hash-checked preview; `?download=1` for download |
+| GET `/api/artifacts/:id` | Hash-checked file; `?download=1` for download |
+| GET `/api/artifacts/:id/preview` | Authenticated, hash-checked image preview; optional PDF `page` or workbook `sheet`/`range`. Returns bounded coverage metadata. |
 
 `server/types.ts` defines task, route, model, workspace, checkpoint, approval, and
 worker contracts. `server/tools.ts` defines the shared tool schemas. There are no

@@ -157,16 +157,18 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 ## Verification and development
 
 Local checks cover routing, file tools, approvals, imports, persistence,
-accounting, and the interface. The current tool pass includes 147 automated tests,
-13 browser workflows, and 12 standalone package checks. Browser workflows use
+accounting, and the interface. The current tool pass includes 150 automated tests,
+14 browser workflows, and 12 standalone package checks. Browser workflows use
 synthetic workers while exercising the real app and files.
 
 Live Codex and Claude checks have produced code, sourced research, writing, and
 Word/PDF/Excel outputs. Those checks exposed defects in document rendering,
 image delivery, and search that were repaired and rechecked. The
 [tool audit](docs/TOOL_AUDIT.md) records the failures, fixes, sample outputs, and
-remaining limits. OpenRouter has no successful live worker result yet. Final
-installed-app checks and signed distribution are still pending.
+remaining limits. Six later tasks exercised the installed engine, including
+Luna Low fallback and native cancellation/resume. Document previews and saved
+state passed checks in the Developer ID signed app. OpenRouter has no successful
+live worker result yet; notarization and a fresh-Mac installation remain pending.
 
 Routing accuracy, resource savings, and daily-use reliability have not been
 established. Intel Macs, Windows, and Linux are not release-tested. The

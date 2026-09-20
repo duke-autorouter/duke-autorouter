@@ -84,6 +84,61 @@ function NavigationIcon({ kind }: { kind: 'tasks' | 'connections' | 'usage' }) {
     </svg>
   );
 }
+function ArtifactPreview({ artifact, close }: { artifact: { id: string; path: string }; close: () => void }) {
+  const rendered = /\.(pdf|docx|xlsx|png|jpe?g)$/i.test(artifact.path);
+  const [page, setPage] = useState(1), [sheet, setSheet] = useState('');
+  const [result, setResult] = useState<{
+    page?: number; pages?: number; sheet?: string; sheets?: string[]; range?: string;
+    images: { mimeType: string; data: string }[];
+  }>();
+  const [loading, setLoading] = useState(rendered), [error, setError] = useState('');
+  useEffect(() => {
+    if (!rendered) return;
+    let active = true;
+    setLoading(true);
+    setError('');
+    const query = new URLSearchParams({ page: String(page), ...(sheet ? { sheet } : {}) });
+    void api(`/artifacts/${artifact.id}/preview?${query}`)
+      .then((value) => { if (active) setResult(value); })
+      .catch((failure: Error) => { if (active) setError(failure.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [artifact.id, rendered, page, sheet]);
+  return (
+    <div className="modal-backdrop" onKeyDown={(event) => { if (event.key === 'Escape') close(); }}>
+      <div className="modal preview-modal" role="dialog" aria-modal="true" aria-label={artifact.path}>
+        <div className="section-heading">
+          <h2>{artifact.path}</h2>
+          <button autoFocus onClick={close}>Close</button>
+        </div>
+        {rendered ? <>
+          <div className="preview-controls">
+            {result?.pages && <>
+              <button disabled={loading || page <= 1} onClick={() => setPage(page - 1)}>Previous page</button>
+              <span>Page {page} of {result.pages}</span>
+              <button disabled={loading || page >= result.pages} onClick={() => setPage(page + 1)}>Next page</button>
+            </>}
+            {!!result?.sheets?.length && <label>Sheet <select aria-label="Preview sheet" disabled={loading}
+              value={sheet || result.sheet} onChange={(event) => setSheet(event.target.value)}>
+              {result.sheets.map((name) => <option key={name}>{name}</option>)}
+            </select></label>}
+            <a href={'/api/artifacts/' + artifact.id + '?download=1'}>Download file</a>
+          </div>
+          {loading ? <p role="status">Loading preview…</p> : error ? <p role="alert">{error}</p> :
+            <div className="document-preview">
+              {result?.images.map((image, index) => <img key={index}
+                alt={`${artifact.path}${result.page ? `, page ${result.page}` : ''}${result.sheet ? `, ${result.sheet} ${result.range}` : ''}`}
+                src={`data:${image.mimeType};base64,${image.data}`} />)}
+            </div>}
+          {/\.docx$/i.test(artifact.path) && <p>First-page preview. Download to view the full document.</p>}
+          {/\.xlsx$/i.test(artifact.path) && <p>Saved cells{result?.range ? ` · ${result.range}` : ''}. Open in Excel for the full layout.</p>}
+        </> : /\.(md|txt|html)$/i.test(artifact.path) ? (
+          <iframe title={artifact.path} sandbox="" src={'/api/artifacts/' + artifact.id} />
+        ) : <p><a href={'/api/artifacts/' + artifact.id + '?download=1'}>Download file</a> to open it in its application.</p>}
+      </div>
+    </div>
+  );
+}
 function App() {
   const [data, setData] = useState<any>(),
     [screen, setScreen] = useState('tasks'),
@@ -961,24 +1016,7 @@ function TaskView({ detail, approvals, busy, act }: any) {
           {detail.feedback && <small>Saved.</small>}
         </div>
       )}
-      {preview && (
-        <div className="modal-backdrop">
-          <div className="modal preview-modal">
-            <div className="section-heading">
-              <h2>{preview.path}</h2>
-              <button onClick={() => setPreview(undefined)}>Close</button>
-            </div>
-            {/\.(md|txt|html|pdf|png)$/i.test(preview.path) ? (
-              <iframe title={preview.path} sandbox="" src={'/api/artifacts/' + preview.id} />
-            ) : (
-              <p>
-                This format opens in its document application.{' '}
-                <a href={'/api/artifacts/' + preview.id + '?download=1'}>Download file</a>
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+      {preview && <ArtifactPreview key={preview.id} artifact={preview} close={() => setPreview(undefined)} />}
       <details className="task-setup-receipt resource-receipts" aria-label="Resource receipts">
         <summary>Usage & execution receipts</summary>
         {t.usage && (

@@ -29,13 +29,15 @@ checks. Source and release artifacts remain private until publication is approve
 
 ## Before distributing the Mac download
 
-- Install the final audited tool bundle and repeat the native window, saved
-  account, project and task flow. The earlier native checks predate these repairs.
+- Keep the final installed-app receipt current. The signed build passed native
+  document previews and quit/relaunch with accounts, projects and tasks preserved.
+  Six live tasks exercised the installed engine before the preview-only repair;
+  cancellation and resume used the native window.
 - Complete a successful live OpenRouter worker check with an available endpoint
   before claiming every adapter works. A key/catalog lookup is insufficient;
   the zero-price endpoint attempt failed before tool execution.
-- Sign the app and nested runtimes with Developer ID, then rerun the standalone
-  tests under the hardened runtime. Current package checks used ad hoc signing.
+- Developer ID signing and all 12 standalone checks under the hardened runtime
+  passed. Repeat them if the application bundle changes.
 - Submit the exact signed archive to Apple, verify acceptance, staple the ticket,
   and assess it with Gatekeeper. Create the DMG, ZIP and checksums from those bytes.
 - Download and install on a fresh Apple Silicon Mac, connect accounts, create a

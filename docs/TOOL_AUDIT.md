@@ -3,8 +3,8 @@
 The September 2026 audit covers the four 0.1 workflows: coding, public-source
 research, writing, and basic Word, PDF and Excel documents. It found defects in
 DUKE's shared tool layer that a structural file check could not catch. Repairs
-now pass local, standalone-package and bounded live Codex/Claude checks. Final
-installed-app verification and a successful OpenRouter worker run remain open.
+now pass local, standalone-package, installed-app and bounded live Codex/Claude
+checks. A successful OpenRouter worker run remains open.
 
 DUKE supplies these tools itself. Bundling a provider runtime does not supply the
 entire Codex or Claude application's tool environment. The
@@ -19,6 +19,7 @@ entire Codex or Claude application's tool environment. The
 | Spreadsheet calculation | Only literal values were supported. Cached formula values could be mistaken for recalculation. | Explicit formulas and named sheets, with bounded calculation. Tests cover arithmetic, conditional and cross-sheet formulas, errors and unsupported references. An incorrect library SUMIF result was caught and corrected. The live two-sheet workbook recalculates to 15. |
 | Image delivery | Screenshots were paths or JSON text; Codex's bridge could return a data URL without displaying the image. | Adapter-specific image content plus Codex bridge instructions. Both native workers identified an unseen shape image. The repaired research run delivered an actual model-visible screenshot. Image bytes stay out of stored tool receipts. |
 | Spreadsheet preview | Quick Look cropped the workbook and hid some values. | An explicit sheet/range grid shows saved cell values. Claude inspected Inventory and Summary after repair. These previews do not reproduce native Excel layout or recalculate formulas. |
+| Native deliverable preview | The Mac window showed a blank PDF iframe; Word and XLSX only offered downloads. | The interface uses the existing renderer for version-checked images. PDF pages, a Word first page, and switching between Inventory and Summary were inspected in the signed Mac app. |
 | File navigation and edits | Directory listings silently stopped at 500; no precise replacement or content search. | Sorted pagination, bounded line reads, literal search and unique-match edits with backups. Tests cover limits, failed edits, credential exclusions and project boundaries. Included in the standalone check. |
 | Web discovery | Search HTML could be a challenge page or unrelated results. | Keyless Tavily results identify original URLs. Explicit rate/error/empty handling and no paid fallback. Luna's repaired live run found MDN, read the source, opened the page and inspected its screenshot. |
 | Public PDFs | A web read could decode binary PDF bytes as text. | Bounded PDF extraction through the bundled helper. Unit, package and live public-PDF checks passed. No OCR is implied. |
@@ -41,7 +42,7 @@ The [API reference](API.md#shared-worker-tools) gives the schemas and bounds.
 | `create_artifact`, `preview_file` | Saved Markdown, HTML, Word, PDF and XLSX; structural checks, calculations, preview coverage, actual image delivery and inspection. |
 | `checkpoint` | Saved progress and artifacts, stage continuation and explicit interrupted-task resume. |
 
-Core tests exercise tool contracts and adapter image messages. Thirteen browser
+Core tests exercise tool contracts and adapter image messages. Fourteen browser
 workflows use synthetic workers with real file operations. Twelve standalone
 checks run the actual bundle with a minimal environment and disposable state.
 Live checks exercise selected ordinary operations through Codex and Claude.
@@ -50,6 +51,7 @@ These layers cover different failure modes; no one layer substitutes for the res
 ## Evidence and scope
 
 - [Machine-readable tool receipt](evidence/tool-audit-verification.json)
+- [Installed tasks and signed-app checks](evidence/installed-acceptance.json)
 - [Actual sample files and rendered previews](evidence/tool-audit/README.md)
 - [Live tasks and brief](LIVE_ACCEPTANCE_TASKS.md)
 - [Verification record and remaining release checks](VERIFICATION.md)

@@ -1,12 +1,15 @@
 # Verification
 
-The September 2026 tool pass has **147 automated tests, 13 browser workflows,
-and 12 standalone package checks passing**. Live Codex and Claude workers also
+The September 2026 tool pass has **150 automated tests, 14 browser workflows,
+and 12 standalone package checks passing**. The package checks also pass with
+Developer ID signing and the hardened runtime. Live Codex and Claude workers
 completed bounded checks of coding, research, writing, and documents. These runs
 found defects; the [tool audit](TOOL_AUDIT.md) records the corrections and limits.
 
-The current [tool receipt](evidence/tool-audit-verification.json) identifies the
-tested source, commands and live checks. [Sample outputs](evidence/tool-audit/README.md)
+The [installed-app receipt](evidence/installed-acceptance.json) records six later
+live tasks, native previews, cancellation, resume and saved-state restart. The
+earlier [tool receipt](evidence/tool-audit-verification.json) identifies its tested
+source, commands and live checks. [Sample outputs](evidence/tool-audit/README.md)
 include actual worker-created files and their rendered previews. The production
 [dependency audit](evidence/dependency-audit.json) reports zero known vulnerabilities
 for its recorded lockfile. None of these checks establishes routing savings or
@@ -17,9 +20,10 @@ general model quality.
 | Check | Result and scope |
 | --- | --- |
 | TypeScript and build | Passed locally; includes the native document helper. |
-| Automated tests | 147 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages and evidence limits. |
-| Browser workflows | 13 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, deliverables, usage, recovery and narrow screens. Final backend-only repairs followed this run. |
-| Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and an ad hoc signature check. |
+| Automated tests | 150 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks and evidence limits. |
+| Browser workflows | 14 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, rendered deliverables, usage, recovery and narrow screens. |
+| Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and Developer ID signature checks under the hardened runtime. |
+| Installed Mac app | Signed update preserved accounts, model choices, settings, two projects and 14 tasks. PDF, Word and both workbook sheets displayed; native quit/relaunch retained state and left a valid signature. |
 | Evaluation corpus | 80 cases validate, 20 per work family. This checks the corpus, without calling models. |
 | Live workers | Successful Codex and Claude runs, detailed below. No successful OpenRouter task yet. |
 | Credential exposure | Full source history, tracked files, document contents, screenshot text and the packaged app reviewed. No credentials identified. The [audit receipt](evidence/secret-audit.json) records scope and limits; CI now checks text and history. |
@@ -34,7 +38,11 @@ The initial eight task runs used the installed app's engine, connected Jev and
 subscription workers. They included four rechecks. The later tool checks used
 the bundled adapters and tools through an isolated acceptance runner. Those
 later checks exercised real accounts but bypassed Jev selection and the native
-window. They do not replace the final installed-app check.
+window. A subsequent six-task cohort used the installed engine with Jev, Codex
+and Claude. Those tasks were queued through the local API with the evaluation
+flag set; resume, cancellation and follow-up used the native window. The native
+Start task button was not exercised in that cohort; synthetic browser checks
+cover it.
 
 | Work | Observed result |
 | --- | --- |
@@ -46,12 +54,35 @@ window. They do not replace the final installed-app check.
 | Image delivery | Codex and Claude correctly described an image with a blue circle and red square. After additional Codex bridge guidance, a research run emitted one actual image input and described its screenshot. |
 | OpenRouter | A zero-price endpoint request returned HTTP 404 before any tool call. The account had no API credit. The attempt spent $0 and left no unresolved reservation. Its adapter has automated coverage, but live completion is unverified. |
 
+The six installed-engine tasks completed: coding, research, writing, documents,
+zero-API-budget fallback, and cancellation/recovery. Jev selected Sonnet Low for
+coding, research and documents. Uncertain selections and the exhausted API budget
+used Luna Low. The zero-budget task incurred no additional API charge. Native
+Stop removed a pending shell approval without creating the file; a subsequent
+native follow-up saved the requested line through the file tool.
+
+The first coding attempt stalled during routing without a provider receipt.
+Quit/relaunch marked it interrupted, and native Continue completed it. The cause
+was not established; later tasks did not reproduce it. Research search results
+were irrelevant in one run; the worker recovered by reading official URLs
+directly. These are retained observations, not repaired results.
+
+Installed checks found a blank PDF iframe. The repair now displays rendered
+images from the shared document helper, with PDF page controls and workbook sheet
+selection. The signed app displayed the PDF page, Word first page, and Inventory
+and Summary cells with the expected total. After switching from the development
+signature, macOS requested Documents access again; the owner allowed it and the
+preview succeeded on reopening.
+
 Jev's review remained **unverified** on some otherwise useful outputs. Independent
 acceptance review does not rewrite those saved statuses. The original failures
 also remain in the private run history. All prompts used public or invented
-material. Recorded API spending was **$0.003308** within a $1 total cap;
+material. Five of the six later automatic reviews remain unverified, including
+conservative Jev judgments and checks unavailable at the exhausted budget.
+Recorded API spending across both cohorts was **$0.005682** within a $1 total cap;
 subscription usage was separate. No comparative savings claim follows from this
-small set of acceptance tasks.
+small set of acceptance tasks. Original budget settings were restored and no
+unsettled charges remain.
 
 ## Earlier evidence
 
@@ -73,12 +104,11 @@ These receipts retain their original dates and scope:
 
 ## Still required for release
 
-Install the final tool bundle and repeat the native task flow. Complete Developer
-ID signing, notarization, and a fresh-machine download/install/account check.
+Complete notarization and a fresh-machine download/install/account check.
 Resolve the OpenRouter live gap before calling every supported adapter validated.
 
-The Mac download has not been published. The final tool bundle currently has an
-ad hoc signature. A clean profile on the development Mac does not establish a
+The Mac download has not been published. The current bundle has a verified
+Developer ID signature. A clean profile on the development Mac does not establish a
 fresh physical Mac installation. No Intel, Windows or Linux release is tested.
 
 Broader routing accuracy, multi-day reliability, and resource savings require

@@ -233,5 +233,6 @@
     "testBudget": "Original limits restored after tests; no active tasks",
     "accountsAndHistory": "Preserved",
     "temporaryModelSelection": "Six-model acceptance roster preserved"
-  }
+  },
+  "supersededBy": "installed-acceptance.json"
 }

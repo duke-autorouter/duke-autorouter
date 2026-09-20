@@ -1,10 +1,13 @@
 # Verification evidence
 
-The latest [tool audit receipt](tool-audit-verification.json) covers the default
-tools, packaged runtimes, and live Codex/Claude rechecks. Its
+The [installed acceptance receipt](installed-acceptance.json) covers six live
+tasks, native cancellation and resume, rendered deliverables, saved-state restart,
+and Developer ID signing with hardened-runtime checks. The earlier
+[tool audit receipt](tool-audit-verification.json) covers the default tools,
+packaged runtimes, and live Codex/Claude rechecks. Its
 [sample files and rendered outputs](tool-audit/README.md) came from actual workers
-using public or invented material. Final installed-app verification and a live
-OpenRouter completion remain open. See [verification](../VERIFICATION.md).
+using public or invented material. Notarization, a fresh physical Mac installation,
+and a live OpenRouter completion remain open. See [verification](../VERIFICATION.md).
 
 The earlier receipts below retain the date and scope of their original checks.
 

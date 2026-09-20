@@ -284,6 +284,15 @@ try {
   assert.equal(await page.locator('.app-shell').count(), 1);
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   console.log('PASS five artifact formats, sandboxed HTML preview');
+  for (const format of ['pdf', 'docx', 'xlsx']) {
+    await page.locator('.artifact').filter({ hasText: `artifacts/example.${format}` })
+      .getByRole('button', { name: 'Preview' }).click();
+    const previewImage = page.locator('.document-preview img');
+    await previewImage.waitFor();
+    await waitFor(() => previewImage.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 10));
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+  }
+  console.log('PASS PDF, Word and spreadsheet previews render images');
   await start('Remove the note');
   await page.getByRole('button', { name: 'Approve this action' }).waitFor();
   await page.screenshot({ path: 'outputs/approval.png', fullPage: true });

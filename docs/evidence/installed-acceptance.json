@@ -1,0 +1,209 @@
+{
+  "at": "2026-09-20T13:13:04.953822+00:00",
+  "status": "Installed live task checks, rendered previews and signed-runtime checks complete; notarization and fresh-machine distribution pending",
+  "platform": "Apple Silicon macOS, development machine",
+  "material": "Public or invented briefs and files only; no imported personal instructions",
+  "scope": "Six tasks queued through the installed application API with evaluation=true. Native window exercised interrupted-task resume, shell approval display, cancellation and follow-up. Native Start task was not exercised in this cohort; synthetic browser workflows cover it.",
+  "liveRuns": [
+    {
+      "kind": "coding",
+      "createdAt": "2026-09-20T12:29:01.914Z",
+      "finishedAt": "2026-09-20T12:46:42.014Z",
+      "status": "completed",
+      "modelId": "claude:sonnet",
+      "effort": "low",
+      "automaticReview": "unverified",
+      "artifacts": [
+        {
+          "path": "slugify.test.cjs",
+          "sha256": "35f40332e54635c8440cacdbe96afae2460974eee5d66cfe4a12445bbbf48ac9"
+        },
+        {
+          "path": "slugify.cjs",
+          "sha256": "e18db5daa92c88ffcb56afddd459abae518476018d2004bd79167c0310e50e80"
+        }
+      ]
+    },
+    {
+      "kind": "research",
+      "createdAt": "2026-09-20T12:47:05.796Z",
+      "finishedAt": "2026-09-20T12:47:31.771Z",
+      "status": "completed",
+      "modelId": "claude:sonnet",
+      "effort": "low",
+      "automaticReview": "unverified",
+      "artifacts": [
+        {
+          "path": "artifacts/research.md",
+          "sha256": "344a6de1bb2262067687bd0c9ba544a3e5776879f20b253ac467813cf8f46131"
+        },
+        {
+          "path": "artifacts/browser-1789908431382.png",
+          "sha256": "69d3a154b316d1a37ecba2349f626b72d22f97dd1ad91f75f532fa2479b3f952"
+        }
+      ]
+    },
+    {
+      "kind": "writing",
+      "createdAt": "2026-09-20T12:47:56.564Z",
+      "finishedAt": "2026-09-20T12:48:10.191Z",
+      "status": "completed",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "automaticReview": "passed",
+      "artifacts": [
+        {
+          "path": "artifacts/writing.md",
+          "sha256": "e8ce71e51e7fcc5ec3e2fa557b8998df5ec3a261730d4ab3edba2f69bc721262"
+        }
+      ]
+    },
+    {
+      "kind": "documents",
+      "createdAt": "2026-09-20T12:48:22.402Z",
+      "finishedAt": "2026-09-20T12:48:47.278Z",
+      "status": "completed",
+      "modelId": "claude:sonnet",
+      "effort": "low",
+      "automaticReview": "unverified",
+      "artifacts": [
+        {
+          "path": "artifacts/inventory.xlsx",
+          "sha256": "855274d8b3b5f08adfb7f1fd77d75e6c4e2b6da0002d887dc3e77ef957e8127b"
+        },
+        {
+          "path": "artifacts/inventory.pdf",
+          "sha256": "b49d46bc9e9d288b82f7975fcb548cdd81a63f15d704d276478a42b0174cdd68"
+        },
+        {
+          "path": "artifacts/inventory.docx",
+          "sha256": "c372b62bacf6a9ed5d027de78eadd5f8ed5aef9695043ec292b3f21caab323de"
+        }
+      ]
+    },
+    {
+      "kind": "fallback",
+      "createdAt": "2026-09-20T12:49:16.021Z",
+      "finishedAt": "2026-09-20T12:49:30.629Z",
+      "status": "completed",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "automaticReview": "unverified",
+      "artifacts": [
+        {
+          "path": "artifacts/fallback.md",
+          "sha256": "b25bae1818ce465adfa4dc3b10e898e801331c0c65b9c7b186f2abc22c0a2ab9"
+        }
+      ]
+    },
+    {
+      "kind": "recovery",
+      "createdAt": "2026-09-20T12:50:04.219Z",
+      "finishedAt": "2026-09-20T12:51:19.077Z",
+      "status": "completed",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "automaticReview": "unverified",
+      "artifacts": [
+        {
+          "path": "approval-check.txt",
+          "sha256": "0be581b2a3160ae0d338696074fc5bef9bcafd50ffa24c181b2c5ee21c976c76"
+        }
+      ]
+    }
+  ],
+  "independentChecks": [
+    "Saved coding utility passed five independently rerun Node tests.",
+    "Research note checked against official MDN and Node sources; example is identified as unexecuted.",
+    "Writing stays within the invented brief, including hours, lending limits, annual cost and no online booking.",
+    "Word and PDF text/table contents and workbook formulas/cache agree on Hammer 8, Drill 4, Sander 3, total 15.",
+    "With no remaining API budget, fallback selected Luna Low, wrote the exact requested content and incurred zero additional API spend.",
+    "Native Stop removed the pending shell approval; target file was absent. Native follow-up then saved exactly Approved test plus newline without executing the cancelled shell command."
+  ],
+  "observedLimits": [
+    "The first coding attempt stalled at routing without a provider receipt, then became interrupted after quit/relaunch. Native Continue completed it. Root cause is unestablished; later tasks did not reproduce the stall.",
+    "Search results in the research task were irrelevant. The worker recovered by reading the official source URLs directly.",
+    "Five of six automatic reviews remain unverified. Independent acceptance checks do not overwrite those saved statuses.",
+    "No successful live OpenRouter task.",
+    "No comparative savings, routing-quality benchmark or fresh physical Mac install."
+  ],
+  "spending": {
+    "apiCapUSD": 1,
+    "priorAcceptanceUSD": 0.003308,
+    "thisCohortUSD": 0.002374,
+    "totalAcceptanceUSD": 0.005682,
+    "unsettledCharges": 0,
+    "originalBudgetRestored": true,
+    "subscriptionUsage": "Separate from API charges; no dollar conversion inferred."
+  },
+  "checks": {
+    "typescript": "passed",
+    "build": "passed",
+    "automatedTests": 150,
+    "automatedFailures": 0,
+    "browserWorkflows": 14,
+    "browserJavaScriptErrors": 0,
+    "previewAuthorizationVersionAndContainment": "passed",
+    "standalonePackage": 12
+  },
+  "published": false,
+  "repairs": [
+    {
+      "problem": "The native PDF iframe displayed a blank document; Word and XLSX offered only download.",
+      "change": "Reuse authenticated, recorded-version checked image rendering for PDF, Word and workbook previews. Add PDF page controls and workbook sheet selection.",
+      "nativeVerification": "Signed app displayed the PDF page, Word first page, Inventory A1:B6 and Summary A1:B3. Both workbook views showed total 15.",
+      "permissions": "macOS requested Documents-folder access again when moving from ad hoc to Developer ID signing. After the owner allowed it, reopening the timed-out preview succeeded."
+    }
+  ],
+  "nativeState": {
+    "preserved": {
+      "workspaces": true,
+      "models": true,
+      "roster": true,
+      "settings": true,
+      "preferences": true,
+      "setups": true,
+      "taskIds": true,
+      "profiles": true
+    },
+    "tasks": 14,
+    "projects": 2,
+    "nativeQuitAndRelaunch": "passed",
+    "ownedServiceStoppedOnQuit": true,
+    "signatureValidAfterNativeUse": true
+  },
+  "standalone": {
+    "at": "2026-09-20T13:02:59.777Z",
+    "checks": [
+      "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
+      "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+      "Project setup persists in a separate application data directory",
+      "Packaged roster and work preferences save through the authenticated API without inference",
+      "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+      "A duplicate service cannot take over the active application state",
+      "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+      "Sandboxed coding task can use bundled Node",
+      "Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools",
+      "Graceful shutdown removes the launch receipt and releases state",
+      "Relaunch restores the saved project and creates a new authenticated local session",
+      "Application signature remains valid after bundled workers, browser and restart"
+    ],
+    "liveInference": false,
+    "minimalEnvironment": true,
+    "signing": "Developer ID Application, hardened runtime"
+  },
+  "signing": {
+    "version": "0.1.0",
+    "signedAt": "2026-09-20T13:02:38.981Z",
+    "archiveSHA256": "a051dea921765d18550ed553e066be45204591aee178b98f3016caa2bf241801",
+    "binaries": 57,
+    "bundles": 10,
+    "status": "Prepared; not submitted",
+    "developerIDRequirement": "passed",
+    "notarization": "pending"
+  },
+  "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
+  "implementationSHA256": "c85d788e13dbc9a0cdbea17c7180e1c20cd2eb12bb9a9099c049954d57fd0898",
+  "implementationFiles": 986,
+  "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files"
+}

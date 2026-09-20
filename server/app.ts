@@ -39,6 +39,7 @@ import { ROSTER_LIMIT } from '../shared/routing.js';
 import { summarizeUsage } from './usage.js';
 import { summarizeSubscriptionUsage } from './subscription-usage.js';
 import { SubscriptionRefresh } from './subscription-refresh.js';
+import { previewFile } from './previews.js';
 import {
   defaultUsagePreferences,
   usageDisplays,
@@ -538,6 +539,23 @@ export async function createApp(
     const m = store.get<Model>('model', (req.params as any).id);
     if (!m || m.provider !== 'openrouter') throw new Blocked('Select an OpenRouter model');
     return openrouter.endpoints(m.model);
+  });
+  app.get('/api/artifacts/:id/preview', async (req, reply) => {
+    const input = z.object({
+      page: z.coerce.number().int().min(1).max(10000).default(1),
+      sheet: z.string().min(1).max(31).optional(),
+      range: z.string().min(1).max(32).optional(),
+    }).strict().parse(req.query);
+    const artifact = store.get<any>('artifact', (req.params as any).id);
+    if (!artifact) throw new Blocked('Artifact not found');
+    const task = store.task(artifact.taskId);
+    const workspace = store.get<Workspace>('workspace', task.workspaceId)!;
+    const result = await previewFile(workspace.path, artifact.path, input.page,
+      AbortSignal.timeout(30000), { sheet: input.sheet, range: input.range });
+    if (result.sha256 !== artifact.sha256)
+      throw new Blocked('Artifact changed since this version was recorded.');
+    reply.header('Cache-Control', 'no-store');
+    return result;
   });
   app.get('/api/artifacts/:id', async (req, reply) => {
     const a = store.get<any>('artifact', (req.params as any).id);

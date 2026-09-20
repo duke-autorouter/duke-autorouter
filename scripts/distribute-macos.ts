@@ -32,7 +32,8 @@ const run = (bin: string, args: string[]) =>
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     maxBuffer: 10_000_000,
-    timeout: bin === '/usr/bin/codesign' ? 60000 : 300000,
+    // The first signature may wait for the owner's macOS Keychain prompt.
+    timeout: 300000,
   }).trim();
 const hash = async (path: string) =>
   createHash('sha256')
@@ -86,6 +87,12 @@ if (mode === 'sign') {
     for (const entry of await readdir(path, { withFileTypes: true })) {
       const child = join(path, entry.name);
       if (entry.isSymbolicLink()) continue;
+      // An interrupted codesign can leave scratch Mach-O files behind. They
+      // belong only to this disposable candidate, never an accepted archive.
+      if (entry.isFile() && entry.name.endsWith('.cstemp')) {
+        await rm(child);
+        continue;
+      }
       if (entry.isDirectory()) {
         await walk(child);
         if (/\.(app|framework|xpc|bundle)$/.test(entry.name)) bundles.push(child);

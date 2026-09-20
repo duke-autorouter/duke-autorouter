@@ -1134,6 +1134,22 @@ main {
 .preview-modal {
   width: 1000px;
 }
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.preview-controls label { margin: 0; }
+.preview-controls a { margin-left: auto; }
+.document-preview {
+  max-height: 64vh;
+  overflow: auto;
+  background: white;
+  border: 1px solid var(--line);
+}
+.document-preview img { display: block; width: 100%; height: auto; }
 .preview-modal iframe {
   border: 1px solid var(--line);
   width: 100%;
