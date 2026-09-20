@@ -1,0 +1,20 @@
+{
+  "scope": "Unmodified worker outputs and independently generated previews from public or invented acceptance tasks. No private profiles or transcripts.",
+  "files": {
+    "coding/sum.cjs": "a391afb53a21473b85bf204d9995cc21c0dc2f407211fbdf463409799d73c91b",
+    "coding/sum.test.cjs": "806914795ef371a8f2337503c9b8652d88d6dcedb082b70216aa009299edbce1",
+    "writing.md": "14e1d07ec6a25425afb562046d1e21892c7884b7f6c8adba69b2bb4f27cb76d1",
+    "research.md": "9b879f241fdd4f318971d9ad0868d4bbb7b9424137a35640f3850b23f596c6e3",
+    "inventory.docx": "b4a95b5739f9412a79ed871d426b182b0c6bacaf643e90f85298ac5ca9c0d490",
+    "inventory.pdf": "d64424a94297fa1ae5c6b956b189674f1614838d1ab76a4e5196f072a73e6373",
+    "inventory.xlsx": "4507bd83a847e3b2518019dfb4e14692b1ae59197f394f3318edd45f4f324ba0",
+    "spreadsheet-review.md": "f2d3c549ed43a85b326c77393a5d6170dbf3429dc52a489d2506167ee19551e7",
+    "word-render.png": "1a6290bfd8aadb9233ceff8eef7d4cab21cc2a4562e2dba448015be66003d62b",
+    "pdf-render.png": "558feca1c10ebfc8723fbaabdf8120079fe7444103338c075cef15b5c3e9e63b",
+    "inventory-grid.png": "58e5d6170fd6fa2fdd0a2669234665361f5e935e5f130f1533b5007f9d9e3b38",
+    "summary-grid.png": "6d808b6c0e2e177195d90704fc88950ce51c00a51ff0abbdf739d89eb026a310",
+    "inventory-native-render.png": "d0b4582937fec161ec23719c4c97c9ae4c6b638cdd10808f327e2515ec5ef9bf",
+    "summary-native-render.png": "114b2ce92a92cb82ad094ea24b0d58db6b55dd9759adcbe328dc5894e7120ab9",
+    "shape-input.png": "5e7f9925c1890c00d99ecef3e3e5226fbdf213f7a1e21a2f28b195d725b096a2"
+  }
+}

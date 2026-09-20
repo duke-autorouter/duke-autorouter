@@ -1,3 +1,4 @@
+import { codexToolContent } from '../tool-results.js';
 import { exhaustedCapacity } from '../capacity.js';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { createInterface } from 'node:readline';
@@ -10,6 +11,7 @@ import { Blocked, Unavailable, type Worker, type WorkerContext, type Health } fr
 import type { ThreadStartParams } from '../generated/codex/v2/ThreadStartParams.js';
 import { brand } from '../../shared/brand.js';
 import { codexExecutable } from '../runtime.js';
+import { workerEffort } from '../effort.js';
 
 export class CodexRPC extends EventEmitter {
   child: ChildProcessWithoutNullStreams;
@@ -155,6 +157,7 @@ export class CodexWorker implements Worker {
     }
   }
   async run(ctx: WorkerContext) {
+    const effort = workerEffort(ctx.model);
     const rpc = this.connect(this.stateDir);
     let output = '';
     const abort = () => rpc.close();
@@ -186,6 +189,14 @@ export class CodexWorker implements Worker {
         sandbox: 'read-only',
         environments: [],
         baseInstructions: ctx.prompt,
+        developerInstructions: [
+          'DUKE supplies client-handled tools for this task. They run in the DUKE host, which enforces the selected project and approvals.',
+          'The native Codex environment is read-only and has no execution environment attached. This restricts direct native access; it does not disable the supplied DUKE tools.',
+          'When write_file or create_artifact is supplied, use it to create and edit the requested project files. These tools are the authorized file-editing interface and keep backups. Do not substitute an in-memory example for a requested file.',
+          'Use the supplied shell tool for tests. Its default is read-only; request writable=true only when needed, and wait for DUKE approval. A denied tool operation remains denied.',
+          'Use workspace-relative paths with DUKE tools. Never access files through native tools or attempt to bypass a tool rejection.',
+          'Image handling in the Codex exec bridge: preview_file and browser screenshot results are strings containing JSON metadata followed by image data URLs, not MCP objects with a content array. To view them inside exec, keep the result r and run: for (const url of String(r).match(/data:image\\/(?:png|jpeg);base64,[A-Za-z0-9+/=]+/g) ?? []) image(url). Print metadata only after removing those data URLs. Do not print base64 or call the tool repeatedly just to display an image. A successful image tool call alone is not visual inspection.',
+        ].join('\n'),
         config: {
           project_doc_max_bytes: 0,
           'features.shell_tool': false,
@@ -226,7 +237,7 @@ export class CodexWorker implements Worker {
                 id: m.id,
                 result: {
                   success: true,
-                  contentItems: [{ type: 'inputText', text: JSON.stringify(value) }],
+                  contentItems: codexToolContent(value),
                 },
               });
             } catch (e) {
@@ -273,6 +284,7 @@ export class CodexWorker implements Worker {
         threadId,
         input: [{ type: 'text', text: ctx.task.prompt, text_elements: [] }],
         environments: [],
+        ...(effort === undefined ? {} : { effort }),
       });
       await completed;
       return output;

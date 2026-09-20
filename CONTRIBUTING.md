@@ -31,6 +31,25 @@ runs require your own accounts and an explicit spending decision. Keep model
 credentials out of test fixtures. Benchmark tasks are excluded from normal
 learning, and model-generated reviews do not establish independent quality.
 
+## Build the standalone Mac app
+
+Source builds require an Apple Silicon Mac, macOS 14+, Node 24+, npm and Xcode
+Command Line Tools. These are contributor requirements; ordinary users install
+prebuilt downloads.
+
+```sh
+git clone https://github.com/duke-autorouter/duke-autorouter.git
+cd duke-autorouter
+npm ci
+npx playwright install chromium
+npm run package:mac
+npm run test:standalone
+```
+
+The command prints the built `DUKE Autorouter.app` path. Local builds use ad hoc
+signing. Keep them distinct from the Developer ID-signed, notarized download.
+Use the [Mac distribution guide](docs/MAC_DISTRIBUTION.md) for release preparation.
+
 ## Changes and reports
 
 Describe the concrete behavior, reproduction and evidence. Include a small
@@ -40,7 +59,9 @@ UI copy and layout changes can use interaction and screenshot checks.
 Preserve these boundaries:
 
 - Jev selects automatically; no mandatory user grading or invented model scores.
-- Preferences cannot bypass project, capability, budget or difficulty limits.
+- Preferences cannot bypass project, capability or budget limits. The explicit
+  economical fallback may attempt work below declared difficulty coverage; normal
+  Jev selection still uses qualified profiles.
 - Unknown usage remains unknown. Include retries and review in task costs.
 - Imported instructions do not install tools or expand permissions.
 - Provider runtimes and task content stay outside the public source snapshot.

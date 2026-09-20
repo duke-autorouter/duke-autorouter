@@ -43,7 +43,7 @@ const model = (id: string, provider: 'codex' | 'claude' | 'openrouter', quality 
   ModelInput.parse({
     id,
     provider,
-    model: id,
+    model: provider === 'codex' ? 'gpt-5.6-luna' : 'claude-haiku-4-5',
     label: id,
     enabled: true,
     evaluated: true,
@@ -362,7 +362,12 @@ test('OpenRouter pins provider, disables fallbacks, executes tools, and reconcil
     const result = await worker.run({
       task: task(),
       workspace: workspace(f.dir),
-      model: { ...model('m', 'openrouter'), model: 'vendor/m' },
+      model: {
+        ...model('m', 'openrouter'),
+        model: 'vendor/m',
+        supportedEfforts: ['low', 'high'],
+        effort: 'low',
+      },
       signal: new AbortController().signal,
       prompt: 'system',
       tool: async () => {
@@ -376,6 +381,7 @@ test('OpenRouter pins provider, disables fallbacks, executes tools, and reconcil
     assert.equal(called, 1);
     assert.deepEqual(requests[0].provider.only, ['test']);
     assert.equal(requests[0].provider.allow_fallbacks, false);
+    assert.deepEqual(requests[0].reasoning, { effort: 'low' });
     assert.equal(f.store.spend().day, 0.002);
   } finally {
     await f.close();
@@ -403,6 +409,96 @@ test('OpenRouter refuses unknown pricing before making a request', async () => {
     );
   } finally {
     await f.close();
+  }
+});
+
+test('OpenRouter images follow all tool replies and require verified image capability and rates', async () => {
+  for (const supported of [false, true]) {
+    const f = await fixture();
+    try {
+      const requests: any[] = [];
+      const worker = new OpenRouterWorker(
+        f.store,
+        { get: async () => 'fake-test-only' } as any,
+        async (url, options) => {
+          if (String(url).endsWith('/endpoints'))
+            return new Response(
+              JSON.stringify({
+                data: {
+                  endpoints: [
+                    {
+                      tag: 'test',
+                      supported_parameters: ['tools'],
+                      pricing: {
+                        prompt: '0.000001',
+                        completion: '0.000002',
+                        ...(supported ? { image: '0', image_token: '0.000001' } : {}),
+                      },
+                    },
+                  ],
+                },
+              }),
+            );
+          if (String(url).endsWith('/models'))
+            return new Response(
+              JSON.stringify({
+                data: [{ id: 'vendor/m', architecture: { input_modalities: ['text', 'image'] } }],
+              }),
+            );
+          requests.push(JSON.parse(options?.body as string));
+          return new Response(
+            JSON.stringify({
+              usage: { cost: 0.001 },
+              choices: [
+                {
+                  finish_reason: 'stop',
+                  message:
+                    requests.length === 1
+                      ? {
+                          role: 'assistant',
+                          content: null,
+                          tool_calls: ['1', '2'].map((id) => ({
+                            id,
+                            type: 'function',
+                            function: { name: 'preview_file', arguments: '{"path":"sample.png"}' },
+                          })),
+                        }
+                      : { role: 'assistant', content: 'Done' },
+                },
+              ],
+            }),
+          );
+        },
+      );
+      await worker.run({
+        task: task(),
+        workspace: workspace(f.dir),
+        model: { ...model('m', 'openrouter'), model: 'vendor/m' },
+        signal: new AbortController().signal,
+        prompt: 'Inspect sample',
+        session: () => {},
+        emit: () => {},
+        tool: async () => ({
+          path: 'sample.png',
+          images: [{ mimeType: 'image/png', data: 'AA==' }],
+        }),
+      });
+      const messages = requests[1].messages;
+      assert.deepEqual(
+        messages.slice(-3).map((m: any) => m.role),
+        ['tool', 'tool', 'user'],
+      );
+      assert.ok(
+        messages
+          .filter((m: any) => m.role === 'tool')
+          .every((m: any) => !m.content.includes('AA==')),
+      );
+      if (supported)
+        assert.equal(messages.at(-1).content.filter((x: any) => x.type === 'image_url').length, 2);
+      else assert.match(messages.at(-1).content, /NOT delivered/);
+    } finally {
+      await f.close();
+    }
   }
 });
 test('engine completes a real file task and verifies file evidence', async () => {

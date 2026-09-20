@@ -9,6 +9,12 @@ Task prompts and selected context go to the chosen remote worker. Connected Jev
 receives bounded routing and review evidence as described in
 [routing policy](docs/ROUTING_POLICY.md). Local storage does not mean local inference.
 
+The public web search tool sends its query to Tavily's keyless search endpoint.
+It sends no DUKE credentials or API key. Queries can still contain information
+from the task, so they are external data sharing. The service has its own limits;
+DUKE does not fall back to paid search. Web reads and browser requests contact
+the selected public sites. Document parsing and previews run locally.
+
 The application data directory contains task text, files, authentication profiles,
 backups and the private launch token. API keys are stored in macOS Keychain or read
 from environment variables. Never commit state, logs, launch links, `.env` files,

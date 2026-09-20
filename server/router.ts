@@ -14,6 +14,8 @@ import { matchingOutcomes, measuredQuality } from './outcomes.js';
 import { workTypeFor, briefSizeFor } from './work-profile.js';
 import { rankingTokens } from './efficiency.js';
 import { ROSTER_LIMIT } from '../shared/routing.js';
+import { effortVariants } from './effort.js';
+import { orderedEfforts } from '../shared/effort.js';
 
 export const difficultyRank = { routine: 0, standard: 1, complex: 2 } as const;
 export type RoutingTask = Pick<Task, 'prompt' | 'required' | 'modelOverride'> &
@@ -83,7 +85,12 @@ export function eligibleModels(
   );
 }
 
-export function qualifiedModels(models: Model[], assessment: TaskAssessment, settings: Settings) {
+export function qualifiedModels(
+  models: Model[],
+  assessment: TaskAssessment,
+  settings: Settings,
+  economyAttempt = false,
+) {
   const demonstrated = (m: Model) =>
     (measuredQuality(m, assessment) ?? -1) >= settings.qualityFloor;
   const preferred = preferredModelId(settings, assessment);
@@ -102,6 +109,7 @@ export function qualifiedModels(models: Model[], assessment: TaskAssessment, set
       if (!m.enabled) return false;
       const reviewed = m.evaluated ? m.quality[assessment.kind] : undefined;
       if (
+        !economyAttempt &&
         (m.maxDifficulty || m.evaluated) &&
         difficultyRank[m.maxDifficulty ?? 'routine'] < difficultyRank[assessment.difficulty]
       )
@@ -123,7 +131,6 @@ export function qualifiedModels(models: Model[], assessment: TaskAssessment, set
         efficiencyOrder(a, b) ||
         difficultyRank[a.maxDifficulty ?? 'complex'] -
           difficultyRank[b.maxDifficulty ?? 'complex'] ||
-        Number(b.catalog?.preferred ?? false) - Number(a.catalog?.preferred ?? false) ||
         feedbackPreference(b) - feedbackPreference(a) ||
         a.id.localeCompare(b.id),
     );
@@ -152,12 +159,13 @@ export function route(
   settings: Settings,
   unavailable = new Set<string>(),
   decision?: RoutingDecision,
+  preview = false,
 ): Route {
   const assessment = applyDifficultyFloor(
     task,
     task.modelOverride ? assessLocally(task) : (decision?.assessment ?? assessLocally(task)),
   );
-  const eligible = eligibleModels(task, workspace, models, unavailable);
+  const eligible = eligibleModels(task, workspace, models, unavailable).flatMap(effortVariants);
   const qualified = qualifiedModels(eligible, assessment, settings);
   let chosen = task.modelOverride ? eligible.find((m) => m.id === task.modelOverride) : undefined;
   if (task.modelOverride && !chosen)
@@ -168,27 +176,42 @@ export function route(
     !task.modelOverride &&
     decision?.modelId &&
     decision.confidence !== undefined &&
-    decision.confidence >= 0.8
-      ? qualified.find((m) => m.id === decision.modelId)
+    Number.isFinite(decision.confidence) &&
+    decision.confidence >= 0 &&
+    decision.confidence <= 1
+      ? qualified.find((m) => m.id === decision.modelId && m.effort === decision.effort)
       : undefined;
-  chosen ??= jevChoice || qualified[0];
+  const fallbacks = qualifiedModels(eligible, assessment, settings, true).filter(
+    (model) =>
+      model.effort === orderedEfforts(model.supportedEfforts)[0] &&
+      (settings.jevFallbackModel
+        ? model.id === settings.jevFallbackModel
+        : (model.provider === 'codex' && /\bluna\b/i.test(model.model)) ||
+          (['claude', 'openrouter'].includes(model.provider) && /\bhaiku\b/i.test(model.model))),
+  );
+  chosen ??= jevChoice || (preview && settings.jevMode === 'assist' ? qualified[0] : fallbacks[0]);
   if (!chosen)
     throw new Blocked(
-      `No available model has a suitable profile for this ${assessment.difficulty} ${assessment.kind} task. Choose a suitable model in My models, or check its connection and project permissions.`,
+      eligible.length && (qualified.length || fallbacks.length)
+        ? 'The Jev fallback model is unavailable. Select Luna or Haiku in My models, or choose a fallback in Usage & routing. DUKE will not switch to another model without that setting.'
+        : `No available model has a suitable profile for this ${assessment.difficulty} ${assessment.kind} task. Choose a suitable model in My models, or check its connection and project permissions.`,
     );
   const selectionSource = task.modelOverride ? 'manual' : jevChoice ? 'jev' : 'rules';
   return {
     modelId: chosen.id,
     provider: chosen.provider,
     model: chosen.model,
+    effort: chosen.effort,
     kind: assessment.kind,
     assessment,
     selectionSource,
     reason: task.modelOverride
       ? 'Your model selection; workspace, availability, and tool checks passed.'
-      : `${assessment.difficulty[0].toUpperCase() + assessment.difficulty.slice(1)} ${assessment.kind} task · ${jevChoice ? 'Jev selected this model' : 'rules selected this model'} · ${chosen.evaluated && chosen.quality[assessment.kind] !== undefined ? 'meets your declared quality and difficulty requirements' : 'initial profile and preferences; collecting results for this type of work'}${task.checkpoint?.repairDifficulty ? ' · difficulty floor retained for an unfinished repair' : ''}`,
+      : !jevChoice && !preview
+        ? `${settings.jevFallbackModel ? 'Your configured' : 'Luna/Haiku'} fallback · Jev did not select an available model; trying this worker before using more resources.`
+        : `${assessment.difficulty[0].toUpperCase() + assessment.difficulty.slice(1)} ${assessment.kind} task · ${jevChoice ? 'Jev selected this model' : 'provisional profile match; Jev chooses when you start'} · ${chosen.evaluated && chosen.quality[assessment.kind] !== undefined ? 'meets your declared quality and difficulty requirements' : 'initial profile and preferences; collecting results for this type of work'}${task.checkpoint?.repairDifficulty ? ' · difficulty floor retained for an unfinished repair' : ''}`,
     fallbacks: task.modelOverride
       ? []
-      : qualified.filter((m) => m.id !== chosen!.id).map((m) => m.id),
+      : fallbacks.filter((m) => m.id !== chosen!.id).map((m) => m.id),
   };
 }

@@ -1,8 +1,10 @@
 # Live acceptance tasks
 
 Use a dedicated project with only invented or public information, after accounts
-are connected and provider permissions are selected. These tasks have not run
-against live models yet.
+are connected and provider permissions are selected. Initial live runs and
+rechecks were performed during the September 2026 release pass. They exposed
+defects as well as successful results; see the [verification record](VERIFICATION.md).
+The current default-tool audit requires further installed-package rechecks.
 
 ## Coding
 

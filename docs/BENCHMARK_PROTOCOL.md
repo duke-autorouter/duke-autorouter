@@ -16,9 +16,12 @@ Use the same explicit roster, starting preferences, profiles, execution limits
 and task corpus for each comparison:
 
 1. `strong`: one strong selected model for every task, using an explicit override.
-2. `rules`: the existing quality/efficiency fallback with saved work preferences;
-   Jev is off for this diagnostic baseline.
-3. `jev`: normal automatic assessment, model selection and review.
+2. `rules`: the configured economical fallback at its lowest supported effort;
+   Jev is off for this diagnostic baseline. Record the exact fallback.
+3. `jev`: normal automatic assessment, model-and-effort selection and review.
+
+Record the actual effort on every attempt; a model name alone does not identify
+the execution configuration. Include the tools/skills version in each comparison.
 
 These are complete operating modes. Their actual routing/review calls count in
 usage. Each result receives the same independent acceptance review; Jev's review

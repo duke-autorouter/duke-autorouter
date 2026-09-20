@@ -83,3 +83,54 @@ No adapter may infer permission from prompt text or classifier confidence.
 
 Provider-native reasoning is not shown as a product feature. User-facing events
 are result text, concise status, tools, approvals, checkpoints, sources, and usage.
+
+### Fallback and effort
+
+`PUT /api/settings` accepts `jevFallbackModel`, a selected model ID. An empty string
+uses an available selected Luna or Haiku. A newly configured ID must be enabled.
+If it later becomes unavailable, execution blocks rather than choosing an
+unconfigured model. Routes record optional `effort`; omission means provider
+default. Model profiles expose advertised `supportedEfforts` and per-effort
+`effortProfiles` evidence. Provider catalog refresh owns supported levels.
+
+## Shared worker tools
+
+These are model-facing tool calls through the adapters, not unauthenticated HTTP
+endpoints. Task capabilities and project scope are enforced by the service.
+
+| Tool | Contract and limits |
+| --- | --- |
+| `setup_list`, `setup_read` | Read packaged core skills and approved task setup snapshots. A setup cannot grant permissions. |
+| `list_files` | Sorted directory entries, 500 per page; `offset`, `total` and `nextOffset` expose pagination. |
+| `read_file` | UTF-8, saved PDF text, Word main text and XLSX cells/formulas; 2 MB input, bounded lines and explicit extraction limits. |
+| `search_files` | Literal text, project scope, line numbers; at most 1,000 files/10 MB/100 matches; excludes credentials, links, dependencies and binary files. |
+| `write_file`, `edit_file` | Text output or one unique exact replacement, with retained previous bytes. Ambiguous replacements fail without modifying the file. |
+| `remove_file` | Approved, recoverable removal with content revalidation. |
+| `shell` | Network-isolated execution; project writes need approval. Node is bundled; other language runtimes are project prerequisites. |
+| `web_search`, `web_read` | Keyless Tavily discovery and public HTTPS source reading, including text-based PDFs under 2 MB. Search results alone cannot support citations. Rate limits, unsupported binary pages and empty responses fail explicitly. |
+| `browser` | Isolated public browser; approved clicks/fills, bounded reads and viewport screenshots. |
+| `create_artifact` | Markdown, HTML, basic Word/PDF, and XLSX with `rows` or named `sheets`. Formula cells use `{ "formula": "SUM(B2:B4)" }`; strings beginning with `=` remain text. |
+| `preview_file` | PDF `page`, PNG/JPEG, static HTML viewport, Word Quick Look thumbnail, or XLSX `sheet` and `range` (for example `A1:D12`). XLSX previews show saved cells, up to 50 rows and 12 columns, rather than native Excel styling. Word previews may cover only the first page. Returns image data and coverage. |
+| `checkpoint` | Completed work, remaining work and artifact paths for the next stage. |
+
+Images use each adapter's image-content protocol, with only metadata retained in
+tool event receipts. Codex's code-mode bridge receives instructions to emit the
+image from its string-wrapped tool result; returning a data URL alone does not
+prove that the model viewed it. OpenRouter requires verified vision support and image rates
+within the approved price ceiling; missing metadata produces an explicit visual
+limitation instead of an unbounded image request. Static HTML rendering disables
+scripts and subresources and does not verify an interactive app.
+
+The calculation worker has cell, formula-length, time and memory limits. External
+workbook links, structured references, macros and native Excel parity are outside
+this contract. Reads may report cached values with calculations unverified when
+an imported workbook uses unsupported formulas. Artifact creation fails on
+unsupported formulas or calculation errors.
+
+XLSX previews display saved formula caches. Use `read_file` to recalculate and
+report any unsupported formulas before relying on those values. PDF extraction
+reports pages without readable text, including image-only pages in a mixed PDF.
+OCR is not bundled.
+
+Execution evidence includes `duke-tools-v2` and the hashes of packaged skills.
+Changes to these invalidate incompatible learning observations.

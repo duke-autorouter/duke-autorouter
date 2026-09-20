@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import type { Store } from './store.js';
 import type { Model, EfficiencyRun, EfficiencySummary, TaskAssessment } from './types.js';
 import { modelExecutionKey, scopeKey, scopeRelevance, workScope } from './work-profile.js';
-import { REVIEW_POLICY } from './outcomes.js';
+import { REVIEW_POLICY, ROUTING_POLICY } from './outcomes.js';
+import { TOOLCHAIN_POLICY, coreSkillsHash } from './core-skills.js';
 
 export const EFFICIENCY_POLICY = 'duke-efficiency-v2';
 export function executionKey(store: Store) {
@@ -14,7 +15,11 @@ export function executionKey(store: Store) {
         maxRecovery: s.maxRecovery,
         jevModel: s.jevModel,
         mode: s.jevMode,
+        jevFallbackModel: s.jevFallbackModel ?? '',
         review: REVIEW_POLICY,
+        routing: ROUTING_POLICY,
+        tools: TOOLCHAIN_POLICY,
+        skills: coreSkillsHash,
       }),
     )
     .digest('hex');
@@ -82,7 +87,7 @@ export function efficiencySummaries(
       (r.policy === EFFICIENCY_POLICY
         ? r.modelKey === modelKey && r.executionKey === currentExecution
         : // Legacy receipts lack per-model configuration: reuse only when verifiable.
-          r.policy === 'duke-efficiency-v1' && r.rosterKey === key) &&
+          r.policy === 'duke-efficiency-v1' && r.rosterKey === key && model.effort === undefined) &&
       r.modelId === model.id &&
       r.model === model.model &&
       r.status !== 'cancelled' &&

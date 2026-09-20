@@ -206,6 +206,48 @@ try {
   assert.equal(ran.code, 0, ran.stderr);
   assert.match(ran.stdout, /portable-code-test/);
   pass('Sandboxed coding task can use bundled Node');
+  const toolAudit = await runProcess(
+    node,
+    [
+      '--input-type=module',
+      '-e',
+      `
+    import assert from 'node:assert/strict';
+    import { Store } from ${JSON.stringify(pathToFileURL(join(resources, 'app/server/store.js')).href)};
+    import { ToolService } from ${JSON.stringify(pathToFileURL(join(resources, 'app/server/tools.js')).href)};
+    import { Approvals } from ${JSON.stringify(pathToFileURL(join(resources, 'app/server/approval.js')).href)};
+    import { TaskInput } from ${JSON.stringify(pathToFileURL(join(resources, 'app/server/types.js')).href)};
+    const store = new Store(${JSON.stringify(join(root, 'tool-state/db'))});
+    const tools = new ToolService(store, new Approvals(store), ${JSON.stringify(join(root, 'tool-state'))});
+    store.put('workspace','w',{id:'w',name:'Package check',path:${JSON.stringify(work)},providers:['codex'],instructions:[]});
+    store.save({...TaskInput.parse({prompt:'Invented package check',workspaceId:'w',required:['files','artifacts']}),id:'t',title:'check',status:'running',attempt:0,createdAt:'',updatedAt:''});
+    const call = (name,args) => tools.call('t',name,args,new AbortController().signal);
+    try {
+      assert.equal((await call('setup_list',{})).defaultSkills.length,4);
+      for (const format of ['pdf','docx']) {
+        await call('create_artifact',{path:'sample.'+format,format,content:'# Sample résumé\\n\\n| Tool | Count |\\n|---|---|\\n| Hammer | 8 |'});
+        assert.match((await call('read_file',{path:'sample.'+format})).content,/Hammer/);
+        const preview = await call('preview_file',{path:'sample.'+format});
+        assert.equal(preview.images[0].mimeType,'image/png');
+        assert.ok(preview.images[0].data.length>1000);
+      }
+      await call('create_artifact',{path:'sample.xlsx',format:'xlsx',content:'',rows:[['Item','Count'],['Hammer',8],['Drill',4],['Total',{formula:'SUM(B2:B3)'}]]});
+      assert.match((await call('read_file',{path:'sample.xlsx'})).content,/B4: 12/);
+      assert.ok((await call('preview_file',{path:'sample.xlsx'})).images[0].data.length>1000);
+      await call('write_file',{path:'edit.txt',content:'one needle'});
+      await call('edit_file',{path:'edit.txt',old_text:'one needle',new_text:'two needles'});
+      assert.equal((await call('search_files',{query:'two needles'})).matches[0].path,'edit.txt');
+      console.log('packaged-default-tools-pass');
+    } finally { store.close(); }
+  `,
+    ],
+    { cwd: root, env, timeout: 100000 },
+  );
+  assert.equal(toolAudit.code, 0, toolAudit.stderr + toolAudit.stdout);
+  assert.match(toolAudit.stdout, /packaged-default-tools-pass/);
+  pass(
+    'Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools',
+  );
   child.kill('SIGTERM');
   await new Promise<void>((resolve) => child.once('exit', () => resolve()));
   assert.equal(child.exitCode, 0);

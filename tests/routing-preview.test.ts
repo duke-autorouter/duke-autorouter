@@ -11,7 +11,7 @@ function model(id: string, provider: Provider = 'codex', evaluated = true) {
   return ModelInput.parse({
     id,
     provider,
-    model: id,
+    model: provider === 'codex' ? 'gpt-5.6-luna' : 'claude-haiku-4-5',
     label: id,
     enabled: true,
     evaluated,
@@ -176,7 +176,10 @@ test('preview and execution honor exhausted capacity until reset or a refreshed 
       checkedAt: new Date(Date.now() - 120000).toISOString(),
     });
     assert.equal((await f.preview()).json().route.modelId, 'b-claude');
-    f.store.put('health', 'codex', { ...exhausted, quota: { rateLimits: { primary: { usedPercent: 100, resetsAt: Date.now() / 1000 - 1 } } } });
+    f.store.put('health', 'codex', {
+      ...exhausted,
+      quota: { rateLimits: { primary: { usedPercent: 100, resetsAt: Date.now() / 1000 - 1 } } },
+    });
     assert.equal((await f.preview()).json().route.modelId, 'a-codex');
     f.store.put('health', 'codex', {
       provider: 'codex',

@@ -3,7 +3,7 @@ import type { Store } from './store.js';
 import { modelExecutionKey, scopeRelevance } from './work-profile.js';
 
 export const REVIEW_POLICY = 'duke-review-v1';
-export const ROUTING_POLICY = 'duke-routing-v5';
+export const ROUTING_POLICY = 'duke-routing-v7';
 
 const scope = (o: Pick<TaskAssessment, 'kind' | 'difficulty' | 'workType' | 'briefSize'>) =>
   `${o.kind}:${o.difficulty}:${o.workType ?? 'legacy'}:${o.briefSize ?? 'legacy'}`;
@@ -33,7 +33,7 @@ export function outcomeSummaries(
         !o.evaluation &&
         o.modelId === model.id &&
         o.model === model.model &&
-        (!o.modelKey || o.modelKey === modelExecutionKey(model)) &&
+        (o.modelKey ? o.modelKey === modelExecutionKey(model) : model.effort === undefined) &&
         o.policy === REVIEW_POLICY &&
         (!kind || o.kind === kind) &&
         Date.parse(o.at) > Date.now() - 90 * 86400000,

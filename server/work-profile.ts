@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { TaskKind, TaskAssessment, Model } from './types.js';
 import type { WorkType, BriefSize } from '../shared/routing.js';
+import { TOOLCHAIN_POLICY, coreSkillsHash } from './core-skills.js';
 
 export function workTypeFor(text: string, kind: TaskKind): WorkType {
   if (/\b(debug|bug|crash|race condition|diagnos\w*|investigate.*fail)\b/i.test(text))
@@ -38,10 +39,13 @@ export function modelExecutionKey(model: Model) {
       JSON.stringify({
         provider: model.provider,
         model: model.model,
+        effort: model.effort,
         providerSlug: model.providerSlug,
         maxOutput: model.maxOutput,
         contextLimit: model.contextLimit,
         capabilities: [...model.capabilities].sort(),
+        tools: TOOLCHAIN_POLICY,
+        skills: coreSkillsHash,
       }),
     )
     .digest('hex');

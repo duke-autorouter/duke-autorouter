@@ -1,8 +1,9 @@
 # Selected models, efficiency and automatic checks
 
-Implemented September 19, 2026. Policy identifiers: `duke-routing-v5`, `duke-efficiency-v2` and
+Implemented September 19, 2026. Policy identifiers: `duke-routing-v7`, `duke-efficiency-v2` and
 `duke-review-v1`. This document describes implemented behavior, not measured
-live-model accuracy. Live acceptance and comparison runs remain on hold.
+live-model accuracy. Live acceptance checks are recorded in the verification guide;
+held-out model comparisons are a separate release benchmark.
 
 ## Decision flow
 
@@ -11,9 +12,9 @@ flowchart TD
   Roster[User selects models and optional work preferences] --> Candidates
   Task[Task, allowed tools and bounded context] --> Assess[Jev: work type and difficulty]
   Assess --> Candidates[Suitable profiles, capacity and budget]
-  Candidates --> Choose[Jev selects the worker]
-  Assess -. Uncertain or unavailable .-> Fallback[Quality gates, preference and efficiency rules]
-  Choose -. Uncertain or unavailable .-> Fallback
+  Candidates --> Choose[Jev selects model and effort]
+  Assess -. Uncertain or unavailable .-> Fallback[Configured fallback at lowest supported effort]
+  Choose -. Rules requested or unavailable .-> Fallback
   Choose --> Gate[Recheck permissions and availability]
   Fallback --> Gate
   Gate --> Work[Worker executes through shared tools]
@@ -40,12 +41,20 @@ worker selections do not perform an automatic Jev content review.
 Routing includes up to 6,000 prompt characters, 1,000 expected-result characters,
 selected attachment excerpts (2,000 each / 8,000 total), root-level project
 structure counts, and checkpoint progress. An attachment alone no longer forces
-complexity. Truncation, unsupported binary input, uncertain assessment or an
-unavailable assessor use a conservative complex-work fallback. A quality retry
+complexity. Truncation and unsupported binary input retain a conservative
+difficulty estimate. An uncertain or unavailable assessment uses the configured
+fallback; an unknown difficulty is recorded without promoting the worker. A quality retry
 raises the previous difficulty requirement by one level, capped at complex.
 
-The `0.8` thresholds concern Jev's answer distributions. They are not an 80%
-prediction of successful work. Calibration requires the held-out comparison.
+The `0.8` assessment and review thresholds concern Jev's answer distributions.
+They are not an 80% prediction of successful work. Model choice has no separate
+confidence floor: a close choice among already-qualified models does not justify
+a more powerful fallback. DUKE records the confidence and follows a valid choice.
+An explicit `use_rules` choice, unavailable service or malformed answer uses the
+configured fallback. Permission, capability, availability and budget checks still apply.
+This distinction follows [TypeSafe's description of confidence](https://docs.typesafe.ai/confidence):
+selection confidence reflects the separation among options, not task success.
+Calibration still requires held-out comparisons.
 
 ### Candidate policy
 
@@ -70,20 +79,56 @@ prediction of successful work. Calibration requires the held-out comparison.
   loops. A stronger model can be efficient when a weaker model would need recovery.
   Jev assessment, selection and review remain normal product functions. Reducing
   Jev calls or bypassing it to save small API amounts is not this build's objective.
-- The rules fallback ranks demonstrated adequate quality ahead of unmeasured
+- Within the qualified candidates, DUKE ranks demonstrated adequate quality ahead of unmeasured
   profiles. Within that tier, the explicit work preference comes first. Then
   complete scoped efficiency evidence precedes missing evidence; lower observed
   tokens per successful task wins. Missing consumption is unknown, never free.
-  Adequate difficulty coverage, provider default, optional feedback and stable ID
+  Adequate difficulty coverage, optional feedback and stable ID
   break remaining ties. Jev can choose any qualified model, including a model
   without sufficient efficiency history. Quality above the required floor is not maximized.
-  Subscription billing alone no longer gives a candidate preference.
+  Subscription billing and the provider's default-model flag do not give a candidate preference.
 - No generic model-name ranking or invented token-efficiency scores are used.
   With sparse evidence, routing relies on descriptions and preferences. This is a
   cold-start policy, not proof that DUKE has found the best model.
 - Catalog refresh updates ordinary prices/context limits. Explicit edits and
   pinned endpoint caps remain pinned. A changed/unavailable API endpoint can
   fall back to another worker without exceeding those caps.
+
+### Configured fallback
+
+`Jev fallback model` in **Usage & routing** defaults to a selected, available Luna
+or Haiku. A user may explicitly choose another selected model. The fallback uses
+its lowest advertised effort; a model with no effort control uses its provider
+default. A missing, exhausted, disabled, unaffordable or out-of-scope fallback
+blocks the task with an explanation. It never silently substitutes Astra, Opus,
+Fable or another unconfigured model.
+
+Fallback is an economical attempt, not a claim that a small model is qualified for
+an unknown task difficulty. It may run below declared difficulty coverage, while
+permissions, required tools, known negative quality evidence and spending limits
+still apply. Uncertain assessments do not produce positive learning evidence.
+Checks still run afterward. A failed worker is excluded from recovery, which asks
+Jev again; if Jev is still unavailable, only an available permitted fallback can run.
+
+### Reasoning effort
+
+Jev chooses a model and effort together. Candidate configurations use levels
+advertised by the Codex app server, Claude SDK or OpenRouter model catalog. No
+unsupported setting is invented. If no control is advertised, the route says
+**Provider default**. Codex receives `turn/start.effort`, Claude receives the SDK
+`effort` option, and OpenRouter receives `reasoning.effort`.
+
+The selected effort is saved with the route and execution receipts. Quality and
+whole-task token history are scoped to that model-effort configuration; unknown
+legacy effort is not reused for an explicit effort setting. A model at Low and
+the same model at Max therefore have separate evidence. The UI shows the chosen
+level beside the model. Effort names are provider settings, not equal token budgets
+or guarantees of quality. The objective remains the least resources likely to
+finish useful work, including retries.
+
+The 32-model roster expands into supported effort choices. If it would exceed
+254 configurations plus the fallback choice, intermediate Minimal variants are
+omitted where None is also available; the lowest and highest settings remain.
 
 The engine rechecks permission, availability and budget after Jev responds.
 Feedback and automatic evidence are selected using Jev's assessed family rather
@@ -102,7 +147,7 @@ success. Deterministic failures are handled before asking Jev to judge content.
 | Work | Checks |
 | --- | --- |
 | Coding | Required outputs and the explicit verification command, or a recognized read-only test command rerun after the worker finishes. No observed test means checks incomplete. |
-| Research | Source URLs must have retrieved-body receipts from `web_read` or `browser` when web/browser research is requested; Jev assesses whether the excerpts support material claims. Search snippets alone do not qualify. |
+| Research | Source URLs must have retrieved-body receipts from `web_read` or `browser` when web/browser research is requested; Jev assesses whether the excerpts support material claims. Search snippets alone do not qualify. URLs in code examples or source-code artifacts are not treated as citations. |
 | Writing | Jev checks the requested brief, factual support and completeness against bounded task inputs and outputs. |
 | Documents | Required files, core Office XML/text or PDF page structure; Jev checks readable content against the brief. Generated PDF text is used only while its bytes match the generation receipt. |
 
@@ -190,7 +235,7 @@ The summary also reports total tasks, successful tasks, sampled tasks/successes,
 incomplete tasks, every known token and tokens from incomplete tasks. One unknown
 report no longer suppresses all the complete observations. It does prevent a hard
 efficiency ranking or savings claim. Jev sees the coverage and uses early/partial
-evidence as tentative guidance. The rules fallback still requires five fully
+evidence as tentative guidance. Evidence-based ordering still requires five fully
 reported accepted tasks and no incomplete results before ranking by exact-scope
 tokens. Related evidence is guidance for Jev, never a hard efficiency ranking.
 

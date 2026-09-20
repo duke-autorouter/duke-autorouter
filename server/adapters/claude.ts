@@ -1,8 +1,10 @@
+import { claudeToolContent } from '../tool-results.js';
 import { query, createSdkMcpServer, tool } from '@anthropic-ai/claude-agent-sdk';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { safeEnv } from '../process.js';
 import { claudeExecutable } from '../runtime.js';
+import { workerEffort } from '../effort.js';
 import {
   claudeSubscriptionConnected,
   claudeConnection,
@@ -86,6 +88,8 @@ export class ClaudeWorker implements Worker {
     ctx.signal.throwIfAborted();
     if (this.authenticating())
       throw new Unavailable('Finish Claude sign-in before starting a task.');
+    const effort = workerEffort(ctx.model) as
+      'low' | 'medium' | 'high' | 'xhigh' | 'max' | undefined;
     if (!(await claudeSubscriptionConnected(this.stateDir, ctx.signal)))
       throw new Unavailable(
         'Claude subscription authentication is required; API credentials are not used.',
@@ -101,9 +105,7 @@ export class ClaudeWorker implements Worker {
         tool(d.name, d.description, (toolSchemas as any)[d.name].shape, async (args: any) => {
           try {
             return {
-              content: [
-                { type: 'text' as const, text: JSON.stringify(await ctx.tool(d.name, args)) },
-              ],
+              content: claudeToolContent(await ctx.tool(d.name, args)),
             };
           } catch (e) {
             if (e instanceof Blocked) {
@@ -127,6 +129,7 @@ export class ClaudeWorker implements Worker {
         ...this.options(),
         abortController: controller,
         model: ctx.model.model,
+        ...(effort === undefined ? {} : { effort }),
         maxTurns: 24,
         systemPrompt: ctx.prompt,
         mcpServers: { workspace: server },

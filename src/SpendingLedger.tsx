@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { displayName } from './displayNames';
 
 type Entry = {
   id: string;
@@ -45,7 +46,7 @@ export function SpendingLedger({ entries, busy, api, act, refresh }: Props) {
           {entries.map((r) => (
             <tr key={r.id}>
               <td>
-                {r.provider}
+                {displayName(r.provider)}
                 <small>{new Date(r.at).toLocaleString()}</small>
               </td>
               <td>{amount(r.reserved)}</td>
@@ -108,7 +109,7 @@ function ReconcileCharge({
         void save({ actualUSD: Number(charge), reservedMicros: entry.reserved, note });
       }}
     >
-      <h3>Record the verified {entry.provider} charge</h3>
+      <h3>Record the verified {displayName(entry.provider)} charge</h3>
       <p>
         Updates DUKE’s records only; no charge or refund is issued. Use zero only for a confirmed $0
         charge.

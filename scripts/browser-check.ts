@@ -87,6 +87,7 @@ const r = await createApp({
 });
 // Local checks must never read the user's saved Jev key or make inference calls.
 r.engine.jev = new Jev(r.store, { get: async () => undefined } as any);
+r.store.put('settings', 'main', { ...r.store.settings(), jevFallbackModel: 'fixture' });
 r.store.put(
   'model',
   'fixture',
@@ -100,6 +101,7 @@ r.store.put(
     evidence: 'Browser test injection only',
     maxDifficulty: 'complex',
     capabilities: ['files', 'shell', 'web', 'browser', 'artifacts'],
+    supportedEfforts: ['low', 'high'],
     quality: { coding: 1, research: 1, writing: 1, documents: 1 },
   }),
 );
@@ -296,8 +298,16 @@ try {
   console.log('PASS cancellation through real UI');
   await page.getByRole('button', { name: 'Usage & routing' }).click();
   await page.getByLabel('Daily API limit ($)', { exact: true }).fill('4');
+  await page.getByLabel(/^Jev fallback model/).selectOption('');
   await page.getByRole('button', { name: 'Save routing policy' }).click();
   await waitFor(async () => r.store.settings().dailyLimit === 4);
+  assert.equal(r.store.settings().jevFallbackModel, '');
+  await page.reload();
+  await page.getByRole('button', { name: 'Usage & routing' }).click();
+  assert.equal(await page.getByLabel(/^Jev fallback model/).inputValue(), '');
+  await page.getByLabel(/^Jev fallback model/).selectOption('fixture');
+  await page.getByRole('button', { name: 'Save routing policy' }).click();
+  await waitFor(async () => r.store.settings().jevFallbackModel === 'fixture');
   // Exercise the actual Jev adapter and UI using a synthetic transport in this
   // temporary test app. No remote inference or personal workspace permission changes.
   let jevCalls = 0;
@@ -370,6 +380,8 @@ try {
     .getByText(/Complex coding task · Jev selected this model/)
     .waitFor();
   assert.equal(r.store.tasks()[0].modelOverride, undefined);
+  assert.equal(r.store.tasks()[0].route?.effort, 'low');
+  await page.locator('.route-card').getByText('fixture · Low effort', { exact: true }).waitFor();
   assert.equal(jevCalls, 3);
   await page
     .getByRole('group', { name: 'Resource receipts', exact: true })

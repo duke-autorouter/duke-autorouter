@@ -1,0 +1,61 @@
+# Decision log
+
+DUKE's purpose is to finish useful work with the least necessary model resources.
+This log records decisions that affect that purpose, their costs, and the evidence
+needed to keep or revisit them. It is a retrospective record written during the
+September 2026 release pass, not a reconstructed transcript or a claim that every
+decision was documented when first made.
+
+| Decision | Status | Reason and consequence |
+| --- | --- | --- |
+| [Own the task and use a shared tool layer](adr/0001-shared-task-harness.md) | Accepted; final installed check open | Consistent permissions, recovery and receipts across workers. DUKE must also supply the tools and workflow quality its users expect. |
+| [Route over a chosen roster, model and effort](adr/0002-efficient-routing.md) | Implemented | Bound the choice to the user's models and select the least sufficient configuration. A fallback is economical and explicit. |
+| [Keep verification evidence separate from model confidence](adr/0003-verification-and-learning.md) | Implemented; repaired coverage checked | A confident answer, valid file or successful command cannot establish every aspect of task quality. Unknowns remain visible and do not count as success evidence. |
+| [Keep skills distinct from tools](adr/0004-skills-and-tools.md) | Implemented and package checked | Skills describe the work; tools execute it. Imported instructions supplement a usable packaged baseline. |
+| [Ship a downloadable local Mac app and source](adr/0005-local-mac-release.md) | App implemented; download preparation open | A prebuilt download is the normal install. Source-build instructions serve contributors; a hosted service is unnecessary. |
+| [Give Jev the routing decision](adr/0006-jev-as-router.md) | Implemented | Typed assessment and choice remove routine model selection while the harness enforces eligibility. Correct shape does not prove good judgment. |
+| [Support subscriptions and optional API workers](adr/0007-provider-integrations.md) | Implemented; provider limits documented | Use existing capacity and selected API models through isolated profiles. Validate each execution path separately. |
+| [Make a task the default interaction](adr/0008-simple-default-interface.md) | Implemented | Chat first, optional fine-tuning, quiet usage, and actionable setup states. |
+| [Import reviewed setups by Link or Copy](adr/0009-portable-setup-import.md) | Implemented | Preserve existing working preferences without importing credentials, executable authority or every source-app feature. |
+| [Keep permissions and recovery in the harness](adr/0010-permissions-and-recovery.md) | Implemented with bounded coverage | Project-scoped tools, approved side effects, retained versions, explicit resume and a persistent action ledger. |
+| [Learn from whole-task resources](adr/0011-resource-accounting.md) | Implemented; savings unmeasured | Include retries and reviews, distinguish API cost from subscription capacity, and scope evidence to comparable execution. |
+| [Use bounded search and inspect original sources](adr/0012-public-retrieval.md) | Implemented; live check passed | Keyless search avoids another setup account. Service limits stay explicit, and citations require original-source reading. |
+
+## What changed after testing
+
+- The identity settled on **DUKE Autorouter**, with DUKE meaning **Decides Using Knowledge and Evidence**. Exact combined-name screening informed the choice; it did not establish trademark clearance.
+- A standalone native Mac app replaced the development-server experience as the end-user target. A downloadable app is required; asking users to package it was corrected.
+- A chat-first interface replaced the proposed persistent three-pane workspace. Usage became optional, and advanced controls moved out of the normal task path.
+- Linked and copied setup imports became separate supported choices rather than one assumed preference.
+- A small selected roster replaced the initial emphasis on a broad model catalog.
+- Efficiency now applies to subscription capacity as well as API spending.
+- Jev chooses supported reasoning effort along with the model. Evidence at Low
+  does not establish performance at Max.
+- A flat model-choice distribution no longer triggers a premium fallback.
+  Uncertain assessment uses the configured fallback at its lowest supported effort.
+- Live checks exposed differences between provider-native tools and DUKE's own
+  tool layer. The [default tool audit](TOOL_AUDIT.md) records repairs, package and
+  live rechecks, and the final release checks still open.
+- Structural document checks accepted files with poor presentation. The audit
+  now requires inspection of saved outputs and explicit coverage limits.
+- Live research exposed search failures and a screenshot returned without an
+  image reaching Codex. The repaired retrieval and image paths were rechecked
+  with Luna. Workbook previews now show explicit ranges after Quick Look cropped
+  values during a Claude check.
+
+For current implementation details use the [architecture](ARCHITECTURE.md),
+[routing policy](ROUTING_POLICY.md), and [verification record](VERIFICATION.md).
+When a decision changes, add a superseding ADR and retain the original rationale.
+
+## Maintaining this record
+
+Add an ADR when a choice materially changes product behavior, architecture,
+authority, evaluation or distribution. Record the problem, decision, plausible
+alternatives, costs, evidence and reason to revisit it. Link implementation and
+verification without copying private accounts, transcripts or runtime state.
+
+Small visual fixes belong in commits or release notes. Keep accepted decisions
+when superseded and link their replacement. Open validation gates belong in
+[release readiness](RELEASE_READINESS.md), not in an invented historical success
+claim. This log describes the entire project; the tool audit is one supporting
+record.

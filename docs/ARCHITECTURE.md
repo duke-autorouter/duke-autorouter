@@ -1,12 +1,9 @@
 # Architecture
 
-![DUKE Autorouter architecture map](assets/duke-autorouter-architecture-v3.png)
-
-[Open the full-resolution map](assets/duke-autorouter-architecture-v3.png).
-Created with the built-in image generation tool from the
-[saved prompt set](assets/README.md).
-The image predates automatic content checks. The current routing and verification
-loop, evidence policy and limits are described in [Routing policy](ROUTING_POLICY.md).
+This diagram describes the implemented 0.1 routing and verification flow.
+The [routing policy](ROUTING_POLICY.md) covers evidence limits and recovery rules.
+The [decision log](DECISIONS.md) explains the product and architecture choices.
+The [distribution guide](MAC_DISTRIBUTION.md) covers the downloadable Mac app.
 
 ```mermaid
 flowchart TD
@@ -17,20 +14,23 @@ flowchart TD
     Engine --> Eligible[Permission, tools, capacity and budget eligibility]
     Eligible --> Assessment[Jev assesses task family and difficulty]
     Assessment --> Qualified[Check evaluated profiles or provider descriptions]
-    Qualified --> Select[Jev chooses a model from eligible profiles]
+    Qualified --> Select[Jev chooses a model and supported effort]
     Select --> Validate[Recheck current eligibility]
     Validate --> Codex[Codex app-server]
     Validate --> Claude[Claude Agent SDK]
     Validate --> OR[OpenRouter tool loop]
-    Assessment -. Unavailable or uncertain .-> Rules[Automatic rules fallback]
-    Select -. Unavailable or uncertain .-> Rules
+    Assessment -. Unavailable or uncertain .-> Rules[Configured fallback at lowest effort]
+    Select -. Unavailable or explicit fallback .-> Rules
     Rules --> Validate
     Codex --> Tools[Shared tool and approval service]
     Claude --> Tools
     OR --> Tools
     Tools --> Files[Workspace and artifacts]
+    Tools --> Documents[Document readers, renderers and formula calculation]
+    Engine --> Skills[Packaged skills and approved setup snapshot]
     Tools --> Shell[Separate SRT shell sandbox]
     Tools --> Browser[Isolated Chromium]
+    Tools --> Search[Keyless Tavily search and public-source reads]
     Engine --> DB[SQLite events and budget ledger]
     Tools --> DB
     Files --> Verify[File, test and source checks]
@@ -40,6 +40,19 @@ flowchart TD
     Outcome -. Failed checks within recovery limit .-> Assessment
     DB -. Scoped outcome history .-> Qualified
 ```
+
+<details>
+<summary>Illustrated overview</summary>
+
+![DUKE Autorouter architecture map](assets/duke-autorouter-architecture-v3.png)
+
+[Open the full-resolution map](assets/duke-autorouter-architecture-v3.png).
+This earlier illustration shows the main components. It predates automatic
+content review and outcome history; use the diagram above for the current flow.
+The image was created with the built-in image generation tool from the
+[saved prompt set](assets/README.md).
+
+</details>
 
 ## Execution boundaries
 
@@ -88,11 +101,11 @@ selection under Task options remains available for evaluation trials or an expli
    user-declared quality sent as null. Only user-selected roster profiles are eligible. Their descriptions, optional work preferences and user-feedback counts
    inform selection; neither is relabeled as benchmark evidence. Legacy evaluated
    profiles without difficulty coverage qualify for routine work only.
-4. A second Jev **Choice** selects a candidate using the task assessment and model
+4. A second Jev **Choice** selects a model-effort configuration using the task assessment and model
    profiles: scoped quality/whole-task token observations, work preference, difficulty
    coverage, tools, context limit, billing, prices, and optional routing notes. This is a separate request because questions
    within one request are evaluated independently. The explicit roster is limited
-   to 32 models, with a rules-fallback option.
+   to 32 models; supported effort levels expand the choices, with a configured-fallback option.
 5. DUKE checks the returned candidate against the current roster, permissions,
    availability, and budget, then invokes its worker automatically. The task record
    saves the assessed difficulty, chosen model, decision source, and concise reason.
@@ -100,11 +113,12 @@ selection under Task options remains available for evaluation trials or an expli
 
 The implementation uses the official `POST /v1/systemone` format and validates
 answer types, confidence ranges, distributions, score consistency, and candidate
-membership. Difficulty and selection confidence must reach 0.8. This is a
-configurable-code threshold to evaluate, **not a measured correctness guarantee**.
-An uncertain difficulty assessment uses a complex-capable rules fallback; an
-uncertain or failed selection retains any valid difficulty assessment and lets
-rules select automatically. If no model qualifies, execution blocks with the
+membership. Assessment confidence must reach 0.8; this is **not a measured
+correctness guarantee**. Selection among qualified models has no additional
+confidence floor. A valid choice is applied even when several candidates are
+similarly suitable. An uncertain difficulty assessment uses the configured economical
+fallback; an explicit rules choice or failed selection retains any valid
+difficulty assessment and uses the configured fallback. If no model qualifies, execution blocks with the
 missing requirement rather than treating an unevaluated worker as proven.
 
 **Automatic selection** applies Jev decisions from first use when connected.
@@ -116,13 +130,16 @@ its API cost. Jev is part of normal routing across projects; no per-project swit
 is required, and legacy `jevAllowed` values no longer disable it. Worker provider
 permissions and the global operating mode still apply.
 
-Rules estimate difficulty from task text and use conservative treatment of long
-briefs and incomplete context. Demonstrated capability takes precedence. Once
-quality requirements are met, complete scoped efficiency
-evidence, lower whole-task tokens, starting preferences, adequate difficulty coverage
-and defaults guide the fallback. See ROUTING_POLICY.md for the full ordering.
+The fallback is a selected Luna or Haiku, or another model explicitly chosen in
+Usage & routing, at its lowest supported effort. It may make an economical attempt
+below declared difficulty coverage. An unavailable fallback blocks without
+silently promoting to a premium model. Permission, tool and spending limits still
+apply. Normal Jev choices use qualified model-effort profiles, scoped evidence and
+starting preferences. Provider defaults receive no preference. See ROUTING_POLICY.md
+for the full decision flow.
 Local automatic outcomes are scoped to family, work type, difficulty and brief size;
-they never rewrite benchmark scores. Failed attempts, routing and review tokens
+they never rewrite benchmark scores. Effort is part of each execution configuration,
+so Low and Max do not share quality or token estimates. Failed attempts, routing and review tokens
 remain part of cumulative task usage. Unknown usage cannot establish efficiency.
 Jev receives early observations and related work at the same difficulty as tentative
 guidance, while hard qualification still requires exact evidence. Per-model
@@ -139,8 +156,9 @@ Missing telemetry remains unknown. The worker refreshes Codex capacity before an
 after execution, with bounded metadata requests. Task receipts retain observed
 account-window changes separately from tokens and API costs. A reset or missing
 snapshot prevents a comparable delta; other apps may contribute to an account's
-change. The local preview uses cached telemetry. Claude's remaining subscription
-quota is still unavailable. Both adapters are optimized for the same resource goal.
+change. The local preview uses cached telemetry. Claude allowance readings use
+an experimental runtime control request and remain separate from Codex windows.
+Missing or stale readings stay labeled. Both adapters serve the same resource goal.
 
 ## State and recovery
 
@@ -172,9 +190,41 @@ read local state. This is a single-user application, not a hostile-user isolatio
 boundary. Browser automation is limited to a fresh profile; complex transactional
 workflows still require explicit receipt verification by the worker and user.
 
-Document creation provides basic text-first layouts. PDF output uses the standard
-Helvetica character set; unsupported characters fail explicitly. DOCX/XLSX are
-downloaded for native review. Layout-heavy documents still need human inspection.
+The shared tool layer includes bounded text/document reads, literal search,
+precise text edits, backed-up writes, sandboxed commands, public search and reads,
+isolated browsing, document generation and visual previews. Four packaged skills
+guide coding, research, writing and documents; imported skills remain distinct
+from executable tools.
+
+Word output uses native headings and explicit table grids. PDF output renders an
+escaped Markdown tree with bundled Chromium, scripting and subresources disabled.
+XLSX supports typed values, named sheets and explicit formulas. A bounded worker
+calculates supported formulas with xlsx-calc and Formula.js and rejects errors;
+this is not a claim of complete native Excel compatibility.
+
+The Mac helper extracts saved PDF text and renders individual pages. Pages with
+no extractable text remain explicitly unverified; OCR is not included. Word
+Quick Look previews may cover only a first page. XLSX previews render the saved
+cells in a named sheet and range, with cached formula values. They do not reproduce
+native Excel layout or charts; separate reads recalculate supported formulas.
+
+Image results use Codex/Claude image messages. Codex's code-mode bridge wraps
+dynamic tool output as a string, so its instructions explicitly emit the embedded
+image to the model. Live checks confirmed model-visible image input after an
+earlier run returned a screenshot without displaying it. OpenRouter image transmission additionally requires
+verified input support and rates within the approved price ceiling; otherwise the
+worker receives an explicit unavailable-image notice. Image requests reserve a
+full input context window to avoid estimating image tokens from compressed bytes.
+
+Search uses Tavily's keyless HTTP endpoint with no API key or paid fallback.
+Rate limits and empty results are explicit failures. Results identify sources
+to read; snippets alone cannot establish citation support. Direct source reads
+support text pages and bounded text-based PDFs. The
+[retrieval decision](adr/0012-public-retrieval.md) records this choice and its limits.
+
+Content checks, recalculation and layout coverage remain separate. A content pass
+is labeled as such when layout has not been independently checked. See the
+[tool audit](TOOL_AUDIT.md) for checks, limits and outstanding evidence.
 
 ## Sources checked during implementation
 
@@ -188,6 +238,7 @@ downloaded for native review. Layout-heavy documents still need human inspection
 - [OpenRouter provider routing](https://openrouter.ai/docs/guides/routing/provider-selection)
 - [OpenRouter endpoint catalog](https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model)
 - [Anthropic sandbox runtime](https://github.com/anthropics/sandbox-runtime)
+- [Tavily official keyless client implementation](https://github.com/tavily-ai/tavily-python/blob/master/tavily/tavily.py)
 
 ## Standalone application
 

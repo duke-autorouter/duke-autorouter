@@ -46,6 +46,7 @@ export type RoutingDecision = {
   assessment: TaskAssessment;
   modelId?: string;
   confidence?: number;
+  effort?: import('../shared/effort.js').Effort;
 };
 export type Status =
   | 'queued'
@@ -101,6 +102,9 @@ export const ModelInput = z.object({
   provider: Provider,
   model: z.string().min(1),
   label: z.string().min(1),
+  supportedEfforts: z
+    .array(z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra']))
+    .optional(),
   enabled: z.boolean().default(false),
   capabilities: z.array(Cap),
   quality: z.object({
@@ -135,6 +139,12 @@ export const ModelInput = z.object({
   maxOutput: z.number().int().min(256).max(16384).default(4096),
 });
 export type Model = z.infer<typeof ModelInput> & {
+  effort?: import('../shared/effort.js').Effort;
+  effortProfiles?: {
+    effort: import('../shared/effort.js').Effort;
+    observations: OutcomeSummary[];
+    efficiency: EfficiencySummary[];
+  }[];
   // Derived from local receipts, never accepted as a client-supplied quality score.
   observations?: OutcomeSummary[];
   efficiency?: EfficiencySummary[];
@@ -157,6 +167,7 @@ export type Outcome = {
   taskId: string;
   modelId: string;
   model: string;
+  effort?: import('../shared/effort.js').Effort;
   kind: TaskKind;
   difficulty: Difficulty;
   status: TaskReview['status'];
@@ -230,6 +241,7 @@ export type EfficiencyRun = {
   taskId: string;
   modelId: string;
   model: string;
+  effort?: import('../shared/effort.js').Effort;
   assessment: TaskAssessment;
   status: 'passed' | 'failed' | 'unverified' | 'cancelled';
   recovered?: boolean;
@@ -266,6 +278,7 @@ export type Route = {
   modelId: string;
   provider: Provider;
   model: string;
+  effort?: import('../shared/effort.js').Effort;
   kind: TaskKind;
   reason: string;
   fallbacks: string[];
@@ -305,6 +318,7 @@ export type Settings = {
   qualityFloor: number;
   jevMode: 'off' | 'observe' | 'assist';
   jevModel: string;
+  jevFallbackModel?: string;
   jevInputPrice: number;
   jevValidated: boolean;
   maxSteps: number;
@@ -318,6 +332,7 @@ export const defaults: Settings = {
   qualityFloor: 0.8,
   jevMode: 'assist',
   jevModel: 'jev-1.13.0',
+  jevFallbackModel: '',
   jevInputPrice: 0.042,
   jevValidated: false,
   maxSteps: 24,

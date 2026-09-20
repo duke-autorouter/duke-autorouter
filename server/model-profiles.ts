@@ -3,6 +3,7 @@ import { ModelInput, type Model, type Provider, type TaskKind, type Outcome } fr
 import { outcomeSummaries } from './outcomes.js';
 import { efficiencySummaries, rosterKey } from './efficiency.js';
 import type { EfficiencyRun } from './types.js';
+import { catalogEfforts, effortVariants } from './effort.js';
 
 export const catalogFields = ['inputPrice', 'outputPrice', 'requestPrice', 'contextLimit'] as const;
 export function preserveModelOverrides(model: Model, previous?: Model): Model {
@@ -53,6 +54,7 @@ export function recordCatalog(store: Store, provider: Provider, list: any[]) {
       maxOutput: 4096,
       ...existing,
       ...fresh,
+      supportedEfforts: catalogEfforts(provider, raw),
       catalogOverrides: [...overrides],
       catalog: {
         description: String(
@@ -68,7 +70,7 @@ export function recordCatalog(store: Store, provider: Provider, list: any[]) {
   return results;
 }
 
-export function modelsWithFeedback(store: Store, kind?: TaskKind): Model[] {
+export function modelsWithFeedback(store: Store, kind?: TaskKind, withEfforts = false): Model[] {
   const evaluationTasks = new Set(
     store
       .tasks()
@@ -81,8 +83,18 @@ export function modelsWithFeedback(store: Store, kind?: TaskKind): Model[] {
   const outcomes = store.list<Outcome>('routing_outcome');
   const runs = store.list<EfficiencyRun>('routing_run'),
     key = rosterKey(store);
-  return store.list<Model>('model').map((model) => ({
+  const models = store.list<Model>('model');
+  return (withEfforts ? models.flatMap(effortVariants) : models).map((model) => ({
     ...model,
+    ...(!withEfforts && model.supportedEfforts?.length
+      ? {
+          effortProfiles: effortVariants(model).map((variant) => ({
+            effort: variant.effort!,
+            observations: outcomeSummaries(store, variant, kind, outcomes),
+            efficiency: efficiencySummaries(store, variant, runs, key),
+          })),
+        }
+      : {}),
     observations: outcomeSummaries(store, model, kind, outcomes),
     efficiency: efficiencySummaries(store, model, runs, key),
     feedback: {

@@ -16,6 +16,7 @@ import {
 } from '../server/model-profiles.js';
 import { inspectFile, routingContext } from '../server/task-evidence.js';
 import { outcomeSummaries, interval, REVIEW_POLICY } from '../server/outcomes.js';
+import { citedURLs } from '../server/verification.js';
 import {
   defaults,
   ModelInput,
@@ -168,7 +169,7 @@ test('Jev gives content review a longer deadline than routing and preserves the 
   }
 });
 
-test('uncertain fallback prefers demonstrated capability and excludes explicitly inadequate catalog coverage', () => {
+test('configured fallback permits an economical attempt without treating it as proven complex capability', () => {
   const w: Workspace = {
     id: 'w',
     name: 'w',
@@ -188,8 +189,13 @@ test('uncertain fallback prefers demonstrated capability and excludes explicitly
   const unknown = model('unknown', { evaluated: false, catalog, maxDifficulty: undefined });
   const routine = model('routine', { evaluated: false, catalog, maxDifficulty: 'routine' });
   const task = { prompt: 'Implement a distributed system', required: ['files'] as ['files'] };
-  assert.equal(route(task, w, [unknown, routine, strong], defaults).modelId, 'proven');
-  assert.ok(!route(task, w, [unknown, routine, strong], defaults).fallbacks.includes('routine'));
+  const settings = { ...defaults, jevFallbackModel: 'routine' };
+  assert.equal(route(task, w, [unknown, routine, strong], settings).modelId, 'routine');
+  assert.equal(
+    route(task, w, [unknown, routine, strong], settings).assessment.difficulty,
+    'complex',
+  );
+  assert.throws(() => route(task, w, [unknown, strong], settings), /fallback model is unavailable/);
 });
 
 test('catalog refresh replaces stale prices and context while preserving explicit overrides and enablement', () => {
@@ -425,10 +431,10 @@ test('review cancellation stops completion and never records a learned outcome',
   }
 });
 
-test('exhausted Jev budget uses capability fallback and leaves review incomplete without paid calls', async () => {
+test('exhausted Jev budget uses the configured fallback and leaves review incomplete without paid calls', async () => {
   const f = await fixture();
   try {
-    f.store.put('settings', 'main', { ...defaults, dailyLimit: 0 });
+    f.store.put('settings', 'main', { ...defaults, dailyLimit: 0, jevFallbackModel: 'worker' });
     f.add(model('worker'));
     const task = await f.run();
     assert.equal(task.status, 'completed');
@@ -560,6 +566,21 @@ test('an independently rerun task check can fail and trigger recovery before sem
   }
 });
 
+test('research citations exclude code examples but retain linked and bare prose URLs', () => {
+  assert.deepEqual(
+    citedURLs(
+      [
+        '[Report](https://example.org/report#section)',
+        'See https://example.org/other.',
+        '`fetch("https://example.com/inline")`',
+        '```js\nfetch("https://example.com/fenced")\n```',
+        '\n    fetch("https://example.com/indented")\n',
+      ].join('\n'),
+    ),
+    ['https://example.org/report', 'https://example.org/other'],
+  );
+});
+
 test('research requires retrieved citation receipts and gives source excerpts to the reviewer', async () => {
   for (const retrieved of [true, false]) {
     const f = await fixture('research');
@@ -575,10 +596,17 @@ test('research requires retrieved citation receipts and gives source excerpts to
                 text: 'An invented report says the value is 42.',
               },
             });
-          return 'The value is 42. [Report](https://example.org/report)';
+          await c.tool('write_file', {
+            path: 'example.js',
+            content: 'fetch("https://example.com/code");',
+          });
+          return 'The value is 42. [Report](https://example.org/report)\n\n```js\nfetch("https://example.com/sample")\n```';
         },
       };
-      const task = await f.run({ prompt: 'Research and cite the value', required: ['web'] });
+      const task = await f.run({
+        prompt: 'Research and cite the value',
+        required: ['web', 'files'],
+      });
       assert.equal(task.review?.status, retrieved ? 'passed' : 'failed');
       if (retrieved) assert.match(f.calls.at(-1).state.evidence.sources[0].text, /42/);
       else assert.match(task.review!.summary, /not read/);

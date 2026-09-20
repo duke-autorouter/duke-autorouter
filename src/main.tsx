@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import type { Task, Workspace, Model, Approval, Settings, RoutePreview } from '../server/types';
 import { brand } from '../shared/brand';
 import { Markdown } from './Markdown';
+import { displayName } from './displayNames';
+import { effortLabel } from '../shared/effort';
 import { chooseFolder } from './desktop';
 import { ImportDialog, SetupImport } from './SetupImport';
 import { ModelRoster } from './ModelRoster';
@@ -35,6 +37,15 @@ const usd = (n: number) =>
   }).format(n);
 const providers = { codex: 'Codex', claude: 'Claude', openrouter: 'OpenRouter', jev: 'Jev' };
 const statusLabel = (s: string) => s.replaceAll('_', ' ');
+function WorkingDots() {
+  return (
+    <span className="working-dots" aria-hidden="true">
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    </span>
+  );
+}
 function Mark() {
   return (
     <div className="mark" aria-hidden="true">
@@ -263,7 +274,10 @@ function App() {
             />
             {!!active.length && (
               <p className="quiet">
-                {active.length} task{active.length === 1 ? '' : 's'} in progress.
+                {active.length} task{active.length === 1 ? '' : 's'} in progress
+                {active.some((task) =>
+                  ['queued', 'routing', 'running', 'verifying'].includes(task.status),
+                ) && <WorkingDots />}
               </p>
             )}
           </div>
@@ -596,7 +610,7 @@ function Composer({
                   <option value="">Automatic — let DUKE choose</option>
                   {compatibleModels.map((m) => (
                     <option value={m.id} key={m.id}>
-                      {m.label} · {m.provider}
+                      {displayName(m.label)} · {providers[m.provider]}
                     </option>
                   ))}
                 </select>
@@ -744,6 +758,7 @@ function TaskView({ detail, approvals, busy, act }: any) {
           <h1>{t.title}</h1>
         </div>
         <span
+          role="status"
           className={
             'status-chip ' +
             (t.status === 'completed' && t.review?.status === 'unverified'
@@ -754,16 +769,19 @@ function TaskView({ detail, approvals, busy, act }: any) {
           {t.status === 'completed' && t.review?.status === 'unverified'
             ? 'Saved · checks incomplete'
             : statusLabel(t.status)}
+          {['queued', 'routing', 'running', 'verifying'].includes(t.status) && <WorkingDots />}
         </span>
       </div>
       {t.route && (
         <div className="route-card">
           <div className="route-icon">↗</div>
           <div>
-            <b>{t.route.model}</b>
+            <b>
+              {displayName(t.route.model)} · {effortLabel(t.route.effort)} effort
+            </b>
             <p>{t.route.reason}</p>
           </div>
-          <span className="tag">{t.route.provider}</span>
+          <span className="tag">{providers[t.route.provider]}</span>
         </div>
       )}
       <div className="request-block">
@@ -864,11 +882,16 @@ function TaskView({ detail, approvals, busy, act }: any) {
           <summary>
             <b>
               {t.review.status === 'passed'
-                ? 'Checks passed'
+                ? t.review.limitations.some((note) => /layout/i.test(note))
+                  ? 'Content checks passed'
+                  : 'Checks passed'
                 : t.review.status === 'failed'
                   ? 'Checks found issues'
                   : 'Checks incomplete'}
             </b>
+            {t.review.status === 'passed' && t.review.limitations.some((note) => /layout/i.test(note)) && (
+              <span className="check-reason">Layout has not been independently checked.</span>
+            )}
             {t.review.status !== 'passed' && (
               <span className="check-reason">
                 {(
@@ -988,7 +1011,8 @@ function TaskView({ detail, approvals, busy, act }: any) {
             {t.subscriptionUsage.attempts.map((attempt) => (
               <div key={attempt.id}>
                 <b>
-                  {attempt.provider === 'codex' ? 'Codex' : 'Claude'} · {attempt.modelId}
+                  {attempt.provider === 'codex' ? 'Codex' : 'Claude'} ·{' '}
+                  {displayName(attempt.modelId)}
                 </b>
                 {!attempt.windows.length ? (
                   <p className="quiet">Allowance change was not reported.</p>
@@ -1076,9 +1100,6 @@ function TaskView({ detail, approvals, busy, act }: any) {
         </form>
       ) : (
         <div className="running-row">
-          <span>
-            <i className="live-dot" /> {statusLabel(t.status)}
-          </span>
           <button onClick={() => act(() => api('/tasks/' + t.id + '/cancel', {}))}>
             Stop task
           </button>
@@ -1465,11 +1486,13 @@ function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean
   const [m, setM] = useState(model),
     [endpoints, setEndpoints] = useState<any[]>([]);
   useEffect(() => setM(model), [JSON.stringify(model)]);
+  const observations =
+    model.effortProfiles?.flatMap((profile) => profile.observations) ?? model.observations ?? [];
   return (
     <details className="model-card">
       <summary>
         <div>
-          <b>{model.label}</b>
+          <b>{displayName(model.label)}</b>
           <small>{model.id}</small>
         </div>
         <span className={'tag ' + (model.enabled ? 'green' : '')}>
@@ -1494,11 +1517,11 @@ function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean
             Your feedback: {m.feedback.worked} worked · {m.feedback.needsWork} needs work
           </p>
         )}
-        {!!m.observations?.length && (
+        {!!observations.length && (
           <p className="quiet">
-            Local automatic checks: {m.observations.reduce((n, o) => n + o.passed, 0)} passed ·{' '}
-            {m.observations.reduce((n, o) => n + o.failed, 0)} found issues ·{' '}
-            {m.observations.reduce((n, o) => n + o.unverified, 0)} incomplete.
+            Local automatic checks: {observations.reduce((n, o) => n + o.passed, 0)} passed ·{' '}
+            {observations.reduce((n, o) => n + o.failed, 0)} found issues ·{' '}
+            {observations.reduce((n, o) => n + o.unverified, 0)} incomplete.
           </p>
         )}
         <div className="checks">
@@ -1620,7 +1643,10 @@ function Usage({ data, act, busy }: any) {
     [ledger, setLedger] = useState<any[]>();
   const evidence = data.models
     .filter((m: Model) => m.enabled)
-    .flatMap((m: Model) => m.efficiency ?? []);
+    .flatMap(
+      (m: Model) =>
+        m.effortProfiles?.flatMap((profile) => profile.efficiency) ?? m.efficiency ?? [],
+    );
   const evidenceTasks = evidence.reduce((n: number, e: any) => n + e.tasks, 0);
   const sampledTasks = evidence.reduce((n: number, e: any) => n + e.sampledTasks, 0);
   const recoveredTasks = evidence.reduce(
@@ -1720,6 +1746,32 @@ function Usage({ data, act, busy }: any) {
               Routing diagnostics are active. Restore Automatic selection below to use Jev.
             </p>
           )}
+          <label>
+            Jev fallback model
+            <select
+              value={s.jevFallbackModel ?? ''}
+              onChange={(e) => setS({ ...s, jevFallbackModel: e.target.value })}
+            >
+              <option value="">Automatic — Luna or Haiku</option>
+              {s.jevFallbackModel &&
+                !data.models.some((m: Model) => m.enabled && m.id === s.jevFallbackModel) && (
+                  <option value={s.jevFallbackModel}>
+                    Previously selected model (unavailable)
+                  </option>
+                )}
+              {data.models
+                .filter((m: Model) => m.enabled)
+                .map((m: Model) => (
+                  <option key={m.id} value={m.id}>
+                    {displayName(m.label)} · {providers[m.provider]}
+                  </option>
+                ))}
+            </select>
+            <small>
+              Used if Jev fails or cannot choose. The model must be selected and available;
+              otherwise the task pauses.
+            </small>
+          </label>
           <details>
             <summary>Advanced routing diagnostics</summary>
             <label>

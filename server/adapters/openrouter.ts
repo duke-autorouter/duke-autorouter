@@ -1,9 +1,11 @@
+import { splitToolResult, type ToolImage } from '../tool-results.js';
 import { Store } from '../store.js';
 import { Secrets } from '../secrets.js';
 import { definitions } from '../tools.js';
 import { Blocked, Unavailable, type Worker, type WorkerContext, type Health } from '../types.js';
 import { requestBudget } from '../request-budget.js';
 import { brand } from '../../shared/brand.js';
+import { workerEffort } from '../effort.js';
 export class OpenRouterWorker implements Worker {
   constructor(
     public store: Store,
@@ -53,6 +55,7 @@ export class OpenRouterWorker implements Worker {
     return (await r.json()).data.endpoints;
   }
   async run(ctx: WorkerContext) {
+    const effort = workerEffort(ctx.model);
     const key = await this.secrets.get('openrouter');
     if (!key) throw new Unavailable('OpenRouter API key is missing.');
     const profile = ctx.model;
@@ -104,6 +107,7 @@ export class OpenRouterWorker implements Worker {
       { role: 'system', content: ctx.prompt },
       { role: 'user', content: ctx.task.prompt },
     ];
+    let imageSupport: boolean | undefined;
     for (let step = 0; step < this.store.settings().maxSteps; step++) {
       ctx.signal.throwIfAborted();
       const estimate = requestBudget(model, messages, tools);
@@ -119,6 +123,7 @@ export class OpenRouterWorker implements Worker {
         },
         body: JSON.stringify({
           model: model.model,
+          ...(effort === undefined ? {} : { reasoning: { effort } }),
           messages,
           tools,
           tool_choice: 'auto',
@@ -161,6 +166,7 @@ export class OpenRouterWorker implements Worker {
           throw new Error('Worker exhausted its output allowance.');
         return message.content ?? '';
       }
+      const images: ToolImage[] = [];
       for (const call of message.tool_calls) {
         ctx.signal.throwIfAborted();
         let value;
@@ -170,8 +176,48 @@ export class OpenRouterWorker implements Worker {
           if (e instanceof Blocked) throw e;
           value = { error: (e as Error).message };
         }
-        messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(value) });
+        const parts = splitToolResult(value);
+        messages.push({ role: 'tool', tool_call_id: call.id, content: parts.text });
+        images.push(...parts.images);
       }
+      // Image inputs follow the complete tool-result group; interleaving them
+      // would leave unmatched tool calls on multi-tool turns.
+      if (images.length && imageSupport === undefined) {
+        const raw = (await this.models()).find((m: any) => m.id === model.model);
+        // Image rates can differ from text rates. Only transmit when the fresh
+        // endpoint explicitly fits the approved prompt-price ceiling. The next
+        // request reserves a full context window rather than guessing image tokens.
+        const perImage = endpoint.pricing?.image;
+        const perToken = endpoint.pricing?.image_token;
+        imageSupport =
+          raw?.architecture?.input_modalities?.includes('image') === true &&
+          perImage != null &&
+          Number(perImage) === 0 &&
+          perToken != null &&
+          Number.isFinite(Number(perToken)) &&
+          Number(perToken) >= 0 &&
+          Number(perToken) * 1e6 <= model.inputPrice;
+      }
+      if (images.length && !imageSupport)
+        messages.push({
+          role: 'user',
+          content:
+            'Preview images were generated but NOT delivered to this worker: image input or its pricing is not verified for this endpoint. Do not claim to have visually inspected them. Use text checks and report the visual limitation.',
+        });
+      if (images.length && imageSupport)
+        messages.push({
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Images returned by your tools, in the same order. Inspect only the stated coverage.',
+            },
+            ...images.map((image) => ({
+              type: 'image_url',
+              image_url: { url: `data:${image.mimeType};base64,${image.data}` },
+            })),
+          ],
+        });
     }
     throw new Blocked(
       'Worker reached its tool-step limit. Review the checkpoint before continuing.',

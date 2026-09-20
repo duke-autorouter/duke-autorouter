@@ -3,25 +3,56 @@ import { readFile, writeFile, readdir, stat, rename, mkdir, copyFile } from 'nod
 import { resolve, join, relative, extname } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
-import { Document, Packer, Paragraph } from 'docx';
-import ExcelJS from 'exceljs';
-import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { wordArtifact, pdfArtifact } from './artifacts.js';
+import { makeSpreadsheet } from './spreadsheets.js';
+import { fileContent, decodeText } from './file-content.js';
+import { searchFiles } from './file-search.js';
+import { previewFile, imageResult } from './previews.js';
+import { toolReceipt } from './tool-results.js';
+import { coreSkills } from './core-skills.js';
 import { Store } from './store.js';
 import { Approvals, fingerprint } from './approval.js';
 import { scoped, sensitive } from './paths.js';
 import { runProcess } from './process.js';
 import { shellRunnerArgs } from './runtime.js';
-import { fetchPublic, publicURL } from './web.js';
+import { fetchPublic, publicURL, searchPublic } from './web.js';
 import { Blocked, UncertainEffect, now, type Task, type Workspace, type Cap } from './types.js';
 import { SetupImporter } from './setup-import.js';
 import type { SetupSnapshot } from '../shared/setup.js';
 
+const sheetCell = z.union([
+  z.string().max(20000),
+  z.number().finite(),
+  z.boolean(),
+  z.null(),
+  z.object({ formula: z.string().min(1).max(4000) }),
+]);
+const sheetRows = z.array(z.array(sheetCell).max(100)).max(5000);
 export const toolSchemas = {
   setup_list: z.object({}),
   setup_read: z.object({ id: z.string().min(1).max(100) }),
-  list_files: z.object({ path: z.string().default('.') }),
-  read_file: z.object({ path: z.string() }),
+  list_files: z.object({
+    path: z.string().default('.'),
+    offset: z.number().int().min(0).default(0),
+  }),
+  read_file: z.object({
+    path: z.string(),
+    start_line: z.number().int().min(1).default(1),
+    max_lines: z.number().int().min(1).max(2000).default(500),
+  }),
+  search_files: z.object({ path: z.string().default('.'), query: z.string().min(1).max(500) }),
   write_file: z.object({ path: z.string(), content: z.string().max(500000) }),
+  edit_file: z.object({
+    path: z.string(),
+    old_text: z.string().min(1).max(500000),
+    new_text: z.string().max(500000),
+  }),
+  preview_file: z.object({
+    path: z.string(),
+    page: z.number().int().min(1).max(1000).default(1),
+    sheet: z.string().min(1).max(31).optional(),
+    range: z.string().min(1).max(40).optional(),
+  }),
   remove_file: z.object({ path: z.string() }),
   shell: z.object({ command: z.string().min(1).max(8000), writable: z.boolean().default(false) }),
   web_read: z.object({ url: z.string() }),
@@ -36,9 +67,11 @@ export const toolSchemas = {
     path: z.string(),
     format: z.enum(['markdown', 'html', 'pdf', 'docx', 'xlsx']),
     content: z.string().max(300000),
-    rows: z
-      .array(z.array(z.union([z.string(), z.number(), z.boolean()])))
-      .max(5000)
+    rows: sheetRows.optional(),
+    sheets: z
+      .array(z.object({ name: z.string().min(1).max(31), rows: sheetRows }))
+      .min(1)
+      .max(10)
       .optional(),
   }),
   checkpoint: z.object({
@@ -49,17 +82,44 @@ export const toolSchemas = {
   }),
 };
 const info: Record<keyof typeof toolSchemas, [Cap | null, string]> = {
-  setup_list: [null, 'List the approved setup instructions, skills, roles and references captured for this task.'],
-  setup_read: [null, 'Read an approved setup document by its exact ID from setup_list. Uses the task snapshot, not a filesystem path.'],
-  list_files: ['files', 'List workspace files; excludes credentials and application state.'],
-  read_file: ['files', 'Read a UTF-8 file in the workspace.'],
+  setup_list: [
+    null,
+    'List the approved setup instructions, skills, roles and references captured for this task.',
+  ],
+  setup_read: [
+    null,
+    'Read an approved setup document by its exact ID from setup_list. Uses the task snapshot, not a filesystem path.',
+  ],
+  list_files: [
+    'files',
+    'List up to 500 directory entries with a nextOffset when more remain. Excludes credentials and application state.',
+  ],
+  read_file: [
+    'files',
+    'Read bounded lines of UTF-8 text, PDF text, Word main text or spreadsheet cell values/formulas. Returns extraction notes and truncation. Use preview_file for images or layout.',
+  ],
+  search_files: [
+    'files',
+    'Search literal text recursively in project files. Returns line numbers and explicit coverage limits; skips binary files, credentials and dependency trees.',
+  ],
   write_file: ['files', 'Write a workspace text file with a retained prior version.'],
+  edit_file: [
+    'files',
+    'Replace one exact, unique text match in a UTF-8 file, retaining a backup. Read first; an absent or ambiguous match fails without editing.',
+  ],
+  preview_file: [
+    'files',
+    'Return an image of a saved PDF page, PNG/JPEG, static HTML viewport, Word Quick Look thumbnail or XLSX saved-cell grid. For XLSX, select sheet by name and range such as A1:D12 (at most 50 rows/12 columns). Grid previews do not reproduce native Excel layout; use read_file to recalculate formulas. Word previews may cover only the first page. Report coverage limits.',
+  ],
   remove_file: ['files', 'Move a file to recoverable storage after user approval.'],
   shell: [
     'shell',
     'Run a network-isolated command. Workspace is read-only unless writable=true, which requires approval. Use file tools for ordinary edits.',
   ],
-  web_read: ['web', 'Read a public HTTPS page; returns source URL and links.'],
+  web_read: [
+    'web',
+    'Read a public HTTPS text page or text-based PDF under 2 MB; returns source URL, text, links and explicit coverage limits. Scanned PDFs require OCR, which is not included.',
+  ],
   web_search: ['web', 'Search the public web and return results with source URLs.'],
   browser: [
     'browser',
@@ -67,7 +127,7 @@ const info: Record<keyof typeof toolSchemas, [Cap | null, string]> = {
   ],
   create_artifact: [
     'artifacts',
-    'Create a Markdown, HTML, PDF, Word, or Excel artifact. XLSX uses rows; other formats use content.',
+    'Create Markdown, HTML, PDF, Word, or Excel. PDF/Word render basic Markdown headings, lists and tables. XLSX supports typed rows or named sheets and explicit {formula:"SUM(B2:B4)"} cells; supported formulas are recalculated. Formula-like strings remain text. Reopen and preview the saved output; complex Office preservation is not supported.',
   ],
   checkpoint: [
     null,
@@ -96,7 +156,9 @@ export class ToolService {
     public store: Store,
     public approvals: Approvals,
     public stateDir: string,
-  ) { this.setups = new SetupImporter(store, stateDir); }
+  ) {
+    this.setups = new SetupImporter(store, stateDir);
+  }
   async call(taskId: string, name: string, raw: unknown, signal: AbortSignal): Promise<any> {
     signal.throwIfAborted();
     const task = this.store.task(taskId),
@@ -113,26 +175,88 @@ export class ToolService {
     switch (name) {
       case 'setup_list': {
         const snapshot = this.store.get<SetupSnapshot>('setup_snapshot', taskId);
-        result = { files: snapshot?.files.map(({ content, sourceHash, ...f }) => f) ?? [], warnings: snapshot?.warnings ?? [] };
+        result = {
+          defaultSkills: coreSkills.map(({ content, ...s }) => s),
+          files: snapshot?.files.map(({ content, sourceHash, ...f }) => f) ?? [],
+          warnings: snapshot?.warnings ?? [],
+        };
         break;
       }
       case 'setup_read': {
-        const file = this.store.get<SetupSnapshot>('setup_snapshot', taskId)?.files.find(f => f.id === args.id);
-        if (!file) throw new Blocked('Document is not part of this task’s approved setup snapshot.');
-        result = { id: file.id, setup: file.setupName, path: file.path, content: file.content, sha256: file.sha256 };
+        const file =
+          coreSkills.find((s) => s.id === args.id) ??
+          this.store
+            .get<SetupSnapshot>('setup_snapshot', taskId)
+            ?.files.find((f) => f.id === args.id);
+        if (!file)
+          throw new Blocked('Document is not part of this task’s approved setup snapshot.');
+        result = {
+          id: file.id,
+          setup: 'setupName' in file ? file.setupName : 'DUKE default skills',
+          path: file.path,
+          content: file.content,
+          sha256: file.sha256,
+        };
         break;
       }
-      case 'list_files':
-        result = (await readdir(await path(), { withFileTypes: true }))
+      case 'list_files': {
+        const entries = (await readdir(await path(), { withFileTypes: true }))
           .filter((f) => !sensitive(f.name) && !f.isSymbolicLink())
-          .slice(0, 500)
+          .sort((a, b) => a.name.localeCompare(b.name))
           .map((f) => ({ name: f.name, directory: f.isDirectory() }));
+        result = {
+          entries: entries.slice(args.offset, args.offset + 500),
+          total: entries.length,
+          nextOffset: args.offset + 500 < entries.length ? args.offset + 500 : null,
+        };
         break;
+      }
       case 'read_file': {
+        const file = await fileContent(workspace, args.path, signal),
+          lines = file.content.split('\n');
+        const excerpt = lines
+          .slice(args.start_line - 1, args.start_line - 1 + args.max_lines)
+          .join('\n');
+        result = {
+          ...file,
+          path: args.path,
+          content: excerpt.slice(0, 50000),
+          startLine: args.start_line,
+          totalLines: lines.length,
+          truncated:
+            file.truncated ||
+            args.start_line > 1 ||
+            args.start_line - 1 + args.max_lines < lines.length ||
+            excerpt.length > 50000,
+        };
+        break;
+      }
+      case 'search_files':
+        result = await searchFiles(workspace.path, args.path, args.query, signal);
+        break;
+      case 'preview_file':
+        result = await previewFile(workspace.path, args.path, args.page, signal, {
+          sheet: args.sheet,
+          range: args.range,
+        });
+        break;
+      case 'edit_file': {
         const p = await path();
         if ((await stat(p)).size > 500000)
-          throw new Blocked('File is larger than 500 KB. Narrow the read using shell.');
-        result = { path: args.path, content: await readFile(p, 'utf8') };
+          throw new Error('Precise edits are limited to UTF-8 files under 500 KB.');
+        const content = decodeText(await readFile(p)),
+          first = content.indexOf(args.old_text);
+        if (first < 0 || content.indexOf(args.old_text, first + 1) >= 0)
+          throw new Error(
+            'The old_text must match exactly once. Read the current file and include more surrounding text.',
+          );
+        const next =
+          content.slice(0, first) + args.new_text + content.slice(first + args.old_text.length);
+        if (Buffer.byteLength(next) > 500000) throw new Error('Edited file would exceed 500 KB.');
+        await this.backup(taskId, p);
+        signal.throwIfAborted();
+        await writeFile(p, next, { mode: 0o600 });
+        result = await this.recordArtifact(taskId, workspace.path, p);
         break;
       }
       case 'write_file': {
@@ -180,10 +304,7 @@ export class ToolService {
         this.store.event(taskId, 'source', { url: result.url });
         break;
       case 'web_search':
-        result = await fetchPublic(
-          'https://www.google.com/search?q=' + encodeURIComponent(args.query),
-          signal,
-        );
+        result = await searchPublic(args.query, signal);
         this.store.event(taskId, 'source', { url: result.url, query: args.query });
         break;
       case 'browser':
@@ -205,51 +326,17 @@ export class ToolService {
         if (args.format === 'markdown' || args.format === 'html')
           await writeFile(p, args.content, { mode: 0o600 });
         if (args.format === 'docx') {
-          const d = new Document({
-            sections: [
-              { children: args.content.split('\n').map((text: string) => new Paragraph(text)) },
-            ],
-          });
-          await writeFile(p, await Packer.toBuffer(d));
+          await writeFile(p, await wordArtifact(args.content));
         }
         if (args.format === 'xlsx') {
-          const book = new ExcelJS.Workbook();
-          book.addWorksheet('Sheet 1').addRows(args.rows ?? [[args.content]]);
-          await book.xlsx.writeFile(p);
-          const check = new ExcelJS.Workbook();
-          await check.xlsx.readFile(p);
+          const workbook = await makeSpreadsheet(args.content, args.rows, args.sheets, signal);
+          await writeFile(p, workbook.bytes);
+          result = { calculation: workbook.calculation };
         }
         if (args.format === 'pdf') {
-          const pdf = await PDFDocument.create(),
-            font = await pdf.embedFont(StandardFonts.Helvetica);
-          let page = pdf.addPage(),
-            y = 790;
-          for (const line of args.content.split('\n')) {
-            const words = line.split(/\s+/);
-            let wrapped = '';
-            for (const word of words) {
-              if (font.widthOfTextAtSize(wrapped + ' ' + word, 11) > 490) {
-                if (y < 50) {
-                  page = pdf.addPage();
-                  y = 790;
-                }
-                page.drawText(wrapped, { x: 50, y, size: 11, font });
-                y -= 16;
-                wrapped = '';
-              }
-              wrapped += (wrapped ? ' ' : '') + word;
-            }
-            if (y < 50) {
-              page = pdf.addPage();
-              y = 790;
-            }
-            page.drawText(wrapped, { x: 50, y, size: 11, font });
-            y -= 18;
-          }
-          await writeFile(p, await pdf.save());
-          await PDFDocument.load(await readFile(p));
+          await writeFile(p, await pdfArtifact(args.content, signal));
         }
-        result = await this.recordArtifact(taskId, workspace.path, p);
+        result = { ...(await this.recordArtifact(taskId, workspace.path, p)), ...result };
         break;
       }
       case 'checkpoint': {
@@ -271,7 +358,7 @@ export class ToolService {
       }
     }
     signal.throwIfAborted();
-    this.store.event(taskId, 'tool_completed', { name, result });
+    this.store.event(taskId, 'tool_completed', { name, result: toolReceipt(result) });
     return result;
   }
   async backup(taskId: string, path: string) {
@@ -286,6 +373,7 @@ export class ToolService {
     }
   }
   async recordArtifact(taskId: string, root: string, path: string) {
+    root = await scoped(root, '.');
     const data = await readFile(path),
       a = {
         id: randomUUID(),
@@ -302,11 +390,11 @@ export class ToolService {
   async shell(w: Workspace, command: string, writable: boolean, signal: AbortSignal) {
     if (process.platform !== 'darwin' && process.platform !== 'linux')
       throw new Blocked('The sandbox is not supported on this platform.');
-    const r = await runProcess(
-      process.execPath,
-      shellRunnerArgs(),
-      { input: JSON.stringify({ workspace: w.path, command, writable }), signal, timeout: 100000 },
-    );
+    const r = await runProcess(process.execPath, shellRunnerArgs(), {
+      input: JSON.stringify({ workspace: w.path, command, writable }),
+      signal,
+      timeout: 100000,
+    });
     try {
       return JSON.parse(r.stdout);
     } catch {
@@ -439,13 +527,19 @@ export class ToolService {
       }
       if (args.action === 'screenshot') {
         const p = await scoped(w.path, `artifacts/browser-${Date.now()}.png`, true);
-        await page.screenshot({ path: p, fullPage: true });
-        return this.recordArtifact(task.id, w.path, p);
+        const bytes = await page.screenshot({ path: p });
+        return {
+          ...(await this.recordArtifact(task.id, w.path, p)),
+          coverage: 'Current browser viewport only',
+          images: [imageResult(bytes, 'image/png', page.url())],
+        };
       }
+      const body = await page.locator('body').innerText();
       return {
         url: page.url(),
         title: await page.title(),
-        text: (await page.locator('body').innerText()).slice(0, 30000),
+        text: body.slice(0, 30000),
+        truncated: body.length > 30000,
         links: await page.locator('a').evaluateAll((els) =>
           els.slice(0, 60).map((a) => ({
             text: (a.textContent ?? '').slice(0, 100),

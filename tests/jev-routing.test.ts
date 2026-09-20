@@ -10,6 +10,7 @@ import { Approvals } from '../server/approval.js';
 import { Jev } from '../server/adapters/jev.js';
 import {
   ModelInput,
+  defaults,
   type Difficulty,
   type Model,
   type Workspace,
@@ -116,7 +117,11 @@ async function fixture() {
     answer: (fn: typeof answer) => {
       answer = fn;
     },
-    add: (...models: Model[]) => models.forEach((m) => store.put('model', m.id, m)),
+    add: (...models: Model[]) => {
+      models.forEach((m) => store.put('model', m.id, m));
+      // Synthetic identifiers use an explicit fallback rather than a real model alias.
+      store.put('settings', 'main', { ...store.settings(), jevFallbackModel: models.at(-1)!.id });
+    },
     run: async (prompt = 'Change a line of code', patch: Record<string, unknown> = {}) => {
       engine.stopped = true;
       const task = await engine.create({ prompt, workspaceId: 'w', required: ['files'], ...patch });
@@ -303,8 +308,8 @@ test('a stale Jev choice cannot execute a disabled or newly exhausted model', as
   }
 });
 
-test('uncertain model selection and invalid candidate IDs fall back automatically at the assessed difficulty', async () => {
-  for (const mode of ['uncertain', 'invalid', 'timeout'] as const) {
+test('explicit rules choice and invalid candidate IDs fall back automatically at the assessed difficulty', async () => {
+  for (const mode of ['rules', 'invalid', 'timeout'] as const) {
     const f = await fixture();
     try {
       f.add(model('quick', 'routine'), model('deep'));
@@ -314,8 +319,7 @@ test('uncertain model selection and invalid candidate IDs fall back automaticall
         return {
           model: choice(
             Object.keys(body.questions.model.criteria),
-            mode === 'invalid' ? 'outside-candidate-list' : 'candidate_0',
-            mode === 'uncertain' ? 0.2 : 1,
+            mode === 'invalid' ? 'outside-candidate-list' : 'use_rules',
           ),
         };
       });
@@ -331,7 +335,91 @@ test('uncertain model selection and invalid candidate IDs fall back automaticall
   }
 });
 
-test('uncertain difficulty uses a complex-capable fallback without asking for a model', async () => {
+test('a close choice among qualified models executes Jev selection without a confidence escalation', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('default'), model('selected'));
+    f.answer((body) => {
+      if (body.questions.difficulty) return assessment(1);
+      const keys = Object.keys(body.questions.model.criteria);
+      const selected = Object.entries(body.questions.model.criteria).find(
+        ([, v]: any) => v.model === 'selected',
+      )![0];
+      return {
+        model: {
+          type: 'choice',
+          choice: selected,
+          confidence: 0.2,
+          probabilities: Object.fromEntries(keys.map((key) => [key, key === selected ? 0.4 : 0.3])),
+        },
+      };
+    });
+    const task = await f.run();
+    assert.equal(task.status, 'completed');
+    assert.deepEqual(f.runs, ['selected']);
+    assert.equal(task.route?.selectionSource, 'jev');
+    assert.equal(task.route?.assessment.difficulty, 'standard');
+  } finally {
+    await f.close();
+  }
+});
+
+test('Jev jointly chooses a supported model and effort and the engine records that execution', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker', 'complex', { supportedEfforts: ['low', 'max'] }));
+    const worker = f.engine.workers.codex;
+    let effort: string | undefined;
+    f.engine.workers.codex = {
+      run: async (context) => {
+        effort = context.model.effort;
+        return worker.run(context);
+      },
+    };
+    f.answer((body) => {
+      if (body.questions.difficulty) return assessment(1);
+      const options = body.questions.model.criteria;
+      assert.deepEqual(
+        Object.values<any>(options)
+          .filter((option) => option.model === 'worker')
+          .map((option) => option.effort),
+        ['low', 'max'],
+      );
+      const selected = Object.keys(options).find((key) => options[key].effort === 'max')!;
+      return { model: choice(Object.keys(options), selected, 0.3) };
+    });
+    const task = await f.run();
+    assert.equal(task.status, 'completed');
+    assert.equal(task.route?.effort, 'max');
+    assert.equal(task.route?.selectionSource, 'jev');
+    assert.equal(effort, 'max');
+    assert.equal(f.store.list<any>('routing_run')[0].effort, 'max');
+    assert.equal(f.store.list<any>('routing_outcome')[0].effort, 'max');
+  } finally {
+    await f.close();
+  }
+});
+
+test('the default fallback cannot silently select a provider flagship', () => {
+  const selected = route(
+    { prompt: 'Write a short note', required: ['files'] },
+    { id: 'w', name: 'Test', path: '/tmp', providers: ['codex'], instructions: [] },
+    [
+      model('z-default', 'complex', {
+        catalog: {
+          preferred: true,
+          description: 'Provider default',
+          discoveredAt: new Date().toISOString(),
+        },
+      }),
+      model('a-qualified', 'routine', { model: 'gpt-5.6-luna' }),
+    ],
+    defaults,
+  );
+  assert.equal(selected.modelId, 'a-qualified');
+});
+
+test('uncertain difficulty uses the configured fallback without asking for a model', async () => {
   const f = await fixture();
   try {
     f.add(model('quick', 'routine'), model('deep'));
@@ -350,6 +438,7 @@ test('shadow testing records decisions but cannot change the executed model', as
   try {
     f.store.put('settings', 'main', { ...f.store.settings(), jevMode: 'observe' });
     f.add(model('quick', 'routine'), model('deep'));
+    f.store.put('settings', 'main', { ...f.store.settings(), jevFallbackModel: 'quick' });
     f.answer((body) =>
       body.questions.difficulty
         ? assessment(2)

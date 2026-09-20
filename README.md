@@ -1,247 +1,198 @@
 # DUKE Autorouter
 
-![DUKE Autorouter — lime wordmark on navy](docs/assets/duke-autorouter-banner.svg)
+![DUKE Autorouter](docs/assets/duke-autorouter-banner.svg)
 
-**Decides Using Knowledge and Evidence**
+**Give it the task. It chooses the model.**
 
-*Give it the task. It chooses the model.*
+DUKE Autorouter is a Mac app that chooses a model for each task from a roster you
+select. Use it for coding, research, writing, and documents across your Codex and
+Claude subscriptions and optional OpenRouter models. Jev assesses the task,
+chooses an eligible model and supported reasoning effort, and reviews the result.
 
-Created and maintained by [Joshua Bloodworth](https://github.com/joshdbloodworth).
+The goal is to finish each task with the model capability it needs while
+conserving tokens, subscription capacity, and API spending. Live routing quality
+and savings have not yet been measured.
 
-A local task harness for coding, research, writing, and file deliverables. It routes
-work across a small roster you select from supported Codex and Claude subscription
-runtimes and optional OpenRouter models. The objective is sufficient quality with
-minimal necessary resource use, conserving subscriptions and API budgets alike.
-Jev assesses task difficulty and chooses an eligible model for automatic
-execution. Shadow testing is available as a development diagnostic.
+## Version 0.1
 
-**Status: source preview for Apple Silicon macOS.** A standalone app can be built locally.
-Live routing quality and resource savings have not been established.
-Local tests and browser checks are not evidence of model quality or daily-use
-reliability. See [verification](docs/VERIFICATION.md) for the exact coverage.
+Version 0.1 targets **Apple Silicon Macs running macOS 14 or newer**. The normal
+installation is a prebuilt Mac download. The application source is available for
+inspection and contributions. The first signed, notarized download is being
+prepared and has not been published yet.
 
-Start with the [step-by-step setup guide](docs/NEXT_STEPS.md).
-The [architecture map](docs/assets/duke-autorouter-architecture-v3.png) shows the local
-runtime, remote models, tools, and accounting boundaries.
-The [brand assets](docs/assets/README.md) include outlined wordmarks, monochrome
-variants, the favicon and the Mac app icon.
+- **A native Mac window.** The installed app manages its own background process.
+  Open it from Applications; no terminal or Codex desktop app is needed after
+  installation.
+- **Automatic model choice.** Select the models DUKE may use during setup.
+  Optional preferences give it a starting point for UI work, writing, debugging,
+  and other tasks. You do not need to score models or grade every result.
+- **Project files and deliverables.** Work in a folder you choose. Workers can
+  edit code, run tests, read public web sources, and create Markdown, HTML, PDF,
+  Word, and spreadsheet files through shared tools. Four included skills guide
+  these workflows. Basic document reading, previews, and formula calculation
+  are included; advanced Office editing is outside 0.1.
+- **Setup import.** Bring instructions, preferences, skills, and agent definitions
+  from an existing folder, including `AGENTS.md` and `CLAUDE.md`. Link to the
+  originals or keep a separate copy in DUKE. Review files before importing.
+- **Usage and task history.** See API spending, reported Codex and Claude
+  subscription allowances, and task-level token usage. Saved conversations,
+  files, checks, and checkpoints remain available after a restart.
 
-## Use the Mac application
+Version 0.1 runs one task at a time. Interrupted tasks require an explicit
+resume. Imported agent definitions provide instructions; automatic teams,
+scheduled tasks, and general desktop control are outside this release.
 
-After building and installing the app below, open **DUKE Autorouter** from Applications.
-It starts its own local service and opens the chat interface in a dedicated Mac
-window, with a Dock icon and standard window and editing commands. The **DUKE**
-menu bar item brings that same window forward or quits the application and its
-owned service. Closing the window keeps work running; reopen it from the Dock or
-menu bar. Provider sign-in and external links open in your browser. File imports
-and downloads use native file dialogs. No terminal, Codex desktop app,
-Homebrew, or developer checkout is required by the installed bundle.
+![DUKE task interface](docs/evidence/home-desktop.png)
 
-The package includes Node, Codex app-server, the Claude SDK runtime and Chromium.
-Tasks and profiles are saved under `~/Library/Application Support/DUKE Autorouter`.
-Logs are under `~/Library/Logs/DUKE Autorouter`. This initial Apple Silicon build
-is locally signed; a signed and notarized public download is not provided.
+## How routing works
 
-## Run from source
+Jev assesses the type and difficulty of a task, then chooses from your selected
+models and their supported effort levels. DUKE checks project permissions, required tools, account availability,
+and spending limits before execution. If Jev is unavailable, cannot assess the task confidently, or asks to use
+a fallback, DUKE uses your configured fallback at its lowest supported effort.
+The default is an available Luna or Haiku from your roster. Change it under
+**Usage & routing**. If that fallback is unavailable, the task pauses rather than
+switching to another model. A close choice between suitable models does not
+automatically escalate to a more powerful one.
 
-Requirements: Node 24 or newer, npm, and a supported macOS system. The first
-verified machine is Apple Silicon. Windows and Linux are not release-tested.
+After execution, DUKE checks files, test results, and retrieved sources where
+applicable. Jev reviews the available content. Failed checks can trigger another
+attempt with a suitable model; unfinished checks stay visible in the result.
 
-```sh
-git clone https://github.com/duke-autorouter/duke-autorouter.git
-cd duke-autorouter
-npm ci
-npx playwright install chromium
-npm run build
-npm start
-```
+New setups begin with provider model descriptions and your optional preferences.
+As tasks finish, DUKE records outcomes and total usage, including retries and
+reviews, to inform later choices for similar tasks at the same model and effort. This history is local to your
+installation. The [routing policy](docs/ROUTING_POLICY.md) explains the decision
+rules, evidence limits, and recovery behavior.
 
-Open the **private launch link** printed by the server. It signs this browser into
-the local app. The server binds only to `127.0.0.1:4318`. Keep the launch link local.
-The app continues running while its terminal process is running; it is not a
-background service. Ctrl+C stops it. `PORT` changes the listening port.
+See the [architecture and diagrams](docs/ARCHITECTURE.md) for the full system.
+The [decision log and ADRs](docs/DECISIONS.md) explain the choices, tradeoffs and
+changes made after testing.
 
-No provider credentials are needed to open the interface or run local synthetic tests.
-Executing real tasks requires at least one connected worker. Connecting Jev enables
-its assessment, selection and review; without it, the app uses rules and shows
-which checks remain incomplete. OpenRouter is optional.
+## Accounts
 
-Optional environment variables are documented in [.env.example](.env.example). The
-app does not automatically load `.env`; use `export` or Node’s `--env-file` flag.
+Connect at least one worker account. Add a TypeSafe API key to use Jev for
+assessment, automatic selection, and review. Without Jev, DUKE uses its local
+rules and marks content checks it could not complete.
 
-`npm run doctor` checks Node, Chromium, and the pinned native runtime protocols.
-It does not make an inference request. `npm run dev` uses Vite middleware when a
-production `dist` folder is absent; `npm run build` refreshes a production build.
-Restart the server after rebuilding so its static-file routes match the new assets.
+| Connection | Role in DUKE | Access |
+| --- | --- | --- |
+| Codex | Completes tasks | An eligible ChatGPT/Codex subscription |
+| Claude | Completes tasks | An eligible Claude subscription |
+| OpenRouter | Optional additional worker models | An API key and available API credit |
+| TypeSafe Jev | Assesses tasks, selects models, and reviews results | An API key and available API capacity |
 
-## Build the Mac application
+Codex and Claude use separate DUKE profiles through their bundled runtimes.
+Existing credentials, plugins, and settings are not copied automatically.
+Claude's additional sign-in options remain accessible, but DUKE's Claude worker
+currently supports subscription execution. See the
+[Claude runtime and usage notes](docs/USAGE.md#claude-runtime-and-distribution-review) for the implementation
+and remaining provider-term ambiguity.
 
-On Apple Silicon macOS 14 or newer with Xcode Command Line Tools installed, run
-the source setup above, then:
+## Download and install
 
-```sh
-npm run package:mac
-```
+The Mac download will be available on the
+[GitHub Releases page](https://github.com/duke-autorouter/duke-autorouter/releases)
+when the 0.1 release checks are complete. No download is published yet.
 
-The packager fetches the pinned official Node runtime and verifies its SHA-256
-against that version's published checksums. It bundles the locked production
-packages and matching Playwright browsers, builds the Swift launcher, and signs
-locally. Copy the generated `DUKE Autorouter.app` from the printed build path to
-Applications. `DUKE_PACKAGE_DIR` can choose a different output directory.
-`npm run test:standalone` checks the generated bundle in a disposable profile.
-Do not distribute that bundle until runtime licensing and signing requirements
-have been reviewed. See [release readiness](docs/RELEASE_READINESS.md).
+1. Download the Apple Silicon `.dmg` attached to the release.
+2. Open it and drag **DUKE Autorouter** into **Applications**.
+3. Open DUKE and connect your accounts.
 
-## First task
+You do not need Node, Xcode, Codex desktop or a terminal. Closing the window keeps
+DUKE running; reopen it from the Dock or menu bar. Quit DUKE to stop its service.
 
-1. Open **Connections & setup**. Connect Codex and/or Claude using their browser
-   sign-in flows. Available models are discovered after sign-in. Choose the models DUKE may use under **My models**. These are separate
-   app profiles; existing credentials, plugins, and context are not copied.
-   Claude's **Other sign-in options** keeps official SSO, Console and full native
-   setup accessible. DUKE currently routes Claude work through subscriptions;
-   connecting a separately billed account does not enable paid execution.
-2. Add TypeSafe and/or OpenRouter keys in the local password form. Keys are saved
-   to macOS Keychain. Do not paste keys into chat or task prompts.
-3. Choose **Add a project** from the task box and select a project folder.
-   **Account access** optionally restricts which worker accounts can receive its context. Connected Jev assesses tasks and selects models automatically across
-   projects; there is no separate project switch. Jev receives the task brief,
-   expected result, tool names, model profiles, and bounded excerpts of selected task
-   attachments and progress. Review includes task-file excerpts read by the worker. It also checks deliverable and source excerpts after execution.
-   Imported personal setup files are not included directly. These requests use the API budget.
-4. Your selected models can route immediately using provider descriptions. Optionally
-   set **Starting preferences** for types of work; scoring is not part of setup. API endpoints
-   are selected from current tool-capable endpoints within the catalog price caps;
-   an explicit endpoint can still be pinned in advanced model settings.
-5. Describe a task and start it. Automatic routing is the default. **Task options**
-   contains optional result instructions, project attachments, and a manual model
-   override when eligible models are available. **Advanced options** holds tool
-   permissions, output-file checks, and a test command. Previewing makes no model calls.
-6. Review the deliverables and automatic checks. **Usage & execution receipts**
-   holds the detailed evidence. Token receipts distinguish routing,
-   worker and review consumption. Feedback is optional; no user grading is required.
+For source builds and local development, see [Contributing](CONTRIBUTING.md).
+The [distribution guide](docs/MAC_DISTRIBUTION.md) covers signing, notarization,
+checksums and release preparation for maintainers.
 
-Use **Connections & setup → Bring your setup** to import an existing folder of
-instructions, preferences, skills and agent roles. Choose **Link** for future
-source edits or **Copy** for an independent editable copy. Review the detected
-files and project scopes before applying. Every task keeps its own context
-snapshot; imported instructions never expand tool permissions. Selected files
-can be exported as a portable DUKE bundle. The earlier single-file project
-import remains available. See [setup import](docs/SETUP_IMPORT.md) for supported
-formats, limits and behavior.
+## Start your first task
 
-## Operating behavior
+1. Open **Connections & setup**. Sign in to Codex or Claude, add your Jev key,
+   and connect OpenRouter if you want it.
+2. Under **My models**, choose the models DUKE may use and save the selection.
+   **Starting preferences** are optional.
+3. Return to **Tasks**, choose **Add a project**, and select a folder. To bring
+   existing instructions, use **Connections & setup → Bring your setup** and
+   choose **Link** or **Copy**. The [import guide](docs/SETUP_IMPORT.md) explains
+   supported files and project scope.
+4. Describe what you want done and choose **Start task**. DUKE selects the model
+   and begins. Results and generated files appear with the conversation.
 
-- Jev assesses task difficulty, selects from eligible model profiles, and the
-  engine dispatches automatically. It uses TypeSafe Score for difficulty and Choice
-  for model selection. Uncertain decisions use automatic rules fallback.
-- User-declared evaluations retain their quality and difficulty gates. Provider descriptions
-  enable first-use routing; optional work preferences provide starting points.
-  Jev uses early scoped outcomes and cumulative resource receipts to inform later
-  choices. Related work supplies weaker guidance; unrelated roster and preference
-  changes retain compatible history. Retries and routing/review calls count.
-  Subscription-window receipts preserve observed allowance changes and unknowns.
-  Rules honor your work preference within the same quality tier, then compare
-  established token evidence. Jev can select any qualified candidate.
-  Missing reports cannot establish savings. Overrides retain
-  provider and tool restrictions. One task executes at a time in v0.1.
-- Tasks save their history and checkpoints in SQLite. A restart marks active work
-  interrupted; resume it explicitly. Native session IDs are retained as evidence,
-  while subsequent stages start clean sessions using checkpoints and artifacts.
-- At most two automatic recovery attempts and six stages. Workers have a bounded
-  tool loop; Codex stages also have a 30-minute watchdog.
-- Files are scoped to the project. Replacements keep backups. Individual file
-  removal moves the file into recoverable app storage after approval.
-- Shell commands run in a separate OS sandbox with network access disabled.
-  Workspace reads and tests can run automatically; shell write access requires
-  approval. Normal file-tool edits remain autonomous. Dependency installation
-  needing the network must be done outside the worker by the user.
-- Browser actions use an isolated ephemeral Chromium profile. Public HTTPS reads
-  are allowed; clicks and fills require approval. This is not a general desktop
-  automation or authenticated-account integration.
-- API limits default to **$5/day and $25/month**, using America/New_York calendar
-  boundaries. Jev is included. Reservations are retained when a response is
-  uncertain; reported usage settles successful requests. **Usage & routing →
-  Review request ledger** lets you record a provider-verified charge for a stopped
-  task, preserving the reservation and an audit note. Unknown charges never
-  become zero automatically. Limits cover this
-  harness's ledger, not activity in other apps, subscription fees, credit
-  purchases, or charges independently enabled in provider accounts.
-- The header defaults to a **Usage** button. Open it to see API budgets and separate
-  Codex/Claude allowance windows, then choose whether to pin API budget,
-  subscriptions, both, or neither. This changes visibility only.
-- Subscription readings include account activity outside DUKE. Unknown capacity
-  stays unknown; stale readings and elapsed resets require a refresh. Claude
-  uses an experimental method in the pinned SDK and degrades to unavailable
-  when the runtime cannot report usage. See [usage display](docs/USAGE.md).
-- No background notifications, cloud hosting, telemetry service, scheduled tasks,
-  automatic teams, or public publishing are configured.
+**Task options** holds optional result instructions, attachments, and a model
+override when compatible models are available. **Advanced options** holds tool
+permissions, output-file checks, and a test command. The defaults are enough to
+start a task.
 
-## Evaluate routing
+The [setup guide](docs/NEXT_STEPS.md) covers account setup and troubleshooting.
+
+## Data, permissions, and usage
+
+Task history and configuration are stored on your Mac. The installed app uses
+`~/Library/Application Support/DUKE Autorouter`; a source checkout uses `.router/`
+unless `ROUTER_DATA_DIR` is set. API keys entered through the connection form are
+saved in macOS Keychain. Keep the state directory outside task folders and source
+control. Stop DUKE before backing it up.
+
+Connected model providers receive the task context needed to carry out the work.
+Jev receives the task brief, model information, and bounded excerpts of selected
+attachments, progress, and results. Imported setup files are not sent directly
+to Jev, though material quoted into task output can reach its review. Public web
+search sends the query to Tavily's keyless service. It requires no extra account
+and reports service limits without switching to paid search. See
+[security and data handling](SECURITY.md) for the boundaries.
+
+Files are scoped to the selected project. Shell commands run in an OS sandbox
+with network access disabled; shell writes require approval. Browser tools use
+an isolated profile, and clicks or form fills require approval. Network-dependent
+package installation must be done outside the worker.
+
+Open **Usage & routing** for spending and subscription details. The header's
+**Usage** button can optionally show API budgets, subscription allowances, or
+both. API limits start at $5 per day and $25 per month and include Jev. They cover
+requests made through DUKE. Subscription readings are account-wide, so they
+include use in other apps. Missing or stale usage stays labeled; Claude's usage
+reader is experimental. See the [usage guide](docs/USAGE.md).
+
+## Verification and development
+
+Local checks cover routing, file tools, approvals, imports, persistence,
+accounting, and the interface. The current tool pass includes 147 automated tests,
+13 browser workflows, and 12 standalone package checks. Browser workflows use
+synthetic workers while exercising the real app and files.
+
+Live Codex and Claude checks have produced code, sourced research, writing, and
+Word/PDF/Excel outputs. Those checks exposed defects in document rendering,
+image delivery, and search that were repaired and rechecked. The
+[tool audit](docs/TOOL_AUDIT.md) records the failures, fixes, sample outputs, and
+remaining limits. OpenRouter has no successful live worker result yet. Final
+installed-app checks and signed distribution are still pending.
+
+Routing accuracy, resource savings, and daily-use reliability have not been
+established. Intel Macs, Windows, and Linux are not release-tested. The
+[verification record](docs/VERIFICATION.md) separates automated checks, live
+worker evidence, and release checks still to do.
+
+Run the core development checks without provider credentials:
 
 ```sh
+npm run check
 npm test
-npm run test:browser
-npm run test:importer
-npm run test:sandbox
+npm run build
 npm run eval
 ```
 
-The first command runs core and HTTP tests. Browser verification injects a
-**synthetic worker into a separate test app**, while exercising the real UI,
-SQLite, tool service, approvals, and artifact files. Production has no synthetic
-worker option. The sandbox check exercises real macOS isolation with synthetic
-files. `npm run eval` validates the 80-case corpus; it does not call models.
+`npm run eval` validates the 80-case task corpus without calling models. Live
+comparisons use your accounts and consume usage; the
+[benchmark protocol](docs/BENCHMARK_PROTOCOL.md) describes those separate runs.
 
-With the app running and a model connected:
+See [contributing](CONTRIBUTING.md) for additional checks and
+[API documentation](docs/API.md) for local interfaces.
 
-```sh
-npm run eval -- --run --mode strong --model 'codex:EXACT_DISCOVERED_ID' --limit 4
-npm run eval -- --run --mode rules --limit 4
-npm run eval -- --run --mode jev --limit 4
-```
+## License and credits
 
-Use the exact roster ID from setup. Set Jev **Off** for the rules run and
-**Automatic selection** for the Jev run. Shadow testing is a separate diagnostic
-that does not test Jev dispatch. Existing API budgets still apply. Live runs require
-your explicit decision to send the test briefs and consume provider usage. No live
-acceptance results are included in this source preview.
-Start with development cases. Use `--split held-out --limit 40` for final paired
-evaluation, after development decisions are fixed. Review each saved result's
-rubric, then fill `review.accepted`, `review.criticalFailure`, `review.corrections`,
-and notes in `outputs/evaluations/<run>/results.json`.
+Created and maintained by [Joshua Bloodworth](https://github.com/joshdbloodworth).
+DUKE stands for **Decides Using Knowledge and Evidence**.
 
-```sh
-npm run eval:compare -- path/to/baseline/results.json path/to/candidate/results.json
-```
-
-Comparison rejects unmatched cases or profiles, duplicate cases, development splits,
-fewer than five cases per work type, and unreviewed acceptance results. It compares
-acceptance by work type, latency, retries/stages, whole-task tokens by provider,
-settled API costs, unresolved reservations and observed subscription-window changes.
-Allowance percentages are kept separate by provider and reset window; account-wide
-changes are not attributed entirely to DUKE. See [benchmark protocol](docs/BENCHMARK_PROTOCOL.md).
-Benchmark tasks do not train normal routing history. Independent release evaluation
-is separate from the automatic checks in normal use. Jev confidence is not a
-calibrated success probability. See [routing policy](docs/ROUTING_POLICY.md).
-
-## State and portability
-
-Private state defaults to `.router/` in this project. `ROUTER_DATA_DIR` can point
-to another private directory. Do not place it inside a selectable task workspace.
-The state includes task content, instruction copies, backups, authentication
-profiles, and a private launch token. Keep it out of shared folders and source
-control. Stop the app before backing up the whole state directory; preserve the
-SQLite database together with its WAL files.
-
-For changes and local checks, see [contributing](CONTRIBUTING.md). For sensitive
-reports and data boundaries, see [security](SECURITY.md). `npm run source:export`
-creates an allowlisted source snapshot under `release/`; it never publishes it.
-
-See [architecture](docs/ARCHITECTURE.md), [interfaces](docs/API.md), and
-[verification and release gates](docs/VERIFICATION.md). The application's source
-is Apache-2.0. Dependencies retain their own licenses and terms, including the
-Claude runtime. See [third-party notices](THIRD_PARTY_NOTICES.md). No proprietary
-runtime binaries, private context, or credentials belong in a source release.
-
-The complete public name is **DUKE Autorouter**. See the [naming record](docs/NAME.md)
-for the chosen identity and the scope of its preliminary public-use screen.
+The application source is licensed under [Apache-2.0](LICENSE). Dependencies
+retain their own licenses and terms; see [third-party notices](THIRD_PARTY_NOTICES.md).

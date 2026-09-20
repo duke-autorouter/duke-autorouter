@@ -1,6 +1,14 @@
-# Local evidence
+# Verification evidence
 
-Screenshots and browser receipts use invented tasks and synthetic model responses.
+The latest [tool audit receipt](tool-audit-verification.json) covers the default
+tools, packaged runtimes, and live Codex/Claude rechecks. Its
+[sample files and rendered outputs](tool-audit/README.md) came from actual workers
+using public or invented material. Final installed-app verification and a live
+OpenRouter completion remain open. See [verification](../VERIFICATION.md).
+
+The earlier receipts below retain the date and scope of their original checks.
+
+Interface screenshots and browser receipts use invented tasks and synthetic model responses.
 They verify the interface and local mechanics, not real model quality or savings.
 
 - [Chat, updated typography](usage-home.png)

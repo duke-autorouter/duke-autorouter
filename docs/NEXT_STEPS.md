@@ -55,9 +55,11 @@ Choose **Use this setup** after checking the selection and project scope. See
 [the importer guide](SETUP_IMPORT.md) for updates, portable exports and supported
 skills/settings. Imported agent roles are guidance, not separate running agents.
 
-Under **Projects**, give the project a name and use **Choose folder…**. Select a
-specific folder where DUKE can read and create files. The picker can create a new
-folder. Select the providers allowed to receive that project’s task context.
+Return to **Tasks** and choose **Add a project** in the task box. Select a
+folder where DUKE can read and create files, check the project name, and save.
+The folder picker can create a new folder. **Account access** lets you restrict
+which worker accounts can receive that project's context. You can also add
+projects under **Connections & setup**.
 
 Once connected, Jev automatically assesses difficulty and chooses the model for
 tasks across your projects. There is no per-project Jev switch. Jev receives a
@@ -70,13 +72,17 @@ Use **Project settings** to change which worker accounts can carry out the work.
 
 ## 5. Start a task
 
-Click **New task**, describe the work, and check the labeled **Project** selector.
-Automatic routing is the default. **Task options** contains attachments, expected
-files, verification commands, available tools, and the optional model override.
+Click **New task**, describe the work, and check the **Project** selector.
+Choose **Start task**. Automatic routing is the default.
+
+**Task options** contains optional result instructions, attachments, and a model
+override when compatible models are available. **Advanced options** holds tool
+permissions, output-file checks, and a test command. None is required to begin.
 
 The preview makes no model calls. On Start, DUKE rechecks permissions,
 availability and spending limits. Jev assesses difficulty and selects the worker
-automatically; automatic rules handle missing or uncertain Jev responses.
+automatically; the configured economical fallback handles missing or uncertain Jev responses
+at its lowest supported effort. An unavailable fallback pauses the task.
 
 Models in your roster are labeled **Selected**. Jev uses their provider
 descriptions to choose a model. You do not need to score or evaluate models.
@@ -89,7 +95,10 @@ across subscriptions and APIs. Early outcomes inform Jev, and unrelated model or
 preference changes retain compatible history. **Worked** or **Needs work** remains
 optional feedback. Developer testing is separate from normal setup.
 
-## 6. Complete the live acceptance checks
+## For contributors: live acceptance checks
+
+These checks are part of release validation. They are not required for ordinary
+setup. Live runs send prompts to connected providers and consume account usage.
 
 Use a dedicated test project with nonprivate material for these checks:
 

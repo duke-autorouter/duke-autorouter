@@ -918,13 +918,38 @@ main {
 }
 .running-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   font-size: 13px;
   margin: 25px 0;
 }
-.running-row .live-dot {
-  margin-right: 8px;
+.working-dots {
+  display: inline-flex;
+  margin-left: 2px;
+}
+.working-dots > span {
+  animation: working-dot 1.4s ease-in-out infinite;
+}
+.working-dots > span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.working-dots > span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes working-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .working-dots > span {
+    animation: none;
+  }
 }
 .approval {
   border: 1px solid #e1cf9f;

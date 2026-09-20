@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-19T18:33:17.452Z",
+  "at": "2026-09-20T01:43:42.989786+00:00",
   "command": "npm audit --omit=dev --json",
   "scope": "Production dependencies; development dependencies omitted from vulnerability audit",
   "result": "passed",
@@ -14,20 +14,14 @@
     "total": 0
   },
   "dependencyMetadata": {
-    "prod": 287,
+    "prod": 291,
     "dev": 97,
     "optional": 87,
     "peer": 7,
     "peerOptional": 0,
-    "total": 404
+    "total": 408
   },
-  "packageLockSHA256": "f070e6c63c29ffb12bab30e148edf83cf05ca83da7d5fcefbd5bfafeaabc82f9",
-  "auditReportSHA256": "95379634d06631bcf5d458da43521653935bd8e88632d8385c437d9220db8c65",
-  "previousAttempts": {
-    "count": 2,
-    "result": "unavailable",
-    "httpStatus": 503,
-    "reason": "npm advisory endpoint maintenance"
-  },
-  "note": "No known vulnerabilities were reported by npm at the recorded time. No dependency files were changed."
+  "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
+  "auditReportSHA256": "9258f5c03029293686708186b2ce7d8f7bb7e212963b79e469f84b1ebd11dfe2",
+  "note": "No known vulnerabilities were reported at the recorded time. Includes xlsx-calc and Formula.js; this does not establish absence of unknown vulnerabilities."
 }

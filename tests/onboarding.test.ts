@@ -47,15 +47,16 @@ test('provider discovery waits for selection without claiming evaluated quality;
       /No available model/,
     );
     saveRoster(r.store, { modelIds: [profiles[0].id] });
+    r.store.put('settings', 'main', { ...defaults, jevFallbackModel: profiles[0].id });
     profiles = modelsWithFeedback(r.store);
     const selected = route(
       { ...task, required: [...task.required] },
       workspace,
       profiles,
-      defaults,
+      r.store.settings(),
     );
     assert.equal(selected.modelId, 'codex:general');
-    assert.match(selected.reason, /collecting results/);
+    assert.match(selected.reason, /configured fallback/);
     const created = await r.engine.create({ ...task, workspaceId: 'w' });
     for (let i = 0; i < 100 && r.store.task(created.id).status !== 'completed'; i++)
       await new Promise((resolve) => setTimeout(resolve, 10));
@@ -96,7 +97,10 @@ test('feedback is one rating per task, informs future routing, and leaves measur
     assert.equal(profiles[1].evaluated, false);
     assert.equal(profiles[1].quality.writing, 0);
     assert.equal(
-      route({ ...task, required: [...task.required] }, workspace, profiles, defaults).modelId,
+      route({ ...task, required: [...task.required] }, workspace, profiles, {
+        ...defaults,
+        jevFallbackModel: 'codex:b',
+      }).modelId,
       'codex:b',
     );
     assert.equal(modelsWithFeedback(r.store, 'coding')[1].feedback?.worked, 0);

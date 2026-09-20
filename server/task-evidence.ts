@@ -3,6 +3,9 @@ import { extname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { inflateRawSync, crc32 } from 'node:zlib';
 import { PDFDocument } from 'pdf-lib';
+import ExcelJS from 'exceljs';
+import { calculateWorkbook } from './spreadsheets.js';
+import { nativeDocument } from './native-documents.js';
 import { scoped, sensitive } from './paths.js';
 import type { Task, Workspace, Check } from './types.js';
 
@@ -41,7 +44,7 @@ export type ReviewEvidence = {
 export async function routingContext(
   task: Task,
   workspace: Workspace,
-  attachments: { path: string; content: string }[],
+  attachments: { path: string; content: string; truncated?: boolean }[],
 ): Promise<RoutingContext> {
   let budget = 8000;
   const bounded = attachments.map((a) => {
@@ -53,7 +56,7 @@ export async function routingContext(
       bytes: Buffer.byteLength(a.content),
       lines: a.content.split('\n').length,
       excerpt,
-      truncated: excerpt.length < a.content.length,
+      truncated: !!a.truncated || excerpt.length < a.content.length,
     };
   });
   // Only aggregate project structure; private setup documents are never copied to Jev.
@@ -100,7 +103,7 @@ const xmlText = (s: string) =>
 // Read Office XML without executing macros, resolving external relationships, or extracting
 // files. Bound both compressed and expanded size before decompression; reject ZIP64/encryption.
 class InspectionLimit extends Error {}
-function officeXML(bytes: Buffer): Map<string, string> {
+export function officeXML(bytes: Buffer): Map<string, string> {
   let end = -1;
   for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) {
     if (
@@ -158,7 +161,11 @@ function officeXML(bytes: Buffer): Map<string, string> {
   return files;
 }
 
-export async function inspectFile(workspace: Workspace, path: string): Promise<FileEvidence> {
+export async function inspectFile(
+  workspace: Workspace,
+  path: string,
+  signal?: AbortSignal,
+): Promise<FileEvidence> {
   const p = await scoped(workspace.path, path),
     metadata = await stat(p);
   if (!metadata.isFile() || !metadata.size) throw new Error(`${path} is missing or empty`);
@@ -184,11 +191,22 @@ export async function inspectFile(workspace: Workspace, path: string): Promise<F
   if (format === '.pdf') {
     const pdf = await PDFDocument.load(bytes, { updateMetadata: false });
     if (!pdf.getPageCount()) throw new Error('PDF has no pages');
-    return {
-      ...result,
-      incomplete: true,
-      detail: `PDF opens with ${pdf.getPageCount()} pages; rendered layout and extracted text are not checked.`,
-    };
+    try {
+      const extracted = await nativeDocument({ operation: 'pdf_text', path: p }, signal);
+      const missingPages = extracted.pagesWithoutText ?? [];
+      return {
+        ...result,
+        text: extracted.hasText ? extracted.text : undefined,
+        incomplete: extracted.truncated || !extracted.hasText || missingPages.length > 0,
+        detail: `PDF opens with ${pdf.getPageCount()} pages. ${extracted.hasText ? 'Text extracted from saved PDF.' : 'No extractable text; OCR is not included.'}${missingPages.length ? ` Pages ${missingPages.join(', ')} have no extractable text and may be blank or image-only; OCR is not included.` : ''} Layout requires visual inspection.`,
+      };
+    } catch (error) {
+      return {
+        ...result,
+        incomplete: true,
+        detail: `PDF opens with ${pdf.getPageCount()} pages; text inspection unavailable: ${(error as Error).message}`,
+      };
+    }
   }
   if (format === '.docx' || format === '.xlsx') {
     let files: Map<string, string>;
@@ -203,38 +221,52 @@ export async function inspectFile(workspace: Workspace, path: string): Promise<F
       if (!main || !/<w:document\b/.test(main) || !/<\/w:document>/.test(main))
         throw new Error('Missing Word document body');
       result.text = xmlText(main);
+      result.detail =
+        'Main Word document text inspected. Comments, tracked changes, embedded images and rendered layout are not assessed.';
     } else {
       if (!files.has('xl/workbook.xml')) throw new Error('Missing Excel workbook');
       const sheets = [...files].filter(([name]) => name.startsWith('xl/worksheets/'));
       if (!sheets.length) throw new Error('Workbook has no worksheets');
       if (!sheets.some(([, xml]) => /<(?:v|t)>[^<]+<\//.test(xml)))
         throw new Error('Workbook has no readable cells');
-      const strings = [
-        ...(files.get('xl/sharedStrings.xml') ?? '').matchAll(/<si\b[^>]*>([\s\S]*?)<\/si>/g),
-      ].map((m) => xmlText(m[1]));
-      result.text = sheets
-        .map(
-          ([name, xml]) =>
-            name +
-            '\n' +
-            [...xml.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)]
-              .map((m) => {
-                const value = m[2].match(/<v>([\s\S]*?)<\/v>/)?.[1] ?? xmlText(m[2]);
-                if (/\bt="s"/.test(m[1]) && strings[Number(value)] === undefined)
-                  throw new Error('Invalid spreadsheet shared string reference');
-                return /\bt="s"/.test(m[1]) ? strings[Number(value)] : value;
-              })
-              .join(' | '),
-        )
-        .join('\n');
+      const book = new ExcelJS.Workbook();
+      await book.xlsx.load(bytes as any);
+      try {
+        const calculation = await calculateWorkbook(book, signal);
+        result.detail = `Workbook cells read; ${calculation.formulas} formulas recalculated with ${calculation.engine}. Native Excel compatibility and rendered layout are not assessed.`;
+      } catch (error) {
+        result.incomplete = true;
+        result.detail = `Formula calculation unverified: ${(error as Error).message}. Displayed values may be cached.`;
+      }
+      result.text = '';
+      for (const sheet of book.worksheets) {
+        result.text += `\n[Sheet: ${sheet.name}]\n`;
+        sheet.eachRow((row) =>
+          row.eachCell((cell) => {
+            if (result.text!.length >= 200000) {
+              result.incomplete = true;
+              return;
+            }
+            result.text += `${cell.address}: ${cell.text}${cell.formula ? ` [formula: =${cell.formula}]` : ''}\n`;
+          }),
+        );
+      }
     }
     if (!result.text.trim()) throw new Error('Office document has no readable text or cells');
-    result.detail =
-      'Core Office XML and text inspected; opening in Office, rendered layout and formula correctness are not checked.';
-  } else if (!bytes.includes(0)) result.text = bytes.toString('utf8');
-  else {
+  } else if (!bytes.includes(0)) {
+    try {
+      result.text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    } catch {
+      result.incomplete = true;
+      result.detail = 'Binary or non-UTF-8 content is not supported by the text verifier.';
+    }
+  } else {
     result.incomplete = true;
     result.detail = 'Binary content is not supported by the text verifier.';
+  }
+  if (result.text && result.text.length > 200000) {
+    result.text = result.text.slice(0, 200000);
+    result.incomplete = true;
   }
   return result;
 }

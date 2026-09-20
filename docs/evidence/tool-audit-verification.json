@@ -1,0 +1,237 @@
+{
+  "at": "2026-09-20T02:21:52.624114+00:00",
+  "status": "Local and packaged repairs pass; final installed-app and OpenRouter live checks remain open",
+  "platform": "Apple Silicon macOS; development machine",
+  "toolchain": "duke-tools-v2",
+  "implementationSHA256": "348daa007c1dba9dff18aedeb77f83dc1b186fec4b397229d5614c2f11f508e8",
+  "implementationFiles": 984,
+  "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop plus listed root build files",
+  "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
+  "checks": [
+    {
+      "command": "npm run build",
+      "result": "passed",
+      "scope": "fresh source export",
+      "outputSHA256": "5ec6024bf4821afadc6bde934be284377114b26e3960c7eb486b949472d1d9d8"
+    },
+    {
+      "command": "npm run check",
+      "result": "passed",
+      "scope": "fresh source export",
+      "outputSHA256": "050a5147d436ddb6aef50450bc422b052069584ec8fdd3058b4668689802cec9"
+    },
+    {
+      "command": "npm test",
+      "result": "passed",
+      "count": 147,
+      "at": "2026-09-20T02:10:16.236202+00:00",
+      "outputSHA256": "8d93191c63da90721b03b90b8803ceb1d625522a6dfe2aa70138c6274977aeef"
+    },
+    {
+      "command": "npm run test:browser",
+      "result": "passed",
+      "count": 13,
+      "at": "2026-09-20T01:40:51.506227+00:00",
+      "outputSHA256": "f11e313e9481ea596f5cce6a6f824fb8badc3b979f8bd91a128138a03bae9ae5"
+    },
+    {
+      "command": "npm run test:standalone",
+      "result": "passed",
+      "count": 12,
+      "at": "2026-09-20T02:11:40.979646+00:00",
+      "outputSHA256": "5338a93c5d6c5efaf52a7084e0c7d0b6e5d7af1fd41f7613ea426971eaeaabaa"
+    },
+    {
+      "command": "npm run eval",
+      "result": "passed",
+      "count": 80,
+      "at": "2026-09-20T01:40:44.468745+00:00",
+      "outputSHA256": "15c07e74f78e4a479204674572aeed4ef52daf5d7cc71735fe03d9ec14b9e84f"
+    }
+  ],
+  "standalone": {
+    "at": "2026-09-20T02:11:40.979Z",
+    "checks": [
+      "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
+      "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+      "Project setup persists in a separate application data directory",
+      "Packaged roster and work preferences save through the authenticated API without inference",
+      "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+      "A duplicate service cannot take over the active application state",
+      "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+      "Sandboxed coding task can use bundled Node",
+      "Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools",
+      "Graceful shutdown removes the launch receipt and releases state",
+      "Relaunch restores the saved project and creates a new authenticated local session",
+      "Application signature remains valid after bundled workers, browser and restart"
+    ],
+    "liveInference": false,
+    "minimalEnvironment": true
+  },
+  "live": {
+    "originalEngineTasks": 8,
+    "originalTaskFamilies": [
+      "coding",
+      "research",
+      "writing",
+      "documents"
+    ],
+    "material": "Public or invented inputs only",
+    "initialFailures": [
+      "Codex host-tool guidance",
+      "Literal Markdown and Word table rendering",
+      "Citation extraction from code examples",
+      "Unsupported detail in writing draft"
+    ],
+    "packagedWorkerRuns": [
+      {
+        "startedAt": "2026-09-20T01:57:05.097Z",
+        "finishedAt": "2026-09-20T01:57:50.862Z",
+        "kind": "tools-codex",
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "effort": "low",
+        "scope": "Real subscription worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "8dfcbf9b9f8e85124eee2d4a3c6ccdb286194d9352ea3eba4151b0c30d7d6298",
+        "apiSpend": 0,
+        "status": "worker_completed",
+        "toolCalls": 17
+      },
+      {
+        "startedAt": "2026-09-20T01:58:46.194Z",
+        "finishedAt": "2026-09-20T01:59:16.208Z",
+        "kind": "tools-claude",
+        "provider": "claude",
+        "model": "sonnet",
+        "effort": "low",
+        "scope": "Real subscription worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "381340344b5d5834a85fca5307971c462bb586e4bc05e1fe60162a925d754f60",
+        "apiSpend": 0,
+        "status": "worker_completed",
+        "toolCalls": 15
+      },
+      {
+        "startedAt": "2026-09-20T02:00:47.859Z",
+        "finishedAt": "2026-09-20T02:01:31.129Z",
+        "kind": "tools-research",
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "effort": "low",
+        "scope": "Real subscription worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "dedbe3a82e13e0cc098eee0752de67ceee4d3e8fe54975f40e47d760bf371690",
+        "apiSpend": 0,
+        "status": "worker_completed",
+        "toolCalls": 8
+      },
+      {
+        "startedAt": "2026-09-20T02:11:28.196Z",
+        "finishedAt": "2026-09-20T02:12:15.465Z",
+        "kind": "tools-research-fixed",
+        "provider": "codex",
+        "model": "gpt-5.6-luna",
+        "effort": "low",
+        "scope": "Real subscription worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "dedbe3a82e13e0cc098eee0752de67ceee4d3e8fe54975f40e47d760bf371690",
+        "apiSpend": 0,
+        "status": "worker_completed",
+        "toolCalls": 9
+      },
+      {
+        "startedAt": "2026-09-20T02:12:36.392Z",
+        "finishedAt": "2026-09-20T02:12:59.079Z",
+        "kind": "tools-grid",
+        "provider": "claude",
+        "model": "sonnet",
+        "effort": "low",
+        "scope": "Real subscription worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "07b31dd8fb9b8c00c8226c93c389f04452d52b4916bb377f7d49028cc8c1801a",
+        "apiSpend": 0,
+        "status": "worker_completed",
+        "toolCalls": 6
+      },
+      {
+        "startedAt": "2026-09-20T02:13:51.635Z",
+        "finishedAt": "2026-09-20T02:13:52.005Z",
+        "kind": "tools-openrouter-free",
+        "provider": "openrouter",
+        "model": "liquid/lfm-2.5-2.6b:free",
+        "scope": "Real connected worker and shared tools from the Mac bundle, driven by an isolated acceptance runner. This is not an installed UI or Jev-routing test.",
+        "toolchain": "duke-tools-v2",
+        "skillHash": "8dfcbf9b9f8e85124eee2d4a3c6ccdb286194d9352ea3eba4151b0c30d7d6298",
+        "apiSpend": 0,
+        "status": "failed",
+        "error": "OpenRouter request failed (404).",
+        "toolCalls": 0,
+        "unreconciled": 0
+      }
+    ],
+    "imageReceiptCheck": "Repaired Codex research session includes one actual input_image block; image data and raw native sessions are excluded.",
+    "independentChecks": [
+      "Saved coding utility: five Node tests pass",
+      "Writing recheck stays within supplied fictional facts",
+      "Research note matches retrieved public source and explicitly reports browser/PDF work",
+      "Word/PDF layouts and both workbook sheets independently rendered and inspected",
+      "Spreadsheet totals are 15 in recalculated reads and saved outputs"
+    ],
+    "apiSpendUSD": 0.003308,
+    "apiCapUSD": 1,
+    "unreconciled": 0,
+    "subscriptionUsage": "Consumed separately; incomplete provider telemetry is not inferred as dollars."
+  },
+  "artifacts": "tool-audit/manifest.json",
+  "limits": [
+    "No successful live OpenRouter worker; zero-price request returned 404 before tools.",
+    "Packaged worker rechecks bypass Jev and the native window.",
+    "Final tools are not yet verified in the installed app.",
+    "Ad hoc package signature; Developer ID and notarization pending.",
+    "No fresh physical Mac installation.",
+    "No comparative model-quality, routing-savings or multi-day reliability result.",
+    "Document, preview, formula and OCR limits are described in TOOL_AUDIT.md."
+  ],
+  "published": false,
+  "cleanSource": {
+    "at": "2026-09-20T02:23:44.921930+00:00",
+    "environment": "Fresh allowlisted export on development Mac; new lockfile install, no copied node_modules",
+    "checks": [
+      {
+        "command": "npm ci --no-fund --no-audit",
+        "exitCode": 0,
+        "outputSHA256": "52c4f3215c4c59902e3f0e7c34aabe4aa7e8f163b6ca79fccc7a8bdfa426b4db"
+      },
+      {
+        "command": "npm run check",
+        "exitCode": 0,
+        "outputSHA256": "050a5147d436ddb6aef50450bc422b052069584ec8fdd3058b4668689802cec9"
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 0,
+        "outputSHA256": "5ec6024bf4821afadc6bde934be284377114b26e3960c7eb486b949472d1d9d8"
+      },
+      {
+        "command": "npm test",
+        "exitCode": 0,
+        "outputSHA256": "58655046498d356fd207affcae8b500bee2b78b01670ae0b1bb52027ae42a2f5"
+      },
+      {
+        "command": "npm run eval",
+        "exitCode": 0,
+        "outputSHA256": "15c07e74f78e4a479204674572aeed4ef52daf5d7cc71735fe03d9ec14b9e84f"
+      }
+    ],
+    "sourceManifestSHA256": "1057b59e922541cf9ad113a3fb14a68fefc0b91cb56fd59dac819b74417ea588",
+    "exportedFiles": 1078,
+    "sourceMismatches": [],
+    "liveInference": false
+  },
+  "configurationCleanup": {
+    "testBudget": "Original limits restored after tests; no active tasks",
+    "accountsAndHistory": "Preserved",
+    "temporaryModelSelection": "Six-model acceptance roster preserved"
+  }
+}

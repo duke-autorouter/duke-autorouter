@@ -9,6 +9,7 @@ import { Store } from '../server/store.js';
 import { ToolService } from '../server/tools.js';
 import { Approvals } from '../server/approval.js';
 import { TaskInput } from '../server/types.js';
+import { inspectFile } from '../server/task-evidence.js';
 test('PDF and XLSX artifacts reopen with expected content structure', async () => {
   const root = await mkdtemp(join(tmpdir(), 'duke-artifacts-')),
     path = join(root, 'workspace');
@@ -51,6 +52,27 @@ test('PDF and XLSX artifacts reopen with expected content structure', async () =
     const book = new ExcelJS.Workbook();
     await book.xlsx.readFile(join(path, 'out.xlsx'));
     assert.equal(book.worksheets[0].getCell('B2').value, 42);
+    assert.ok(book.worksheets[0].getColumn(1).width! >= 12);
+    assert.equal(book.worksheets[0].getCell('B2').alignment.horizontal, 'right');
+    await tools.call(
+      't',
+      'create_artifact',
+      {
+        path: 'out.docx',
+        format: 'docx',
+        content:
+          '# Inventory\n\n**Sample data.**\n\n| Item | Count |\n|---|---|\n| Hammer | 8 |\n\n- Return tools clean.',
+      },
+      new AbortController().signal,
+    );
+    const word = await inspectFile(
+      { id: 'w', name: 'test', path, providers: ['codex'], instructions: [] },
+      'out.docx',
+    );
+    assert.ok(word.text);
+    assert.match(word.text, /Inventory/);
+    assert.match(word.text, /Hammer/);
+    assert.doesNotMatch(word.text, /# Inventory|\*\*Sample|\|---\|/);
   } finally {
     s.close();
     await rm(root, { recursive: true, force: true });

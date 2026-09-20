@@ -13,6 +13,9 @@ change the licenses or service terms of its dependencies or the models it calls.
 - React, Vite, Fastify, Zod, TypeScript, tsx, docx, ExcelJS, pdf-lib, and related
   packages retain their included open-source licenses.
 - Playwright: Apache-2.0. Chromium and its components retain their own notices.
+- xlsx-calc 0.9.2 and Formula.js 4.6.1: MIT. These provide bounded calculation
+  for supported spreadsheet formulas; they are not native Microsoft Excel.
+  Sources: https://github.com/fabiooshiro/xlsx-calc and https://github.com/formulajs/formulajs.
 - DM Sans and Manrope fonts: SIL Open Font License; local font packages contain
   the applicable license text. No external font requests are needed.
 

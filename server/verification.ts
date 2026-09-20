@@ -3,6 +3,7 @@ import type { ToolService } from './tools.js';
 import type { Jev } from './adapters/jev.js';
 import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
+import { marked } from 'marked';
 import { scoped } from './paths.js';
 import { inspectFile, type ReviewEvidence, type RoutingContext } from './task-evidence.js';
 import { REVIEW_POLICY } from './outcomes.js';
@@ -18,13 +19,19 @@ function urlKey(raw: string) {
   }
 }
 export function citedURLs(text: string) {
-  return [
-    ...new Set(
-      (text.match(/https?:\/\/[^\s<>"`]+/g) ?? []).map((url) =>
-        urlKey(url.replace(/[)\],.;!?]+$/, '')),
-      ),
-    ),
-  ];
+  const urls = new Set<string>();
+  const collect = (value: string) => {
+    for (const url of value.match(/https?:\/\/[^\s<>"`]+/g) ?? [])
+      urls.add(urlKey(url.replace(/[)\],.;!?]+$/, '')));
+  };
+  // Parse prose so example URLs in fenced, indented or inline code are not
+  // mistaken for research citations. The reviewer still sees the full content.
+  marked.walkTokens(marked.lexer(text), (token) => {
+    if (token.type === 'link') collect(token.href);
+    else if (token.type === 'text' && !token.tokens) collect(token.text);
+    else if (token.type === 'html') collect(token.text);
+  });
+  return [...urls];
 }
 function repeatableTest(command: string) {
   return (
@@ -94,8 +101,15 @@ export async function verifyTask(
       event.kind === 'tool_completed' &&
       event.data.name === 'read_file' &&
       typeof event.data.result?.content === 'string'
-    )
+    ) {
       inputs.set(event.data.result.path, event.data.result.content);
+      if (event.data.result.truncated) {
+        evidence.incomplete = true;
+        limitations.push(
+          `${event.data.result.path}: the worker read a bounded or incomplete excerpt.`,
+        );
+      }
+    }
   let inputBudget = 16000;
   for (const [path, text] of inputs) {
     const excerpt = text.slice(0, Math.min(4000, inputBudget));
@@ -122,30 +136,7 @@ export async function verifyTask(
   for (const path of paths.slice(0, 20)) {
     signal.throwIfAborted();
     try {
-      const file = await inspectFile(workspace, path);
-      if (file.format === '.pdf') {
-        // The generator's exact input is usable text evidence only while the saved bytes
-        // still match its receipt. This does not establish rendered layout quality.
-        const receipt = artifacts.findLast((a) => a.path === path && a.sha256 === file.sha256);
-        const start =
-          receipt && events.findLastIndex((e) => e.kind === 'artifact' && e.data.id === receipt.id);
-        const generation =
-          typeof start === 'number' && start >= 0
-            ? events
-                .slice(0, start)
-                .findLast(
-                  (e) =>
-                    e.kind === 'tool_started' &&
-                    e.data.name === 'create_artifact' &&
-                    e.data.args.path === path &&
-                    e.data.args.format === 'pdf',
-                )
-            : undefined;
-        if (generation) {
-          file.text = generation.data.args.content;
-          file.incomplete = false;
-        }
-      }
+      const file = await inspectFile(workspace, path, signal);
       if (file.text && file.text.length > textBudget) {
         file.text = file.text.slice(0, textBudget);
         file.incomplete = true;
@@ -158,9 +149,20 @@ export async function verifyTask(
         status: file.incomplete ? 'unverified' : 'passed',
         detail: file.detail,
       });
-      if (['.pdf', '.docx', '.xlsx'].includes(file.format))
-        limitations.push(`${path}: rendered layout was not inspected.`);
-      if (file.format === '.xlsx') limitations.push(`${path}: formulas were not recalculated.`);
+      if (['.pdf', '.docx', '.xlsx'].includes(file.format)) {
+        const previews = events.filter(
+          (e) =>
+            e.kind === 'tool_completed' &&
+            e.data.name === 'preview_file' &&
+            e.data.result?.path === path &&
+            e.data.result?.sha256 === file.sha256,
+        );
+        limitations.push(
+          previews.length
+            ? `${path}: generated ${previews.length} preview(s). ${previews.at(-1)!.data.result.coverage} Layout was not independently judged.`
+            : `${path}: rendered layout was not inspected.`,
+        );
+      }
     } catch (e) {
       // Unsafe paths are policy failures; a verifier must never broaden file access to retry.
       if (e instanceof Blocked) throw e;
@@ -196,7 +198,14 @@ export async function verifyTask(
     .filter((e) => e.kind === 'tool_completed' && ['web_read', 'browser'].includes(e.data.name))
     .map((e) => e.data.result)
     .filter((s) => s?.url && typeof s.text === 'string');
-  const citationText = [result, ...evidence.files.map((f) => f.text ?? '')].join('\n');
+  const citationText = [
+    result,
+    ...evidence.files
+      .filter((f) =>
+        ['.md', '.markdown', '.txt', '.html', '.htm', '.pdf', '.docx', '.xlsx'].includes(f.format),
+      )
+      .map((f) => f.text ?? ''),
+  ].join('\n');
   const citations = citedURLs(citationText);
   if (
     task.route?.kind === 'research' &&

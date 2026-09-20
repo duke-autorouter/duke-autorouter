@@ -329,10 +329,17 @@ export async function createApp(
         qualityFloor: z.number().min(0).max(1),
         jevMode: z.enum(['off', 'observe', 'assist']),
         jevModel: z.string().min(1),
+        jevFallbackModel: z.string().max(300).optional(),
         jevInputPrice: z.number().nonnegative(),
         jevValidated: z.boolean(),
       })
       .parse(req.body);
+    if (
+      s.jevFallbackModel &&
+      s.jevFallbackModel !== store.settings().jevFallbackModel &&
+      !store.get<Model>('model', s.jevFallbackModel)?.enabled
+    )
+      throw new Blocked('Choose a Jev fallback model from your selected roster.');
     store.put('settings', 'main', { ...store.settings(), ...s });
     return store.settings();
   });

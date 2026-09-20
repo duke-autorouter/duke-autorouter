@@ -1,84 +1,86 @@
 # Verification
 
-DUKE Autorouter has local automated checks for routing, task execution, accounting,
-imports, UI interactions and its Mac runtime. The current source-preview evidence
-is recorded in [the release receipt](evidence/release-checks.json). The receipt
-identifies the commands, platform, synthetic inputs and any untested behavior.
-Screenshots in that folder use invented task and account data.
+The September 2026 tool pass has **147 automated tests, 13 browser workflows,
+and 12 standalone package checks passing**. Live Codex and Claude workers also
+completed bounded checks of coding, research, writing, and documents. These runs
+found defects; the [tool audit](TOOL_AUDIT.md) records the corrections and limits.
 
-Current results: **124 automated tests, thirteen browser workflows, four Claude-setup workflows, six usage-panel workflows, eleven importer
-checks, six native sandbox checks and eleven standalone package checks pass**. The
-clean-source build and 80-case corpus validation also pass. The npm production
-dependency audit completed on September 19, 2026, with **zero known vulnerabilities
-reported**. Its scope and lockfile hash are in [the audit receipt](evidence/dependency-audit.json).
+The current [tool receipt](evidence/tool-audit-verification.json) identifies the
+tested source, commands and live checks. [Sample outputs](evidence/tool-audit/README.md)
+include actual worker-created files and their rendered previews. The production
+[dependency audit](evidence/dependency-audit.json) reports zero known vulnerabilities
+for its recorded lockfile. None of these checks establishes routing savings or
+general model quality.
 
-The subsequent [branding check](evidence/branding-verification.json) covers the
-outlined SVGs, desktop and narrow layouts, favicon, Mac app and menu bar icons,
-and the installed app update. Browser, importer and standalone checks were rerun
-after that change. The original release receipt retains the earlier core-test
-and clean-source build evidence.
+## Current checks
 
-The later [usage and typography receipt](evidence/usage-verification.json) covers
-DM Sans, saved header preferences, independent Codex/Claude windows, stale and
-unavailable states, keyboard and narrow-screen behavior, and the packaged update.
-All automated tests, importer checks and the standalone checks were rerun for
-this change. The twelve existing browser workflows passed before the final
-sentence-case label adjustment; the six focused usage workflows ran afterward.
-Read-only metadata calls through the installed app returned Codex and Claude
-allowance percentages and reset times. No model prompt was submitted. Claude's
-SDK usage interface remains experimental; this account check does not prove
-availability for every plan or future runtime release. Fresh-machine and live
-model-task acceptance are still pending.
+| Check | Result and scope |
+| --- | --- |
+| TypeScript and build | Passed locally; includes the native document helper. |
+| Automated tests | 147 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages and evidence limits. |
+| Browser workflows | 13 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, deliverables, usage, recovery and narrow screens. Final backend-only repairs followed this run. |
+| Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and an ad hoc signature check. |
+| Evaluation corpus | 80 cases validate, 20 per work family. This checks the corpus, without calling models. |
+| Live workers | Successful Codex and Claude runs, detailed below. No successful OpenRouter task yet. |
 
-The [Claude setup receipt](evidence/claude-setup-verification.json) records the
-additional official sign-in choices, cancellation and billing classification.
-Its four browser workflows use a simulated login process; the native launch
-test executes a substitute program to check quoting, environment isolation and
-cleanup. No real SSO, Console or cloud login was performed. The eleven package
-checks cover actual bundled runtimes and restart with a disposable profile.
-The installed app retained its saved configuration and its existing Claude
-subscription, and a metadata-only read returned two allowance windows. Source
-and packaged Claude executable hashes still match. The earlier native-sandbox
-and clean-source receipts are retained as historical checks, not new runs.
+Clean-source and hosted checks are recorded against the source snapshot or
+commit they actually tested. See the receipt and
+[GitHub Actions](https://github.com/duke-autorouter/duke-autorouter/actions).
 
-The [native window and interface receipt](evidence/native-window-verification.json)
-records the standalone WebKit window, standard Mac editing and window controls,
-attached folder/file/save dialogs, and the simpler task interface. The installed
-app was launched, quit and reopened; native import/export was checked with a
-synthetic setup, then removed. Saved account readiness and configuration remained
-unchanged. This includes 33 native origin/navigation policy scenarios, 124 core
-tests, thirteen browser workflows and eleven final package checks. The source
-profile's earlier hosted checks passed on its original commit; current hosted
-results remain tied to the commit shown by GitHub.
+## Live acceptance
 
-## What the checks establish
+The initial eight task runs used the installed app's engine, connected Jev and
+subscription workers. They included four rechecks. The later tool checks used
+the bundled adapters and tools through an isolated acceptance runner. Those
+later checks exercised real accounts but bypassed Jev selection and the native
+window. They do not replace the final installed-app check.
 
-- Core and HTTP tests exercise eligibility, preference ordering, automatic Jev
-  dispatch, recovery, uncertainty, approval boundaries, usage and persistence.
-- Import tests exercise Link and Copy, portable multiline settings, scope,
-  missing references, credential exclusions and immutable task snapshots.
-- Browser workflows run the actual app and file tools against synthetic workers.
-  They exercise task creation, deliverables and previews, recovery evidence,
-  approvals, cancellation, model selection and audited spending reconciliation.
-- Standalone checks use a disposable data directory, minimal environment and an
-  unrelated working directory. They initialize the bundled worker and browser
-  runtimes without model inference and check shutdown, restart and signature.
-- Clean-source verification uses the allowlisted export, installs its lockfile
-  dependencies and runs the documented build and local checks.
+| Work | Observed result |
+| --- | --- |
+| Coding | The first Codex attempt exposed incorrect tool guidance. After repair, saved code and tests ran. A later Luna Low package check created a utility and passed five independently rerun Node tests. |
+| Research | A citation checker incorrectly treated an example URL as a source. After repair, source checks passed. Later search and screenshot-delivery defects were fixed; Luna Low retrieved MDN and a public PDF, viewed a browser screenshot, and wrote an accurate sourced note. |
+| Writing | The initial draft added an unsupported borrowing policy. A Luna Low recheck stayed within the invented brief and passed factual review. |
+| Documents | Valid initial files contained literal Markdown and poorly rendered tables. Repaired exporters produced clean Word/PDF outputs and a two-sheet workbook with total 15. Claude Sonnet Low read the inputs, created the files, and inspected image previews. Independent renders confirmed the saved output. |
+| Spreadsheet inspection | Quick Look cropped cells. A later Claude check read recalculated formulas and viewed both sheets through explicit cell-range previews. Saved-cell previews and native Excel layout remain different checks. |
+| Image delivery | Codex and Claude correctly described an image with a blue circle and red square. After additional Codex bridge guidance, a research run emitted one actual image input and described its screenshot. |
+| OpenRouter | A zero-price endpoint request returned HTTP 404 before any tool call. The account had no API credit. The attempt spent $0 and left no unresolved reservation. Its adapter has automated coverage, but live completion is unverified. |
 
-A synthetic Jev transport validates the request/selection/review mechanics. It
-cannot establish Jev's judgment, actual provider completion, model quality or
-savings. Catalog and sign-in checks do not establish funded API capacity.
+Jev's review remained **unverified** on some otherwise useful outputs. Independent
+acceptance review does not rewrite those saved statuses. The original failures
+also remain in the private run history. All prompts used public or invented
+material. Recorded API spending was **$0.003308** within a $1 total cap;
+subscription usage was separate. No comparative savings claim follows from this
+small set of acceptance tasks.
 
-## Unverified release claims
+## Earlier evidence
 
-Live coding, research, writing and document acceptance remain unvalidated. No
-paired model benchmark or multi-day reliability claim is included. No fresh
-physical Mac installation, notarized distribution or Intel/Linux/Windows support
-is established by a clean directory on the development Mac. Hosted checks are
-recorded per commit in [GitHub Actions](https://github.com/duke-autorouter/duke-autorouter/actions).
-They cover type checking, core tests, the frontend build and the fixture corpus;
-native interactive checks remain local.
+These receipts retain their original dates and scope:
 
-See [release readiness](RELEASE_READINESS.md) for outstanding decisions and
-[benchmark protocol](BENCHMARK_PROTOCOL.md) for independent output review.
+- [Initial release checks](evidence/release-checks.json): initial clean export,
+  core tests, sandbox, importer and package verification.
+- [Branding](evidence/branding-verification.json): SVG assets, favicon, Mac icons,
+  layouts and installed update.
+- [Usage and typography](evidence/usage-verification.json): header preferences,
+  account-wide Codex/Claude readings, stale states and packaged update. Real
+  account metadata was read without inference; UI cases used invented readings.
+- [Claude setup](evidence/claude-setup-verification.json): simulated login choices,
+  cancellation and billing classification. It does not prove real SSO or cloud
+  account execution.
+- [Native window](evidence/native-window-verification.json): actual window, menus,
+  attached dialogs, quit/relaunch and state preservation on the development Mac.
+  It predates the final tool repairs.
+
+## Still required for release
+
+Install the final tool bundle and repeat the native task flow. Complete Developer
+ID signing, notarization, and a fresh-machine download/install/account check.
+Resolve the OpenRouter live gap before calling every supported adapter validated.
+
+The Mac download has not been published. The final tool bundle currently has an
+ad hoc signature. A clean profile on the development Mac does not establish a
+fresh physical Mac installation. No Intel, Windows or Linux release is tested.
+
+Broader routing accuracy, multi-day reliability, and resource savings require
+the [benchmark protocol](BENCHMARK_PROTOCOL.md). The
+[release checklist](RELEASE_READINESS.md) separates those claims from the 0.1
+distribution work.

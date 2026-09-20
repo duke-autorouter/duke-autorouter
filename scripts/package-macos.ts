@@ -17,6 +17,7 @@ import { chromium } from 'playwright';
 import { appRoot, resource } from '../server/runtime.js';
 import { packageApp } from './package-paths.js';
 import { prepareMacRuntime } from './prepare-macos.js';
+import { buildDocumentTools } from './build-document-tools.js';
 
 if (process.platform !== 'darwin' || process.arch !== 'arm64')
   throw new Error('This package target is Apple Silicon macOS.');
@@ -39,7 +40,11 @@ function run(bin: string, args: string[], cwd = appRoot) {
   execFileSync(bin, args, {
     cwd,
     stdio: 'inherit',
-    env: { ...process.env, CLANG_MODULE_CACHE_PATH: join(build, 'clang-cache') },
+    env: {
+      ...process.env,
+      COPYFILE_DISABLE: '1',
+      CLANG_MODULE_CACHE_PATH: join(build, 'clang-cache'),
+    },
   });
 }
 await rm(join(build, 'runtime'), { recursive: true, force: true });
@@ -51,13 +56,15 @@ run(process.execPath, [
 if (!refresh) await rm(app, { recursive: true, force: true });
 await mkdir(join(contents, 'MacOS'), { recursive: true });
 await mkdir(code, { recursive: true });
+buildDocumentTools(join(resources, 'DocumentTools'));
 // Refresh generated trees exactly, so removed source files and old asset chunks
 // cannot remain in a later bundle. Locked dependencies are reused separately.
-for (const directory of ['server', 'shared', 'dist'])
+for (const directory of ['server', 'shared', 'dist', 'skills'])
   await rm(join(code, directory), { recursive: true, force: true });
 await cp(resource('.build/runtime/server'), join(code, 'server'), { recursive: true });
 await cp(resource('.build/runtime/shared'), join(code, 'shared'), { recursive: true });
 await cp(resource('dist'), join(code, 'dist'), { recursive: true });
+await cp(resource('skills'), join(code, 'skills'), { recursive: true });
 for (const file of ['package.json', 'package-lock.json', 'THIRD_PARTY_NOTICES.md'])
   await cp(resource(file), join(code, file));
 for (const file of ['AppIcon.icns', 'MenuBarTemplate.png', 'MenuBarTemplate@2x.png'])
@@ -73,9 +80,13 @@ if (!refresh) {
       if (entry.optional) continue;
       throw new Error(`Missing installed production dependency: ${path}`);
     }
-    await cp(resource(path), join(code, path), { recursive: true, dereference: true });
     copied.push(path);
   }
+  // Install from the lockfile into the unsynced bundle. Copying thousands of
+  // development files through a File Provider can stall and carries local edits.
+  // The pinned runtimes ship their native executables in platform packages and
+  // do not require lifecycle scripts during this production install.
+  run('npm', ['ci', '--omit=dev', '--ignore-scripts', '--no-audit', '--no-fund'], code);
   // Keep package command entry points available to native SDK dependencies.
   for (const path of copied) {
     const pkg = JSON.parse(await readFile(join(code, path, 'package.json'), 'utf8'));

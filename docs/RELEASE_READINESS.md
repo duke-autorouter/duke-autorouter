@@ -1,56 +1,58 @@
-# Source-preview release checklist
+# Version 0.1 release checklist
 
-This is a portfolio build of a working local harness. Its source and synthetic
-checks can be inspected without claiming demonstrated routing quality or savings.
-The current local evidence is in [verification](VERIFICATION.md).
+DUKE's first release is an inspectable portfolio build with a downloadable Mac
+app. The [verification record](VERIFICATION.md) is the source for completed
+checks. Source and release artifacts remain private until publication is approved.
 
 ## Before sharing source
 
-- Confirm the allowlisted snapshot builds and runs using its own lockfile.
-- Review the source, screenshots and notices for private information.
-- Keep the production dependency audit current when dependencies change. The
-  September 19, 2026 retry passed with zero known vulnerabilities reported; see
-  [the audit receipt](evidence/dependency-audit.json).
-- Review provider terms and the licenses of pinned runtimes. Dependencies are
-  obtained by the user from npm; no proprietary binaries belong in the source.
-- Assess Claude integration against both the SDK subscription-login restriction
-  and the published conditions for running unmodified Claude Code in a product.
-  The [runtime review](USAGE.md#claude-runtime-and-distribution-review) records
-  the verified architecture, additional official setup choices and remaining
-  scope ambiguity. DUKE retains subscription routing; its worker does not yet
-  execute directly billed Claude API/cloud tasks. Switching from the SDK to CLI
-  calls is not sufficient evidence of permission. The current implementation
-  retains the subscription feature with the ambiguity documented. This
-  supersedes the earlier approval-or-API-only framing; no blanket distribution
-  permission is claimed.
-- Choose the repository, enable private vulnerability reporting and review its
-  visibility. Publication is a separate action; the export command does not push.
-- After publishing, verify the configured GitHub Actions job and actual clone path.
+- Build and check the final allowlisted export with its own lockfile. Record its
+  file hashes and the matching private GitHub commit and CI result.
+- Review source, screenshots and notices for private information. The exporter
+  excludes profiles, databases, logs, downloaded runtimes and review scratchpads.
+- Keep the [production dependency audit](evidence/dependency-audit.json) current.
+  The latest tool pass reports zero known vulnerabilities, including the new
+  spreadsheet calculation dependencies.
+- Keep the failed acceptance cases and current limits visible. Confirm links in
+  the README, architecture, decision log and tool audit point to current evidence.
+- Review pinned runtime licenses and distribution conditions. The
+  [Claude runtime notes](USAGE.md#claude-runtime-and-distribution-review) retain
+  the subscription feature and document the remaining provider-term ambiguity.
+  Neither open source status nor an SDK-to-CLI change establishes blanket permission.
+- Configure private vulnerability reporting when the repository becomes public,
+  then verify the public clone path and workflow results. No secret or runtime
+  profile belongs in the source repository.
 
-The export excludes local profiles, databases, logs, downloaded runtimes, private
-review scratchpads and build outputs. Curated test receipts and synthetic
-screenshots remain in `docs/evidence/` so readers can inspect the evidence.
+## Before distributing the Mac download
 
-## Before claiming daily-use reliability or routing gains
+- Install the final audited tool bundle and repeat the native window, saved
+  account, project and task flow. The earlier native checks predate these repairs.
+- Complete a successful live OpenRouter worker check with an available endpoint
+  before claiming every adapter works. A key/catalog lookup is insufficient;
+  the zero-price endpoint attempt failed before tool execution.
+- Sign the app and nested runtimes with Developer ID, then rerun the standalone
+  tests under the hardened runtime. Current package checks used ad hoc signing.
+- Submit the exact signed archive to Apple, verify acceptance, staple the ticket,
+  and assess it with Gatekeeper. Create the DMG, ZIP and checksums from those bytes.
+- Download and install on a fresh Apple Silicon Mac, connect accounts, create a
+  project, run a task and check quit/relaunch. Test the normal quarantine path;
+  removing quarantine is not the installation procedure.
+- Publish the reviewed release assets and source together. The
+  [distribution guide](MAC_DISTRIBUTION.md) describes the maintainer commands.
 
-Run the [prepared live tasks](LIVE_ACCEPTANCE_TASKS.md) with explicit account and
-spending authorization. Check coding, research, writing and documents, and at
-least one task on each intended worker. Verify real Jev selection, artifacts,
-cancellation, exhausted capacity, recovery and resumed work.
+The target is Apple Silicon macOS 14 or newer. The bundle includes Node, Codex,
+Claude, Chromium, the native document helper and four default skills. End users
+should not need to package it or install a development toolchain.
 
-Then compare a fixed strong-model baseline, rules and Jev on matched held-out
-cases with independent acceptance review. Count all routing, worker, retry and
-review resources. Preserve incomplete token and subscription telemetry. See the
-[benchmark protocol](BENCHMARK_PROTOCOL.md). Routine users do not have to grade
-models; this independent review belongs to development validation.
+## Before claiming routing gains or daily-use reliability
 
-## Before distributing a Mac download
+Bounded live checks now cover coding, research, writing and basic documents on
+Codex and Claude. They establish specific working paths and expose failures;
+they do not establish comparative quality or efficiency.
 
-The current target is Apple Silicon macOS 14 or newer. The app bundles Node,
-Codex, Claude SDK and Chromium and manages its own local service. Local ad hoc
-signing is not notarization.
-
-A public binary needs dependency/distribution permission review, signing and
-notarization, then a fresh-machine install and account-flow check. Do not advise
-users to remove quarantine attributes as the normal install procedure.
-A source build on the development machine does not close these distribution gates.
+Compare a fixed strong-model baseline, local rules and Jev on matched held-out
+cases with independent acceptance review. Count routing, worker, retry and review
+resources. Preserve incomplete token and subscription telemetry. Include
+cancellation, exhausted capacity, recovery and resumed work in continued use.
+See the [benchmark protocol](BENCHMARK_PROTOCOL.md). Routine users do not need
+to grade models; development validation owns this work.

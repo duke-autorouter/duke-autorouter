@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Model } from '../server/types';
 import { ROSTER_LIMIT, workLabels, workTypes, type WorkPreferences } from '../shared/routing';
 import { ImportDialog } from './SetupImport';
+import { displayName } from './displayNames';
 
 type Props = {
   models: Model[];
@@ -119,7 +120,7 @@ function RosterDialog({ models, busy, act, api, close }: Props & { close: () => 
               }
             />
             <span>
-              <b>{m.label}</b>
+              <b>{displayName(m.label)}</b>
               <small>{m.id}</small>
               <small>
                 {m.provider === 'openrouter'
@@ -202,7 +203,7 @@ function PreferenceForm({ models, preferences, busy, api, act }: Props) {
               )}
               {selected.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.label} · {m.provider}
+                  {displayName(m.label)} · {displayName(m.provider)}
                 </option>
               ))}
             </select>
