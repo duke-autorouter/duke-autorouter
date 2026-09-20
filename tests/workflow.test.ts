@@ -437,3 +437,36 @@ test('Stop during a review retry preserves the result and rejects the late verdi
   assert.equal(f.control.runs, 1);
   assert.equal(f.store.list('routing_outcome').length, 1);
 });
+
+test('a worker that starts then stalls is blocked without quality penalties or late writes', async (t) => {
+  const f = await fixture(t);
+  let ctx!: WorkerContext;
+  f.engine.limits.inactivity = 40;
+  f.worker.run = async (context) => {
+    ctx = context;
+    ctx.emit('message_delta', { text: 'Starting' });
+    return new Promise(() => {});
+  };
+  const task = await f.run();
+  assert.equal(task.status, 'blocked');
+  assert.match(task.error!, /Waiting for the model took too long/);
+  assert.equal(f.store.list('routing_outcome').length, 0);
+  assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+  await assert.rejects(async () => ctx.tool('write_file', { path: 'late.md', content: 'late' }));
+});
+
+test('missing review evidence blocks clearly and preserves the saved review', async (t) => {
+  const f = await fixture(t);
+  f.control.verdict = 'unknown';
+  const first = await f.run();
+  await rm(join(f.workspace.path, 'result.md'));
+  const calls = f.calls.length;
+  f.engine.retryReview(first.id);
+  await f.engine.execute(first.id);
+  const task = f.store.task(first.id);
+  assert.equal(task.status, 'completed'); // Saved work survives an incomplete re-check.
+  assert.match(task.error!, /result.md is missing/);
+  assert.equal(f.control.runs, 1);
+  assert.equal(f.calls.length, calls);
+  assert.deepEqual(task.review, first.review);
+});
