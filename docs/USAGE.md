@@ -65,21 +65,23 @@ separately from those synthetic checks.
 
 ## Claude runtime and distribution review
 
-Reviewed September 19, 2026 against the installed SDK 0.3.275, its declared Claude
-Code version 2.1.275, the current source and the installed Mac app. The subsequent
-setup update preserves subscription routing while exposing additional official
-authentication choices. Synthetic account tests are separate from live sign-in
-and inference; neither was performed for this change.
+The September 19 setup review used SDK 0.3.275 and its declared Claude Code
+version 2.1.275. It checked account choices without live inference. Later Codex
+and Claude task checks are recorded in [verification](VERIFICATION.md). The
+September 20 distribution review also checks the packaged Claude binary against
+the pinned dependency before and after signing.
 
 ### Verified implementation
 
 - [The adapter](../server/adapters/claude.ts) passes the official platform
   executable to the SDK through `pathToClaudeCodeExecutable`.
   [Resolution](../server/runtime.ts) uses the pinned SDK runtime dependency.
-  The installed Mac app's executable and the dependency executable have the same
+  The release candidate's executable and the dependency executable have the same
   SHA-256: `1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b`.
-  This proves the app preserved that dependency's bytes, not every distribution
-  condition or the integrity of the upstream package.
+  The release signer preserves Anthropic's original signature and rejects a
+  changed runtime. An earlier private candidate re-signed that executable; it
+  was replaced before publication. This byte check does not establish provider
+  approval of DUKE's subscription integration.
 - [Sign-in](../server/claude-login.ts) launches the official binary's
   `auth login` for its subscription default, `--console` for Console, or `--sso`
   for organization sign-in. The binary handles OAuth, browser callback and
@@ -101,6 +103,8 @@ and inference; neither was performed for this change.
   billing service. The existing task-scoped tool broker remains in place.
 
 ### Published conditions and their limits
+
+The official pages below were rechecked September 20, 2026.
 
 The [SDK guide](https://code.claude.com/docs/en/agent-sdk) restricts third-party
 subscription sign-in without prior approval and directs product builders to API
@@ -129,6 +133,6 @@ authorization. The native binary's authentication options are accessible, while
 DUKE's own worker coverage is still narrower. This change does not claim support
 for every provider or verify native SSO/cloud account setup.
 
-This is an incremental implementation of the unmodified-runtime direction, with
-the existing subscription feature preserved. The SDK distribution ambiguity
-remains documented; the change does not certify a public subscription integration.
+DUKE preserves subscription execution and the provider-owned setup flow. The
+relationship between the SDK restriction and the unmodified-binary allowance
+remains unresolved; working sign-in and notarization do not establish approval.

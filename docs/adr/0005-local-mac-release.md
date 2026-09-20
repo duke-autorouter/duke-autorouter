@@ -1,6 +1,6 @@
 # ADR 0005: Ship a downloadable standalone Mac app and inspectable source
 
-Status: native app implemented; downloadable release preparation in progress.
+Status: notarized candidate prepared; final native launch and publication pending.
 Recorded during the September 2026 release pass.
 
 ## Context
@@ -37,7 +37,8 @@ Signing and notarization determine the normal macOS opening experience. An
 unsigned preview must be labeled clearly; it cannot be described as notarized.
 A clean-machine installation and account-flow check remains separate from tests
 on the development Mac. Provider runtime terms and dependency licenses remain
-documented separately.
+documented separately. Preserve already signed provider binaries when packaging;
+verify Claude against the pinned upstream bytes before and after signing DUKE.
 
 Portfolio evidence must distinguish local tests, synthetic workers, live account
 checks and comparative benchmarks. A functioning route does not establish measured

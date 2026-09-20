@@ -101,14 +101,14 @@ test('route preview requires authentication and valid local task input', async (
   }
 });
 
-test('preview explains the first manual trial without creating tasks, inference, or reservations', async () => {
+test('preview retains a manual option when no profile qualifies without creating tasks, inference, or reservations', async () => {
   const f = await fixture();
   try {
     f.store.put('model', 'trial', model('trial', 'codex', false));
     const automatic = await f.preview();
     assert.equal(automatic.statusCode, 200);
     assert.equal(automatic.json().status, 'blocked');
-    assert.match(automatic.json().message, /manual trial/);
+    assert.match(automatic.json().message, /None of your selected models currently qualifies/);
     assert.deepEqual(
       automatic.json().manualModels.map((m: any) => m.id),
       ['trial'],

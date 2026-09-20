@@ -8,11 +8,11 @@ decision was documented when first made.
 
 | Decision | Status | Reason and consequence |
 | --- | --- | --- |
-| [Own the task and use a shared tool layer](adr/0001-shared-task-harness.md) | Accepted; final installed check open | Consistent permissions, recovery and receipts across workers. DUKE must also supply the tools and workflow quality its users expect. |
-| [Route over a chosen roster, model and effort](adr/0002-efficient-routing.md) | Implemented | Bound the choice to the user's models and select the least sufficient configuration. A fallback is economical and explicit. |
+| [Own the task and use a shared tool layer](adr/0001-shared-task-harness.md) | Implemented; installed checks passed | Consistent permissions, recovery and receipts across workers. DUKE must also supply the tools and workflow quality its users expect. |
+| [Route over a chosen roster, model and effort](adr/0002-efficient-routing.md) | Implemented | Bound the choice to the user's models and use only the model capability and effort the task needs. A fallback is economical and explicit. |
 | [Keep verification evidence separate from model confidence](adr/0003-verification-and-learning.md) | Implemented; repaired coverage checked | A confident answer, valid file or successful command cannot establish every aspect of task quality. Unknowns remain visible and do not count as success evidence. |
 | [Keep skills distinct from tools](adr/0004-skills-and-tools.md) | Implemented and package checked | Skills describe the work; tools execute it. Imported instructions supplement a usable packaged baseline. |
-| [Ship a downloadable local Mac app and source](adr/0005-local-mac-release.md) | App implemented; download preparation open | A prebuilt download is the normal install. Source-build instructions serve contributors; a hosted service is unnecessary. |
+| [Ship a downloadable local Mac app and source](adr/0005-local-mac-release.md) | Notarized candidate prepared; publication pending | A prebuilt download is the normal install. Source-build instructions serve contributors; a hosted service is unnecessary. |
 | [Give Jev the routing decision](adr/0006-jev-as-router.md) | Implemented | Typed assessment and choice remove routine model selection while the harness enforces eligibility. Correct shape does not prove good judgment. |
 | [Support subscriptions and optional API workers](adr/0007-provider-integrations.md) | Implemented; provider limits documented | Use existing capacity and selected API models through isolated profiles. Validate each execution path separately. |
 | [Make a task the default interaction](adr/0008-simple-default-interface.md) | Implemented | Chat first, optional fine-tuning, quiet usage, and actionable setup states. |
@@ -35,13 +35,16 @@ decision was documented when first made.
   Uncertain assessment uses the configured fallback at its lowest supported effort.
 - Live checks exposed differences between provider-native tools and DUKE's own
   tool layer. The [default tool audit](TOOL_AUDIT.md) records repairs, package and
-  live rechecks, and the final release checks still open.
+  live rechecks, and remaining limits.
 - Structural document checks accepted files with poor presentation. The audit
   now requires inspection of saved outputs and explicit coverage limits.
 - Live research exposed search failures and a screenshot returned without an
   image reaching Codex. The repaired retrieval and image paths were rechecked
   with Luna. Workbook previews now show explicit ranges after Quick Look cropped
   values during a Claude check.
+- Release review found that the signer replaced Anthropic's signature on Claude.
+  The corrected signer preserves its published bytes and signature, rejects an
+  altered copy, and checks the delivered app again. No private candidate was published.
 
 For current implementation details use the [architecture](ARCHITECTURE.md),
 [routing policy](ROUTING_POLICY.md), and [verification record](VERIFICATION.md).

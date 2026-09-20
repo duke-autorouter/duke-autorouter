@@ -47,8 +47,9 @@ flowchart TD
 ![DUKE Autorouter architecture map](assets/duke-autorouter-architecture-v3.png)
 
 [Open the full-resolution map](assets/duke-autorouter-architecture-v3.png).
-This earlier illustration shows the main components. It predates automatic
-content review and outcome history; use the diagram above for the current flow.
+This September 18 illustration shows the main components. It predates effort
+selection, content review, outcome history and live acceptance. Its old status
+labels are historical; use the diagram above for the current flow.
 The image was created with the built-in image generation tool from the
 [saved prompt set](assets/README.md).
 
@@ -81,8 +82,8 @@ The adapter does not assume compatibility with Codex's Responses protocol.
 
 ## Difficulty assessment and automatic model selection
 
-Jev is the decision component for **assess difficulty → choose a suitable model →
-automatically execute**. Automatic routing is the default. Manual
+Jev assesses difficulty and chooses a model and effort. DUKE then runs the task
+through the selected worker. Automatic routing is the default. Manual
 selection under Task options remains available for evaluation trials or an explicit override.
 
 1. DUKE builds the eligible roster from enabled models, workspace provider
@@ -135,8 +136,8 @@ Usage & routing, at its lowest supported effort. It may make an economical attem
 below declared difficulty coverage. An unavailable fallback blocks without
 silently promoting to a premium model. Permission, tool and spending limits still
 apply. Normal Jev choices use qualified model-effort profiles, scoped evidence and
-starting preferences. Provider defaults receive no preference. See ROUTING_POLICY.md
-for the full decision flow.
+starting preferences. Provider defaults receive no preference. See the
+[routing policy](ROUTING_POLICY.md) for the full decision flow.
 Local automatic outcomes are scoped to family, work type, difficulty and brief size;
 they never rewrite benchmark scores. Effort is part of each execution configuration,
 so Low and Max do not share quality or token estimates. Failed attempts, routing and review tokens

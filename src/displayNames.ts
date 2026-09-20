@@ -6,6 +6,7 @@ const names: Record<string, string> = {
   astra: 'Astra',
   opus: 'Opus',
   sonnet: 'Sonnet',
+  haiku: 'Haiku',
   sol: 'Sol',
   luna: 'Luna',
   fable: 'Fable',
@@ -21,7 +22,7 @@ const names: Record<string, string> = {
 // Display only: provider keys and model identifiers sent to APIs remain untouched.
 export function displayName(value: string) {
   return value.replace(
-    /\b(?:claude|codex|jev|openrouter|astra|opus|sonnet|sol|luna|fable|gpt|openai|anthropic|typesafe|deepseek|qwen|gemini)\b/gi,
+    /\b(?:claude|codex|jev|openrouter|astra|opus|sonnet|haiku|sol|luna|fable|gpt|openai|anthropic|typesafe|deepseek|qwen|gemini)\b/gi,
     (name) => names[name.toLowerCase()],
   );
 }

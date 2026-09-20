@@ -43,9 +43,8 @@ Deleting the current file does not remove it from earlier commits or copies.
 Do not put credentials, private task content or an exploitable vulnerability in a
 public issue. If the repository offers GitHub private vulnerability reporting,
 use **Security → Report a vulnerability**. Otherwise request a private reporting
-channel from the maintainer without posting reproduction details. A dedicated
-private reporting channel must be configured before public release; this source
-preview does not advertise an invented contact address.
+channel from the maintainer without posting reproduction details. Enabling and
+checking that channel is part of the [publication checklist](docs/RELEASE_READINESS.md).
 
 Provide the affected version, platform, a minimal reproduction using invented
 data, the expected boundary and observed behavior. Avoid testing another person's

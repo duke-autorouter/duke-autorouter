@@ -306,7 +306,7 @@ export async function createApp(
     )
       throw new Blocked(`Choose at most ${ROSTER_LIMIT} models for your roster.`);
     if (m.evaluated && !m.evidence.trim())
-      throw new Blocked('Attach evaluation evidence before enabling automatic routing.');
+      throw new Blocked('Add supporting evidence before marking a model as evaluated.');
     store.put('model', m.id, m);
     return m;
   });

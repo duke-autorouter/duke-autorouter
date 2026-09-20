@@ -1,0 +1,103 @@
+{
+  "at": "2026-09-20T13:49:36.605707+00:00",
+  "release": "0.1.0",
+  "result": "Editorial review completed for maintained documentation and first-party interface messages; current distribution status is recorded separately.",
+  "guide": "Project owner voice and writing guidance, revision 2026-07-22; private guide is not redistributed.",
+  "scope": {
+    "maintainedMarkdownFiles": 38,
+    "interfaceSourceFiles": 17,
+    "serviceSourceFilesScreened": 46,
+    "additionalFiles": [
+      ".env.example",
+      "index.html",
+      ".github/workflows/local-checks.yml"
+    ],
+    "primaryReadmeScreenshot": "docs/evidence/home-desktop.png"
+  },
+  "changes": [
+    "Removed stale pending claims for completed installed-app checks and separated publication steps from broader validation.",
+    "Replaced contributor jargon and shortened onboarding copy without changing setup requirements.",
+    "Made the OpenRouter live-completion gap and incomplete automatic reviews explicit.",
+    "Marked old architecture illustrations as history and linked the current Mermaid diagrams.",
+    "Removed misleading manual-evaluation requirements from routing messages and capitalized Haiku consistently.",
+    "Clarified source versus bundled dependency notices and corrected signing to preserve the published Claude runtime."
+  ],
+  "unchangedHistoricalMaterial": [
+    "Dated verification receipts retain the outcomes observed at that time.",
+    "Worker-created acceptance samples retain their original bytes.",
+    "Image-generation prompts, manifests and old diagrams remain design history."
+  ],
+  "excludedFromEditorialRewriting": [
+    "Third-party legal/license text",
+    "Generated provider protocol identifiers",
+    "Provider-supplied model descriptions",
+    "User task content and private setup files"
+  ],
+  "limits": [
+    "This is an editorial review, not an automated guarantee of writing quality.",
+    "Future copy or behavior changes require another scoped review."
+  ],
+  "reviewedFiles": {
+    "CONTRIBUTING.md": "a48f6000048599b17a7b3fd342de4db031ab8786778c4bbfcc3432cbf0623e69",
+    "README.md": "4a8e46378b6f32848c41b650f226c71cfb5927d230cea10ee8e96d560021426b",
+    "SECURITY.md": "0ddc647596f19c56f024a258fa87bc6b5964d36636ec87cc4e2542276d8b54e7",
+    "THIRD_PARTY_NOTICES.md": "7b504ddf28616e71949578942be9c02679e70aa622dd55741c7e4ef69247a9b1",
+    "docs/API.md": "a50431da652b7f8395e2f1c61965d88d8eccb567652986274ced51062a24fbbd",
+    "docs/ARCHITECTURE.md": "033a79672081d7018861037bc3767a76ab4fc6e65fddab9175e238b6a280fdff",
+    "docs/BENCHMARK_PROTOCOL.md": "cf0d1ca30405a791f283878f624b6cbaeef13e4d08b55e9cd04dbfe91b7d0d4a",
+    "docs/DECISIONS.md": "ac5e2a6da1f4bfdba0e1c5773b1e682c5d3fe69c5d8ba9c6e626736486417edc",
+    "docs/LIVE_ACCEPTANCE_TASKS.md": "e1fc121934e13c7c8f25af35682f108a61a6149ead0ae1cf9e8fa2f8a5a6148e",
+    "docs/MAC_DISTRIBUTION.md": "530ca00d306ee5da4043e2adcc815ae6c030ca223f31b8cc1593eff337baade7",
+    "docs/NAME.md": "40d3b968f76a4f6fb6b2c332b8bd2f3be6d5af538520887599dbc896157e9bf0",
+    "docs/NEXT_STEPS.md": "d8cf2bfc0d393a2dd0ae5ab11943a28501aec40929094a03450c630a84502005",
+    "docs/RELEASE_READINESS.md": "e241e748c5a48ecec250008353d6a25f499f7080b8124786803c75839ce91dec",
+    "docs/ROUTING_POLICY.md": "b7fba4c27581975a8e831a0dc99cf2a79f38e1a2d4f64bef19b09c52659b0ef9",
+    "docs/SETUP_IMPORT.md": "abe53a3828302853c23e82907e3be689c258a26192248f4a60286a0efbb83182",
+    "docs/TOOL_AUDIT.md": "abb0a4c9bbc107bbfb52a766fe116239c065ba3eb82cf42e15067cbb0806f1f7",
+    "docs/USAGE.md": "bebebbdc3141e62a4920211d6596850e31fff226768ac4ab576c696153197ab3",
+    "docs/VERIFICATION.md": "b91c6c25e293c9235b6729d0885cb776574a7937d6a372c2d9c1e8044e05f791",
+    "docs/adr/0001-shared-task-harness.md": "e339bdbad26f973f37236f8b1b3479665e50e41d60a333c3c8d3a41681872e79",
+    "docs/adr/0002-efficient-routing.md": "3ba2af2b7a106fbcebeeeb6cb974babcc7929257c5ee784677313820bbb04d7f",
+    "docs/adr/0003-verification-and-learning.md": "1dc5d26ae4f718cbede34e13f1033ef35e5ebeff0c263517fcc53625790b65c6",
+    "docs/adr/0004-skills-and-tools.md": "e7031a27bdf322df833d28c9197e0544fda356d3aa73a92c2349e45ac57fa3e9",
+    "docs/adr/0005-local-mac-release.md": "bf1d8954c71a009b14c2a2f7fc549deb9dbc6466e5848ab40319a8cb9fc07b65",
+    "docs/adr/0006-jev-as-router.md": "bdbe2e080b235566cc6e28db2b92c569bd5eb09bb9031e1da23440a6884fa173",
+    "docs/adr/0007-provider-integrations.md": "287a48013af5c38ed8906c2f0aafbba60531f1d8c754080aa6afd5c5aba52acd",
+    "docs/adr/0008-simple-default-interface.md": "8519fcc8805b9b4102aa8f8f43900dfa0f5250462739d0ba892fdc6cc2919a96",
+    "docs/adr/0009-portable-setup-import.md": "ada8b823a8ce9a0aeed6c724cc07dbb6be1ca63b64c6a1fabb6bacaf427c5ffb",
+    "docs/adr/0010-permissions-and-recovery.md": "3a3c47fc958e9cfecad3ea7d94fee3daa6e3971652941f0e51d8d85ff1c9a66c",
+    "docs/adr/0011-resource-accounting.md": "90f9647e01cd531fd07c54186ebef8795208c4b575f23ba12a18827466620932",
+    "docs/adr/0012-public-retrieval.md": "8c88e30ccee1875aae10bd91bf2004fc180ea5f641e8d802c33595b95bc0d41d",
+    "docs/assets/README.md": "ea9eb90168305e61e4b5c866278e7d5a699afde3b0e4b2cbf8d4ebec3b28d9a3",
+    "docs/evidence/README.md": "d674950d62320da315edbe479ebfd4a24a20121517bd7111134a30e1b5831ca3",
+    "docs/evidence/tool-audit/README.md": "e1081ff3be4e6ef8ce745a0a35e7108ea79cceb56f1fce4d60cb15bb1679ca64",
+    "examples/starter/brief.md": "1a0baf766547c3acfb00a6cad137307a81fd5e464b697049dd702b6a3e800c01",
+    "skills/coding/SKILL.md": "8dfcbf9b9f8e85124eee2d4a3c6ccdb286194d9352ea3eba4151b0c30d7d6298",
+    "skills/documents/SKILL.md": "07b31dd8fb9b8c00c8226c93c389f04452d52b4916bb377f7d49028cc8c1801a",
+    "skills/research/SKILL.md": "dedbe3a82e13e0cc098eee0752de67ceee4d3e8fe54975f40e47d760bf371690",
+    "skills/writing/SKILL.md": "0bd7e0ba481ed012f1b5bb91662d287f4145e7057e7d3bcc2f79124097e17795",
+    "desktop/DocumentTools.swift": "09038cb27d0dcf308e5c7f710d927a4a86c531bc36388eda60f86f03dce38501",
+    "desktop/Launcher.swift": "2dc65edc041bdb38a1bc70782df23b7ddeff0ab3b6e9d49883a8ac993fb6cfe7",
+    "desktop/NavigationPolicy.swift": "5aea3177983298231e9d44dac7d92b6e2a67f44ff83bfb3997cfe4e72e09fb92",
+    "shared/brand.ts": "e7bc6d775ce04bde27e71058c716e612b4eff1fa90fbcb356600081a6d36e261",
+    "shared/claude-connection.ts": "787d1134ff1f5fb3998b7b0a0397fb062d979f38a55df8bc1806ef6239faa151",
+    "shared/effort.ts": "d44bc03c47c5467134c788dc3f65067c1831dc4ab9ae16603600fb9999f7529a",
+    "shared/routing.ts": "142685928786fa4b52caf27060bce225cd622cf85f15ab5404c55e628f77f3d5",
+    "shared/setup.ts": "9d7f89bd94ec9b6acc575ed90527518825a8a5461993ccf65cf627c5ab4c82c4",
+    "shared/usage-display.ts": "0aae63ec89f218c79e1ddc6b8a05739f4e0653f1ab6b8ccb43749ae8c4c051ec",
+    "src/Markdown.tsx": "2055c8cd23902873fd8e798fd8f80942a23a79c969454ebc8a7d0c15acd3cd91",
+    "src/ModelRoster.tsx": "2130cc37d84f15b4cd9b5b7d2a920c2504a294d28fcf39f4e499a6e48a9843e8",
+    "src/SetupImport.tsx": "f7030d3a147bd427b26f4e22f4b196ae398385624b3c311e9361925452bbe012",
+    "src/SpendingLedger.tsx": "374ccf6bc01e7a2164ac1399db6bb671f4b7d989c5bcd4fc1662518600fc8e1e",
+    "src/UsageControl.tsx": "16187e89a413ed75304e31f68b7acf3d1dae46c908dc3f5b408e0b553d171d54",
+    "src/desktop.ts": "83543e58e6e6486499a82333d03c3d14050595669dddd4416e624fa3e9b7dd04",
+    "src/displayNames.ts": "2e25ec490c2f0e0aa708094f30e7e6e2f62bd69f0c06cb00522ceebd9db06d3d",
+    "src/main.tsx": "8166e9f8f63d836b640f949ca4956476cec33e17c987639a05a91e781b68e45d",
+    ".env.example": "f04d20095694a1dbdb3968aee87c4b2fc93fa666c69c9793528119a3a12f85cb",
+    "index.html": "6d65a80d2467c9271e9e198cf91090e47946a138c7b77d0f04a738dd340f850f"
+  },
+  "localMarkdownLinks": {
+    "checked": 187,
+    "broken": 0
+  }
+}

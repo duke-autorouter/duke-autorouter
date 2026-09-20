@@ -1,0 +1,112 @@
+{
+  "at": "2026-09-20T13:48:20.265800+00:00",
+  "release": "0.1.0",
+  "status": "Notarized downloads prepared and verified; final native launch and publication pending",
+  "platform": "Apple Silicon macOS 14+",
+  "published": false,
+  "implementationSHA256": "cc064229652710cb3846265bec6eafcac01494dca290b4953445aec33f5dd645",
+  "implementationFiles": 986,
+  "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files",
+  "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
+  "checks": {
+    "typescript": "passed",
+    "build": "passed",
+    "automatedTests": 150,
+    "automatedFailures": 0,
+    "browserWorkflows": 14,
+    "browserJavaScriptErrors": 0,
+    "evaluationCorpus": 80,
+    "alteredClaudeRuntimeRejectedBeforeSigning": true,
+    "modelNameCapitalization": "passed",
+    "existingClaudeSubscriptionRecognized": true,
+    "additionalLiveInference": false,
+    "staple": "passed",
+    "signature": "passed",
+    "gatekeeper": "passed",
+    "dmgMountAndApplicationsShortcut": "passed",
+    "claudePublisherSignatureAndUpstreamBytes": "passed",
+    "credentialAudit": "passed",
+    "zipPayloadsMatchAuditedApp": 19773,
+    "assetChecksums": "passed"
+  },
+  "standalone": {
+    "at": "2026-09-20T13:39:39.114Z",
+    "checks": [
+      "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
+      "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+      "Project setup persists in a separate application data directory",
+      "Packaged roster and work preferences save through the authenticated API without inference",
+      "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+      "A duplicate service cannot take over the active application state",
+      "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+      "Sandboxed coding task can use bundled Node",
+      "Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools",
+      "Graceful shutdown removes the launch receipt and releases state",
+      "Relaunch restores the saved project and creates a new authenticated local session",
+      "Application signature remains valid after bundled workers, browser and restart"
+    ],
+    "liveInference": false,
+    "minimalEnvironment": true
+  },
+  "signing": {
+    "version": "0.1.0",
+    "signedAt": "2026-09-20T13:39:25.538Z",
+    "archiveSHA256": "f4ce347114b8adb99e11d3ad90268d87d65eab2fed403ff7eb477036c5ae0a24",
+    "binaries": 57,
+    "signedBinaries": 56,
+    "bundles": 10,
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    },
+    "status": "Accepted",
+    "id": "6a276a93-dcbc-41af-ad6b-a88fbf4d63c7",
+    "submittedAt": "2026-09-20T13:40:52.139Z",
+    "checkedAt": "2026-09-20T13:45:08.633Z"
+  },
+  "scope": "Copy corrections and distribution signing. Prior live acceptance covers the unchanged task and tool behavior; no new inference was sent.",
+  "supersedes": [
+    "First private signed candidate replaced Anthropic signature; rejected for publication despite Apple acceptance.",
+    "Intermediate signature-preserving candidate omitted final interface wording; superseded before distribution."
+  ],
+  "limits": [
+    "No public download or physical second-Mac install has occurred.",
+    "OpenRouter live completion remains unverified.",
+    "No comparative routing, savings or multi-day reliability benchmark.",
+    "Five of six prior automatic reviews remain unverified."
+  ],
+  "supportingEvidence": [
+    "installed-acceptance.json",
+    "secret-audit.json",
+    "public-copy-audit.json"
+  ],
+  "downloads": {
+    "name": "DUKE Autorouter",
+    "version": "0.1.0",
+    "platform": "darwin-arm64",
+    "minimumMacOS": "14",
+    "notarization": "Accepted and stapled",
+    "submissionId": "6a276a93-dcbc-41af-ad6b-a88fbf4d63c7",
+    "createdAt": "2026-09-20T13:46:41.195Z",
+    "assets": [
+      {
+        "path": "DUKE-Autorouter-0.1.0-mac-arm64.dmg",
+        "sha256": "ae1a122540f07f5cea93281d490866bc9d60954a751740f7a3a90439d616a4b5"
+      },
+      {
+        "path": "DUKE-Autorouter-0.1.0-mac-arm64.zip",
+        "sha256": "fd901e4b7912f2535d4a432e61f5028e481becec0740755349819d77b25aefd5"
+      }
+    ],
+    "sourceLockHash": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    }
+  },
+  "finalNativeLaunch": "Pending; previous installed-app checks are recorded in installed-acceptance.json."
+}

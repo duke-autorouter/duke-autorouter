@@ -102,14 +102,20 @@ These receipts retain their original dates and scope:
   attached dialogs, quit/relaunch and state preservation on the development Mac.
   It predates the final tool repairs.
 
-## Still required for release
+## Distribution and remaining coverage
 
-Complete notarization and a fresh-machine download/install/account check.
-Resolve the OpenRouter live gap before calling every supported adapter validated.
+The final 0.1 candidate passed Developer ID verification, Apple notarization,
+stapling and Gatekeeper. The delivered DMG and ZIP preserve Anthropic's original
+Claude executable and signature. All 12 standalone checks passed again, and the
+corrected runtime recognized the existing Claude subscription without inference.
+The [distribution receipt](evidence/distribution-verification.json) identifies
+the exact assets. A final native-window launch remains before publication;
+earlier native checks retain their recorded scope. Check public download links
+and checksums again after publishing.
 
-The Mac download has not been published. The current bundle has a verified
-Developer ID signature. A clean profile on the development Mac does not establish a
-fresh physical Mac installation. No Intel, Windows or Linux release is tested.
+OpenRouter live completion and a second physical Mac installation remain
+unverified. A clean profile on the development Mac does not establish that
+second-machine coverage. No Intel, Windows or Linux release is tested.
 
 Broader routing accuracy, multi-day reliability, and resource savings require
 the [benchmark protocol](BENCHMARK_PROTOCOL.md). The

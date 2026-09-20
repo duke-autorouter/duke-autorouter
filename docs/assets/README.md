@@ -34,13 +34,13 @@ the SVGs, run `npm run brand:icons`. It uses the installed Playwright browser an
 macOS `iconutil`, with no model calls or new dependencies. The packager includes
 these assets before signing the bundle.
 
-## Architecture image
+## Historical architecture image
 
-- Current asset: [duke-autorouter-architecture-v3.png](duke-autorouter-architecture-v3.png)
+- September 18 illustration: [duke-autorouter-architecture-v3.png](duke-autorouter-architecture-v3.png)
 - Method: the existing map corrected with the built-in image editing tool.
-- Source of truth: [implemented architecture](../ARCHITECTURE.md) and the local
-  server/adapters. The image summarizes the implementation; it is not evidence
-  of live model quality.
+- Current diagrams: [implemented architecture](../ARCHITECTURE.md). The earlier
+  illustration predates effort selection, content review, outcome history and
+  completed live checks. Its footer describes the state when it was made.
 
 The September 18 updates adopt the selected complete name, remove the API-limits
 panel, and show Jev's contribution as **Assess difficulty → select model**.
@@ -52,7 +52,7 @@ Historical edits from v1 through v2:
 2. [Remove the API-limits panel](duke-autorouter-footer.prompt.txt)
 3. [Describe Jev's architectural role](duke-autorouter-role.prompt.txt)
 
-The current [difficulty and selection correction](duke-autorouter-difficulty.prompt.txt)
+The [difficulty and selection correction](duke-autorouter-difficulty.prompt.txt)
 was applied to [v2](duke-autorouter-architecture-v2.png). Its
 [previous manifest](image-manifest-v2.json) is retained.
 
@@ -63,7 +63,7 @@ The original [v1 map](duke-router-architecture-v1.png), its
 2. [Contrast and connector refinement](duke-router-architecture-refinement.prompt.txt)
 3. [Final observation-label correction](duke-router-architecture-label.prompt.txt)
 
-The final map distinguishes the local task harness from remote inference,
-subscription quotas from API spending, and Jev difficulty assessment and model selection from the
-three task-execution adapters. The current map omits the API-limits panel and
-retains the note that live provider and routing-quality validation is pending.
+The September 18 map separates local execution from remote inference,
+subscription quotas from API spending, and Jev selection from worker execution.
+The original images, prompts and manifests remain unchanged as design history;
+their old status labels do not describe the current release.

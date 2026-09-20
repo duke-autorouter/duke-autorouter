@@ -1,7 +1,8 @@
 # Getting started with DUKE Autorouter
 
-Use the [source or Mac-app build instructions](../README.md) first. No public
-notarized installer is included. The steps below apply to your own installation.
+Start with the [Mac download and installation instructions](../README.md#download-and-install).
+Download availability is listed there. Contributors can use the separate
+[source-build instructions](../CONTRIBUTING.md).
 
 ## 1. Open DUKE
 
@@ -25,13 +26,11 @@ Open **Connections & setup**.
    Claude Code setup in Terminal on macOS. These are optional. DUKE's Claude
    worker still uses subscription authentication; Console/cloud execution is
    not enabled or billed automatically.
-3. Use **Add API key** on Jev and OpenRouter for the providers you want to use.
+3. Use **Add API key** on Jev for automatic model and effort selection.
+   OpenRouter is optional; its live task path remains unverified in 0.1.
    Enter keys only in these local password fields. They are stored in Keychain.
 4. The app discovers models after connection. **Check connections** refreshes
    status; **Refresh models** updates descriptions and prices.
-
-Sign-in success does not itself prove a model completed a task. The live checks
-below establish that separately.
 
 ## 3. Choose your models
 
@@ -61,12 +60,12 @@ The folder picker can create a new folder. **Account access** lets you restrict
 which worker accounts can receive that project's context. You can also add
 projects under **Connections & setup**.
 
-Once connected, Jev automatically assesses difficulty and chooses the model for
+Once connected, Jev assesses difficulty and chooses the model and effort for
 tasks across your projects. There is no per-project Jev switch. Jev receives a
 bounded brief, success criteria, selected attachment excerpts, project structure,
 progress and model profiles. Content review includes bounded task-input, deliverable
 and source excerpts. Imported setup files stay with the worker unless material
-is quoted into task output. See ROUTING_POLICY.md for limits and verification behavior.
+is quoted into task output. See the [routing policy](ROUTING_POLICY.md) for details.
 
 Use **Project settings** to change which worker accounts can carry out the work.
 
@@ -79,21 +78,17 @@ Choose **Start task**. Automatic routing is the default.
 override when compatible models are available. **Advanced options** holds tool
 permissions, output-file checks, and a test command. None is required to begin.
 
-The preview makes no model calls. On Start, DUKE rechecks permissions,
-availability and spending limits. Jev assesses difficulty and selects the worker
-automatically; the configured economical fallback handles missing or uncertain Jev responses
-at its lowest supported effort. An unavailable fallback pauses the task.
+On Start, DUKE rechecks permissions, availability and spending limits. Jev chooses
+the model and effort. If Jev is unavailable or uncertain, DUKE uses the configured
+fallback at its lowest supported effort. An unavailable fallback pauses the task.
 
 Models in your roster are labeled **Selected**. Jev uses their provider
 descriptions to choose a model. You do not need to score or evaluate models.
 DUKE checks the result and can retry failed work with another suitable model.
 If checks cannot finish, it saves the work with **Saved · checks incomplete**.
-**Usage & execution receipts** contains the details. The token receipt includes routing, worker attempts and review; incomplete reports
-are labeled. Subscription allowance receipts show reported account-window changes
-when available. DUKE aims for sufficient quality with minimal necessary resources
-across subscriptions and APIs. Early outcomes inform Jev, and unrelated model or
-preference changes retain compatible history. **Worked** or **Needs work** remains
-optional feedback. Developer testing is separate from normal setup.
+**Usage & execution receipts** shows the checks and reported resource use,
+including retries and review. DUKE uses comparable past results to inform later
+choices. **Worked** and **Needs work** are optional feedback.
 
 ## For contributors: live acceptance checks
 
@@ -128,4 +123,4 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the acceptance record and
   billing record, then record the verified amount and reference. This adjusts
   local accounting, not the provider’s bill. An active task must finish first.
 
-[Architecture map](assets/duke-autorouter-architecture-v3.png).
+[Architecture and routing diagrams](ARCHITECTURE.md).

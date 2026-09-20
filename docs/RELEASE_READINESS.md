@@ -1,64 +1,75 @@
-# Version 0.1 release checklist
+# Version 0.1 release readiness
 
-DUKE's first release is an inspectable portfolio build with a downloadable Mac
-app. The [verification record](VERIFICATION.md) is the source for completed
-checks. Source and release artifacts remain private until publication is approved.
+DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
+The repository is still private. This page separates publication work from the
+limits that early users need to know.
 
-## Before sharing source
+## Completed checks
 
-- Build and check the final allowlisted export with its own lockfile. Record its
-  file hashes and the matching private GitHub commit and CI result.
-- Review source, screenshots and notices for private information. The exporter
-  excludes profiles, databases, logs, downloaded runtimes and review scratchpads.
-- Run `npm run security:secrets` on the final full-history Git checkout. The
-  [credential audit](evidence/secret-audit.json) also covers historical images,
-  document contents and the current app. Repeat the artifact review if those
-  files change; rerun it on the final signed download before uploading.
-- Keep the [production dependency audit](evidence/dependency-audit.json) current.
-  The latest tool pass reports zero known vulnerabilities, including the new
-  spreadsheet calculation dependencies.
-- Keep the failed acceptance cases and current limits visible. Confirm links in
-  the README, architecture, decision log and tool audit point to current evidence.
-- Review pinned runtime licenses and distribution conditions. The
-  [Claude runtime notes](USAGE.md#claude-runtime-and-distribution-review) retain
-  the subscription feature and document the remaining provider-term ambiguity.
-  Neither open source status nor an SDK-to-CLI change establishes blanket permission.
-- Configure private vulnerability reporting when the repository becomes public,
-  then verify the public clone path and workflow results. No secret or runtime
-  profile belongs in the source repository.
+- 150 automated tests, 14 browser workflows and 12 signed standalone checks pass.
+  Browser workflows use synthetic workers; the [verification record](VERIFICATION.md)
+  distinguishes them from live tasks and native-window checks.
+- Live Codex and Claude tasks cover coding, research, writing and basic documents.
+  Installed checks cover previews, cancellation, resume and saved-state restart.
+- The [credential audit](evidence/secret-audit.json) covers source history,
+  document contents, screenshot text and the packaged app. No credentials were
+  found. CI scans source and history on each push.
+- The final DMG and ZIP passed notarization, stapling, signature and Gatekeeper
+  checks. Claude retains Anthropic's published bytes and signature. See the
+  [distribution receipt](evidence/distribution-verification.json).
+- The [dependency audit](evidence/dependency-audit.json) reports zero known
+  vulnerabilities for the current lockfile.
+- The README, guides, decision records and current interface copy have been
+  [reviewed against the project's voice guidance](evidence/public-copy-audit.json).
+  Historical receipts, sample
+  worker outputs and design prompts retain their original wording and dates.
 
-## Before distributing the Mac download
+## Publication steps
 
-- Keep the final installed-app receipt current. The signed build passed native
-  document previews and quit/relaunch with accounts, projects and tasks preserved.
-  Six live tasks exercised the installed engine before the preview-only repair;
-  cancellation and resume used the native window.
-- Complete a successful live OpenRouter worker check with an available endpoint
-  before claiming every adapter works. A key/catalog lookup is insufficient;
-  the zero-price endpoint attempt failed before tool execution.
-- Developer ID signing and all 12 standalone checks under the hardened runtime
-  passed. Repeat them if the application bundle changes.
-- Submit the exact signed archive to Apple, verify acceptance, staple the ticket,
-  and assess it with Gatekeeper. Create the DMG, ZIP and checksums from those bytes.
-- Download and install on a fresh Apple Silicon Mac, connect accounts, create a
-  project, run a task and check quit/relaunch. Test the normal quarantine path;
-  removing quarantine is not the installation procedure.
-- Publish the reviewed release assets and source together. The
-  [distribution guide](MAC_DISTRIBUTION.md) describes the maintainer commands.
+1. Open the final notarized candidate in the native Mac window and confirm saved
+   state. Earlier signed-app checks passed; the final copy and signing update
+   still needs this last native launch.
+2. Confirm the final source commit passes both GitHub checks. Keep the source
+   manifest and distribution receipt with the exact files they describe.
+3. Publish the reviewed source and 0.1 prerelease assets together after approval.
+   Enable private vulnerability reporting when the repository becomes public;
+   [GitHub supports this for public repositories](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository).
+4. Verify the public clone, release links, checksums and normal download/install
+   path. Update the README's download status after the files are available.
 
-The target is Apple Silicon macOS 14 or newer. The bundle includes Node, Codex,
-Claude, Chromium, the native document helper and four default skills. End users
-should not need to package it or install a development toolchain.
+End users should get a DMG or ZIP, checksums and release notes. They do not need
+Node, Xcode or a terminal. The target is Apple Silicon macOS 14 or newer.
+The [distribution guide](MAC_DISTRIBUTION.md) covers maintainer commands.
 
-## Before claiming routing gains or daily-use reliability
+## Limits to disclose with 0.1
 
-Bounded live checks now cover coding, research, writing and basic documents on
-Codex and Claude. They establish specific working paths and expose failures;
-they do not establish comparative quality or efficiency.
+- **OpenRouter live completion is unverified.** The adapter has automated coverage;
+  the attempted zero-price endpoint returned HTTP 404 before execution. Keep it
+  optional and identify this gap in release notes. A successful task is needed
+  before describing every adapter as live-validated.
+- **A second physical Mac has not been tested.** Disposable-profile and native
+  checks on the development Mac do not establish that coverage. Ask an early
+  tester to check installation, sign-in, a task and restart through the normal
+  macOS download path. Do not prescribe removing quarantine.
+- **Automatic reviews can remain incomplete.** Five of six later live tasks kept
+  that status. One initial routing attempt stalled and completed after restart
+  and resume; its cause remains unresolved. Search produced irrelevant results
+  in one run, and the worker recovered through direct source URLs.
+- **Claude's provider-term ambiguity remains.** The
+  [runtime notes](USAGE.md#claude-runtime-and-distribution-review) describe the
+  preserved subscription feature and provider-owned setup. Neither open-source
+  status nor notarization establishes provider approval.
+- **Savings and broader reliability are unmeasured.** No paired routing benchmark,
+  multi-day reliability result, Intel build, Windows build or Linux build is claimed.
 
-Compare a fixed strong-model baseline, local rules and Jev on matched held-out
-cases with independent acceptance review. Count routing, worker, retry and review
-resources. Preserve incomplete token and subscription telemetry. Include
-cancellation, exhausted capacity, recovery and resumed work in continued use.
-See the [benchmark protocol](BENCHMARK_PROTOCOL.md). Routine users do not need
-to grade models; development validation owns this work.
+These limits belong in the 0.1 prerelease description. They do not turn a bounded
+acceptance result into proof of general model quality. Keep the failed examples
+and incomplete checks visible.
+
+## Evidence needed for stronger claims
+
+Compare Jev with a fixed strong-model baseline and the configured economical
+fallback on matched held-out cases. Use independent acceptance review. Count
+routing, workers, retries and review, and preserve incomplete token and
+subscription readings. See the [benchmark protocol](BENCHMARK_PROTOCOL.md).
+Routine users do not need to grade models; development validation owns this work.

@@ -1,8 +1,9 @@
 # Contributing
 
-DUKE Autorouter is a local, chat-first routing harness. Keep changes focused on
-choosing sufficient capability, checking results and accounting for whole-task
-resource use across subscriptions and APIs. Start from the small selected roster.
+DUKE Autorouter chooses a model and reasoning effort for each task. Changes
+should help it complete the work with less unnecessary token and subscription
+use. Keep setup simple, check the saved results, and count retries and reviews
+when comparing resource use.
 
 ## Local development
 

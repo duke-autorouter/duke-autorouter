@@ -149,9 +149,9 @@ export class Engine {
         status: 'blocked',
         message:
           !parsed.modelOverride && manualModels.length
-            ? 'Auto route needs reviewed results that meet the quality bar for this task. Select a model for a manual trial, or review quality and difficulty coverage in Setup.'
+            ? 'None of your selected models currently qualifies for this task. Check the model profiles and fallback in Connections & setup and Usage & routing.'
             : !parsed.modelOverride
-              ? 'No available model supports this workspace and its selected tools. Connect and enable a compatible model in Setup, or adjust the task tools.'
+              ? 'No selected model is available for this project and its tools. Check your connections and model selection, or adjust the task tools.'
               : error.message,
         manualModels,
         jevMayRefine,

@@ -9,16 +9,16 @@ select. Use it for coding, research, writing, and documents across your Codex an
 Claude subscriptions and optional OpenRouter models. Jev assesses the task,
 chooses an eligible model and supported reasoning effort, and reviews the result.
 
-The goal is to finish each task with the model capability it needs while
-conserving tokens, subscription capacity, and API spending. Live routing quality
+DUKE aims to use only the model capability and reasoning effort a task needs.
+That applies to subscription capacity as well as API spending. Routing quality
 and savings have not yet been measured.
 
 ## Version 0.1
 
 Version 0.1 targets **Apple Silicon Macs running macOS 14 or newer**. The normal
-installation is a prebuilt Mac download. The application source is available for
-inspection and contributions. The first signed, notarized download is being
-prepared and has not been published yet.
+installation is a prebuilt Mac download. This repository contains the source,
+tests, design decisions, and verification records. A signed and notarized release
+candidate is prepared; the public download has not been published yet.
 
 - **A native Mac window.** The installed app manages its own background process.
   Open it from Applications; no terminal or Codex desktop app is needed after
@@ -79,7 +79,7 @@ rules and marks content checks it could not complete.
 | --- | --- | --- |
 | Codex | Completes tasks | An eligible ChatGPT/Codex subscription |
 | Claude | Completes tasks | An eligible Claude subscription |
-| OpenRouter | Optional additional worker models | An API key and available API credit |
+| OpenRouter | Optional worker models; live completion unverified in 0.1 | An API key and available API credit |
 | TypeSafe Jev | Assesses tasks, selects models, and reviews results | An API key and available API capacity |
 
 Codex and Claude use separate DUKE profiles through their bundled runtimes.
@@ -167,8 +167,11 @@ image delivery, and search that were repaired and rechecked. The
 [tool audit](docs/TOOL_AUDIT.md) records the failures, fixes, sample outputs, and
 remaining limits. Six later tasks exercised the installed engine, including
 Luna Low fallback and native cancellation/resume. Document previews and saved
-state passed checks in the Developer ID signed app. OpenRouter has no successful
-live worker result yet; notarization and a fresh-Mac installation remain pending.
+state passed checks in the Developer ID-signed app. Five of those six automatic
+reviews remained unverified; independent checks did not change their saved status.
+OpenRouter has no successful live worker result yet, and installation on a second
+physical Mac has not been tested. See the [release checklist](docs/RELEASE_READINESS.md)
+for the download status.
 
 Routing accuracy, resource savings, and daily-use reliability have not been
 established. Intel Macs, Windows, and Linux are not release-tested. The

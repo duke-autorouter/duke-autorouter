@@ -5,8 +5,9 @@ app from GitHub Releases. Open the DMG, drag DUKE into Applications and launch i
 Users do not need Node, Xcode or a terminal. The first target is Apple Silicon
 macOS 14 or newer.
 
-The 0.1 download is being prepared. Do not present the release link as an
-available installer until the accepted assets have been published.
+The 0.1 candidate has passed Apple notarization, stapling and Gatekeeper checks.
+The [distribution receipt](evidence/distribution-verification.json) identifies
+the prepared DMG and ZIP. They have not been published yet.
 
 ## Maintainer preparation
 
@@ -34,8 +35,10 @@ npm run distribution:submit
 npm run distribution:status
 ```
 
-Signing covers nested executables and bundles before the outer app. Runtime
-entitlements support the bundled JavaScript engines. The signed ZIP is hashed
+Signing covers DUKE's nested executables and bundles before the outer app.
+Claude retains Anthropic's original signature; the signer compares it with the
+pinned dependency and rejects altered bytes. Runtime entitlements support the
+other bundled JavaScript engines. The signed ZIP is hashed
 and retained as the immutable Apple submission. Submission returns promptly;
 check status later without rebuilding or resubmitting the same archive.
 
@@ -47,11 +50,12 @@ npm run distribution:finalize
 
 The finalizer extracts that exact submitted archive, staples and validates the
 ticket, checks the signature and Gatekeeper, builds the DMG and ZIP, mounts the
-DMG to verify its app and Applications shortcut, then writes checksums and a
-release manifest. It refuses an unaccepted or modified submission. None of these
+DMG to verify its app, preserved Claude runtime and Applications shortcut, then
+writes checksums and a release manifest. It refuses an unaccepted or modified submission. None of these
 commands changes repository visibility or publishes a GitHub release.
 
-Run a clean-machine installation and sign-in check on the actual download.
+Check the actual download through the normal macOS installation path. A second
+physical Mac remains a separate early-tester check; disclose whether it was done.
 Publish the DMG, ZIP, `SHA256SUMS.txt`, manifest and scoped release notes together.
 Keep signing/notarization evidence separate from functional acceptance; neither
 one substitutes for the other.

@@ -6,8 +6,9 @@ and Developer ID signing with hardened-runtime checks. The earlier
 [tool audit receipt](tool-audit-verification.json) covers the default tools,
 packaged runtimes, and live Codex/Claude rechecks. Its
 [sample files and rendered outputs](tool-audit/README.md) came from actual workers
-using public or invented material. Notarization, a fresh physical Mac installation,
-and a live OpenRouter completion remain open. See [verification](../VERIFICATION.md).
+using public or invented material. The [distribution receipt](distribution-verification.json) and
+[release checklist](../RELEASE_READINESS.md) track the final download. A second physical Mac installation and a live
+OpenRouter completion remain unverified. See [verification](../VERIFICATION.md).
 
 The earlier receipts below retain the date and scope of their original checks.
 

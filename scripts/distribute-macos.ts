@@ -18,7 +18,10 @@ import { packageApp, packageDirectory } from './package-paths.js';
 // Maintainer-only local release preparation. No GitHub publication, credential
 // export or unsigned fallback is performed by this script.
 const mode = process.argv[2];
-if (!['sign', 'submit', 'status', 'finalize'].includes(mode) || process.platform !== 'darwin')
+if (
+  !['sign', 'submit', 'status', 'finalize'].includes(mode) ||
+  process.platform !== 'darwin'
+)
   throw new Error('Use distribute-macos.ts sign|submit|status|finalize on macOS.');
 const { version } = JSON.parse(await readFile(resource('package.json'), 'utf8'));
 const directory = resolve(
@@ -39,6 +42,33 @@ const hash = async (path: string) =>
   createHash('sha256')
     .update(await readFile(path))
     .digest('hex');
+const claudeRelativePath =
+  'Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude';
+async function verifyClaudeRuntime(app: string, expectedHash?: string) {
+  const binary = join(app, claudeRelativePath);
+  const sha256 = await hash(binary);
+  const upstreamHash =
+    expectedHash ??
+    (await hash(
+      resource('node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude'),
+    ));
+  if (sha256 !== upstreamHash)
+    throw new Error(
+      'Claude runtime differs from the pinned upstream binary. Repackage before signing.',
+    );
+  run('/usr/bin/codesign', [
+    '--verify',
+    '--strict',
+    '-R=anchor apple generic and certificate leaf[subject.OU] = "Q6L2SF6YDW"',
+    binary,
+  ]);
+  return {
+    path: claudeRelativePath,
+    sha256,
+    publisher: 'Anthropic PBC',
+    signaturePreserved: true,
+  };
+}
 const auth = () => {
   if (process.env.DUKE_NOTARY_PROFILE)
     return ['--keychain-profile', process.env.DUKE_NOTARY_PROFILE];
@@ -60,7 +90,9 @@ const auth = () => {
   );
 };
 async function save(value: unknown) {
-  await writeFile(receiptPath, JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
+  await writeFile(receiptPath, JSON.stringify(value, null, 2) + '\n', {
+    mode: 0o600,
+  });
 }
 
 if (mode === 'sign') {
@@ -77,6 +109,9 @@ if (mode === 'sign') {
   } catch (error: any) {
     if (error.code !== 'ENOENT') throw error;
   }
+  // Keep Anthropic's published bytes and signature intact. Re-signing this
+  // already signed executable would violate our unmodified-runtime invariant.
+  const preservedClaude = await verifyClaudeRuntime(packageApp);
   const manifestPath = join(packageApp, 'Contents/Resources/build-manifest.json');
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
   manifest.signing = 'Developer ID Application; Apple notarization pending.';
@@ -123,6 +158,7 @@ if (mode === 'sign') {
   await walk(packageApp);
   const deepest = (a: string, b: string) => b.split('/').length - a.split('/').length;
   for (const binary of binaries.sort(deepest)) {
+    if (binary === join(packageApp, claudeRelativePath)) continue;
     run('/usr/bin/codesign', [
       '--force',
       '--sign',
@@ -163,13 +199,23 @@ if (mode === 'sign') {
     '-R=anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists',
     packageApp,
   ]);
-  run('/usr/bin/ditto', ['-c', '-k', '--keepParent', '--sequesterRsrc', packageApp, submission]);
+  run('/usr/bin/ditto', [
+    '-c',
+    '-k',
+    '--keepParent',
+    '--sequesterRsrc',
+    packageApp,
+    submission,
+  ]);
+  await verifyClaudeRuntime(packageApp, preservedClaude.sha256);
   await save({
     version,
     signedAt: new Date().toISOString(),
     archiveSHA256: await hash(submission),
     binaries: binaries.length,
+    signedBinaries: binaries.length - 1,
     bundles: bundles.length,
+    preservedRuntime: preservedClaude,
     status: 'Prepared; not submitted',
   });
   console.log(`Signed app and immutable Apple submission prepared in ${directory}`);
@@ -196,9 +242,12 @@ if (mode === 'sign') {
       status: 'Submitted',
       submittedAt: new Date().toISOString(),
     });
-    console.log(`Submitted to Apple: ${result.id}. Use status; this does not publish the app.`);
+    console.log(
+      `Submitted to Apple: ${result.id}. Use status; this does not publish the app.`,
+    );
   } else {
-    if (!receipt.id) throw new Error('Submit the signed archive before checking or finalizing it.');
+    if (!receipt.id)
+      throw new Error('Submit the signed archive before checking or finalizing it.');
     const result = JSON.parse(
       run('/usr/bin/xcrun', [
         'notarytool',
@@ -209,7 +258,11 @@ if (mode === 'sign') {
         'json',
       ]),
     );
-    await save({ ...receipt, status: result.status, checkedAt: new Date().toISOString() });
+    await save({
+      ...receipt,
+      status: result.status,
+      checkedAt: new Date().toISOString(),
+    });
     console.log(`Apple notarization: ${result.status}`);
     if (mode === 'status') process.exit(0);
     if (result.status !== 'Accepted')
@@ -221,6 +274,11 @@ if (mode === 'sign') {
     await mkdir(staging);
     run('/usr/bin/ditto', ['-x', '-k', submission, staging]);
     const app = join(staging, basename(packageApp));
+    if (!receipt.preservedRuntime?.sha256)
+      throw new Error(
+        'Missing upstream Claude verification; prepare a new signed release.',
+      );
+    await verifyClaudeRuntime(app, receipt.preservedRuntime.sha256);
     run('/usr/bin/xcrun', ['stapler', 'staple', app]);
     run('/usr/bin/xcrun', ['stapler', 'validate', app]);
     run('/usr/bin/codesign', ['--verify', '--deep', '--strict', app]);
@@ -254,11 +312,19 @@ if (mode === 'sign') {
     // Check the delivered image, not only the source staging directory.
     const mount = join(directory, 'mounted-dmg');
     await mkdir(mount, { recursive: true });
-    run('/usr/bin/hdiutil', ['attach', '-readonly', '-nobrowse', '-mountpoint', mount, dmg]);
+    run('/usr/bin/hdiutil', [
+      'attach',
+      '-readonly',
+      '-nobrowse',
+      '-mountpoint',
+      mount,
+      dmg,
+    ]);
     try {
       if ((await readlink(join(mount, 'Applications'))) !== '/Applications')
         throw new Error('Installer is missing the Applications shortcut.');
       const delivered = join(mount, basename(packageApp));
+      await verifyClaudeRuntime(delivered, receipt.preservedRuntime.sha256);
       run('/usr/bin/codesign', ['--verify', '--deep', '--strict', delivered]);
       run('/usr/bin/xcrun', ['stapler', 'validate', delivered]);
       run('/usr/sbin/spctl', ['--assess', '--type', 'execute', '--verbose=4', delivered]);
@@ -288,6 +354,7 @@ if (mode === 'sign') {
           sourceLockHash: JSON.parse(
             await readFile(join(app, 'Contents/Resources/build-manifest.json'), 'utf8'),
           ).lockHash,
+          preservedRuntime: receipt.preservedRuntime,
         },
         null,
         2,

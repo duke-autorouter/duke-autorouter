@@ -218,7 +218,7 @@ try {
   await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill('Write a note for the first manual trial');
   const routePreview = page.getByRole('status', { name: 'Route preview' });
-  await routePreview.getByText(/Auto route needs reviewed results/).waitFor();
+  await routePreview.getByText(/None of your selected models currently qualifies/).waitFor();
   assert.ok(await page.getByRole('button', { name: 'Start task', exact: true }).isDisabled());
   assert.equal(r.store.tasks().length, 0);
   assert.deepEqual(r.store.spending(), []);

@@ -205,5 +205,6 @@
   "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
   "implementationSHA256": "c85d788e13dbc9a0cdbea17c7180e1c20cd2eb12bb9a9099c049954d57fd0898",
   "implementationFiles": 986,
-  "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files"
+  "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files",
+  "distributionFollowUp": "distribution-verification.json"
 }

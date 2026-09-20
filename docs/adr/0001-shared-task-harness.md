@@ -1,7 +1,8 @@
 # ADR 0001: Own the task and share tools across workers
 
-Status: accepted. Recorded September 20, 2026. Tool repairs pass local and
-packaged Codex/Claude checks; final installed and OpenRouter live checks remain.
+Status: implemented. Recorded September 20, 2026. Tool repairs pass local,
+packaged and installed Codex/Claude checks. OpenRouter live completion remains
+unverified.
 
 ## Context
 
@@ -29,9 +30,8 @@ tests possible. It also makes DUKE responsible for useful default tools. Bundlin
 a provider runtime does not bundle the provider app's complete workflows.
 
 The first document acceptance run exposed that cost: DUKE's generator wrote raw
-Markdown into valid Word and PDF files. This was a harness defect. The release
-must close the [tool audit](../TOOL_AUDIT.md), including input handling and output
-inspection, before describing these workflows as ready.
+Markdown into valid Word and PDF files. The [tool audit](../TOOL_AUDIT.md) records
+that defect, the exporter repair, saved-output inspection, and remaining limits.
 
 Revisit this choice if maintaining basic tool parity takes more effort than
 adapting mature provider-native tools while preserving equivalent boundaries.

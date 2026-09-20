@@ -8,8 +8,9 @@ change the licenses or service terms of its dependencies or the models it calls.
 - Anthropic sandbox runtime: Apache-2.0, version 0.0.76.
 - Claude Agent SDK 0.3.275 and its runtime: Anthropic's license and commercial or
   applicable subscription terms. See the dependency's `LICENSE.md` and `README.md`.
-  These are not relicensed by this application. Users obtain them through npm;
-  proprietary runtime binaries must not be included in the source release.
+  These are not relicensed by this application. Source builds install them through
+  npm; the Mac download includes the pinned runtime and its license files.
+  The source repository excludes proprietary runtime binaries.
 - React, Vite, Fastify, Zod, TypeScript, tsx, docx, ExcelJS, pdf-lib, and related
   packages retain their included open-source licenses.
 - Playwright: Apache-2.0. Chromium and its components retain their own notices.

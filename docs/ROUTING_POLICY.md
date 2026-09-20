@@ -2,8 +2,8 @@
 
 Implemented September 19, 2026. Policy identifiers: `duke-routing-v7`, `duke-efficiency-v2` and
 `duke-review-v1`. This document describes implemented behavior, not measured
-live-model accuracy. Live acceptance checks are recorded in the verification guide;
-held-out model comparisons are a separate release benchmark.
+live-model accuracy. The [verification record](VERIFICATION.md) covers live
+acceptance. Comparative routing and resource claims need separate benchmarks.
 
 ## Decision flow
 
@@ -282,7 +282,7 @@ The private imported setup library and account credentials are not copied into
 those requests. Material quoted into a task deliverable can be included in its
 review. All Jev requests pass through the existing API reservation/budget ledger.
 
-## Evidence needed before release
+## Evidence needed for routing and savings claims
 
 The expanded corpus contains 80 fixtures: 20 for each work type, split equally
 between development and held-out cases. Default small runs rotate across all
@@ -298,8 +298,8 @@ score and no fabricated subscription-dollar conversion.
 Confidence bands are compared with outcomes without treating confidence as a
 success probability. Subscription fees are not counted as per-task API spend.
 
-The corpus is an initial foundation: small coding utilities and document fixtures
-still need broader real-project and adversarial coverage. No quality, cost-saving
+The corpus starts with small coding utilities and document fixtures. It needs
+broader project changes and adversarial cases before supporting general claims. No quality, cost-saving
 or general superiority claim is established until approved live runs and independent
 review produce evidence. The normal user never has to score models to start DUKE.
 See [benchmark protocol](BENCHMARK_PROTOCOL.md) for the next development pass.

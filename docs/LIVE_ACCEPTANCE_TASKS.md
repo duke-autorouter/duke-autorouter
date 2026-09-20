@@ -4,7 +4,9 @@ Use a dedicated project with only invented or public information, after accounts
 are connected and provider permissions are selected. Initial live runs and
 rechecks were performed during the September 2026 release pass. They exposed
 defects as well as successful results; see the [verification record](VERIFICATION.md).
-The current default-tool audit requires further installed-package rechecks.
+Installed-package rechecks are recorded in the
+[installed-app receipt](evidence/installed-acceptance.json). OpenRouter live
+completion remains unverified.
 
 ## Coding
 
