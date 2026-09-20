@@ -1034,6 +1034,31 @@ main {
 .settings-section {
   margin-top: 35px;
 }
+.remote-access .section-heading {
+  align-items: flex-start;
+}
+.remote-access fieldset {
+  margin: 18px 0;
+}
+.pairing-code {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: white;
+}
+.pairing-code code {
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.paired-devices {
+  margin-top: 24px;
+}
+.paired-devices h3 {
+  margin-bottom: 10px;
+}
 .workspace-row {
   margin-bottom: 10px;
 }

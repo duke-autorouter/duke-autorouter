@@ -45,6 +45,7 @@ import {
   usageDisplays,
   type UsagePreferences,
 } from '../shared/usage-display.js';
+import { RemoteAccess } from './remote.js';
 
 export async function createApp(
   options: {
@@ -64,7 +65,8 @@ export async function createApp(
   const store = new Store(join(stateDir, 'router.sqlite'));
   initializeRoster(store);
   store.recover();
-  const secrets = new Secrets(),
+  const remoteAccess = new RemoteAccess(store),
+    secrets = new Secrets(),
     approvals = new Approvals(store),
     tools = new ToolService(store, approvals, stateDir);
   const codex = new CodexWorker(stateDir),
@@ -135,6 +137,8 @@ export async function createApp(
     approvals: store.approvals().filter((a) => a.status === 'pending'),
     health: store.list('health'),
     artifacts: store.list('artifact'),
+    remoteDevices: remoteAccess.devices(),
+    remoteEnabled: process.env.DUKE_REMOTE_ENABLE === '1',
     version: '0.1.0',
     desktop: !!process.env.DUKE_DESKTOP_EXECUTABLE,
     claudeSetupAvailable: process.platform === 'darwin',
@@ -293,6 +297,15 @@ export async function createApp(
     engine.retryReview((req.params as { id: string }).id);
     return { ok: true };
   });
+  app.post('/api/remote/pairing-challenges', async (req) => {
+    const input = z
+      .object({ workspaceIds: z.array(z.string()).min(1).max(50) })
+      .strict()
+      .parse(req.body);
+    return remoteAccess.createChallenge(input.workspaceIds);
+  });
+  app.get('/api/remote/devices', async () => remoteAccess.devices());
+  app.post('/api/remote/devices/:id/revoke', async (req) => remoteAccess.revoke((req.params as { id: string }).id));
   app.post('/api/approvals/:id', async (req) => {
     const b = z.object({ hash: z.string(), allow: z.boolean() }).parse(req.body);
     approvals.decide((req.params as any).id, b.hash, b.allow);
@@ -639,5 +652,5 @@ export async function createApp(
     store.close();
     await releaseLock();
   });
-  return { app, store, engine, tools, approvals, launchToken, stateDir };
+  return { app, store, engine, tools, approvals, remoteAccess, launchToken, stateDir };
 }

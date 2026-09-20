@@ -23,6 +23,7 @@ decision was documented when first made.
 | [Use verdict probability for automatic review](adr/0013-review-probability-threshold.md) | Implemented; nine live diagnostic cases checked | Distribution confidence and answer probability have different meanings. Keep both, apply the cutoff to the verdict, and preserve uncertain outcomes. |
 | [Enforce network boundaries before contact and keep runner limits neutral](adr/0014-boundaries-and-incomplete-checks.md) | Implemented in 0.1.1; regression checks passed | Redirects cannot bypass the private-network guard. Execution limits remain incomplete checks. Rounded probabilities and sparse history do not unnecessarily disable automatic routing or its economical fallback. |
 | [Preserve task requirements and bound incomplete operations](adr/0015-task-revisions-and-bounded-checks.md) | Implemented for 0.1.2 | Follow-ups retain applicable tests, preparation has deadlines, and incomplete reviews can be retried without another worker run. |
+| [Add a narrow remote boundary for the iOS companion](adr/0016-ios-companion-remote-boundary.md) | In progress | Keep the local API loopback-only while giving paired devices project-scoped task, approval and artifact access through an opt-in gateway. |
 
 ## What changed after testing
 
