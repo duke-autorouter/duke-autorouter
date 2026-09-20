@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-09-20T15:54:43.222569+00:00",
+  "reviewedBaseCommit": "fe885b17df8318e9dbe314618f547c521a5cf0d9",
+  "targetVersion": "0.1.1",
+  "environment": {
+    "platform": "macOS Apple Silicon",
+    "node": "v26.0.0"
+  },
+  "checks": {
+    "automatedTests": {
+      "passed": 167,
+      "failed": 0,
+      "skipped": 0
+    },
+    "sandbox": {
+      "passed": 9,
+      "failed": 0
+    },
+    "typescript": "passed",
+    "productionBuild": "passed",
+    "evaluationCorpus": {
+      "validated": 80,
+      "modelCalls": 0
+    },
+    "publicBrowser": {
+      "url": "https://example.com/",
+      "title": "Example Domain",
+      "normalTLSValidation": true
+    },
+    "signedStandalone": {
+      "passed": 12,
+      "failed": 0
+    },
+    "historicalChecksumException": "Valid historical file bytes accepted; mismatched digest/path and future file bytes rejected",
+    "packagedPublicBrowser": {
+      "url": "https://example.com/",
+      "title": "Example Domain",
+      "bundledNodeAndChromium": true,
+      "normalTLSValidation": true
+    }
+  },
+  "regressions": [
+    "Private direct, multi-hop and subresource browser redirects received zero requests at the private fixture",
+    "Public redirects and approved same-origin POSTs work; cross-origin POST redirects blocked",
+    "Proxy refuses private CONNECT, nonstandard ports, HTTP and unauthenticated clients before dialing",
+    "Real sandbox output limit preserves escaped result envelope; real exit 126 remains a command exit",
+    "Incomplete runner states remain unverified with no quality retry or difficulty increase",
+    "Rounded three-option reviews and nine-option selection accepted; raw 0.79 cannot pass 0.8 threshold",
+    "Economical fallback survives sparse failure history while eligibility gates remain enforced",
+    "Mixed-case credential reads and writes blocked by file and native shell boundaries"
+  ],
+  "policies": {
+    "review": "duke-review-v3",
+    "routing": "duke-routing-v9"
+  },
+  "apiSpendThisPassUSD": 0,
+  "sourceSHA256": {
+    "server/browser-network.ts": "75406ec9546119c2ff5c73294969d7e26468caf15f7f3e7bedf116f7600ef90f",
+    "server/research-browser.ts": "1f91e901af638f003b74d79ee33e7509e4ba8160698b7704978b111600b11257",
+    "server/tools.ts": "fafb2d207c45a91dccff05772d45d5c98049af7d5ff57468c1df757387e97934",
+    "server/process.ts": "a9203df98bb3b40b0cce389d8daf3f68f7c2fa645826254ba75888cb30a3d413",
+    "server/shell-runner.ts": "6b1506ad56dc7a184ecfdf5690900fdbeeb7450d0ec6ed06ad683841007d4848",
+    "server/verification.ts": "df641c78c9090673693a53eec241d67bbf9d6a11a5f65e49cbf0114fd2d37748",
+    "server/adapters/jev.ts": "e3e07f423a2fd63c29437a6ba48841041e72ee1d9f26d91e3b57156fad7685a2",
+    "server/router.ts": "81f582e32e4437b5ae29a95cd35179c477f6430cdb7a8ce21db82ce86217574f",
+    "server/paths.ts": "919196d230474a81cbadf648cc303cc0c67a37acd888ba3e855bddf2f811145a",
+    "server/outcomes.ts": "466513e9a69c1cacc655e7679e8b64953ca266cc8ceac55069fe485718c3350d"
+  },
+  "limits": [
+    "Synthetic provider fixtures do not measure live routing accuracy or savings",
+    "Opus Node 22/Linux environment was not rerun; native document support remains macOS-only",
+    "Follow-ups retain original task verification criteria",
+    "No second physical Mac check; broader independent review remains incomplete"
+  ]
+}

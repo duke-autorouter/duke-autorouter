@@ -40,6 +40,7 @@ const entries = [
   'docs/SETUP_IMPORT.md',
   'docs/ROUTING_POLICY.md',
   'docs/REVIEW_SCORING.md',
+  'docs/ADVERSARIAL_REVIEW_20260920.md',
   'docs/BENCHMARK_PROTOCOL.md',
   'docs/LIVE_ACCEPTANCE_TASKS.md',
   'docs/RELEASE_READINESS.md',

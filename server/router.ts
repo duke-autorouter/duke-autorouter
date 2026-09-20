@@ -116,7 +116,10 @@ export function qualifiedModels(
         return false;
       if (reviewed !== undefined && reviewed < settings.qualityFloor) return false;
       const observed = matchingOutcomes(m, assessment);
+      // The explicit outage fallback remains usable when automatic quality
+      // history is sparse or negative. Eligibility and declared quality still apply.
       if (
+        !economyAttempt &&
         observed &&
         observed.passed + observed.failed >= 3 &&
         observed.upperBound < settings.qualityFloor
@@ -192,8 +195,8 @@ export function route(
   chosen ??= jevChoice || (preview && settings.jevMode === 'assist' ? qualified[0] : fallbacks[0]);
   if (!chosen)
     throw new Blocked(
-      eligible.length && (qualified.length || fallbacks.length)
-        ? 'The Jev fallback model is unavailable. Select Luna or Haiku in My models, or choose a fallback in Usage & routing. DUKE will not switch to another model without that setting.'
+      !preview && eligible.length
+        ? `${settings.jevFallbackModel ? 'Your configured fallback' : 'The Luna/Haiku fallback'} cannot run this ${assessment.difficulty} ${assessment.kind} task. Check its connection, project access, required tools, and declared quality settings, or choose another fallback in Usage & routing. A model that already failed this attempt will not be retried automatically. DUKE has not switched to a premium model.`
         : `No available model has a suitable profile for this ${assessment.difficulty} ${assessment.kind} task. Choose a suitable model in My models, or check its connection and project permissions.`,
     );
   const selectionSource = task.modelOverride ? 'manual' : jevChoice ? 'jev' : 'rules';

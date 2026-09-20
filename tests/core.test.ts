@@ -211,6 +211,10 @@ test('workspace rejects traversal, secrets, and symlink escapes', async () => {
       '/etc/passwd',
       '.env',
       'a/.env.local',
+      '.GIT/config',
+      'nested/.SsH/config',
+      '.AWS/credentials',
+      '.ROUTER/state',
       'outside/state/test.sqlite',
     ])
       await assert.rejects(() => scoped(f.dir, p));

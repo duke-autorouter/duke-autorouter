@@ -1,13 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { catalogEfforts, workerEffort } from '../server/effort.js';
-import { ModelInput, defaults, type Workspace } from '../server/types.js';
-import { route } from '../server/router.js';
+import { ModelInput, defaults, type Workspace, type Model } from '../server/types.js';
+import { route, assessLocally, qualifiedModels } from '../server/router.js';
 import { modelExecutionKey } from '../server/work-profile.js';
 import { Store } from '../server/store.js';
-import { outcomeSummaries, REVIEW_POLICY } from '../server/outcomes.js';
+import { outcomeSummaries, REVIEW_POLICY, interval } from '../server/outcomes.js';
 
-const model = (id: string, provider: 'codex' | 'claude' = 'codex') =>
+const model = (id: string, provider: 'codex' | 'claude' = 'codex'): Model =>
   ModelInput.parse({
     id,
     model: id,
@@ -109,5 +109,41 @@ test('effort-specific observations do not mix with another level or legacy unkno
     assert.equal(outcomeSummaries(store, low)[0].passed, 1);
   } finally {
     store.close();
+  }
+});
+
+test('sparse failures cannot disable the economical outage fallback or bypass its hard gates', () => {
+  const fallbackTask = { prompt: 'Write a short note', required: ['files'] as ['files'] };
+  const luna = model('gpt-5.6-luna'),
+    astra = model('gpt-6-astra');
+  const assessment = assessLocally(fallbackTask);
+  luna.observations = [{ ...assessment, passed: 1, failed: 2, unverified: 0, ...interval(1, 2) }];
+  assert.ok(luna.observations[0].upperBound < defaults.qualityFloor);
+  assert.ok(!qualifiedModels([luna], assessment, defaults).length);
+  for (const settings of [defaults, { ...defaults, jevFallbackModel: luna.id }]) {
+    const chosen = route(fallbackTask, workspace, [astra, luna], settings);
+    assert.equal(chosen.modelId, luna.id);
+    assert.equal(chosen.effort, 'low');
+    assert.throws(
+      () => route(fallbackTask, workspace, [astra, luna], settings, new Set([luna.id])),
+      /fallback.*cannot run/,
+    );
+    assert.throws(() =>
+      route(fallbackTask, workspace, [astra, { ...luna, enabled: false }], settings),
+    );
+    assert.throws(() =>
+      route(fallbackTask, workspace, [astra, { ...luna, capabilities: [] }], settings),
+    );
+    assert.throws(() =>
+      route(fallbackTask, { ...workspace, providers: ['claude'] }, [astra, luna], settings),
+    );
+    assert.throws(() =>
+      route(
+        fallbackTask,
+        workspace,
+        [astra, { ...luna, quality: { ...luna.quality, [assessment.kind]: 0.2 } }],
+        settings,
+      ),
+    );
   }
 });

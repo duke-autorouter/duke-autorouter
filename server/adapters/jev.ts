@@ -45,10 +45,21 @@ const rubric = [
   'Complex: interacting components, uncertain requirements, deep reasoning, difficult diagnosis, or substantial verification across a system; errors are difficult to detect.',
 ];
 function distribution(values: Record<string, number>, keys: string[]) {
+  const numbers = Object.values(values);
+  const epsilon = 1e-8;
+  const rounded = numbers.every((p) => Math.abs(p * 100 - Math.round(p * 100)) < epsilon);
+  const radius = rounded ? 0.005 : epsilon;
+  // Reported two-decimal probabilities need not total one. Accept only when
+  // their rounding intervals contain a possible distribution; retain raw values
+  // for thresholds and receipts instead of inflating them by normalization.
+  const minimum = numbers.reduce((sum, p) => sum + Math.max(0, p - radius), 0);
+  const maximum = numbers.reduce((sum, p) => sum + Math.min(1, p + radius), 0);
   if (
     Object.keys(values).length !== keys.length ||
     keys.some((k) => values[k] === undefined) ||
-    Math.abs(Object.values(values).reduce((a, b) => a + b, 0) - 1) > 0.01
+    !numbers.some((p) => p > 0) ||
+    minimum > 1 + epsilon ||
+    maximum < 1 - epsilon
   )
     throw new Error('Jev returned an invalid probability distribution.');
 }
@@ -161,7 +172,7 @@ export class Jev {
       const difficulty = scoreAnswer.parse(assessed.answers?.difficulty);
       distribution(difficulty.probabilities, ['0', '1', '2']);
       const mean = difficulty.probabilities['1'] + 2 * difficulty.probabilities['2'];
-      if (Math.abs(mean - difficulty.score) > 0.02)
+      if (Math.abs(mean - difficulty.score) > 0.02 + 1e-8)
         throw new Error('Jev difficulty score disagrees with its distribution.');
       const confident = Math.min(kind.confidence, difficulty.confidence) >= 0.8;
       // Work preferences are optional; uncertainty here does not lower difficulty.
@@ -285,7 +296,7 @@ export class Jev {
               criteria: {
                 ...choices,
                 use_rules:
-                  'No clear relative fit; let the router automatically choose among the qualified models using its rules.',
+                  'No clear relative fit; use the configured economical fallback at its lowest supported effort. If it is unavailable, the task stops without switching to a premium model.',
               },
             },
           },

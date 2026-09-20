@@ -15,10 +15,15 @@ and savings have not yet been measured.
 
 ## Version 0.1
 
-Version 0.1 is the first public prerelease for **Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.0/DUKE-Autorouter-0.1.0-mac-arm64.dmg).
+The current prerelease is **0.1.1 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.1/DUKE-Autorouter-0.1.1-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.1 fixes a browser redirect boundary defect, incomplete-check scoring,
+rounded Jev responses and fallback exclusions. Update from 0.1.0 before using
+browser research. The [review response](docs/ADVERSARIAL_REVIEW_20260920.md) records
+the fixes, tests and remaining limits.
 
 - **A native Mac window.** The installed app manages its own background process.
   Open it from Applications; no terminal or Codex desktop app is needed after
@@ -90,9 +95,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.0/DUKE-Autorouter-0.1.0-mac-arm64.dmg)**
+**[Download DUKE 0.1.1 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.1/DUKE-Autorouter-0.1.1-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -157,7 +162,7 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The release passes 157 automated tests and 12 standalone package checks. Another
+The release passes 167 automated tests and 12 standalone package checks. Another
 14 browser workflows exercise the app and files with synthetic workers. Live
 Codex and Claude checks cover coding, sourced research, writing, basic documents,
 fallback, and cancellation/resume. Nine live Jev diagnostic reviews passed their

@@ -1,5 +1,9 @@
 # Automatic review scoring
 
+The 0.1.1 [adversarial-review correction](ADVERSARIAL_REVIEW_20260920.md) retains
+this verdict threshold and advances the policy to exclude old runner failures
+from learning. The live evidence below remains the original 0.1.0 investigation.
+
 The September 20 investigation reproduced an overly strict review cutoff.
 Jev's answer probability and its distribution confidence arrived correctly from
 the API. DUKE used confidence to decide whether a pass or fail verdict counted.

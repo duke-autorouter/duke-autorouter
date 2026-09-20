@@ -2,13 +2,31 @@ import { lstat, realpath, mkdir } from 'node:fs/promises';
 import { resolve, relative, sep, dirname } from 'node:path';
 import { Blocked } from './types.js';
 export const sensitive = (name: string) =>
-  name === '.git' ||
-  name === '.router' ||
-  name === '.ssh' ||
-  name === '.aws' ||
-  ['.docker', '.kube', '.gcloud', '.gitconfig'].includes(name.toLowerCase()) ||
+  ['.git', '.router', '.ssh', '.aws', '.docker', '.kube', '.gcloud', '.gitconfig'].includes(
+    name.toLowerCase(),
+  ) ||
   /^\.env(?:\.|$)/i.test(name) ||
   /^(auth\.json|credentials(?:\.json)?|\.npmrc|\.netrc|id_rsa|id_ed25519)$/i.test(name);
+// SRT's deny globs are case-sensitive even on case-insensitive volumes.
+export const sensitiveGlobs = [
+  '.git',
+  '.router',
+  '.ssh',
+  '.aws',
+  '.docker',
+  '.kube',
+  '.gcloud',
+  '.gitconfig',
+  '.env',
+  '.env.*',
+  'auth.json',
+  'credentials',
+  'credentials.json',
+  '.npmrc',
+  '.netrc',
+  'id_rsa',
+  'id_ed25519',
+].map((name) => name.replace(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`));
 export function within(root: string, path: string) {
   const r = relative(root, path);
   return r === '' || (!r.startsWith('..' + sep) && r !== '..' && !r.startsWith(sep));

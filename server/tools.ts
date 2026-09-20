@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { readFile, writeFile, readdir, stat, rename, mkdir, copyFile } from 'node:fs/promises';
 import { resolve, join, relative, extname } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
-import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
+import { researchBrowser } from './research-browser.js';
 import { wordArtifact, pdfArtifact } from './artifacts.js';
 import { makeSpreadsheet } from './spreadsheets.js';
 import { fileContent, decodeText } from './file-content.js';
@@ -13,7 +13,7 @@ import { coreSkills } from './core-skills.js';
 import { Store } from './store.js';
 import { Approvals, fingerprint } from './approval.js';
 import { scoped, sensitive } from './paths.js';
-import { runProcess } from './process.js';
+import { runProcess, type ProcessResult } from './process.js';
 import { shellRunnerArgs } from './runtime.js';
 import { fetchPublic, publicURL, searchPublic } from './web.js';
 import { Blocked, UncertainEffect, now, type Task, type Workspace, type Cap } from './types.js';
@@ -150,7 +150,7 @@ export class ToolService {
   setups: SetupImporter;
   browsers = new Map<
     string,
-    { browser: Browser; context: BrowserContext; page: Page; permit?: { origin: string } }
+    Awaited<ReturnType<typeof researchBrowser>> & { permit?: { origin: string } }
   >();
   constructor(
     public store: Store,
@@ -387,45 +387,62 @@ export class ToolService {
     this.store.event(taskId, 'artifact', a);
     return a;
   }
-  async shell(w: Workspace, command: string, writable: boolean, signal: AbortSignal) {
+  async shell(
+    w: Workspace,
+    command: string,
+    writable: boolean,
+    signal: AbortSignal,
+  ): Promise<ProcessResult> {
     if (process.platform !== 'darwin' && process.platform !== 'linux')
-      throw new Blocked('The sandbox is not supported on this platform.');
+      return {
+        status: 'unavailable',
+        code: null,
+        stdout: '',
+        stderr: 'The sandbox is not supported on this platform.',
+      };
     const r = await runProcess(process.execPath, shellRunnerArgs(), {
       input: JSON.stringify({ workspace: w.path, command, writable }),
       signal,
       timeout: 100000,
+      // The inner 250k-character output may expand sixfold when JSON-escaped.
+      maxOutput: 2_000_000,
     });
+    if (r.status !== 'exited' || r.code !== 0)
+      return {
+        ...r,
+        status: r.status === 'exited' ? 'unavailable' : r.status,
+        code: null,
+        stdout: '',
+        stderr: `The sandbox runner did not return a complete result (${r.status}). ${r.stderr}`,
+      };
     try {
-      return JSON.parse(r.stdout);
+      return z
+        .object({
+          status: z.enum(['exited', 'timed_out', 'output_limit', 'unavailable', 'interrupted']),
+          code: z.number().int().nullable(),
+          stdout: z.string(),
+          stderr: z.string(),
+        })
+        .refine((v) => v.status !== 'exited' || v.code !== null)
+        .parse(JSON.parse(r.stdout));
     } catch {
-      throw new Blocked('Sandbox failed to initialize; command was not run.');
+      return {
+        status: 'unavailable',
+        code: null,
+        stdout: '',
+        stderr: 'The sandbox runner returned an unreadable result. Command completion is unknown.',
+      };
     }
   }
   async browse(task: Task, w: Workspace, args: any, signal: AbortSignal) {
     let state = this.browsers.get(task.id);
     if (!state) {
-      const browser = await chromium.launch({ headless: true }),
-        context = await browser.newContext({ acceptDownloads: false, serviceWorkers: 'block' }),
-        page = await context.newPage();
-      state = { browser, context, page };
+      state = await researchBrowser(() => state?.permit?.origin);
+      if (signal.aborted) {
+        await state.close();
+        signal.throwIfAborted();
+      }
       this.browsers.set(task.id, state);
-      const s = state;
-      await context.route('**/*', async (route) => {
-        try {
-          await publicURL(route.request().url());
-          if (
-            !['GET', 'HEAD'].includes(route.request().method()) &&
-            new URL(route.request().url()).origin !== s.permit?.origin
-          )
-            return route.abort();
-          return route.continue();
-        } catch {
-          return route.abort();
-        }
-      });
-      context.on('page', async (p) => {
-        if (p !== page) await p.close();
-      });
     }
     const { page } = state;
     const abort = () => void this.close(task.id);
@@ -434,6 +451,7 @@ export class ToolService {
       if (args.action === 'open') {
         await publicURL(args.url);
         await page.goto(args.url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+        await publicURL(page.url());
         this.store.event(task.id, 'source', { url: page.url() });
       }
       if (args.action === 'click' || args.action === 'fill') {
@@ -525,6 +543,7 @@ export class ToolService {
           state.permit = undefined;
         }
       }
+      await publicURL(page.url());
       if (args.action === 'screenshot') {
         const p = await scoped(w.path, `artifacts/browser-${Date.now()}.png`, true);
         const bytes = await page.screenshot({ path: p });
@@ -547,6 +566,9 @@ export class ToolService {
           })),
         ),
       };
+    } catch (error) {
+      await this.close(task.id);
+      throw error;
     } finally {
       signal.removeEventListener('abort', abort);
     }
@@ -554,6 +576,6 @@ export class ToolService {
   async close(taskId: string) {
     const s = this.browsers.get(taskId);
     this.browsers.delete(taskId);
-    if (s) await s.browser.close().catch(() => {});
+    if (s) await s.close();
   }
 }

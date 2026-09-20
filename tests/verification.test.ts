@@ -17,6 +17,7 @@ import {
 import { inspectFile, routingContext } from '../server/task-evidence.js';
 import { outcomeSummaries, interval, REVIEW_POLICY } from '../server/outcomes.js';
 import { citedURLs } from '../server/verification.js';
+import type { ProcessStatus } from '../server/process.js';
 import {
   defaults,
   ModelInput,
@@ -195,7 +196,10 @@ test('configured fallback permits an economical attempt without treating it as p
     route(task, w, [unknown, routine, strong], settings).assessment.difficulty,
     'complex',
   );
-  assert.throws(() => route(task, w, [unknown, strong], settings), /fallback model is unavailable/);
+  assert.throws(
+    () => route(task, w, [unknown, strong], settings),
+    /configured fallback cannot run/,
+  );
 });
 
 test('catalog refresh replaces stale prices and context while preserving explicit overrides and enablement', () => {
@@ -601,7 +605,7 @@ test('an independently rerun task check can fail and trigger recovery before sem
     let runs = 0;
     f.tools.shell = async () => {
       runs++;
-      return { code: 1, stdout: 'Incorrect result', stderr: '' };
+      return { status: 'exited', code: 1, stdout: 'Incorrect result', stderr: '' };
     };
     const task = await f.run({
       prompt: 'Fix the code',
@@ -630,6 +634,98 @@ test('research citations exclude code examples but retain linked and bare prose 
     ),
     ['https://example.org/report', 'https://example.org/other'],
   );
+});
+
+test('runner limits and unavailable execution remain neutral and do not trigger recovery', async () => {
+  for (const status of [
+    'timed_out',
+    'output_limit',
+    'unavailable',
+    'interrupted',
+  ] as ProcessStatus[]) {
+    const f = await fixture('coding');
+    try {
+      f.add(model('worker'));
+      f.tools.shell = async () => ({
+        status,
+        code: null,
+        stdout: '',
+        stderr: 'Synthetic infrastructure limit',
+      });
+      const task = await f.run({
+        prompt: 'Fix the code',
+        required: ['files', 'shell'],
+        verification: { files: ['result.md'], command: 'node verify.mjs' },
+      });
+      assert.equal(task.status, 'completed', status);
+      assert.equal(task.review?.status, 'unverified', status);
+      assert.equal(task.review?.checks.find((c) => c.name === 'Tests')?.status, 'unverified');
+      assert.equal(task.attempt, 0);
+      assert.equal(task.checkpoint?.repairDifficulty, undefined);
+      assert.deepEqual(f.runs, ['worker']);
+      assert.equal(f.store.list<Outcome>('routing_outcome')[0].status, 'unverified');
+      assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+test('real sandbox output cap survives its JSON envelope without becoming a failed test', async () => {
+  const f = await fixture('coding');
+  try {
+    f.add(model('worker'));
+    await writeFile(
+      join(f.workspace.path, 'verify.mjs'),
+      'process.stdout.write("\\u0001".repeat(300000));',
+    );
+    const result = await f.tools.shell(
+      f.workspace,
+      'node verify.mjs',
+      false,
+      new AbortController().signal,
+    );
+    assert.equal(result.status, 'output_limit', result.stderr);
+    assert.equal(result.stdout.length, 250000);
+    assert.equal(result.code, null);
+    const exited = await f.tools.shell(
+      f.workspace,
+      'exit 126',
+      false,
+      new AbortController().signal,
+    );
+    assert.equal(exited.status, 'exited', exited.stderr);
+    assert.equal(exited.code, 126);
+  } finally {
+    await f.close();
+  }
+});
+
+test('rounded review probabilities are retained without moving the acceptance threshold', async () => {
+  for (const [probabilities, expected] of [
+    [{ pass: 0.8, fail: 0.1, unknown: 0.09 }, 'passed'],
+    [{ pass: 0.8, fail: 0.11, unknown: 0.1 }, 'passed'],
+    [{ pass: 0.79, fail: 0.1, unknown: 0.1 }, 'unverified'],
+    [{ pass: 0.33, fail: 0.33, unknown: 0.33 }, 'unverified'],
+    [{ pass: 0.4, fail: 0.1, unknown: 0.1 }, 'unverified'],
+  ] as const) {
+    const f = await fixture();
+    try {
+      f.add(model('worker'));
+      f.verdict(() =>
+        Object.fromEntries(
+          ['brief', 'support', 'completion'].map((id) => [
+            id,
+            { type: 'choice', choice: 'pass', confidence: 1, probabilities },
+          ]),
+        ),
+      );
+      const task = await f.run();
+      assert.equal(task.review?.status, expected, JSON.stringify(probabilities));
+    } finally {
+      await f.close();
+    }
+  }
 });
 
 test('research requires retrieved citation receipts and gives source excerpts to the reviewer', async () => {

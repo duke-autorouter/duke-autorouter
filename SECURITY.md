@@ -13,7 +13,15 @@ The public web search tool sends its query to Tavily's keyless search endpoint.
 It sends no DUKE credentials or API key. Queries can still contain information
 from the task, so they are external data sharing. The service has its own limits;
 DUKE does not fall back to paid search. Web reads and browser requests contact
-the selected public sites. Document parsing and previews run locally.
+the selected public sites. The browser uses a task-scoped HTTPS proxy that pins
+connections to validated public IP addresses, including redirected requests.
+Request interception also checks each page redirect and approved write origin.
+WebSockets and service workers are disabled. Credential paths are excluded
+without regard to letter case. Document parsing and previews run locally.
+
+Version 0.1.1 fixes a browser redirect boundary defect in 0.1.0. Update the app
+before using browser research. The [review response](docs/ADVERSARIAL_REVIEW_20260920.md)
+records the fix and regression coverage.
 
 The application data directory contains task text, files, authentication profiles,
 backups and the private launch token. API keys are stored in macOS Keychain or read

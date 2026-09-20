@@ -433,6 +433,65 @@ test('uncertain difficulty uses the configured fallback without asking for a mod
   }
 });
 
+test('rounded distributions retain Jev routing across a nine-option choice', async () => {
+  const f = await fixture();
+  try {
+    f.add(...Array.from({ length: 8 }, (_, i) => model(`worker-${i}`)));
+    f.answer((body) => {
+      if (body.questions.difficulty)
+        return {
+          kind: {
+            ...choice(['coding', 'research', 'writing', 'documents'], 'coding'),
+            probabilities: { coding: 0.97, research: 0.01, writing: 0.01, documents: 0.02 },
+          },
+          difficulty: {
+            type: 'score',
+            score: 0.995,
+            confidence: 1,
+            probabilities: { '0': 0.33, '1': 0.33, '2': 0.33 },
+          },
+        };
+      const keys = Object.keys(body.questions.model.criteria);
+      assert.equal(keys.length, 9);
+      return {
+        model: {
+          ...choice(keys, 'candidate_0'),
+          probabilities: Object.fromEntries(
+            keys.map((key) => [key, key === 'candidate_0' ? 0.9 : 0.01]),
+          ),
+        },
+      };
+    });
+    const task = await f.run();
+    assert.equal(task.route?.selectionSource, 'jev');
+    assert.equal(task.route?.modelId, 'worker-0');
+    assert.equal(f.calls.length, 2);
+  } finally {
+    await f.close();
+  }
+});
+
+test('rounding allowance cannot accept empty mass, wrong keys or invalid high-precision totals', async () => {
+  for (const probabilities of [
+    { coding: 0, research: 0, writing: 0, documents: 0 },
+    { coding: 0.9, research: 0.09, writing: 0, extra: 0 },
+    { coding: 0.5001, research: 0.2, writing: 0.15, documents: 0.14 },
+    { coding: 0.5, research: 0.1, writing: 0.1, documents: 0.1 },
+  ]) {
+    const f = await fixture();
+    try {
+      f.add(model('quick', 'routine'));
+      f.answer(() => ({
+        ...assessment(0),
+        kind: { ...choice(Object.keys(probabilities), 'coding'), probabilities },
+      }));
+      assert.equal((await f.run()).route?.selectionSource, 'rules');
+    } finally {
+      await f.close();
+    }
+  }
+});
+
 test('shadow testing records decisions but cannot change the executed model', async () => {
   const f = await fixture();
   try {

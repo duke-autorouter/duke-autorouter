@@ -21,6 +21,7 @@ decision was documented when first made.
 | [Learn from whole-task resources](adr/0011-resource-accounting.md) | Implemented; savings unmeasured | Include retries and reviews, distinguish API cost from subscription capacity, and scope evidence to comparable execution. |
 | [Use bounded search and inspect original sources](adr/0012-public-retrieval.md) | Implemented; live check passed | Keyless search avoids another setup account. Service limits stay explicit, and citations require original-source reading. |
 | [Use verdict probability for automatic review](adr/0013-review-probability-threshold.md) | Implemented; nine live diagnostic cases checked | Distribution confidence and answer probability have different meanings. Keep both, apply the cutoff to the verdict, and preserve uncertain outcomes. |
+| [Enforce network boundaries before contact and keep runner limits neutral](adr/0014-boundaries-and-incomplete-checks.md) | Implemented in 0.1.1; regression checks passed | Redirects cannot bypass the private-network guard. Execution limits remain incomplete checks. Rounded probabilities and sparse history do not unnecessarily disable automatic routing or its economical fallback. |
 
 ## What changed after testing
 

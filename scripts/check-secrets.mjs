@@ -3,6 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtemp, readFile, writeFile, mkdir, lstat, rm, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname, relative } from 'node:path';
+import { recordedChecksumVerifier } from './recorded-checksum.ts';
 
 // Run locally: repository contents and findings are never sent to a scanning service.
 const version = '8.30.1';
@@ -15,6 +16,7 @@ const checksums = {
 const root = await realpath(process.cwd());
 const git = (args) => execFileSync('git', args, { cwd: root, maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const recordedChecksum = recordedChecksumVerifier(root, git);
 if (await realpath(git(['rev-parse', '--show-toplevel']).toString().trim()) !== root)
   throw new Error('Run this check from the release repository root.');
 if (git(['rev-parse', '--is-shallow-repository']).toString().trim() !== 'false')
@@ -86,8 +88,7 @@ try {
           const line = content.toString().split('\n')[finding.StartLine - 1];
           const match = /^\s*"([^"\n]+)": "([a-f0-9]{64})",?\s*$/.exec(line);
           if (match && !match[1].startsWith('/') && !match[1].split('/').includes('..')) {
-            const source = scope === 'history' ? git(['show', `${finding.Commit}:${match[1]}`]) : await readFile(join(root, match[1]));
-            verified = hash(source) === match[2];
+            verified = await recordedChecksum(match[1], match[2], scope === 'history' ? finding.Commit : undefined);
           }
         } catch { /* Unverifiable findings require review. */ }
       }

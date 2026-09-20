@@ -5,7 +5,7 @@ app from GitHub Releases. Open the DMG, drag DUKE into Applications and launch i
 Users do not need Node, Xcode or a terminal. The first target is Apple Silicon
 macOS 14 or newer.
 
-The [0.1 release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0)
+The [0.1.1 release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
 includes a DMG, ZIP, checksums and release manifest. The
 [distribution receipt](evidence/distribution-verification.json) identifies the
 files that passed notarization, stapling, signature and Gatekeeper checks.

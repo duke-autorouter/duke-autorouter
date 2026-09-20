@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
-Updated September 20, 2026. Policy identifiers: `duke-routing-v8`, `duke-efficiency-v2` and
-`duke-review-v2`. This document describes implemented behavior, not measured
+Updated September 20, 2026. Policy identifiers: `duke-routing-v9`, `duke-efficiency-v2` and
+`duke-review-v3`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -98,6 +98,13 @@ Calibration still requires held-out comparisons.
   pinned endpoint caps remain pinned. A changed/unavailable API endpoint can
   fall back to another worker without exceeding those caps.
 
+TypeSafe reports probabilities and scores rounded to two decimal places. DUKE
+accepts sums consistent with that precision, including 0.99 and 1.01. It keeps the
+reported values for thresholds and receipts; normalization cannot promote a
+verdict below 0.8 into a pass. Missing keys, impossible totals and all-zero
+answers still use the unavailable-result path. See the
+[TypeSafe provider reference](https://ai-sdk.dev/providers/ai-sdk-providers/typesafe-ai).
+
 ### Configured fallback
 
 `Jev fallback model` in **Usage & routing** defaults to a selected, available Luna
@@ -109,8 +116,10 @@ Fable or another unconfigured model.
 
 Fallback is an economical attempt, not a claim that a small model is qualified for
 an unknown task difficulty. It may run below declared difficulty coverage, while
-permissions, required tools, known negative quality evidence and spending limits
-still apply. Uncertain assessments do not produce positive learning evidence.
+permissions, required tools, user-declared quality limits and spending limits
+still apply. Automatic failure history can exclude a model from Jev's shortlist,
+but does not disable the configured outage fallback. This permits a cheap attempt
+when previous automated checks were sparse or unreliable. Uncertain assessments do not produce positive learning evidence.
 Checks still run afterward. A failed worker is excluded from recovery, which asks
 Jev again; if Jev is still unavailable, only an available permitted fallback can run.
 
@@ -171,6 +180,9 @@ files, checkpoint and external-action ledger. Permission failures and uncertain
 external actions remain blocked; they cannot trigger an authority-bypassing retry.
 An unavailable, cancelled, malformed, uncertain or unaffordable review does
 not count as a quality failure. Incomplete checks never count as positive evidence.
+Timeouts, output limits, missing runners and sandbox startup failures also leave
+checks incomplete. Only a command that actually started and returned a nonzero
+exit is a failed test. Cancelled work does not create a learned outcome.
 Review records retain the selected answer, full probability distribution,
 distribution confidence, model version and threshold. The versioned quality and
 efficiency histories keep earlier acceptance rules separate; saved task reviews
@@ -201,7 +213,8 @@ claim. A positive capability estimate requires at least five checked outcomes
 and a conservative bound that meets the quality floor. At the default 0.8 floor,
 five successes are insufficient; twenty successes with no failures clear it.
 Legacy observations without the new work/size scope do not establish quality for a new scoped task. Three or more observations whose upper bound is below the quality floor exclude
-that profile for that family/difficulty. These are provisional heuristics over
+that profile from Jev's shortlist for that family/difficulty. The configured outage
+fallback is exempt from this automatic exclusion. These are provisional heuristics over
 automated judgments, not calibrated population-accuracy guarantees.
 
 Benchmark tasks are explicitly marked `evaluation: true`; their receipts and

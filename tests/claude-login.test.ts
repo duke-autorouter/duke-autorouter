@@ -212,7 +212,7 @@ test(
           assert.equal(execution.code, 0, execution.stderr);
           result = execution.stdout;
           await assert.rejects(stat(script), { code: 'ENOENT' });
-          return { stdout: '', stderr: '', code: 0 };
+          return { status: 'exited', stdout: '', stderr: '', code: 0 };
         },
         executable,
       );

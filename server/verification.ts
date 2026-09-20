@@ -166,7 +166,22 @@ export async function verifyTask(
     } catch (e) {
       // Unsafe paths are policy failures; a verifier must never broaden file access to retry.
       if (e instanceof Blocked) throw e;
-      checks.push({ name: path, status: 'failed', detail: (e as Error).message });
+      signal.throwIfAborted();
+      const unavailable = [
+        'EACCES',
+        'EPERM',
+        'EIO',
+        'EMFILE',
+        'ENFILE',
+        'EBUSY',
+        'ENOMEM',
+      ].includes((e as NodeJS.ErrnoException).code ?? '');
+      evidence.incomplete ||= unavailable;
+      checks.push({
+        name: path,
+        status: unavailable ? 'unverified' : 'failed',
+        detail: (e as Error).message,
+      });
     }
   }
   const previousTest = stageEvents.findLast(
@@ -183,9 +198,15 @@ export async function verifyTask(
     const test = await tools.shell(workspace, command, false, signal);
     checks.push({
       name: 'Tests',
-      status: test.code === 0 ? 'passed' : 'failed',
-      detail: `${command}\nExit ${test.code}\n${String(test.stdout ?? '').slice(-4000)}\n${String(test.stderr ?? '').slice(-2000)}`,
+      status: test.status !== 'exited' ? 'unverified' : test.code === 0 ? 'passed' : 'failed',
+      detail: `${command}\n${test.status === 'exited' ? `Exit ${test.code}` : `Check incomplete: ${test.status}`}\n${String(test.stdout ?? '').slice(-4000)}\n${String(test.stderr ?? '').slice(-2000)}`,
     });
+    if (test.status !== 'exited') {
+      evidence.incomplete = true;
+      limitations.push(
+        `Test execution was incomplete (${test.status}); this is not a model quality failure.`,
+      );
+    }
   } else if (task.route?.kind === 'coding') {
     checks.push({
       name: 'Tests',

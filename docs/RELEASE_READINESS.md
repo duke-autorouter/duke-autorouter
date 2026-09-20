@@ -2,12 +2,16 @@
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
 The source and Mac downloads are available in the
-[0.1 public prerelease](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0).
+[0.1.1 public prerelease](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1).
 This page records what was checked and the limits that early users need to know.
+
+The [0.1.1 review response](ADVERSARIAL_REVIEW_20260920.md) records fixes for
+browser redirects, incomplete execution checks, rounded Jev answers and fallback
+exclusions. Update from 0.1.0 before using browser research.
 
 ## Completed checks
 
-- 157 automated tests pass for the release source. The interface passed
+- 167 automated tests pass for the release source. The interface passed
   14 browser workflows; the final package passed 12 signed standalone checks.
   Browser workflows use synthetic workers; the [verification record](VERIFICATION.md)
   distinguishes them from live tasks and native-window checks.

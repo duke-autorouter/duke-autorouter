@@ -28,6 +28,7 @@ const contents = join(app, 'Contents');
 const resources = join(contents, 'Resources');
 const code = join(resources, 'app');
 const refresh = process.argv.includes('--refresh');
+const { version } = JSON.parse(await readFile(resource('package.json'), 'utf8'));
 const lockHash = createHash('sha256')
   .update(await readFile(resource('package-lock.json')))
   .digest('hex');
@@ -170,8 +171,8 @@ await writeFile(
 <key>CFBundleExecutable</key><string>DUKE Autorouter</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.1.0</string>
-<key>CFBundleVersion</key><string>3</string>
+<key>CFBundleShortVersionString</key><string>${version}</string>
+<key>CFBundleVersion</key><string>4</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>LSUIElement</key><false/>
 <key>NSHighResolutionCapable</key><true/>
@@ -182,7 +183,7 @@ await writeFile(
   JSON.stringify(
     {
       name: 'DUKE Autorouter',
-      version: '0.1.0',
+      version,
       platform: 'darwin-arm64',
       builtAt: new Date().toISOString(),
       node: {

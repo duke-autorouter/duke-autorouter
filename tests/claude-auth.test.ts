@@ -10,6 +10,7 @@ import type { runProcess } from '../server/process.js';
 const fixture =
   (status: unknown, code = 0): typeof runProcess =>
   async () => ({
+    status: 'exited',
     stdout: JSON.stringify(status),
     stderr: '',
     code,
@@ -63,7 +64,7 @@ test('Claude subscription login is recognized when SDK token-source fields are a
       assert.deepEqual(args, ['auth', 'status']);
       assert.equal(options?.env?.CLAUDE_CONFIG_DIR, '/tmp/duke-profile/claude');
       assert.equal(options?.env?.ANTHROPIC_API_KEY, undefined);
-      return { stdout: JSON.stringify(connected), stderr: '', code: 0 };
+      return { status: 'exited', stdout: JSON.stringify(connected), stderr: '', code: 0 };
     },
   );
   assert.equal(ready, true);
@@ -94,6 +95,7 @@ test('Claude API, gateway, signed-out and incomplete auth states do not enable s
 
 test('Claude status errors and cancellation cannot be mistaken for a connected account', async () => {
   const invalid: typeof runProcess = async () => ({
+    status: 'exited',
     stdout: 'unparseable private diagnostic',
     stderr: '',
     code: 1,
