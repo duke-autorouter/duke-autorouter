@@ -1,0 +1,146 @@
+{
+  "at": "2026-09-20T18:49:04.351054+00:00",
+  "release": "0.1.2",
+  "status": "Signed, notarized and checked; GitHub records publication status.",
+  "releaseURL": "https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2",
+  "platform": "Apple Silicon macOS 14+",
+  "implementationCommit": "65d9c8a593b5212b58860d2e593a586fafcaa1a2",
+  "sourceScope": "Runtime and build inputs match this commit. Later documentation and release-receipt edits do not change the packaged runtime.",
+  "packageLockSHA256": "ce5036a3b54f1aca274dbb1638c6052e1bd824b63577c3cfce48ab2a13d1cd9b",
+  "packagedRuntimeFilesMatched": 945,
+  "checks": {
+    "typescript": "passed",
+    "build": "passed",
+    "automatedTests": 182,
+    "automatedFailures": 0,
+    "browserWorkflows": 15,
+    "nativeSandboxChecks": 9,
+    "evaluationCorpus": 80,
+    "evaluationModelCalls": 0,
+    "implementationCI": "https://github.com/duke-autorouter/duke-autorouter/actions/runs/35529677308",
+    "signature": "passed",
+    "staple": "passed",
+    "gatekeeper": "passed",
+    "dmgMountAndApplicationsShortcut": "passed",
+    "claudePublisherSignatureAndUpstreamBytes": "passed",
+    "appleArchiveHashMatches": true,
+    "assetChecksums": "passed"
+  },
+  "standalone": {
+    "at": "2026-09-20T18:39:01.187Z",
+    "checks": [
+      "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
+      "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
+      "Project setup persists in a separate application data directory",
+      "Packaged roster and work preferences save through the authenticated API without inference",
+      "Packaged importer supports Link, independent Copy, portable export and authenticated local persistence",
+      "A duplicate service cannot take over the active application state",
+      "Bundled Codex, Claude SDK and Chromium initialize without global installations; no inference",
+      "Sandboxed coding task can use bundled Node",
+      "Bundled default skills, precise edits, search, Word/PDF reading and previews, and spreadsheet formulas work without developer tools",
+      "Graceful shutdown removes the launch receipt and releases state",
+      "Relaunch restores the saved project and creates a new authenticated local session",
+      "Application signature remains valid after bundled workers, browser and restart"
+    ],
+    "liveInference": false,
+    "minimalEnvironment": true
+  },
+  "native": {
+    "status": "Native-window inspection of 0.1.2 has not been performed; prior inspection is recorded below.",
+    "priorVersion": "0.1.1",
+    "priorReceipt": "distribution-0.1.1-verification.json",
+    "scope": "0.1.2 interface coverage is from the actual app in browser automation with synthetic workers. The signed standalone checks use a disposable profile."
+  },
+  "signing": {
+    "version": "0.1.2",
+    "signedAt": "2026-09-20T18:37:19.273Z",
+    "archiveSHA256": "c82105aa728fb73d3008503d257057856436f1a697733f3495d48f2ac2cfd952",
+    "binaries": 57,
+    "signedBinaries": 56,
+    "bundles": 10,
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    },
+    "status": "Accepted",
+    "id": "5758ed93-475f-44c2-8dc7-5c6771d7d8ea",
+    "submittedAt": "2026-09-20T18:40:20.919411+00:00",
+    "checkedAt": "2026-09-20T18:45:32.996Z"
+  },
+  "downloads": {
+    "name": "DUKE Autorouter",
+    "version": "0.1.2",
+    "platform": "darwin-arm64",
+    "minimumMacOS": "14",
+    "notarization": "Accepted and stapled",
+    "submissionId": "5758ed93-475f-44c2-8dc7-5c6771d7d8ea",
+    "createdAt": "2026-09-20T18:46:58.708Z",
+    "assets": [
+      {
+        "path": "DUKE-Autorouter-0.1.2-mac-arm64.dmg",
+        "sha256": "db1d0c391312996b970661a09f645a7e1a950d908de15712b23d222b56409a60"
+      },
+      {
+        "path": "DUKE-Autorouter-0.1.2-mac-arm64.zip",
+        "sha256": "75362247e3c55aaa129eb435b0edf8d1825e901a72fdb2ca8f30ddd8ed416d77"
+      }
+    ],
+    "sourceLockHash": "ce5036a3b54f1aca274dbb1638c6052e1bd824b63577c3cfce48ab2a13d1cd9b",
+    "preservedRuntime": {
+      "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+      "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+      "publisher": "Anthropic PBC",
+      "signaturePreserved": true
+    }
+  },
+  "credentialAudit": {
+    "at": "2026-09-20T18:47:51.090323+00:00",
+    "credentialsCompared": 8,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1104,
+        "bytes": 9385643,
+        "errors": []
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19752,
+        "bytes": 1484489140,
+        "errors": []
+      },
+      {
+        "scope": "download-metadata",
+        "files": 3,
+        "bytes": 1424,
+        "errors": []
+      }
+    ],
+    "exactMatches": 0,
+    "firstPartyPatternFiles": 945,
+    "patternFindings": 0,
+    "zipPayloadsMatched": 19777,
+    "zipResourceMetadataScanned": 0,
+    "downloadChecksums": "passed",
+    "limits": "Claude Keychain tokens were not extracted for exact comparison. Pattern/history checks and credential-path exclusions are separate coverage."
+  },
+  "apiSpendThisPassUSD": 0,
+  "limits": [
+    "No new live model calls; follow-up requirement judgments use synthetic responses.",
+    "Native 0.1.2 window inspection pending; no physical second-Mac installation.",
+    "OpenRouter live completion remains unverified.",
+    "No comparative routing, savings or multi-day reliability benchmark.",
+    "The original live stall was not conclusively diagnosed.",
+    "Missing image evidence, ambiguous requirements or unavailable review capacity can still leave checks incomplete."
+  ],
+  "supportingEvidence": [
+    "workflow-verification.json",
+    "adversarial-fixes-verification.json",
+    "installed-acceptance.json",
+    "review-scoring-verification.json",
+    "secret-audit.json",
+    "distribution-0.1.1-verification.json"
+  ]
+}

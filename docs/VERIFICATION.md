@@ -39,7 +39,7 @@ or savings claim follows from these tests.
 | Automated tests | 182 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks, probability boundaries and evidence limits. |
 | Browser workflows | 15 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, rendered deliverables, usage, recovery and narrow screens. |
 | Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and Developer ID signature checks under the hardened runtime. |
-| Installed Mac app | Signed update preserved accounts, model choices, settings, two projects and 14 tasks. PDF, Word and both workbook sheets displayed; native quit/relaunch retained state and left a valid signature. |
+| Installed Mac app | The earlier 0.1.1 signed update preserved accounts, model choices, settings, two projects and 14 tasks. PDF, Word and both workbook sheets displayed; native quit/relaunch retained state and left a valid signature. |
 | Evaluation corpus | 80 cases validate, 20 per work family. This checks the corpus, without calling models. |
 | Live workers | Successful Codex and Claude runs, detailed below. No successful OpenRouter task yet. |
 | Credential exposure | Full source history, tracked files, document contents, screenshot text and the packaged app reviewed. No credentials identified. The [audit receipt](evidence/secret-audit.json) records scope and limits; CI now checks text and history. |
@@ -123,18 +123,21 @@ These receipts retain their original dates and scope:
 
 ## Distribution and remaining coverage
 
-The 0.1.1 release passed Developer ID verification, Apple notarization,
+The 0.1.2 release passed Developer ID verification, Apple notarization,
 stapling and Gatekeeper. The delivered DMG and ZIP preserve Anthropic's original
-Claude executable and signature. All 12 standalone checks passed again, and the
-corrected runtime recognized the existing Claude subscription without inference.
-The [distribution receipt](evidence/distribution-0.1.1-verification.json) identifies
-the exact assets, updated package audit and native-window check. The installed update retained
-14 tasks, two projects, account connections and saved settings. The native home
-screen and a saved task rendered after updating; quit and relaunch preserved state.
-The [0.1.0 receipt](evidence/distribution-verification.json) retains its earlier
-document-preview checks. Earlier live
-checks retain their recorded scope; packaging did not rerun model inference.
-The [public release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.1)
+Claude executable and signature. All 12 signed standalone checks passed, and
+945 packaged runtime files match the tested build. The
+[0.1.2 distribution receipt](evidence/distribution-0.1.2-verification.json)
+identifies the exact assets, package credential audit and verification scope.
+No new model inference was part of this patch.
+
+The installed native-window check remains at 0.1.1. The 0.1.2 interface has
+browser coverage, and its signed package passed the standalone checks. That [earlier update](evidence/distribution-0.1.1-verification.json)
+retained 14 tasks, two projects, account connections and saved settings. The
+native home screen and a saved task rendered after updating; quit and relaunch
+preserved state. The [0.1.0 receipt](evidence/distribution-verification.json)
+retains its document-preview checks. Earlier live checks retain their recorded
+scope. The [public release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2)
 includes checksums for the DMG and ZIP.
 
 OpenRouter live completion and a second physical Mac installation remain

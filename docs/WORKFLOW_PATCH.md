@@ -37,7 +37,10 @@ development Mac. No new live model calls or benchmark runs are part of this patc
 
 Local checks passed: **182 automated tests**, **15 browser workflows**, **9 Mac
 sandbox checks**, TypeScript, the production build and the **80-case evaluation
-corpus**. The corpus check makes no model calls and measures no efficiency.
+corpus**. The signed package passed **12 standalone checks**. The
+[distribution receipt](evidence/distribution-0.1.2-verification.json) records
+notarization, package contents and the credential audit. The corpus check makes
+no model calls and measures no efficiency.
 
 ## Remaining limits
 
