@@ -68,7 +68,7 @@ async function copy(path: string) {
   }
   if (!stat.isFile()) throw new Error(`Unsupported source entry: ${path}`);
   if (
-    /(?:^|\/)(?:node_modules|\.router|\.build|\.git|auth|profiles)(?:\/|$)|\.sqlite(?:-|$)|\.log$/i.test(
+    /(?:^|\/)(?:node_modules|\.router|\.build|\.git|auth|profiles)(?:\/|$)|(?:^|\/)(?:auth\.json|launch\.json|\.credentials\.json|id_rsa|id_ed25519)$|\.(?:p8|p12|pfx|pem|key|db)$|\.sqlite(?:3)?(?:-|$)|\.log(?:\.|$)/i.test(
       path,
     )
   )

@@ -10,6 +10,10 @@ checks. Source and release artifacts remain private until publication is approve
   file hashes and the matching private GitHub commit and CI result.
 - Review source, screenshots and notices for private information. The exporter
   excludes profiles, databases, logs, downloaded runtimes and review scratchpads.
+- Run `npm run security:secrets` on the final full-history Git checkout. The
+  [credential audit](evidence/secret-audit.json) also covers historical images,
+  document contents and the current app. Repeat the artifact review if those
+  files change; rerun it on the final signed download before uploading.
 - Keep the [production dependency audit](evidence/dependency-audit.json) current.
   The latest tool pass reports zero known vulnerabilities, including the new
   spreadsheet calculation dependencies.

@@ -25,6 +25,19 @@ The setup importer rejects known credential paths and recognizable secrets, but
 cannot determine whether every personal document is safe to share. Inspect every
 selected export. Imports never authorize external actions or install services.
 
+## Release checks
+
+Before sharing source, run `npm run security:secrets` in a full Git clone.
+The check scans every reachable commit and tracked working file, rejects private
+state paths, and fails on unresolved findings. File-checksum findings are accepted
+only when the checksum matches the referenced source bytes. The
+[release audit](docs/evidence/secret-audit.json) records the separate document,
+screenshot and packaged-app review. This checks for exposed credentials; it is
+not an independent security assessment.
+
+If a credential is committed, revoke or rotate it before rewriting history.
+Deleting the current file does not remove it from earlier commits or copies.
+
 ## Reporting a vulnerability
 
 Do not put credentials, private task content or an exploitable vulnerability in a

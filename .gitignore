@@ -11,6 +11,15 @@ test-results/
 .DS_Store
 .build/
 release/
+*.p8
+*.p12
+*.pfx
+*.pem
+*.key
+*.sqlite*
+auth.json
+.credentials.json
+launch.json
 
 # Local build/review history; curated public evidence lives in docs/evidence.
 docs/reviews/

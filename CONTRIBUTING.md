@@ -18,6 +18,7 @@ npm run check
 npm test
 npm run build
 npm run eval
+npm run security:secrets
 ```
 
 For interface or import changes, also run `npm run test:browser` and
@@ -69,6 +70,12 @@ Preserve these boundaries:
 `npm run source:export` writes a new allowlisted snapshot under `release/` and
 refuses to replace a nonempty directory. It does not publish or create a Git repo.
 Review the snapshot and [release checklist](docs/RELEASE_READINESS.md) before sharing.
+
+Run the secret check from the release Git repository with full history. It
+downloads a pinned, checksum-verified Gitleaks executable, then scans locally.
+Set `GITLEAKS_BIN` to an existing 8.30.1 executable to avoid the download. Reports
+contain finding locations, never credential values. CI runs the same check.
+Screenshots, rendered documents and the final app still need release review.
 
 For a model upgrade, check its official protocol, package license and provider
 terms against the pinned adapters. A successful catalog read is not evidence of

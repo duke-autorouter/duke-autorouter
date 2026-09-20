@@ -22,6 +22,7 @@ general model quality.
 | Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and an ad hoc signature check. |
 | Evaluation corpus | 80 cases validate, 20 per work family. This checks the corpus, without calling models. |
 | Live workers | Successful Codex and Claude runs, detailed below. No successful OpenRouter task yet. |
+| Credential exposure | Full source history, tracked files, document contents, screenshot text and the packaged app reviewed. No credentials identified. The [audit receipt](evidence/secret-audit.json) records scope and limits; CI now checks text and history. |
 
 Clean-source and hosted checks are recorded against the source snapshot or
 commit they actually tested. See the receipt and

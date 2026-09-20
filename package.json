@@ -34,6 +34,7 @@
     "eval:compare": "node --import tsx scripts/compare-evals.ts",
     "format": "prettier --write \"server/*.ts\" \"server/adapters/*.ts\" \"src/*.{tsx,css}\" \"scripts/*.ts\" \"tests/*.ts\" \"evals/*.ts\"",
     "source:export": "node --import tsx scripts/export-source.ts",
+    "security:secrets": "node scripts/check-secrets.mjs",
     "distribution:sign": "node --import tsx scripts/distribute-macos.ts sign",
     "distribution:submit": "node --import tsx scripts/distribute-macos.ts submit",
     "distribution:status": "node --import tsx scripts/distribute-macos.ts status",

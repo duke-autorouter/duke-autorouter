@@ -1,11 +1,11 @@
 {
   "name": "DUKE Autorouter",
-  "at": "2026-09-20T02:26:35.520934+00:00",
+  "at": "2026-09-20T12:41:11.002916+00:00",
   "files": {
-    ".gitignore": "403cd9fdaa56f9412fe49f612b92f4c48b035177615e06f6064f5b14bf04845b",
+    ".gitignore": "6814baa1ecb5b14a8a848218c31ccf3b27e1c01a663c4be13062d0aa014b566a",
     ".env.example": "f04d20095694a1dbdb3968aee87c4b2fc93fa666c69c9793528119a3a12f85cb",
-    ".github/workflows/local-checks.yml": "5f7a413cff73c7698fbb2927518e2bf201c602f82e347e4d7366cf31f1760e90",
-    "package.json": "deb9cfe54bc822e74ae81d05def6d41248b801ae438749f299808b75bbd4927f",
+    ".github/workflows/local-checks.yml": "b396058d62c60275226096e35a04b591055de43688bf1f9727c9d076fc68c3fb",
+    "package.json": "f1e034a2005576f60816333f9d5d9b5d212071f39d7fbc2388209116fafbca88",
     "package-lock.json": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
     "tsconfig.json": "408f12d44215ee1099367dcec0a76a2fca2530ddace26a11f68bbc1e08145f8d",
     "tsconfig.server.json": "9cdffca654db2bdd7b8ad582b9d9d0ff3582406f58a9a9df7d08df8d6cbbd7dd",
@@ -14,8 +14,8 @@
     "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
     "THIRD_PARTY_NOTICES.md": "1f73d30c0dd870cd02d5eda49f2afae09c035b0168e9713a19cb95e6ad0e3887",
     "README.md": "3059e65feefaa5389c517f14291af1ab294cbab1a36c7aa59716f3a04efaa27a",
-    "CONTRIBUTING.md": "588985b82f5e2af052c23176b36623d62858181dc03dab2e5d646243adf64305",
-    "SECURITY.md": "2cb6cf8e6a5f18821a9dc047e1cdc6a2a4d976462c04603aa9c1217003671ba7",
+    "CONTRIBUTING.md": "02fd8dddbfe92e18cfd5497658a56e05bd54db6dff4de125b243355efbb678e7",
+    "SECURITY.md": "1a05b2d4d2e62a4799a807e884ec9a69f547f1fcd24aafddf3ff72707940c73b",
     "server/adapters/claude.ts": "f2dccce408780340424ba5b4d846d872da06093dd54f49cec4f8021ca8162dc5",
     "server/adapters/codex.ts": "f1149ad747c4637a545d0dfcb670e97359cb08e1077fcfb8f1c983e030dbbe1f",
     "server/adapters/jev.ts": "f53dbe4db72b45824733c21d4b01eb389f43c1422b568ce09443c1a55acace1e",
@@ -978,7 +978,7 @@
     "scripts/distribute-macos.ts": "4be0270c982eced002a1bd41c8cae794a58de03bfef47c33c275ce32bbf3bc90",
     "scripts/doctor.ts": "1118ae28b7f94627b91d29917591aaad5ef96f67814f83cf8a9905294ae4f4da",
     "scripts/evaluate.ts": "36d4947fd081745759f2c44226eec77f365129a836d668b69f7a50d52895e614",
-    "scripts/export-source.ts": "efe92dac6c11023d4aa387c9884acdc312d5fba720cba65d5972338f797d65ce",
+    "scripts/export-source.ts": "0a89d198ce2b2091baec918599c8b68b9f755e5cdaf73b9d51783c741cfcca6b",
     "scripts/importer-browser-check.ts": "137ec83f4fb30fa1801e4357a6c3efdadd4d7469cadc4512ce5a6cc0c9527bf9",
     "scripts/package-macos.ts": "0451e514af9250f9574c0097db58723909d61d6684e6c3409404d8b83499684e",
     "scripts/package-paths.ts": "f174cc4ce46d3381107f445ff4ab1e5cb44411cd1bd56d24312c725ee60dc1fa",
@@ -1022,8 +1022,8 @@
     "docs/ROUTING_POLICY.md": "b52f873cfcacd303e747d3684c185e2f46168859051563bea5c97fb2dc3c472b",
     "docs/BENCHMARK_PROTOCOL.md": "cf0d1ca30405a791f283878f624b6cbaeef13e4d08b55e9cd04dbfe91b7d0d4a",
     "docs/LIVE_ACCEPTANCE_TASKS.md": "938470390d0a12e77fc220314186bd5626dab588a9986ae1b345a3c42ce77147",
-    "docs/RELEASE_READINESS.md": "0822bf057b8eec809bfd4b8c76e64ec77d1d617589793c7c3eaa3b7a3dcc0da1",
-    "docs/VERIFICATION.md": "dd816af9e1d96dfde3aa0ce2e38d9f475b833ca4dbd5fbfbcae3b5f62db46190",
+    "docs/RELEASE_READINESS.md": "07ccd161e08e47411b8cf0805826b10b83e6fdadf7306ed7fdeee6d92d3e1c66",
+    "docs/VERIFICATION.md": "ce5f3370545f68bf7598b4e44809e49cfdc10bda46e7ff7685ee935340c8e658",
     "docs/assets/README.md": "423e4cb68a948e2b32c410ead6d092729191d0bb6bb19bfb572745a5980a5751",
     "docs/assets/duke-autorouter-app-icon.png": "38eb9462b03bf9488f26c107dbb2a67a4a92c48b6db0e605510de17cf070d31a",
     "docs/assets/duke-autorouter-architecture-v2.png": "bb4a6207b0dbcd1ad21fbb1e7ae7b781827a0674af15efe94f281d94c55cf3d7",
@@ -1079,7 +1079,9 @@
     "docs/evidence/usage-browser-verification.json": "92c03a51460acc3988fbeb1d9c3276faf87cdd5ee767d837db79fc3c056e9772",
     "docs/evidence/usage-home.png": "7dbaa021baf9b7bf90cc5b6350edccee45d35b08b89c6b8f1ec043a4786a920b",
     "docs/evidence/usage-overview.png": "1757dd2f125e69c2cc45a8699ecd78ca2d07fc0b60dc3ba63dd7b5c39b518a61",
-    "docs/evidence/usage-verification.json": "3e8bf045b967211eb6c17738c285f887b9e5b2aab7aebdd685cb297351869c0f"
+    "docs/evidence/usage-verification.json": "3e8bf045b967211eb6c17738c285f887b9e5b2aab7aebdd685cb297351869c0f",
+    "docs/evidence/secret-audit.json": "ec366972909549d5a83c7d2077cb3d39d290abb72517f4774276a1e3f476263b",
+    "scripts/check-secrets.mjs": "3638dc60c992659dfbd14a27e14ed475f5da2e2560f7d62fa45dde6c746e9ac0"
   },
-  "note": "Verified clean allowlisted source plus its completed clean-source receipt. No publication or model benchmark implied."
+  "note": "Allowlisted source snapshot. No publication or model validation implied."
 }
