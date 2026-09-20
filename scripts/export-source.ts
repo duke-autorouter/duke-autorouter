@@ -39,6 +39,7 @@ const entries = [
   'docs/NAME.md',
   'docs/SETUP_IMPORT.md',
   'docs/ROUTING_POLICY.md',
+  'docs/REVIEW_SCORING.md',
   'docs/BENCHMARK_PROTOCOL.md',
   'docs/LIVE_ACCEPTANCE_TASKS.md',
   'docs/RELEASE_READINESS.md',

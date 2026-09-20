@@ -36,8 +36,8 @@ The source build and an end-user download have different distribution requiremen
 Signing and notarization determine the normal macOS opening experience. An
 unsigned preview must be labeled clearly; it cannot be described as notarized.
 A clean-machine installation and account-flow check remains separate from tests
-on the development Mac. Provider runtime terms and dependency licenses remain
-documented separately. Preserve already signed provider binaries when packaging;
+on the development Mac. Dependency licenses are listed in the third-party notices.
+Preserve already signed provider binaries when packaging;
 verify Claude against the pinned upstream bytes before and after signing DUKE.
 
 Portfolio evidence must distinguish local tests, synthetic workers, live account

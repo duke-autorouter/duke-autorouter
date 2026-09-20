@@ -1,6 +1,6 @@
 # ADR 0007: Support subscriptions and optional API workers
 
-Status: implemented; provider and distribution limits remain documented.
+Status: implemented.
 Recorded during the September 2026 release pass.
 
 ## Context
@@ -18,9 +18,8 @@ Check execution availability independently from whether an API key is present.
 
 Keep the Claude runtime unmodified and preserve its setup choices. DUKE's current
 worker executes subscription tasks; additional sign-in choices do not imply
-implemented API/cloud execution. The [usage notes](../USAGE.md#claude-runtime-and-distribution-review)
-record the implementation and remaining provider-term ambiguity. Open source
-status is not evidence of blanket provider permission.
+implemented API/cloud execution. The [usage notes](../USAGE.md#claude-runtime-and-setup)
+describe connection setup and the bundled runtime.
 
 ## Alternatives and consequences
 

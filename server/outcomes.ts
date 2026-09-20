@@ -2,8 +2,10 @@ import type { Model, Outcome, OutcomeSummary, TaskAssessment, TaskKind } from '.
 import type { Store } from './store.js';
 import { modelExecutionKey, scopeRelevance } from './work-profile.js';
 
-export const REVIEW_POLICY = 'duke-review-v1';
-export const ROUTING_POLICY = 'duke-routing-v7';
+export const REVIEW_POLICY = 'duke-review-v2';
+// Acceptance labels feed whole-task efficiency as well as quality history.
+export const ROUTING_POLICY = 'duke-routing-v8';
+export const REVIEW_MIN_PROBABILITY = 0.8;
 
 const scope = (o: Pick<TaskAssessment, 'kind' | 'difficulty' | 'workType' | 'briefSize'>) =>
   `${o.kind}:${o.difficulty}:${o.workType ?? 'legacy'}:${o.briefSize ?? 'legacy'}`;

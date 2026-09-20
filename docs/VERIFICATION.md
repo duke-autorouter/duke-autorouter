@@ -1,7 +1,8 @@
 # Verification
 
-The September 2026 tool pass has **150 automated tests, 14 browser workflows,
-and 12 standalone package checks passing**. The package checks also pass with
+The current source passes **157 automated tests** after the review-scoring fix.
+The preceding tool pass passed **14 browser workflows and 12 standalone package
+checks**. The package checks also pass with
 Developer ID signing and the hardened runtime. Live Codex and Claude workers
 completed bounded checks of coding, research, writing, and documents. These runs
 found defects; the [tool audit](TOOL_AUDIT.md) records the corrections and limits.
@@ -15,12 +16,17 @@ include actual worker-created files and their rendered previews. The production
 for its recorded lockfile. None of these checks establishes routing savings or
 general model quality.
 
+The [scoring investigation](REVIEW_SCORING.md) records nine later live Jev review
+checks: four correct outputs passed and five incorrect outputs failed. They used
+saved public or invented evidence without rerunning workers. The signed app and
+download candidate need this source correction before publication.
+
 ## Current checks
 
 | Check | Result and scope |
 | --- | --- |
 | TypeScript and build | Passed locally; includes the native document helper. |
-| Automated tests | 150 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks and evidence limits. |
+| Automated tests | 157 pass. Routing, model/effort fallback, tool contracts, permissions, accounting, imports, document calculations, image messages, preview authentication/version checks, probability boundaries and evidence limits. |
 | Browser workflows | 14 pass using the actual app, files and synthetic workers. Covers creation, model choice, approvals, cancellation, rendered deliverables, usage, recovery and narrow screens. |
 | Standalone package | 12 pass using a disposable profile, minimal PATH and unrelated working directory. Bundled Node, Codex, Claude, Chromium, core skills and document helper work without global installations. Includes saved-state restart and Developer ID signature checks under the hardened runtime. |
 | Installed Mac app | Signed update preserved accounts, model choices, settings, two projects and 14 tasks. PDF, Word and both workbook sheets displayed; native quit/relaunch retained state and left a valid signature. |
@@ -79,6 +85,9 @@ acceptance review does not rewrite those saved statuses. The original failures
 also remain in the private run history. All prompts used public or invented
 material. Five of the six later automatic reviews remain unverified, including
 conservative Jev judgments and checks unavailable at the exhausted budget.
+The later scoring correction preserves those original records. Its
+[separate receipt](evidence/review-scoring-verification.json) contains fresh
+distributions, known incorrect examples and the remaining coverage gaps.
 Recorded API spending across both cohorts was **$0.005682** within a $1 total cap;
 subscription usage was separate. No comparative savings claim follows from this
 small set of acceptance tasks. Original budget settings were restored and no

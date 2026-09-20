@@ -78,6 +78,6 @@ Set `GITLEAKS_BIN` to an existing 8.30.1 executable to avoid the download. Repor
 contain finding locations, never credential values. CI runs the same check.
 Screenshots, rendered documents and the final app still need release review.
 
-For a model upgrade, check its official protocol, package license and provider
-terms against the pinned adapters. A successful catalog read is not evidence of
+For a model upgrade, check its official protocol, package license and account
+requirements against the pinned adapters. A successful catalog read is not evidence of
 working inference or subscription entitlement.

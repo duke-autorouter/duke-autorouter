@@ -20,6 +20,7 @@ decision was documented when first made.
 | [Keep permissions and recovery in the harness](adr/0010-permissions-and-recovery.md) | Implemented with bounded coverage | Project-scoped tools, approved side effects, retained versions, explicit resume and a persistent action ledger. |
 | [Learn from whole-task resources](adr/0011-resource-accounting.md) | Implemented; savings unmeasured | Include retries and reviews, distinguish API cost from subscription capacity, and scope evidence to comparable execution. |
 | [Use bounded search and inspect original sources](adr/0012-public-retrieval.md) | Implemented; live check passed | Keyless search avoids another setup account. Service limits stay explicit, and citations require original-source reading. |
+| [Use verdict probability for automatic review](adr/0013-review-probability-threshold.md) | Implemented; nine live diagnostic cases checked | Distribution confidence and answer probability have different meanings. Keep both, apply the cutoff to the verdict, and preserve uncertain outcomes. |
 
 ## What changed after testing
 

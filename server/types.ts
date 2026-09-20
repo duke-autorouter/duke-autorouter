@@ -153,6 +153,14 @@ export type Check = {
   name: string;
   status: 'passed' | 'failed' | 'unverified';
   detail: string;
+  judgment?: {
+    model: string;
+    choice: 'pass' | 'fail' | 'unknown';
+    probability: number;
+    confidence: number;
+    probabilities: Record<string, number>;
+    threshold: number;
+  };
 };
 export type TaskReview = {
   status: 'passed' | 'failed' | 'unverified';

@@ -12,6 +12,11 @@ OpenRouter completion remain unverified. See [verification](../VERIFICATION.md).
 
 The earlier receipts below retain the date and scope of their original checks.
 
+The [review-scoring receipt](review-scoring-verification.json) records a later
+source correction, raw score distributions and nine live Jev diagnostic cases.
+The [investigation](../REVIEW_SCORING.md) distinguishes that check from the
+installed application's earlier results.
+
 Interface screenshots and browser receipts use invented tasks and synthetic model responses.
 They verify the interface and local mechanics, not real model quality or savings.
 

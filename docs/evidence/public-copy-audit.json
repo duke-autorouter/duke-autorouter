@@ -99,5 +99,28 @@
   "localMarkdownLinks": {
     "checked": 187,
     "broken": 0
-  }
+  },
+  "followUps": [
+    {
+      "at": "2026-09-20T14:23:29.355746+00:00",
+      "scope": "Shortened connection documentation to operating details. Updated review scoring, test evidence, policy identifiers and pending package rebuild.",
+      "review": "Read against the project voice guide; checked claims against code and live diagnostic receipts.",
+      "reviewedFiles": {
+        "CONTRIBUTING.md": "6429fa8c2ef0598b4635a868ad54d29afc3807846210bc36f881a9e9e12f62d2",
+        "README.md": "b92bbd4a683824d093fd00125eefa143b10626367ead0c93cd0f9848695b8105",
+        "docs/ARCHITECTURE.md": "be2e4d74634247ae40fa20c804114031ac5978b9713155ba6fc128003a09116d",
+        "docs/DECISIONS.md": "d66d2ab1fdfe5490ab2c0dec60dc5c90ace5777bd51b6156a4991b194c148184",
+        "docs/RELEASE_READINESS.md": "fa6ed41b10ee67695dbe0e6421d220945d782a6ada0e64552f63809bca3b2fdd",
+        "docs/ROUTING_POLICY.md": "1e2dfedc564fa4326cb0e42b02376276d66abde5b2148683bd57eb6f7fa6e571",
+        "docs/USAGE.md": "093aee32d0b6f7250d9d0e0967d9846d713245e4e346c4dc23c415a4378469e5",
+        "docs/VERIFICATION.md": "5a267670522b801fd7554f85af3fd16931d025cc2932b1351bf443dee9710bd5",
+        "docs/adr/0003-verification-and-learning.md": "8efc78d30b2cbfe1ec1db4501a1f95b620bc3cefacdab8ad5102314c7f96d0b0",
+        "docs/adr/0005-local-mac-release.md": "542bfa04e3c23ac81894b983c03e8410d65db19943aa4413741ce0632d4fa0fb",
+        "docs/adr/0007-provider-integrations.md": "c9d5af874f90d0314d98c0108f406d3650d4a9bd691add0bbb2467fc57be4f72",
+        "docs/evidence/README.md": "cc43ffcabe114d7fa3a41d5aa3b77b464e21a95c7f53782145037b03edeb4a10",
+        "docs/REVIEW_SCORING.md": "ca4226e287ecbafc64e73afc66f77f8c3697f04e516bdca092daee3fcebe8c88",
+        "docs/adr/0013-review-probability-threshold.md": "de49a15dff0dfb87d1ff3512f576b48053f5fbc61b9630d0997cc3186f0cabf4"
+      }
+    }
+  ]
 }

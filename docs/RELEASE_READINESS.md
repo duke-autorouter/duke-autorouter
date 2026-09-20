@@ -6,7 +6,8 @@ limits that early users need to know.
 
 ## Completed checks
 
-- 150 automated tests, 14 browser workflows and 12 signed standalone checks pass.
+- 157 automated tests pass for the current source. The preceding candidate passed
+  14 browser workflows and 12 signed standalone checks.
   Browser workflows use synthetic workers; the [verification record](VERIFICATION.md)
   distinguishes them from live tasks and native-window checks.
 - Live Codex and Claude tasks cover coding, research, writing and basic documents.
@@ -14,9 +15,11 @@ limits that early users need to know.
 - The [credential audit](evidence/secret-audit.json) covers source history,
   document contents, screenshot text and the packaged app. No credentials were
   found. CI scans source and history on each push.
-- The final DMG and ZIP passed notarization, stapling, signature and Gatekeeper
+- The preceding DMG and ZIP passed notarization, stapling, signature and Gatekeeper
   checks. Claude retains Anthropic's published bytes and signature. See the
   [distribution receipt](evidence/distribution-verification.json).
+- The [review-scoring correction](REVIEW_SCORING.md) passed nine live Jev diagnostic
+  cases: four correct outputs passed and five incorrect outputs failed.
 - The [dependency audit](evidence/dependency-audit.json) reports zero known
   vulnerabilities for the current lockfile.
 - The README, guides, decision records and current interface copy have been
@@ -26,9 +29,9 @@ limits that early users need to know.
 
 ## Publication steps
 
-1. Open the final notarized candidate in the native Mac window and confirm saved
-   state. Earlier signed-app checks passed; the final copy and signing update
-   still needs this last native launch.
+1. Rebuild, sign and notarize the candidate with the scoring correction. Check the
+   packaged app, then open its native window and confirm saved state. The earlier
+   signed-app and distribution receipts describe the preceding candidate.
 2. Confirm the final source commit passes both GitHub checks. Keep the source
    manifest and distribution receipt with the exact files they describe.
 3. Publish the reviewed source and 0.1 prerelease assets together after approval.
@@ -51,14 +54,12 @@ The [distribution guide](MAC_DISTRIBUTION.md) covers maintainer commands.
   checks on the development Mac do not establish that coverage. Ask an early
   tester to check installation, sign-in, a task and restart through the normal
   macOS download path. Do not prescribe removing quarantine.
-- **Automatic reviews can remain incomplete.** Five of six later live tasks kept
-  that status. One initial routing attempt stalled and completed after restart
+- **Automatic reviews can remain incomplete.** Five of six installed live tasks kept
+  that status under the earlier policy. The [scoring correction](REVIEW_SCORING.md)
+  fixes the probability cutoff; image evidence, cancellation-test coverage and
+  zero-budget review remain separate limits. One initial routing attempt stalled and completed after restart
   and resume; its cause remains unresolved. Search produced irrelevant results
   in one run, and the worker recovered through direct source URLs.
-- **Claude's provider-term ambiguity remains.** The
-  [runtime notes](USAGE.md#claude-runtime-and-distribution-review) describe the
-  preserved subscription feature and provider-owned setup. Neither open-source
-  status nor notarization establishes provider approval.
 - **Savings and broader reliability are unmeasured.** No paired routing benchmark,
   multi-day reliability result, Intel build, Windows build or Linux build is claimed.
 

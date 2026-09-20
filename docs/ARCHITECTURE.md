@@ -72,7 +72,7 @@ are rejected, and only broker tools have workspace write authority.
 Claude uses Agent SDK 0.3.275 and an in-process MCP server. Built-in tools are
 disabled, settings sources are empty, and pre-tool hooks enforce the exact
 task-scoped tool set. Only first-party subscription authentication is accepted.
-Provider terms and entitlement must be rechecked before upgrading or releasing.
+Authentication and execution availability are checked separately.
 
 OpenRouter uses its Chat Completions tool protocol in a bounded loop. It pins one
 eligible provider endpoint, disables provider fallbacks, requires tool parameter
@@ -232,7 +232,6 @@ is labeled as such when layout has not been independently checked. See the
 - [Codex app-server](https://learn.chatgpt.com/docs/app-server)
 - [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference)
 - [Claude Agent SDK permissions](https://code.claude.com/docs/en/agent-sdk/permissions)
-- [Claude subscription notice](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan)
 - [TypeSafe Score](https://docs.typesafe.ai/primitives/score)
 - [TypeSafe Choice](https://docs.typesafe.ai/primitives/choice)
 - [TypeSafe official SDK wire formats](https://github.com/typesafe-ai/typesafe-sdk-python)

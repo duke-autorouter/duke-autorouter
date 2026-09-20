@@ -382,6 +382,52 @@ test('failed checks without a suitable alternative retain the deliverable and ca
   }
 });
 
+test('review gates use verdict probability and retain the full distribution separately from confidence', async (t) => {
+  for (const [label, probabilities, confidence, expected] of [
+    ['observed coding distribution', { pass: 0.8, fail: 0.18, unknown: 0.02 }, 0.7, 'passed'],
+    ['observed document distribution', { pass: 0.83, fail: 0.13, unknown: 0.04 }, 0.75, 'passed'],
+    ['below pass threshold', { pass: 0.799, fail: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
+    ['at fail threshold', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'failed'],
+    ['below fail threshold', { fail: 0.799, pass: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
+    ['certain unknown', { unknown: 1, pass: 0, fail: 0 }, 1, 'unverified'],
+  ] as const) {
+    await t.test(label, async () => {
+      const f = await fixture();
+      try {
+        f.add(model('worker'));
+        const selected = Object.entries(probabilities).sort((a, b) => b[1] - a[1])[0][0];
+        f.verdict(() => ({
+          brief: {
+            type: 'choice',
+            choice: selected,
+            probabilities,
+            confidence,
+          },
+          support: 'pass',
+          completion: 'pass',
+        }));
+        const task = await f.run();
+        assert.equal(task.review?.status, expected);
+        const check = task.review!.checks.find((c) => c.name === 'Jev: brief')!;
+        assert.equal(check.judgment?.model, 'synthetic-jev');
+        assert.deepEqual(check.judgment?.probabilities, probabilities);
+        assert.equal(check.judgment?.confidence, confidence);
+        assert.equal(
+          check.judgment?.probability,
+          probabilities[selected as keyof typeof probabilities],
+        );
+        assert.equal(check.judgment?.threshold, 0.8);
+        const event = f.store.events(task.id).find((e) => e.kind === 'jev_review')!;
+        assert.equal(event.data.policy, REVIEW_POLICY);
+        assert.deepEqual(event.data.judgments['Jev: brief'], check.judgment);
+        assert.ok(!JSON.stringify(event.data).includes('PRIVATE-SETUP-MARKER'));
+      } finally {
+        await f.close();
+      }
+    });
+  }
+});
+
 test('uncertain, malformed and unavailable reviews are neutral, not successes or quality failures', async () => {
   for (const mode of ['unknown', 'uncertain', 'malformed', 'unavailable'] as const) {
     const f = await fixture();
@@ -394,7 +440,12 @@ test('uncertain, malformed and unavailable reviews are neutral, not successes or
             mode === 'malformed'
               ? { choice: 'pass' }
               : mode === 'uncertain'
-                ? choice(['pass', 'fail', 'unknown'], 'fail', 0.2)
+                ? {
+                    type: 'choice',
+                    choice: 'fail',
+                    confidence: 0.2,
+                    probabilities: { fail: 0.4, pass: 0.35, unknown: 0.25 },
+                  }
                 : 'unknown',
           support: 'pass',
           completion: 'pass',
@@ -648,7 +699,11 @@ test('documents are inspected as real Office/PDF files and corruption cannot pas
       prompt: 'Create a Word document, spreadsheet and PDF',
       required: ['artifacts'],
     });
-    assert.equal(task.review?.status, 'passed', task.review?.summary ?? 'Review was absent');
+    assert.equal(
+      task.review?.status,
+      'passed',
+      task.error ?? task.review?.summary ?? 'Review was absent',
+    );
     const files = f.calls.at(-1).state.evidence.files;
     assert.match(files.find((x: any) => x.path === 'brief.docx').text, /Approve the invented plan/);
     assert.match(files.find((x: any) => x.path === 'budget.xlsx').text, /42/);

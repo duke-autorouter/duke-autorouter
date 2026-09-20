@@ -115,7 +115,6 @@
     "Claude SDK usage interface is experimental and may change; readings can be unavailable.",
     "Codex first direct metadata attempt timed out; diagnostic retry and installed endpoint both returned allowance data.",
     "Account telemetry checks do not validate routed model tasks, model quality, token savings or every subscription plan.",
-    "Anthropic prior-approval requirement for offering third-party subscription login is tracked in RELEASE_READINESS.md.",
     "No fresh physical Mac installation, notarization or native on-screen layout validation claimed."
   ]
 }

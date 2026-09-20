@@ -63,7 +63,7 @@ the packaged restart check. Browser tests use invented account readings and
 workers that reject inference. Connected-account metadata checks are recorded
 separately from those synthetic checks.
 
-## Claude runtime and distribution review
+## Claude runtime and setup
 
 The September 19 setup review used SDK 0.3.275 and its declared Claude Code
 version 2.1.275. It checked account choices without live inference. Later Codex
@@ -79,9 +79,7 @@ the pinned dependency before and after signing.
   The release candidate's executable and the dependency executable have the same
   SHA-256: `1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b`.
   The release signer preserves Anthropic's original signature and rejects a
-  changed runtime. An earlier private candidate re-signed that executable; it
-  was replaced before publication. This byte check does not establish provider
-  approval of DUKE's subscription integration.
+  changed runtime.
 - [Sign-in](../server/claude-login.ts) launches the official binary's
   `auth login` for its subscription default, `--console` for Console, or `--sso`
   for organization sign-in. The binary handles OAuth, browser callback and
@@ -102,24 +100,6 @@ the pinned dependency before and after signing.
   binds to loopback. There is no DUKE-operated shared credential or inference
   billing service. The existing task-scoped tool broker remains in place.
 
-### Published conditions and their limits
-
-The official pages below were rechecked September 20, 2026.
-
-The [SDK guide](https://code.claude.com/docs/en/agent-sdk) restricts third-party
-subscription sign-in without prior approval and directs product builders to API
-authentication. Separately, [Claude Code's terms](https://code.claude.com/docs/en/legal-and-compliance)
-describe products running its unmodified binary: commercial terms apply,
-built-in authentication choices must remain available, users authenticate and
-pay providers directly, and usage cannot be resold or intermediated. That page
-expressly preserves end users' own subscription sign-in to the binary. Neither
-page provides an open-source exemption.
-
-The [programmatic-use guide](https://code.claude.com/docs/en/headless) describes
-`claude -p` as another SDK interface. A CLI rewrite alone would not resolve how
-DUKE's custom chat interface fits the two cases. That is an interpretation gap;
-successful authentication does not settle it.
-
 ### Scope of the setup change
 
 Subscription routing is retained. Additional account choices are optional and
@@ -132,7 +112,3 @@ spend accounting before DUKE can run it. Merely signing in is not that
 authorization. The native binary's authentication options are accessible, while
 DUKE's own worker coverage is still narrower. This change does not claim support
 for every provider or verify native SSO/cloud account setup.
-
-DUKE preserves subscription execution and the provider-owned setup flow. The
-relationship between the SDK restriction and the unmodified-binary allowance
-remains unresolved; working sign-in and notarization do not establish approval.

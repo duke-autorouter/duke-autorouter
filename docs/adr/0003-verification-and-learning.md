@@ -36,6 +36,8 @@ an unsupported policy in a writing draft, and document files with literal Markdo
 The failed examples stay in the record. Coverage must be explicit in the UI and
 receipts, and unsupported checks cannot quietly become passes.
 
-The current confidence thresholds are engineering choices, not calibrated
-probabilities of useful work. Held-out comparisons and broader failure cases
-are required before making quality or efficiency claims.
+The thresholds are engineering choices. Review uses the selected verdict's
+probability, while assessment uses distribution confidence. The
+[scoring decision](0013-review-probability-threshold.md) explains the difference.
+Held-out comparisons and broader failure cases are required before making quality
+or efficiency claims.

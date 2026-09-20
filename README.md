@@ -17,8 +17,9 @@ and savings have not yet been measured.
 
 Version 0.1 targets **Apple Silicon Macs running macOS 14 or newer**. The normal
 installation is a prebuilt Mac download. This repository contains the source,
-tests, design decisions, and verification records. A signed and notarized release
-candidate is prepared; the public download has not been published yet.
+tests, design decisions, and verification records. A signed and notarized candidate
+has passed distribution checks. It needs the latest scoring correction before
+publication; the public download is not available yet.
 
 - **A native Mac window.** The installed app manages its own background process.
   Open it from Applications; no terminal or Codex desktop app is needed after
@@ -86,8 +87,7 @@ Codex and Claude use separate DUKE profiles through their bundled runtimes.
 Existing credentials, plugins, and settings are not copied automatically.
 Claude's additional sign-in options remain accessible, but DUKE's Claude worker
 currently supports subscription execution. See the
-[Claude runtime and usage notes](docs/USAGE.md#claude-runtime-and-distribution-review) for the implementation
-and remaining provider-term ambiguity.
+[Claude runtime and usage notes](docs/USAGE.md#claude-runtime-and-setup) for connection details.
 
 ## Download and install
 
@@ -157,9 +157,9 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 ## Verification and development
 
 Local checks cover routing, file tools, approvals, imports, persistence,
-accounting, and the interface. The current tool pass includes 150 automated tests,
-14 browser workflows, and 12 standalone package checks. Browser workflows use
-synthetic workers while exercising the real app and files.
+accounting, and the interface. The current source passes 157 automated tests.
+The preceding tool pass also passed 14 browser workflows and 12 standalone package
+checks. Browser workflows use synthetic workers while exercising the real app and files.
 
 Live Codex and Claude checks have produced code, sourced research, writing, and
 Word/PDF/Excel outputs. Those checks exposed defects in document rendering,
@@ -169,6 +169,9 @@ remaining limits. Six later tasks exercised the installed engine, including
 Luna Low fallback and native cancellation/resume. Document previews and saved
 state passed checks in the Developer ID-signed app. Five of those six automatic
 reviews remained unverified; independent checks did not change their saved status.
+A later [scoring investigation](docs/REVIEW_SCORING.md) corrected the review cutoff.
+Four correct outputs passed and five deliberately incorrect outputs failed in
+live Jev diagnostic checks. These were review calls, without rerunning workers.
 OpenRouter has no successful live worker result yet, and installation on a second
 physical Mac has not been tested. See the [release checklist](docs/RELEASE_READINESS.md)
 for the download status.

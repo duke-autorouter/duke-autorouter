@@ -1,0 +1,630 @@
+{
+  "at": "2026-09-20T14:18:35.843236+00:00",
+  "scope": "Source-level review-policy correction. Real Jev calls used only public or invented evidence. No worker reruns or installed-app update.",
+  "reviewPolicy": "duke-review-v2",
+  "routingPolicy": "duke-routing-v8",
+  "threshold": {
+    "measure": "selected verdict probability",
+    "minimum": 0.8,
+    "unknown": "unverified"
+  },
+  "providerModels": [
+    "jev-1.13.0"
+  ],
+  "source": "https://docs.typesafe.ai/confidence",
+  "baselineReplays": [
+    {
+      "case": "coding",
+      "checks": [
+        {
+          "name": "Jev: brief",
+          "status": "passed"
+        },
+        {
+          "name": "Jev: support",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: completion",
+          "status": "passed"
+        }
+      ],
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.88,
+          "probabilities": {
+            "unknown": 0.01,
+            "fail": 0.07,
+            "pass": 0.92
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.7,
+          "probabilities": {
+            "unknown": 0.02,
+            "fail": 0.18,
+            "pass": 0.8
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.93,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 0.04,
+            "pass": 0.96
+          }
+        }
+      }
+    },
+    {
+      "case": "research",
+      "checks": [
+        {
+          "name": "Jev: brief",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: support",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: completion",
+          "status": "unverified"
+        }
+      ],
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.08,
+          "probabilities": {
+            "fail": 0.39,
+            "unknown": 0.25,
+            "pass": 0.36
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.34,
+          "probabilities": {
+            "fail": 0.33,
+            "unknown": 0.11,
+            "pass": 0.56
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.21,
+          "probabilities": {
+            "fail": 0.48,
+            "unknown": 0.23,
+            "pass": 0.29
+          }
+        }
+      }
+    },
+    {
+      "case": "writing",
+      "checks": [
+        {
+          "name": "Jev: brief",
+          "status": "passed"
+        },
+        {
+          "name": "Jev: support",
+          "status": "passed"
+        },
+        {
+          "name": "Jev: completion",
+          "status": "passed"
+        }
+      ],
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.95,
+          "probabilities": {
+            "pass": 0.97,
+            "unknown": 0,
+            "fail": 0.03
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.95,
+          "probabilities": {
+            "pass": 0.97,
+            "unknown": 0.01,
+            "fail": 0.02
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.97,
+          "probabilities": {
+            "pass": 0.98,
+            "unknown": 0,
+            "fail": 0.02
+          }
+        }
+      }
+    },
+    {
+      "case": "documents",
+      "checks": [
+        {
+          "name": "Jev: brief",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: support",
+          "status": "passed"
+        },
+        {
+          "name": "Jev: completion",
+          "status": "unverified"
+        }
+      ],
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.75,
+          "probabilities": {
+            "pass": 0.83,
+            "fail": 0.13,
+            "unknown": 0.04
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.82,
+          "probabilities": {
+            "pass": 0.89,
+            "fail": 0.1,
+            "unknown": 0.01
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.77,
+          "probabilities": {
+            "pass": 0.85,
+            "fail": 0.13,
+            "unknown": 0.02
+          }
+        }
+      }
+    },
+    {
+      "case": "recovery",
+      "checks": [
+        {
+          "name": "Jev: brief",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: support",
+          "status": "unverified"
+        },
+        {
+          "name": "Jev: completion",
+          "status": "unverified"
+        }
+      ],
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.39,
+          "probabilities": {
+            "unknown": 0.11,
+            "fail": 0.3,
+            "pass": 0.59
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.24,
+          "probabilities": {
+            "unknown": 0.15,
+            "fail": 0.35,
+            "pass": 0.5
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.29,
+          "probabilities": {
+            "unknown": 0.05,
+            "fail": 0.42,
+            "pass": 0.53
+          }
+        }
+      }
+    }
+  ],
+  "liveDiagnosticCases": [
+    {
+      "case": "coding",
+      "expected": "passed",
+      "observed": "passed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.88,
+          "probabilities": {
+            "unknown": 0,
+            "pass": 0.93,
+            "fail": 0.07
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.73,
+          "probabilities": {
+            "unknown": 0.02,
+            "pass": 0.82,
+            "fail": 0.16
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.93,
+          "probabilities": {
+            "unknown": 0,
+            "pass": 0.96,
+            "fail": 0.04
+          }
+        }
+      }
+    },
+    {
+      "case": "writing",
+      "expected": "passed",
+      "observed": "passed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.95,
+          "probabilities": {
+            "fail": 0.03,
+            "unknown": 0,
+            "pass": 0.97
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.94,
+          "probabilities": {
+            "fail": 0.03,
+            "unknown": 0.01,
+            "pass": 0.96
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.96,
+          "probabilities": {
+            "fail": 0.02,
+            "unknown": 0.01,
+            "pass": 0.97
+          }
+        }
+      }
+    },
+    {
+      "case": "documents",
+      "expected": "passed",
+      "observed": "passed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.77,
+          "probabilities": {
+            "pass": 0.84,
+            "unknown": 0.04,
+            "fail": 0.12
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.83,
+          "probabilities": {
+            "pass": 0.89,
+            "unknown": 0.02,
+            "fail": 0.09
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.79,
+          "probabilities": {
+            "pass": 0.86,
+            "unknown": 0.02,
+            "fail": 0.12
+          }
+        }
+      }
+    },
+    {
+      "case": "wrong-price",
+      "expected": "failed",
+      "observed": "failed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 1,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 1,
+            "pass": 0
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.99,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 1,
+            "pass": 0
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.97,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 0.98,
+            "pass": 0.02
+          }
+        }
+      }
+    },
+    {
+      "case": "invented-service",
+      "expected": "failed",
+      "observed": "failed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 1,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 1,
+            "pass": 0
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.99,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 0.99,
+            "pass": 0.01
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.99,
+          "probabilities": {
+            "unknown": 0,
+            "fail": 0.99,
+            "pass": 0.01
+          }
+        }
+      }
+    },
+    {
+      "case": "omitted-facts",
+      "expected": "failed",
+      "observed": "failed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 1,
+          "probabilities": {
+            "fail": 1,
+            "pass": 0,
+            "unknown": 0
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.94,
+          "probabilities": {
+            "fail": 0.97,
+            "pass": 0.02,
+            "unknown": 0.01
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.99,
+          "probabilities": {
+            "fail": 1,
+            "unknown": 0,
+            "pass": 0
+          }
+        }
+      }
+    },
+    {
+      "case": "new-correct-brief",
+      "expected": "passed",
+      "observed": "passed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.98,
+          "probabilities": {
+            "unknown": 0,
+            "pass": 0.99,
+            "fail": 0.01
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.94,
+          "probabilities": {
+            "unknown": 0.03,
+            "pass": 0.95,
+            "fail": 0.02
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "pass",
+          "confidence": 0.98,
+          "probabilities": {
+            "unknown": 0,
+            "pass": 0.99,
+            "fail": 0.01
+          }
+        }
+      }
+    },
+    {
+      "case": "new-wrong-hours",
+      "expected": "failed",
+      "observed": "failed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 1,
+          "probabilities": {
+            "fail": 1,
+            "unknown": 0,
+            "pass": 0
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.98,
+          "probabilities": {
+            "fail": 0.99,
+            "unknown": 0,
+            "pass": 0.01
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.99,
+          "probabilities": {
+            "fail": 0.99,
+            "unknown": 0,
+            "pass": 0.01
+          }
+        }
+      }
+    },
+    {
+      "case": "wrong-inventory-total",
+      "expected": "failed",
+      "observed": "failed",
+      "answers": {
+        "brief": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.96,
+          "probabilities": {
+            "pass": 0.02,
+            "unknown": 0,
+            "fail": 0.98
+          }
+        },
+        "support": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.96,
+          "probabilities": {
+            "pass": 0.02,
+            "unknown": 0,
+            "fail": 0.98
+          }
+        },
+        "completion": {
+          "type": "choice",
+          "choice": "fail",
+          "confidence": 0.96,
+          "probabilities": {
+            "pass": 0.02,
+            "unknown": 0,
+            "fail": 0.98
+          }
+        }
+      }
+    }
+  ],
+  "results": {
+    "correctPassed": 4,
+    "incorrectFailed": 5,
+    "cases": 9,
+    "expectedLabelsFixedBeforeInference": true
+  },
+  "spending": {
+    "priorAcceptanceUSD": 0.005682,
+    "diagnosticUSD": 0.001307,
+    "totalUSD": 0.006989,
+    "overallAuthorizedCapUSD": 1,
+    "diagnosticCapUSD": 0.05,
+    "unsettledCharges": 0
+  },
+  "sourceChecks": {
+    "automatedTests": 157,
+    "failures": 0,
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "limits": [
+    "The baseline replay reconstructed project-structure context and reused recorded tests; it was not a byte-identical reproduction of the historical request.",
+    "The existing automatic-review statuses were not overwritten.",
+    "Research image verification, cancelled-task intent/test coverage and zero-budget review remain separate gaps.",
+    "These deliberately clear diagnostic examples do not calibrate general task quality or establish routing savings.",
+    "The signed application candidate predates this source correction and needs rebuilding before release."
+  ],
+  "implementationSHA256": {
+    "server/adapters/jev.ts": "45c647e4e6af01dbf3fd42d31d91d81edddcdb3f55d4a2159d5b72faf4121027",
+    "server/outcomes.ts": "eb8b3c4e8ad6966ad53abf539b8d2a6ecba3b161407614058fee010dcc8918a0",
+    "server/types.ts": "80ef169824227e21e5960a7ae4789012b890b17521d5037349c47c4fbbb88d0d",
+    "tests/verification.test.ts": "1580c20000b4a0c27d27cc04d97fb9f8c2532af44f475b74d622b2daa2ded0e5"
+  }
+}

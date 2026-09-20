@@ -11,7 +11,7 @@ import {
 import { modelsWithFeedback } from '../model-profiles.js';
 import { normalizeUsage } from '../usage.js';
 import { efficiencyEvidence } from '../efficiency.js';
-import { qualityEvidence } from '../outcomes.js';
+import { qualityEvidence, REVIEW_MIN_PROBABILITY, REVIEW_POLICY } from '../outcomes.js';
 import { capacityWindows } from '../subscription-usage.js';
 import { workTypeFor, briefSizeFor } from '../work-profile.js';
 import { workLabels, workTypes, type WorkType } from '../../shared/routing.js';
@@ -389,10 +389,13 @@ export class Jev {
         signal,
       );
       signal.throwIfAborted();
-      return Object.keys(requirements).map((id) => {
+      const checks: Check[] = Object.keys(requirements).map((id) => {
         const answer = choice(response.answers?.[id], Object.keys(criteria));
+        // TypeSafe confidence measures distribution concentration, not P(choice).
+        // Gate the verdict on its own probability; keep both for inspection.
+        const selectedProbability = answer.probabilities[answer.choice];
         const status =
-          answer.confidence < 0.8 || answer.choice === 'unknown'
+          selectedProbability < REVIEW_MIN_PROBABILITY || answer.choice === 'unknown'
             ? 'unverified'
             : answer.choice === 'pass'
               ? 'passed'
@@ -400,9 +403,23 @@ export class Jev {
         return {
           name: `Jev: ${id}`,
           status,
-          detail: `${requirements[id as keyof typeof requirements]} Assessment: ${answer.choice}; confidence ${answer.confidence.toFixed(2)}. This is an automated judgment, not a guaranteed success rate.`,
+          detail: `${requirements[id as keyof typeof requirements]} Assessment: ${answer.choice}; probability ${selectedProbability.toFixed(3)}; distribution confidence ${answer.confidence.toFixed(3)}. This is an automated judgment, not a guaranteed success rate.`,
+          judgment: {
+            model:
+              typeof response.model === 'string' ? response.model : this.store.settings().jevModel,
+            choice: answer.choice as 'pass' | 'fail' | 'unknown',
+            probability: selectedProbability,
+            confidence: answer.confidence,
+            probabilities: answer.probabilities,
+            threshold: REVIEW_MIN_PROBABILITY,
+          },
         };
       });
+      this.store.event(task.id, 'jev_review', {
+        policy: REVIEW_POLICY,
+        judgments: Object.fromEntries(checks.map((check) => [check.name, check.judgment])),
+      });
+      return checks;
     } catch (e) {
       if (signal.aborted) throw e;
       this.store.event(task.id, 'review_unavailable', { reason: (e as Error).message });

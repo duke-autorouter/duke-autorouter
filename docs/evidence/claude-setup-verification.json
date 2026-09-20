@@ -111,8 +111,7 @@
     "Console, SSO and cloud account setup were not exercised with real accounts.",
     "The full native setup window is separate from DUKE task execution; its launch was emulated in browser tests.",
     "DUKE Claude task execution continues to require subscription authentication; direct Claude API/cloud billing remains unsupported.",
-    "No live routed task, benchmark, fresh-machine installation or notarization is claimed.",
-    "Authentication choices do not resolve the documented SDK distribution-policy ambiguity."
+    "No live routed task, benchmark, fresh-machine installation or notarization is claimed."
   ],
   "source": {
     "implementationFiles": 967,

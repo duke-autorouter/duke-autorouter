@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
-Implemented September 19, 2026. Policy identifiers: `duke-routing-v7`, `duke-efficiency-v2` and
-`duke-review-v1`. This document describes implemented behavior, not measured
+Updated September 20, 2026. Policy identifiers: `duke-routing-v8`, `duke-efficiency-v2` and
+`duke-review-v2`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -46,8 +46,12 @@ difficulty estimate. An uncertain or unavailable assessment uses the configured
 fallback; an unknown difficulty is recorded without promoting the worker. A quality retry
 raises the previous difficulty requirement by one level, capped at complex.
 
-The `0.8` assessment and review thresholds concern Jev's answer distributions.
-They are not an 80% prediction of successful work. Model choice has no separate
+Assessment uses a `0.8` distribution-confidence threshold. Review instead requires
+at least `0.8` probability on its selected pass or fail answer. These are different
+measures: a live review returned pass probability `0.80` with confidence `0.70`.
+The former review policy rejected that answer by testing confidence. The
+[scoring investigation](REVIEW_SCORING.md) records the correction and checks.
+Neither measure establishes an 80% real-world success rate for DUKE. Model choice has no separate
 confidence floor: a close choice among already-qualified models does not justify
 a more powerful fallback. DUKE records the confidence and follows a valid choice.
 An explicit `use_rules` choice, unavailable service or malformed answer uses the
@@ -165,8 +169,12 @@ benchmark's final judge.
 Failed checks use the existing recovery limit (two retries by default) and preserve
 files, checkpoint and external-action ledger. Permission failures and uncertain
 external actions remain blocked; they cannot trigger an authority-bypassing retry.
-An unavailable, cancelled, malformed, low-confidence or unaffordable review does
+An unavailable, cancelled, malformed, uncertain or unaffordable review does
 not count as a quality failure. Incomplete checks never count as positive evidence.
+Review records retain the selected answer, full probability distribution,
+distribution confidence, model version and threshold. The versioned quality and
+efficiency histories keep earlier acceptance rules separate; saved task reviews
+are not rewritten.
 
 ## Local outcome history
 
