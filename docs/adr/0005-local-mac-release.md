@@ -1,6 +1,6 @@
 # ADR 0005: Ship a downloadable standalone Mac app and inspectable source
 
-Status: notarized candidate prepared; final native launch and publication pending.
+Status: accepted for the 0.1 public prerelease.
 Recorded during the September 2026 release pass.
 
 ## Context

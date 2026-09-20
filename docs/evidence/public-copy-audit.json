@@ -121,6 +121,26 @@
         "docs/REVIEW_SCORING.md": "ca4226e287ecbafc64e73afc66f77f8c3697f04e516bdca092daee3fcebe8c88",
         "docs/adr/0013-review-probability-threshold.md": "de49a15dff0dfb87d1ff3512f576b48053f5fbc61b9630d0997cc3186f0cabf4"
       }
+    },
+    {
+      "at": "2026-09-20T14:49:43.080846+00:00",
+      "scope": "0.1 publication copy, direct Mac download instructions, concise verification summary, release limits and private vulnerability reporting.",
+      "review": "Read against the project voice guide; publication claims must be confirmed by the final distribution and public-access receipts.",
+      "reviewedFiles": {
+        "README.md": "8c109b19a24a47fd2932ff34cd9c4818ebb8c56e38f1b12741060edbf05011f7",
+        "SECURITY.md": "14be05ac8de0e8c11ca06a22f74a980b31cec6e7743bbd78add9f10f0c8b1d63",
+        "docs/DECISIONS.md": "cb0323c6ca22605bc4eb9a3e2f63c0cc88ea94c7cfd7e3427221128d456553e8",
+        "docs/MAC_DISTRIBUTION.md": "205aaebe222f1bc9f1caece96520ae05f848f29f6a7521ba5cce3d740d8d5e68",
+        "docs/RELEASE_READINESS.md": "6e8357c707c52b66e868c017027c922135cba7f4cd458007fdf2a31eecd18c58",
+        "docs/VERIFICATION.md": "621ccf7d1893ffef51345047a449e1f954792a1d4bb208be1586969aa9459a41",
+        "docs/adr/0005-local-mac-release.md": "99693d854dcabf2e9feafd22aa3cc9317d69e58ad0ade3527cecf36823e784c6"
+      },
+      "releaseNotesSHA256": "f28f291c5baa5cd7d68c64dcd9c448aa383199d3db9d6fc4679fd87581820b41",
+      "localMarkdownLinks": {
+        "markdownFiles": 43,
+        "localFileLinks": 199,
+        "broken": []
+      }
     }
   ]
 }

@@ -15,11 +15,10 @@ and savings have not yet been measured.
 
 ## Version 0.1
 
-Version 0.1 targets **Apple Silicon Macs running macOS 14 or newer**. The normal
-installation is a prebuilt Mac download. This repository contains the source,
-tests, design decisions, and verification records. A signed and notarized candidate
-has passed distribution checks. It needs the latest scoring correction before
-publication; the public download is not available yet.
+Version 0.1 is the first public prerelease for **Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.0/DUKE-Autorouter-0.1.0-mac-arm64.dmg).
+This repository contains the source, tests, design decisions, and verification
+records.
 
 - **A native Mac window.** The installed app manages its own background process.
   Open it from Applications; no terminal or Codex desktop app is needed after
@@ -91,9 +90,11 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-The Mac download will be available on the
-[GitHub Releases page](https://github.com/duke-autorouter/duke-autorouter/releases)
-when the 0.1 release checks are complete. No download is published yet.
+**[Download DUKE 0.1 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.0/DUKE-Autorouter-0.1.0-mac-arm64.dmg)**
+
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0)
+also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
+The app is Developer ID-signed and Apple-notarized.
 
 1. Download the Apple Silicon `.dmg` attached to the release.
 2. Open it and drag **DUKE Autorouter** into **Applications**.
@@ -156,30 +157,19 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-Local checks cover routing, file tools, approvals, imports, persistence,
-accounting, and the interface. The current source passes 157 automated tests.
-The preceding tool pass also passed 14 browser workflows and 12 standalone package
-checks. Browser workflows use synthetic workers while exercising the real app and files.
+The release passes 157 automated tests and 12 standalone package checks. Another
+14 browser workflows exercise the app and files with synthetic workers. Live
+Codex and Claude checks cover coding, sourced research, writing, basic documents,
+fallback, and cancellation/resume. Nine live Jev diagnostic reviews passed their
+expected outcomes after a [scoring correction](docs/REVIEW_SCORING.md).
+The [verification record](docs/VERIFICATION.md) and [tool audit](docs/TOOL_AUDIT.md)
+include the failures, fixes, sample outputs, and exact scope of those checks.
 
-Live Codex and Claude checks have produced code, sourced research, writing, and
-Word/PDF/Excel outputs. Those checks exposed defects in document rendering,
-image delivery, and search that were repaired and rechecked. The
-[tool audit](docs/TOOL_AUDIT.md) records the failures, fixes, sample outputs, and
-remaining limits. Six later tasks exercised the installed engine, including
-Luna Low fallback and native cancellation/resume. Document previews and saved
-state passed checks in the Developer ID-signed app. Five of those six automatic
-reviews remained unverified; independent checks did not change their saved status.
-A later [scoring investigation](docs/REVIEW_SCORING.md) corrected the review cutoff.
-Four correct outputs passed and five deliberately incorrect outputs failed in
-live Jev diagnostic checks. These were review calls, without rerunning workers.
-OpenRouter has no successful live worker result yet, and installation on a second
-physical Mac has not been tested. See the [release checklist](docs/RELEASE_READINESS.md)
-for the download status.
-
-Routing accuracy, resource savings, and daily-use reliability have not been
-established. Intel Macs, Windows, and Linux are not release-tested. The
-[verification record](docs/VERIFICATION.md) separates automated checks, live
-worker evidence, and release checks still to do.
+Automatic reviews can remain incomplete when evidence or API capacity is missing.
+OpenRouter has no successful live worker result yet, and a second physical Mac
+has not been tested. Routing accuracy, resource savings, and multi-day reliability
+have not been established. Intel Macs, Windows, and Linux are not release-tested.
+See the [0.1 release limits](docs/RELEASE_READINESS.md).
 
 Run the core development checks without provider credentials:
 

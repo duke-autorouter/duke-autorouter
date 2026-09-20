@@ -1,9 +1,8 @@
 # Verification
 
 The current source passes **157 automated tests** after the review-scoring fix.
-The preceding tool pass passed **14 browser workflows and 12 standalone package
-checks**. The package checks also pass with
-Developer ID signing and the hardened runtime. Live Codex and Claude workers
+The interface passed **14 browser workflows**, and the final signed release
+passed **12 standalone package checks** with the hardened runtime. Live Codex and Claude workers
 completed bounded checks of coding, research, writing, and documents. These runs
 found defects; the [tool audit](TOOL_AUDIT.md) records the corrections and limits.
 
@@ -18,8 +17,8 @@ general model quality.
 
 The [scoring investigation](REVIEW_SCORING.md) records nine later live Jev review
 checks: four correct outputs passed and five incorrect outputs failed. They used
-saved public or invented evidence without rerunning workers. The signed app and
-download candidate need this source correction before publication.
+saved public or invented evidence without rerunning workers. The 0.1 download
+includes this correction. Historical task statuses remain unchanged.
 
 ## Current checks
 
@@ -113,14 +112,16 @@ These receipts retain their original dates and scope:
 
 ## Distribution and remaining coverage
 
-The final 0.1 candidate passed Developer ID verification, Apple notarization,
+The 0.1 release passed Developer ID verification, Apple notarization,
 stapling and Gatekeeper. The delivered DMG and ZIP preserve Anthropic's original
 Claude executable and signature. All 12 standalone checks passed again, and the
 corrected runtime recognized the existing Claude subscription without inference.
 The [distribution receipt](evidence/distribution-verification.json) identifies
-the exact assets. A final native-window launch remains before publication;
-earlier native checks retain their recorded scope. Check public download links
-and checksums again after publishing.
+the exact assets and final native-window check. The installed update retained
+14 tasks, two projects, account connections and saved settings. Earlier live
+checks retain their recorded scope; packaging did not rerun model inference.
+The [public release](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0)
+includes checksums for the DMG and ZIP.
 
 OpenRouter live completion and a second physical Mac installation remain
 unverified. A clean profile on the development Mac does not establish that

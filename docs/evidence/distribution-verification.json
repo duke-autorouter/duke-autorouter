@@ -1,25 +1,23 @@
 {
-  "at": "2026-09-20T13:48:20.265800+00:00",
+  "at": "2026-09-20T14:53:32.613819+00:00",
   "release": "0.1.0",
-  "status": "Notarized downloads prepared and verified; final native launch and publication pending",
+  "status": "Signed, notarized and verified for the 0.1 public prerelease; GitHub records publication status.",
+  "releaseURL": "https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.0",
   "platform": "Apple Silicon macOS 14+",
-  "published": false,
-  "implementationSHA256": "cc064229652710cb3846265bec6eafcac01494dca290b4953445aec33f5dd645",
+  "buildSourceCommit": "8bde8031469eb90f2af0b9d41e83457955047fac",
+  "implementationSHA256": "dc313e7804eeadf4d1ff65d07fd45fbbb196b0e1ec0f3224c4c8a4595f31f5fe",
   "implementationFiles": 986,
   "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files",
   "packageLockSHA256": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
   "checks": {
     "typescript": "passed",
     "build": "passed",
-    "automatedTests": 150,
+    "automatedTests": 157,
     "automatedFailures": 0,
+    "implementationCI": "https://github.com/duke-autorouter/duke-autorouter/actions/runs/35516498531",
     "browserWorkflows": 14,
-    "browserJavaScriptErrors": 0,
+    "browserScope": "Unchanged interface; synthetic workers in the preceding tool pass.",
     "evaluationCorpus": 80,
-    "alteredClaudeRuntimeRejectedBeforeSigning": true,
-    "modelNameCapitalization": "passed",
-    "existingClaudeSubscriptionRecognized": true,
-    "additionalLiveInference": false,
     "staple": "passed",
     "signature": "passed",
     "gatekeeper": "passed",
@@ -27,10 +25,11 @@
     "claudePublisherSignatureAndUpstreamBytes": "passed",
     "credentialAudit": "passed",
     "zipPayloadsMatchAuditedApp": 19773,
-    "assetChecksums": "passed"
+    "assetChecksums": "passed",
+    "appleArchiveHashMatches": true
   },
   "standalone": {
-    "at": "2026-09-20T13:39:39.114Z",
+    "at": "2026-09-20T14:40:09.514Z",
     "checks": [
       "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
       "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
@@ -48,10 +47,49 @@
     "liveInference": false,
     "minimalEnvironment": true
   },
+  "native": {
+    "at": "2026-09-20T14:48:44.430963+00:00",
+    "installedUpdate": "passed",
+    "savedStatePreserved": true,
+    "counts": {
+      "tasks": 14,
+      "workspaces": 2,
+      "setups": 0,
+      "models": 91,
+      "artifacts": 29
+    },
+    "connections": [
+      {
+        "provider": "claude",
+        "ready": true,
+        "billing": "subscription"
+      },
+      {
+        "provider": "codex",
+        "ready": true,
+        "billing": null
+      },
+      {
+        "provider": "jev",
+        "ready": true,
+        "billing": null
+      },
+      {
+        "provider": "openrouter",
+        "ready": true,
+        "billing": null
+      }
+    ],
+    "nativeQuitAndRelaunch": "passed",
+    "nativePDFPreview": "passed; sample inventory 8 + 4 + 3 = 15",
+    "additionalModelInference": false,
+    "initialAutomationObservation": "The background launch initially appeared blank. Raising and reloading displayed it. A subsequent native quit and relaunch displayed the UI after raising the window without reloading.",
+    "scope": "Developer ID-signed release on the development Mac; no second-machine installation."
+  },
   "signing": {
     "version": "0.1.0",
-    "signedAt": "2026-09-20T13:39:25.538Z",
-    "archiveSHA256": "f4ce347114b8adb99e11d3ad90268d87d65eab2fed403ff7eb477036c5ae0a24",
+    "signedAt": "2026-09-20T14:39:32.439Z",
+    "archiveSHA256": "49b38d9d104945889d1c1a4bb5fa065650c1c372cfdd3b595488cd9c1974295f",
     "binaries": 57,
     "signedBinaries": 56,
     "bundles": 10,
@@ -62,42 +100,32 @@
       "signaturePreserved": true
     },
     "status": "Accepted",
-    "id": "6a276a93-dcbc-41af-ad6b-a88fbf4d63c7",
-    "submittedAt": "2026-09-20T13:40:52.139Z",
-    "checkedAt": "2026-09-20T13:45:08.633Z"
+    "id": "27c113c0-d299-429d-a0a0-04541cf8dd9c",
+    "submittedAt": "2026-09-20T14:46:14.234275+00:00",
+    "checkedAt": "2026-09-20T14:50:14.601Z",
+    "earlierTimedOutSubmission": {
+      "id": "2cfcad65-ae16-4ac1-ba47-4d2dc0b28da0",
+      "status": "In Progress",
+      "submittedAt": "2026-09-20T14:39:57.057Z"
+    },
+    "upload": "Completed with --no-s3-acceleration"
   },
-  "scope": "Copy corrections and distribution signing. Prior live acceptance covers the unchanged task and tool behavior; no new inference was sent.",
-  "supersedes": [
-    "First private signed candidate replaced Anthropic signature; rejected for publication despite Apple acceptance.",
-    "Intermediate signature-preserving candidate omitted final interface wording; superseded before distribution."
-  ],
-  "limits": [
-    "No public download or physical second-Mac install has occurred.",
-    "OpenRouter live completion remains unverified.",
-    "No comparative routing, savings or multi-day reliability benchmark.",
-    "Five of six prior automatic reviews remain unverified."
-  ],
-  "supportingEvidence": [
-    "installed-acceptance.json",
-    "secret-audit.json",
-    "public-copy-audit.json"
-  ],
   "downloads": {
     "name": "DUKE Autorouter",
     "version": "0.1.0",
     "platform": "darwin-arm64",
     "minimumMacOS": "14",
     "notarization": "Accepted and stapled",
-    "submissionId": "6a276a93-dcbc-41af-ad6b-a88fbf4d63c7",
-    "createdAt": "2026-09-20T13:46:41.195Z",
+    "submissionId": "27c113c0-d299-429d-a0a0-04541cf8dd9c",
+    "createdAt": "2026-09-20T14:52:04.529Z",
     "assets": [
       {
         "path": "DUKE-Autorouter-0.1.0-mac-arm64.dmg",
-        "sha256": "ae1a122540f07f5cea93281d490866bc9d60954a751740f7a3a90439d616a4b5"
+        "sha256": "4f008c9d8b03ccdd41e9ff737ac7476954275b06ac87463dc98614b0d5153866"
       },
       {
         "path": "DUKE-Autorouter-0.1.0-mac-arm64.zip",
-        "sha256": "fd901e4b7912f2535d4a432e61f5028e481becec0740755349819d77b25aefd5"
+        "sha256": "0e0b5d7e6d7864febe32df1b6b56462c57937378cc45d048e27f12896b59b926"
       }
     ],
     "sourceLockHash": "084bf79d8fa643df2ac0636cec68ed70d6a874a20c5a931d456ec9034cbacf4b",
@@ -106,7 +134,33 @@
       "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
       "publisher": "Anthropic PBC",
       "signaturePreserved": true
-    }
+    },
+    "buildSourceCommit": "8bde8031469eb90f2af0b9d41e83457955047fac",
+    "implementationSHA256": "dc313e7804eeadf4d1ff65d07fd45fbbb196b0e1ec0f3224c4c8a4595f31f5fe",
+    "implementationFiles": 986,
+    "hashMethod": "SHA-256 of sorted relative path + NUL + file SHA-256 + newline; server/shared/src/skills/tests/scripts/desktop/.github plus package, lockfile, TypeScript, Vite and index build files"
   },
-  "finalNativeLaunch": "Pending; previous installed-app checks are recorded in installed-acceptance.json."
+  "scope": "Final package includes the Jev review probability correction. Signed standalone checks and installed native launch/restart/preview checks used no new model inference. Original live acceptance and later Jev diagnostic reviews retain their separate evidence scopes.",
+  "limits": [
+    "No physical second-Mac install has occurred.",
+    "OpenRouter live completion remains unverified.",
+    "No comparative routing, savings or multi-day reliability benchmark.",
+    "Historical automatic review statuses are unchanged; visual evidence, conflicting follow-up criteria and missing API capacity can leave reviews incomplete."
+  ],
+  "appleWarnings": [
+    {
+      "path": "submission.zip/DUKE Autorouter.app/Contents/Resources/app/node_modules/@fastify/static/test/static-pre-compressed/all-three.html.gz",
+      "message": "The archive at submission.zip/DUKE Autorouter.app/Contents/Resources/app/node_modules/@fastify/static/test/static-pre-compressed/all-three.html.gz could not be unpacked. Any executables contained in the archive will not be notarized."
+    },
+    {
+      "path": "submission.zip/DUKE Autorouter.app/Contents/Resources/app/node_modules/@fastify/static/test/static-pre-compressed/gzip-only.html.gz",
+      "message": "The archive at submission.zip/DUKE Autorouter.app/Contents/Resources/app/node_modules/@fastify/static/test/static-pre-compressed/gzip-only.html.gz could not be unpacked. Any executables contained in the archive will not be notarized."
+    }
+  ],
+  "supportingEvidence": [
+    "installed-acceptance.json",
+    "review-scoring-verification.json",
+    "secret-audit.json",
+    "public-copy-audit.json"
+  ]
 }
