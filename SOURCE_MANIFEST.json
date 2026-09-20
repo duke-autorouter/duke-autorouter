@@ -1,6 +1,6 @@
 {
   "name": "DUKE Autorouter",
-  "at": "2026-09-20T18:49:35.449Z",
+  "at": "2026-09-20T18:57:09.911Z",
   "files": {
     ".gitignore": "6814baa1ecb5b14a8a848218c31ccf3b27e1c01a663c4be13062d0aa014b566a",
     ".env.example": "f04d20095694a1dbdb3968aee87c4b2fc93fa666c69c9793528119a3a12f85cb",
@@ -1039,8 +1039,8 @@
     "docs/WORKFLOW_PATCH.md": "bc1d7eec209c058d58bd3bce94259fb5ab1ee856ace6f1ce3146ed0036f130bb",
     "docs/BENCHMARK_PROTOCOL.md": "cf0d1ca30405a791f283878f624b6cbaeef13e4d08b55e9cd04dbfe91b7d0d4a",
     "docs/LIVE_ACCEPTANCE_TASKS.md": "e1fc121934e13c7c8f25af35682f108a61a6149ead0ae1cf9e8fa2f8a5a6148e",
-    "docs/RELEASE_READINESS.md": "4d030fc50e4d000782c3d4d5dbb3061b6d55df48be15cfa64fcf572a7d5f1a01",
-    "docs/VERIFICATION.md": "1ed1dc76b5036ad906593c4b76256d40fcb71991cdd5246704dd9120141ff55b",
+    "docs/RELEASE_READINESS.md": "2ed409b1c6ca19416c6c5dc7cd84ab576897e3509700a2a390345fd796d399d9",
+    "docs/VERIFICATION.md": "f2f55de2ff2fed6678f1f9e85fc56260f237674cd3c68085d37ad58ee29199ce",
     "docs/assets/README.md": "ea9eb90168305e61e4b5c866278e7d5a699afde3b0e4b2cbf8d4ebec3b28d9a3",
     "docs/assets/duke-autorouter-app-icon.png": "38eb9462b03bf9488f26c107dbb2a67a4a92c48b6db0e605510de17cf070d31a",
     "docs/assets/duke-autorouter-architecture-v2.png": "bb4a6207b0dbcd1ad21fbb1e7ae7b781827a0674af15efe94f281d94c55cf3d7",
@@ -1068,7 +1068,7 @@
     "docs/evidence/claude-setup-verification.json": "025f5b8f81285843ae701f91f573b24062ab6437fd5f02283a18fc0fde354c11",
     "docs/evidence/dependency-audit.json": "6efc24a5e244879519a0c781ee16489020f1919e3e9381f4130113631572e779",
     "docs/evidence/distribution-0.1.1-verification.json": "40c00cc83970828c554c54c6a09b787838dd02c3e57167858d895a7a8227f3d0",
-    "docs/evidence/distribution-0.1.2-verification.json": "fb7c31e931f0f3831bcd0c3d014b831e7e776a2e2f915e8604a3ddd770e94976",
+    "docs/evidence/distribution-0.1.2-verification.json": "50926a3f11f5ad2f27abb577fa48f1d86c1634de05897093be798eef9f2bfda9",
     "docs/evidence/distribution-verification.json": "070bb8cb359b6feb41187663b3625c62e09d7fbab79dcaf879d22e6c6f0e05c8",
     "docs/evidence/home-desktop.png": "1e2e9c894b2ab971e9b8814e97f7d64f5a210f1265659db97fe2747d0739c6e4",
     "docs/evidence/importer-browser-verification.json": "eecba9b2cb9da0b9ba39c243d115a80dc2050ca5dfe797967856bd744f5dd72a",

@@ -38,8 +38,8 @@ exclusions. Update from 0.1.0 before using browser research.
 The release includes an Apple Silicon DMG, ZIP, SHA-256 checksums and a manifest.
 The app includes the review corrections and preserves existing tasks, projects,
 accounts and settings. Disposable-profile checks passed for 0.1.2 on the
-development Mac. The installed native-window check remains at 0.1.1; 0.1.2 has
-browser and standalone package coverage. GitHub checks scan source history for secrets
+development Mac. The 0.1.2 native window displayed the new check controls;
+quit and relaunch preserved 14 tasks, two projects, model choices and settings. GitHub checks scan source history for secrets
 and run the core build, tests and evaluation-corpus validation.
 
 End users do not need Node, Xcode or a terminal. The target is Apple Silicon

@@ -46,10 +46,23 @@
     "minimalEnvironment": true
   },
   "native": {
-    "status": "Native-window inspection of 0.1.2 has not been performed; prior inspection is recorded below.",
-    "priorVersion": "0.1.1",
-    "priorReceipt": "distribution-0.1.1-verification.json",
-    "scope": "0.1.2 interface coverage is from the actual app in browser automation with synthetic workers. The signed standalone checks use a disposable profile."
+    "at": "2026-09-20T18:56:24.116815+00:00",
+    "version": "0.1.2",
+    "installedUpdate": "passed",
+    "savedStatePreserved": true,
+    "counts": {
+      "tasks": 14,
+      "workspaces": 2,
+      "setups": 0,
+      "models": 91,
+      "artifacts": 29
+    },
+    "nativeWindow": "Home screen, saved coding task, expanded check details, Retry checks button and follow-up field rendered in the installed native window.",
+    "nativeQuitAndRelaunch": "passed; launch receipt removed on quit, home screen and saved state restored after relaunch",
+    "signatureAfterNativeUse": "passed",
+    "gatekeeper": "passed",
+    "additionalModelInference": false,
+    "scope": "Development Mac; no second-machine installation. Retry checks was inspected but not invoked against a live provider. Its execution is covered by the synthetic browser workflow."
   },
   "signing": {
     "version": "0.1.2",
@@ -129,7 +142,7 @@
   "apiSpendThisPassUSD": 0,
   "limits": [
     "No new live model calls; follow-up requirement judgments use synthetic responses.",
-    "Native 0.1.2 window inspection pending; no physical second-Mac installation.",
+    "No physical second-Mac installation.",
     "OpenRouter live completion remains unverified.",
     "No comparative routing, savings or multi-day reliability benchmark.",
     "The original live stall was not conclusively diagnosed.",
