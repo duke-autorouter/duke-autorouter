@@ -1,0 +1,97 @@
+{
+  "at": "2026-09-20T00:26:41.284456+00:00",
+  "result": "passed",
+  "scope": "Native Mac window and simplified interface on the development Apple Silicon Mac",
+  "checks": [
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm test",
+      "result": "passed",
+      "tests": 124,
+      "nativePolicyScenarios": 33
+    },
+    {
+      "command": "npm run test:browser",
+      "result": "passed",
+      "workflows": 13,
+      "fixture": "Synthetic Jev and workers; real local server, file tools, approvals and UI"
+    },
+    {
+      "command": "npm run test:importer",
+      "result": "passed",
+      "checks": 11,
+      "fixture": "Invented setup files; no inference"
+    },
+    {
+      "command": "node --import tsx scripts/usage-browser-check.ts",
+      "result": "passed",
+      "workflows": 6,
+      "fixture": "Invented subscription readings"
+    },
+    {
+      "command": "node --import tsx scripts/claude-setup-browser-check.ts",
+      "result": "passed",
+      "workflows": 4,
+      "fixture": "Synthetic sign-in responses"
+    },
+    {
+      "command": "node --import tsx scripts/package-macos.ts --refresh",
+      "result": "passed",
+      "dependencies": "Unchanged lockfile and bundled runtime dependencies"
+    },
+    {
+      "command": "npm run test:standalone",
+      "result": "passed",
+      "checks": 11,
+      "fixture": "Temporary data directory and minimal environment; no inference"
+    }
+  ],
+  "installedApp": {
+    "path": "/Applications/DUKE Autorouter.app",
+    "signature": "Ad hoc signature verified with --deep --strict",
+    "observedInteractions": [
+      "Own native window and standard window controls",
+      "Native Quit and relaunch",
+      "Paste, select-all and undo in task input",
+      "Close and reopen preserves the unsent draft",
+      "Minimize and reopen preserves the window",
+      "Attached project-folder chooser populates name and path",
+      "Attached setup-folder chooser and copied setup import",
+      "Blob export opens native Save dialog and writes verified JSON",
+      "Native file-open dialog reads exported JSON into the import review",
+      "Temporary setup removed; test project never saved",
+      "Home copy removed, connection summary confined to setup, matching SVG sidebar icons and task arrows"
+    ],
+    "savedStatePreserved": true,
+    "comparedFields": [
+      "tasks",
+      "workspaces",
+      "setups",
+      "models",
+      "roster",
+      "settings",
+      "preferences",
+      "spend",
+      "approvals",
+      "artifacts"
+    ],
+    "existingConnectionReadinessPreserved": true,
+    "modelRequests": 0,
+    "apiSpend": 0
+  },
+  "exportFixture": {
+    "files": 1,
+    "bytes": 285,
+    "sha256": "d836eee4993ea9f27c80b0975c596d73d7ab3c974dadaa26081e3a780556f1a1"
+  },
+  "limits": [
+    "Development Mac only; no fresh physical-machine install",
+    "Not notarized for public binary distribution",
+    "No live model acceptance or model-quality benchmark",
+    "No fresh provider login; existing connections retained",
+    "Actual menu-bar and Dock mouse actions were not separately exercised; native File Open/Reopen and minimize paths were exercised"
+  ]
+}

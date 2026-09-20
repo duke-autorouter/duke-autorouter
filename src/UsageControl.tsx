@@ -104,7 +104,7 @@ function SubscriptionCard({
       ) : !view.connected ? (
         <p>Connect your account in Connections & setup.</p>
       ) : !view.windows.length ? (
-        <p>Allowance unavailable. Refresh to check what this account reports.</p>
+        <p>Usage unavailable. Try refreshing.</p>
       ) : (
         <>
           {primary.map((window) => (
@@ -126,14 +126,6 @@ function SubscriptionCard({
           {view.checkedAt
             ? `Checked ${when(Date.parse(view.checkedAt))}${view.fresh ? '' : ' · refresh needed'}`
             : 'Not checked yet'}
-        </small>
-      )}
-      {view.experimental && view.connected && (
-        <small
-          className="usage-source"
-          title="Uses an experimental interface in the pinned Claude runtime."
-        >
-          Usage availability may vary.
         </small>
       )}
     </section>
@@ -286,7 +278,6 @@ export function UsageControl({
             ×
           </button>
         </div>
-        <p className="usage-description">Your subscriptions and API budget, in one place.</p>
         <section className="usage-api" aria-label="API budget">
           <h3>API budget</h3>
           <div className="usage-row">
@@ -309,7 +300,7 @@ export function UsageControl({
             {refreshing ? 'Refreshing…' : 'Refresh usage'}
           </button>
         </div>
-        <p className="usage-description">Account-wide allowances, including use outside DUKE.</p>
+        <p className="usage-description">Includes usage outside DUKE.</p>
         <div className="subscription-cards">
           {views.map((view) => (
             <SubscriptionCard key={view.provider} view={view} compact />
@@ -321,10 +312,6 @@ export function UsageControl({
           </p>
         )}
         <UsageDisplaySelect value={mode} disabled={saving} onChange={(value) => void save(value)} />
-        <small className="usage-source">
-          This changes visibility only. Your routing and budget limits stay active. Small screens
-          keep the button only.
-        </small>
         <button
           className="usage-details"
           onClick={() => {

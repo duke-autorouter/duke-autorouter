@@ -1,6 +1,7 @@
 {
-  "at": "2026-09-19T17:20:00.727Z",
+  "at": "2026-09-20T00:25:21.376Z",
   "checks": [
+    "Regular Mac application includes its Dock icon, menu bar images and native WebKit framework",
     "Bundled Node serves authenticated app and assets from an unrelated folder with no developer PATH",
     "Project setup persists in a separate application data directory",
     "Packaged roster and work preferences save through the authenticated API without inference",

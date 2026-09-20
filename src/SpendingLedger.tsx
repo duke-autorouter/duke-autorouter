@@ -29,8 +29,7 @@ export function SpendingLedger({ entries, busy, api, act, refresh }: Props) {
   return (
     <section className="ledger" aria-label="API request ledger">
       <p className="quiet">
-        Uncertain requests keep their reservation in the original budget window. Check the
-        provider’s billing record before recording a charge here.
+        Check the provider’s billing record before confirming an uncertain charge.
       </p>
       <table>
         <thead>
@@ -111,8 +110,8 @@ function ReconcileCharge({
     >
       <h3>Record the verified {entry.provider} charge</h3>
       <p>
-        This changes DUKE’s accounting only. It does not charge or refund your provider account.
-        Enter zero only when the provider confirms there was no charge.
+        Updates DUKE’s records only; no charge or refund is issued. Use zero only for a confirmed $0
+        charge.
       </p>
       <label>
         Verified charge (USD)

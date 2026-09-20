@@ -217,10 +217,18 @@ code {
   font-size: 18px;
   line-height: 1;
 }
-.new-task kbd {
+.new-task .task-arrow {
   margin-left: auto;
-  font-size: 14px;
-  opacity: 0.55;
+}
+.task-arrow {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
 }
 nav {
   display: flex;
@@ -238,10 +246,6 @@ nav {
   font-size: 13px;
   text-align: left;
   color: #cad6e5;
-}
-.nav span {
-  font-size: 18px;
-  line-height: 15px;
 }
 .nav small {
   margin-left: auto;
@@ -323,25 +327,6 @@ nav {
   border: 1px solid #a4b09f;
   background: transparent;
 }
-.side-bottom {
-  border-top: 1px solid #36516f;
-  padding-top: 22px;
-  font-size: 12px;
-  color: #cad6e5;
-}
-.side-bottom .live-dot {
-  margin-right: 6px;
-}
-.side-bottom p {
-  font-size: 12px;
-  color: #adbed2;
-  margin: 8px 0 22px;
-}
-.version {
-  font-size: 12px;
-  letter-spacing: 0.2px;
-  color: #adbed2;
-}
 main {
   flex: 1;
   margin-left: 246px;
@@ -374,12 +359,46 @@ main {
 .home h1 {
   font-size: 32px;
   letter-spacing: -0.6px;
+  margin: 0 0 28px;
 }
 .project-picker {
   flex-direction: row;
   align-items: center;
   color: #586c83;
   font-size: 12px;
+}
+.add-project {
+  font-size: 12px;
+  padding: 8px 11px;
+}
+.project-accounts {
+  border: 0;
+  padding: 0;
+  margin: 16px 0;
+  min-width: 0;
+}
+.project-accounts legend {
+  font-size: 13px;
+  font-weight: 600;
+}
+.project-accounts .checks {
+  margin-top: 10px;
+}
+.project-account-options {
+  margin: 16px 0;
+}
+.project-account-options > summary {
+  cursor: pointer;
+  font-size: 13px;
+}
+.task-advanced-options {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.task-advanced-options > summary {
+  cursor: pointer;
+  font-weight: 600;
 }
 .routing-mode {
   align-self: center;
@@ -403,9 +422,6 @@ main {
   flex: 1;
   min-width: 0;
 }
-.connection-strip {
-  margin-top: 26px;
-}
 .feedback-row {
   display: flex;
   align-items: center;
@@ -428,12 +444,6 @@ main {
 }
 .home h1 span {
   color: #526c8c;
-}
-.intro {
-  font-size: 14px;
-  color: #5b6d82;
-  line-height: 1.8;
-  margin-bottom: 32px;
 }
 .composer {
   background: #fff;
@@ -474,6 +484,10 @@ main {
   max-width: 190px;
 }
 .primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   background: var(--navy);
   border: 1px solid var(--navy);
   color: white;
@@ -491,9 +505,6 @@ main {
 }
 .composer-controls .primary:hover {
   background: #e4ff79;
-}
-.primary span {
-  margin-left: 12px;
 }
 .composer-bottom {
   background: #f5f7fb;
@@ -621,54 +632,8 @@ main {
   width: 24px;
   margin-right: 8px;
 }
-.connection-strip {
-  border-top: 1px solid #dce3ec;
-  padding-top: 23px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-.connection-strip .side-label {
-  font-size: 12px;
-  letter-spacing: 0.2px;
-}
-.connection-strip p {
-  font-size: 12px;
-  color: #62758e;
-  margin: 7px 0 0;
-}
-.provider-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.provider-tags button {
-  font-size: 12px;
-  background: none;
-  border: 0;
-  padding: 0;
-  display: flex;
-  gap: 7px;
-  align-items: center;
-}
-.provider-tags small {
-  font-size: 12px;
-  color: #62758e;
-}
 .home > .quiet {
   margin: 30px 0 0;
-}
-footer {
-  border-top: 1px solid #e2e8f0;
-  margin: 0 44px;
-  padding: 22px 0;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: #60748d;
-  font-size: 12px;
 }
 .page {
   width: 100%;
@@ -847,6 +812,7 @@ footer {
   text-align: left;
 }
 .section-heading {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1487,12 +1453,6 @@ footer {
   .topbar {
     padding: 0 32px;
   }
-  .provider-tags {
-    gap: 10px;
-  }
-  .provider-tags small {
-    display: none;
-  }
   .page {
     padding: 35px 28px;
   }
@@ -1517,11 +1477,10 @@ footer {
   }
   .brand-wordmark,
   .sidebar > .side-label,
-  .new-task kbd,
+  .new-task .task-arrow,
   .new-task,
   .nav,
-  .task-history,
-  .side-bottom {
+  .task-history {
     display: none;
   }
   .brand-symbol {
@@ -1563,17 +1522,9 @@ footer {
     font-size: 32px;
     letter-spacing: -0.6px;
   }
-  .connection-strip {
-    align-items: flex-start;
-    flex-direction: column;
-  }
   .topbar {
     padding: 0 25px;
     height: 64px;
-  }
-  footer {
-    margin: 0 25px;
-    font-size: 12px;
   }
   .provider-grid,
   .metrics {
@@ -2035,9 +1986,6 @@ button:disabled {
   }
   .usage-preferences .quiet {
     margin-top: 12px;
-  }
-  .connection-strip {
-    gap: 16px;
   }
 }
 

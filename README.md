@@ -28,9 +28,13 @@ variants, the favicon and the Mac app icon.
 
 ## Use the Mac application
 
-After building and installing the app below, open **DUKE Autorouter** from Applications. It starts its own local service and opens
-the chat interface in your browser. The **DUKE** menu bar item reopens the interface
-or quits the application and its owned service. No terminal, Codex desktop app,
+After building and installing the app below, open **DUKE Autorouter** from Applications.
+It starts its own local service and opens the chat interface in a dedicated Mac
+window, with a Dock icon and standard window and editing commands. The **DUKE**
+menu bar item brings that same window forward or quits the application and its
+owned service. Closing the window keeps work running; reopen it from the Dock or
+menu bar. Provider sign-in and external links open in your browser. File imports
+and downloads use native file dialogs. No terminal, Codex desktop app,
 Homebrew, or developer checkout is required by the installed bundle.
 
 The package includes Node, Codex app-server, the Claude SDK runtime and Chromium.
@@ -98,8 +102,8 @@ have been reviewed. See [release readiness](docs/RELEASE_READINESS.md).
    connecting a separately billed account does not enable paid execution.
 2. Add TypeSafe and/or OpenRouter keys in the local password form. Keys are saved
    to macOS Keychain. Do not paste keys into chat or task prompts.
-3. Choose a specific project folder and which worker accounts can receive its
-   context. Connected Jev assesses tasks and selects models automatically across
+3. Choose **Add a project** from the task box and select a project folder.
+   **Account access** optionally restricts which worker accounts can receive its context. Connected Jev assesses tasks and selects models automatically across
    projects; there is no separate project switch. Jev receives the task brief,
    expected result, tool names, model profiles, and bounded excerpts of selected task
    attachments and progress. Review includes task-file excerpts read by the worker. It also checks deliverable and source excerpts after execution.
@@ -108,9 +112,10 @@ have been reviewed. See [release readiness](docs/RELEASE_READINESS.md).
    set **Starting preferences** for types of work; scoring is not part of setup. API endpoints
    are selected from current tool-capable endpoints within the catalog price caps;
    an explicit endpoint can still be pinned in advanced model settings.
-5. Describe a task, leave automatic routing enabled, and start it. **Task options**
-   contains attachments, success criteria, expected files, verification commands,
-   and the optional manual model override. Previewing makes no model calls.
+5. Describe a task and start it. Automatic routing is the default. **Task options**
+   contains optional result instructions, project attachments, and a manual model
+   override when eligible models are available. **Advanced options** holds tool
+   permissions, output-file checks, and a test command. Previewing makes no model calls.
 6. Review the deliverables and automatic checks. **Usage & execution receipts**
    holds the detailed evidence. Token receipts distinguish routing,
    worker and review consumption. Feedback is optional; no user grading is required.

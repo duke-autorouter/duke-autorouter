@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Setup, SetupFile, SetupMode, SetupPreview } from '../shared/setup';
 import type { Workspace } from '../server/types';
+import { chooseFolder } from './desktop';
 
 const labels = {
   instructions: 'Project instructions',
@@ -183,17 +184,11 @@ export function SetupImport({ data, busy, act, api }: Props) {
       <div className="section-heading">
         <div>
           <h2>Your setup</h2>
-          <p className="quiet">
-            Bring your instructions, voice guide, skills and agent roles with you.
-          </p>
         </div>
         <button onClick={() => begin()}>Bring your setup</button>
       </div>
       {!data.setups?.length && (
-        <p className="quiet">
-          Choose a folder from an existing setup. Review it once, then DUKE uses it when working on
-          your tasks.
-        </p>
+        <p className="quiet">Import instructions, preferences, skills, and agent roles.</p>
       )}
       {(data.setups ?? []).map((setup: Setup) => (
         <div className="setup-saved" key={setup.id}>
@@ -251,10 +246,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
           )}
           {!preview ? (
             <>
-              <p>
-                Point DUKE at a folder with your existing instructions and preferences. It will find
-                the connected files for you to review.
-              </p>
+              <p>Choose the folder containing your instructions and preferences.</p>
               <label>
                 Setup folder
                 <div className="folder-input">
@@ -269,7 +261,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
                       disabled={busy}
                       onClick={() =>
                         run(async () => {
-                          const result = await api('/system/choose-folder', { purpose: 'setup' });
+                          const result = await chooseFolder(api, 'setup');
                           if (result.path) setPath(result.path);
                         })
                       }
@@ -289,7 +281,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
                   />
                   <span>
                     <b>Link to existing files</b>
-                    <small>Future tasks use your latest edits in that folder.</small>
+                    <small>Future tasks use your latest edits.</small>
                   </span>
                 </label>
                 <label className={mode === 'copy' ? 'chosen' : ''}>
@@ -301,15 +293,12 @@ export function SetupImport({ data, busy, act, api }: Props) {
                   />
                   <span>
                     <b>Copy into DUKE</b>
-                    <small>Keep an independent copy you can edit here.</small>
+                    <small>Edit a separate copy in DUKE.</small>
                   </span>
                 </label>
               </div>
               {replacing && (
-                <p className="quiet">
-                  The next screen compares this folder with “{replacing.name}”. Your saved setup
-                  changes only after you review and apply it.
-                </p>
+                <p className="quiet">Review changes to “{replacing.name}” before applying them.</p>
               )}
               <button
                 className="primary"
@@ -349,8 +338,8 @@ export function SetupImport({ data, busy, act, api }: Props) {
             <>
               <p>
                 {mode === 'link'
-                  ? 'Linked files update for future tasks. Each task keeps the version it started with.'
-                  : 'These files will be copied into DUKE. Edits to the originals will not change your copy.'}
+                  ? 'Linked edits apply to future tasks; existing tasks keep their original version.'
+                  : 'Edits to the originals will not change your DUKE copy.'}
               </p>
               <div className="two-columns">
                 <label>
@@ -531,10 +520,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
                 </p>
               )}
               <div className="setup-footer">
-                <small>
-                  Used by the model carrying out your work. These setup files are not sent directly
-                  to Jev. Task attachments and deliverables have a separate, bounded review.
-                </small>
+                <small>Selected files are shared with the model doing your task.</small>
                 <div className="button-row">
                   <button onClick={() => setPreview(undefined)} disabled={busy}>
                     Back
@@ -596,8 +582,8 @@ export function SetupImport({ data, busy, act, api }: Props) {
           )}
           <p>
             {managed.mode === 'link'
-              ? 'Read from your linked folder. Edit originals there; future tasks will pick up the changes.'
-              : 'Your independent DUKE copy. Changes here apply to future tasks.'}
+              ? 'Edit the originals in your linked folder. Changes apply to future tasks.'
+              : 'Edits here apply to future tasks.'}
           </p>
           {editing ? (
             <>
@@ -634,8 +620,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
           ) : (
             <>
               <p className="quiet">
-                Select the files to include if you export this setup. Accounts, task history and
-                local folder paths are not bundled.
+                Select files to export. Accounts, task history, and folder paths are excluded.
               </p>
               <div className="setup-file-list">
                 {managed.files.map((f) => (
@@ -673,10 +658,7 @@ export function SetupImport({ data, busy, act, api }: Props) {
                 ))}
               </div>
               <div className="setup-footer">
-                <small>
-                  {exportFiles.length} files selected for export. Review their content before
-                  sharing.
-                </small>
+                <small>{exportFiles.length} files selected</small>
                 <button
                   disabled={busy || !exportFiles.length}
                   onClick={() =>

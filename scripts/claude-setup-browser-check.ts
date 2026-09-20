@@ -62,7 +62,7 @@ const pass = (message: string) => {
 try {
   await mkdir('outputs', { recursive: true });
   await page.goto(url + '/#launch=' + r.launchToken);
-  await page.getByRole('button', { name: '◇ Connections & setup', exact: true }).click();
+  await page.getByRole('button', { name: 'Connections & setup', exact: true }).click();
   const card = page
     .locator('.provider-card')
     .filter({ has: page.getByRole('heading', { name: 'Claude', exact: true }) });

@@ -138,9 +138,13 @@ for (const entry of await readdir(join(resources, 'browsers'), { withFileTypes: 
 run('/usr/bin/xcrun', [
   'swiftc',
   '-O',
+  '-parse-as-library',
+  '-target',
+  'arm64-apple-macosx14.0',
   '-module-cache-path',
   join(build, 'swift-cache'),
   resource('desktop/Launcher.swift'),
+  resource('desktop/NavigationPolicy.swift'),
   '-o',
   join(contents, 'MacOS/DUKE Autorouter'),
 ]);
@@ -156,9 +160,9 @@ await writeFile(
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>0.1.0</string>
-<key>CFBundleVersion</key><string>2</string>
+<key>CFBundleVersion</key><string>3</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
-<key>LSUIElement</key><true/>
+<key>LSUIElement</key><false/>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>`,
 );

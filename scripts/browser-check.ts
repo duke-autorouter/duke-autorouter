@@ -121,22 +121,52 @@ async function waitFor(fn: () => Promise<boolean>) {
 }
 async function start(prompt: string) {
   const previousId = r.store.tasks()[0]?.id;
-  await page.getByRole('button', { name: '＋ New task ↗' }).click();
+  await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill(prompt);
-  await page.getByRole('button', { name: 'Start task ↗' }).click();
+  await page.getByRole('button', { name: 'Start task', exact: true }).click();
   await waitFor(async () => !!r.store.tasks()[0] && r.store.tasks()[0].id !== previousId);
 }
 try {
   await page.goto(url + '/#launch=' + r.launchToken);
   await page.getByRole('heading', { name: 'What are we working on?', exact: true }).waitFor();
   assert.equal(await page.title(), 'DUKE Autorouter');
-  assert.equal(
-    await page.locator('.provider-tags').getByText('optional', { exact: true }).count(),
-    0,
-  );
   await page.getByRole('link', { name: 'DUKE Autorouter', exact: true }).waitFor();
   await page.screenshot({ path: 'outputs/home-desktop.png', fullPage: false });
-  await page.getByRole('button', { name: '◇ Connections & setup' }).click();
+  const draft = 'A draft preserved while adding a project.';
+  await page.getByLabel('Describe your task').fill(draft);
+  await page.getByRole('button', { name: '+ Task options', exact: true }).click();
+  assert.equal(await page.getByLabel('Model routing').count(), 0);
+  assert.equal(await page.getByLabel('Test command', { exact: true }).isVisible(), false);
+  await page.getByRole('button', { name: '＋ Add a project', exact: true }).click();
+  const projectDialog = page.getByRole('dialog', { name: 'Add a project', exact: true });
+  await projectDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+  assert.equal(await page.getByLabel('Describe your task').inputValue(), draft);
+  assert.equal(r.store.list('workspace').length, 0);
+  await page.getByRole('button', { name: '＋ Add a project', exact: true }).click();
+  await projectDialog.getByLabel('Project name', { exact: true }).fill('Browser verification');
+  await projectDialog.getByLabel('Project folder', { exact: true }).fill(join(root, 'missing'));
+  await projectDialog.getByRole('button', { name: 'Add project', exact: true }).click();
+  await projectDialog.getByRole('alert').waitFor();
+  await projectDialog.getByLabel('Project folder', { exact: true }).fill(workspace);
+  await projectDialog.getByRole('button', { name: 'Add project', exact: true }).click();
+  await projectDialog.waitFor({ state: 'hidden' });
+  assert.equal(await page.getByLabel('Describe your task').inputValue(), draft);
+  assert.equal(
+    await page.getByLabel('Project', { exact: true }).inputValue(),
+    r.store.list<any>('workspace')[0].id,
+  );
+  await page.getByLabel('Project', { exact: true }).selectOption('__add_project__');
+  await projectDialog.waitFor();
+  await page.keyboard.press('Escape');
+  assert.equal(
+    await page.getByLabel('Project', { exact: true }).inputValue(),
+    r.store.list<any>('workspace')[0].id,
+  );
+  assert.equal(await page.getByLabel('Describe your task').inputValue(), draft);
+  console.log(
+    'PASS first project creation, invalid-path recovery, cancel, selection and draft preservation',
+  );
+  await page.getByRole('button', { name: 'Connections & setup' }).click();
   assert.equal(await page.getByRole('checkbox', { name: /Jev/ }).count(), 0);
   await page.getByText('Choose at least one model to start routing.', { exact: true }).waitFor();
   recordCatalog(r.store, 'openrouter', [
@@ -167,32 +197,27 @@ try {
   console.log(
     'PASS explicit model selection, searchable optional catalog, saved starting preferences and cancelled draft isolation',
   );
-  await page.getByLabel('Project name', { exact: true }).fill('Browser verification');
-  await page.getByLabel('Absolute folder path').fill(workspace);
-  await page.getByRole('button', { name: 'Add project', exact: true }).click();
   assert.equal(Object.hasOwn(r.store.list<any>('workspace')[0], 'jevAllowed'), false);
   await page.getByText(workspace, { exact: true }).waitFor();
   await page.getByRole('button', { name: 'Project settings', exact: true }).click();
   assert.equal(await page.getByRole('checkbox', { name: /Jev/ }).count(), 0);
   await page
-    .getByText(
-      'Jev assesses your tasks and chooses from the accounts selected above automatically.',
-      { exact: true },
-    )
+    .locator('.modal')
+    .getByRole('group', { name: 'Accounts for this project', exact: true })
     .waitFor();
   await page.getByRole('button', { name: 'Save project settings', exact: true }).click();
   await page.getByRole('button', { name: 'Import instructions', exact: true }).click();
   await page.getByLabel('File path', { exact: true }).fill(join(workspace, 'instructions.md'));
   await page.getByRole('button', { name: 'Preview file', exact: true }).click();
   await page.getByRole('button', { name: 'Import this copy' }).click();
-  await page.getByText('1 imported instruction file', { exact: false }).waitFor();
+  await page.getByText('1 instruction file', { exact: false }).waitFor();
   const reviewedModel = r.store.get<any>('model', 'fixture');
   r.store.put('model', 'fixture', { ...reviewedModel, evaluated: false, evidence: '' });
-  await page.getByRole('button', { name: '＋ New task ↗' }).click();
+  await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill('Write a note for the first manual trial');
   const routePreview = page.getByRole('status', { name: 'Route preview' });
   await routePreview.getByText(/Auto route needs reviewed results/).waitFor();
-  assert.ok(await page.getByRole('button', { name: 'Start task ↗' }).isDisabled());
+  assert.ok(await page.getByRole('button', { name: 'Start task', exact: true }).isDisabled());
   assert.equal(r.store.tasks().length, 0);
   assert.deepEqual(r.store.spending(), []);
   await page.screenshot({ path: 'outputs/route-preview-blocked.png', fullPage: true });
@@ -204,7 +229,7 @@ try {
   await page.getByLabel('Model routing').selectOption('fixture');
   await routePreview.getByText('Estimated model: Synthetic verification worker').waitFor();
   await page.screenshot({ path: 'outputs/route-preview-manual.png', fullPage: true });
-  await page.getByRole('button', { name: 'Start task ↗' }).click();
+  await page.getByRole('button', { name: 'Start task', exact: true }).click();
   await waitFor(async () => r.store.tasks()[0].status === 'completed');
   assert.equal(r.store.tasks()[0].modelOverride, 'fixture');
   assert.equal(r.store.tasks()[0].route?.modelId, 'fixture');
@@ -220,20 +245,20 @@ try {
     .waitFor();
   assert.match(await readFile(join(workspace, 'note.md'), 'utf8'), /Verified/);
   await page.getByRole('button', { name: 'Worked', exact: true }).click();
-  await page.getByText('Saved for future routing choices.', { exact: true }).waitFor();
+  await page.getByText('Saved.', { exact: true }).waitFor();
   assert.equal(r.store.get<any>('feedback', r.store.tasks()[0].id)?.rating, 'worked');
   console.log('PASS workspace, instruction import, task execution, real artifact, checkpoint');
-  await page.getByRole('button', { name: '＋ New task ↗' }).click();
+  await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill('Write a short note');
   await page.getByRole('button', { name: '+ Task options', exact: true }).click();
   await page
-    .getByLabel('What should the finished result contain?')
+    .getByLabel('Result instructions (optional)')
     .fill('Compare distributed system architecture');
   await page
     .getByRole('status', { name: 'Route preview' })
     .getByText(/complex research.*local rules estimate/i)
     .waitFor();
-  await page.getByRole('button', { name: 'Start task ↗' }).click();
+  await page.getByRole('button', { name: 'Start task', exact: true }).click();
   await waitFor(
     async () =>
       r.store.tasks()[0].status === 'completed' &&
@@ -269,7 +294,7 @@ try {
   await page.getByRole('button', { name: 'Stop task' }).click();
   await waitFor(async () => r.store.tasks()[0].status === 'cancelled');
   console.log('PASS cancellation through real UI');
-  await page.getByRole('button', { name: '◷ Usage & routing' }).click();
+  await page.getByRole('button', { name: 'Usage & routing' }).click();
   await page.getByLabel('Daily API limit ($)', { exact: true }).fill('4');
   await page.getByRole('button', { name: 'Save routing policy' }).click();
   await waitFor(async () => r.store.settings().dailyLimit === 4);
@@ -327,15 +352,14 @@ try {
   );
   assert.equal(r.store.settings().jevMode, 'assist');
   assert.equal(r.store.settings().jevValidated, false);
-  await page.getByRole('button', { name: '＋ New task ↗' }).click();
+  await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill('Debug a distributed system');
   await page
-    .getByText('Jev assesses difficulty and selects the worker automatically when you start.', {
-      exact: false,
-    })
+    .getByRole('status', { name: 'Route preview' })
+    .getByText(/Jev may choose another model/)
     .waitFor();
   assert.equal(jevCalls, 0);
-  await page.getByRole('button', { name: 'Start task ↗' }).click();
+  await page.getByRole('button', { name: 'Start task', exact: true }).click();
   await waitFor(
     async () =>
       r.store.tasks()[0]?.route?.selectionSource === 'jev' &&
@@ -384,7 +408,7 @@ try {
   console.log(
     'PASS Jev difficulty assessment, automatic selection and dispatch through the UI, zero preview inference',
   );
-  await page.getByRole('button', { name: '◷ Usage & routing' }).click();
+  await page.getByRole('button', { name: 'Usage & routing' }).click();
   await page.screenshot({ path: 'outputs/usage.png', fullPage: false });
   const uncertainId = r.store.reserve('stopped-synthetic-task', 'jev', 0.02);
   await page.getByRole('button', { name: 'Review request ledger', exact: true }).click();
@@ -406,7 +430,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('button', { name: '◇ Connections & setup' }).click();
+  await page.getByRole('button', { name: 'Connections & setup' }).click();
   await page.screenshot({ path: 'outputs/setup-mobile.png', fullPage: true });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
   assert.deepEqual(errors, []);
@@ -417,7 +441,7 @@ try {
       {
         at: new Date().toISOString(),
         mode: 'Synthetic Jev transport and workers; real server, UI, SQLite, file tools, artifact creation, approvals and cancellation',
-        checks: 12,
+        checks: 13,
         errors,
       },
       null,

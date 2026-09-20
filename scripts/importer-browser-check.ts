@@ -100,7 +100,7 @@ const errors: string[] = [];
 page.on('pageerror', (e) => errors.push(e.message));
 const dialog = () => page.getByRole('dialog');
 async function setup() {
-  await page.getByRole('button', { name: '◇ Connections & setup' }).click();
+  await page.getByRole('button', { name: 'Connections & setup' }).click();
 }
 async function remove(name: string) {
   await page
@@ -138,9 +138,9 @@ try {
   await dialog().getByRole('button', { name: 'Use this setup', exact: true }).click();
   await page.locator('.setup-saved').filter({ hasText: 'Linked example' }).waitFor();
   assert.equal(r.store.list<any>('setup')[0].files.length, 4);
-  await page.getByRole('button', { name: '＋ New task ↗' }).click();
+  await page.getByRole('button', { name: 'New task', exact: true }).click();
   await page.getByLabel('Describe your task').fill('Write a brief using my setup');
-  await page.getByRole('button', { name: 'Start task ↗' }).click();
+  await page.getByRole('button', { name: 'Start task', exact: true }).click();
   await page
     .locator('.result-text')
     .getByText('Created a brief using your imported setup.', { exact: true })

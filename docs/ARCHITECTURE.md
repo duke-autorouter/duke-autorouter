@@ -10,7 +10,7 @@ loop, evidence policy and limits are described in [Routing policy](ROUTING_POLIC
 
 ```mermaid
 flowchart TD
-    App[Mac launcher and bundled runtimes] --> UI[Local chat interface]
+    App[Mac application and bundled runtimes] --> UI[Local chat interface in native window]
     App --> API[Fastify and local session]
     UI --> API
     API --> Engine[Task engine and checkpoint routing]
@@ -192,13 +192,22 @@ downloaded for native review. Layout-heavy documents still need human inspection
 ## Standalone application
 
 A Swift launcher starts the packaged Node service from an application-owned data
-folder and opens its private launch link in the browser. A menu bar item reopens
-the interface or quits. The service stops if its launcher exits unexpectedly.
+folder and loads its private launch link in a native WebKit window. The app has a
+Dock icon, standard editing and window menus, native file selection and save
+dialogs. The Dock and menu bar reopen the same window without resetting its draft;
+closing the window leaves the service running. Quitting stops the service, which
+also stops if its launcher exits unexpectedly. Only the owned loopback origin
+loads inside the window. Clicked external web links open in the default browser;
+automatic external navigation is blocked. The window uses an ephemeral web data
+store; accounts and work remain in the existing application data directory.
 The bundle includes production modules, Codex, Claude’s native runtime, and
 pinned Playwright browsers. Resource paths are independent of the working folder.
 Application state stays outside the bundle so updates do not replace user data.
 
 Account setup invokes provider-owned browser sign-in. Project selection uses a
-native folder picker. Provider model catalogs are discovered automatically after
+native folder picker attached to the app window. A WebKit reply handler accepts
+folder requests only from the local application's main page; embedded artifacts
+and other origins cannot invoke it. Browser sessions retain the authenticated
+local helper. Provider model catalogs are discovered automatically after
 connection but remain unselected until chosen in My models. Starting work preferences
 are optional and do not bypass policy gates. Preview and submission share the complete composer input.

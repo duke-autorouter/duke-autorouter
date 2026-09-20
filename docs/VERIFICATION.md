@@ -6,7 +6,7 @@ is recorded in [the release receipt](evidence/release-checks.json). The receipt
 identifies the commands, platform, synthetic inputs and any untested behavior.
 Screenshots in that folder use invented task and account data.
 
-Current results: **123 automated tests, twelve browser workflows, four Claude-setup workflows, six usage-panel workflows, eleven importer
+Current results: **124 automated tests, thirteen browser workflows, four Claude-setup workflows, six usage-panel workflows, eleven importer
 checks, six native sandbox checks and eleven standalone package checks pass**. The
 clean-source build and 80-case corpus validation also pass. The npm production
 dependency audit completed on September 19, 2026, with **zero known vulnerabilities
@@ -41,6 +41,16 @@ subscription, and a metadata-only read returned two allowance windows. Source
 and packaged Claude executable hashes still match. The earlier native-sandbox
 and clean-source receipts are retained as historical checks, not new runs.
 
+The [native window and interface receipt](evidence/native-window-verification.json)
+records the standalone WebKit window, standard Mac editing and window controls,
+attached folder/file/save dialogs, and the simpler task interface. The installed
+app was launched, quit and reopened; native import/export was checked with a
+synthetic setup, then removed. Saved account readiness and configuration remained
+unchanged. This includes 33 native origin/navigation policy scenarios, 124 core
+tests, thirteen browser workflows and eleven final package checks. The source
+profile's earlier hosted checks passed on its original commit; current hosted
+results remain tied to the commit shown by GitHub.
+
 ## What the checks establish
 
 - Core and HTTP tests exercise eligibility, preference ordering, automatic Jev
@@ -65,8 +75,10 @@ savings. Catalog and sign-in checks do not establish funded API capacity.
 Live coding, research, writing and document acceptance remain unvalidated. No
 paired model benchmark or multi-day reliability claim is included. No fresh
 physical Mac installation, notarized distribution or Intel/Linux/Windows support
-is established by a clean directory on the development Mac. CI is configured;
-a hosted CI result requires a repository push and has not been claimed.
+is established by a clean directory on the development Mac. Hosted checks are
+recorded per commit in [GitHub Actions](https://github.com/duke-autorouter/duke-autorouter/actions).
+They cover type checking, core tests, the frontend build and the fixture corpus;
+native interactive checks remain local.
 
 See [release readiness](RELEASE_READINESS.md) for outstanding decisions and
 [benchmark protocol](BENCHMARK_PROTOCOL.md) for independent output review.

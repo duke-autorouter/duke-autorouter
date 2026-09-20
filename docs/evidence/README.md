@@ -20,3 +20,8 @@ optional header change. Its UI checks use invented account readings. A separate
 redacted metadata check verifies that the installed official runtimes returned
 allowance windows for the connected accounts, without model inference. No account
 identity, tokens, real percentages, reset times or private screenshots are included.
+
+The [native window and interface receipt](native-window-verification.json) covers
+the installed Mac window, attached file dialogs, simpler task options, and saved
+state preservation. The current screenshots show synthetic browser checks;
+interactive native verification was performed separately on the development Mac.

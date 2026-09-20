@@ -6,8 +6,8 @@ notarized installer is included. The steps below apply to your own installation.
 ## 1. Open DUKE
 
 Open **DUKE Autorouter** from Applications. It starts its background service and
-opens the interface in your browser. Use the **DUKE** menu bar item to reopen the
-interface or quit. Closing a browser tab leaves running tasks alone. Quitting
+opens its own Mac window. Use the Dock icon or **DUKE** menu bar item to bring that
+window forward. Closing the window leaves running tasks alone. Quitting
 DUKE stops work safely; saved conversations and files remain available next time.
 
 The installed app contains its own runtimes. Its data is separate from a source

@@ -156,7 +156,7 @@ try {
   await page.reload();
   await open();
   await panel.getByText('70% left (last known)', { exact: true }).waitFor();
-  await panel.getByText(/Allowance unavailable/).waitFor();
+  await panel.getByText(/Usage unavailable/).waitFor();
   assert.doesNotMatch(await page.locator('.usage-pins').innerText(), /% left/);
   await page.keyboard.press('Escape');
   pass('Stale and unavailable telemetry is explicit and cannot masquerade as current capacity');
@@ -172,7 +172,7 @@ try {
   assert.equal(await page.locator('.usage-pins').innerText(), '');
   await open();
   await panel.getByRole('button', { name: 'Usage & routing settings' }).click();
-  await page.getByRole('heading', { name: 'Make every route count.' }).waitFor();
+  await page.getByRole('heading', { name: 'Usage & routing' }).waitFor();
   await page
     .getByLabel('Show in header', { exact: true })
     .filter({ visible: true })

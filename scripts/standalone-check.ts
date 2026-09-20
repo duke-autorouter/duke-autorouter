@@ -34,10 +34,17 @@ const pass = (name: string) => {
 };
 const plist = await readFile(join(packageApp, 'Contents/Info.plist'), 'utf8');
 assert.match(plist, /<key>CFBundleIconFile<\/key><string>AppIcon<\/string>/);
+assert.match(plist, /<key>LSUIElement<\/key><false\/>/);
+const linkedFrameworks = execFileSync(
+  '/usr/bin/otool',
+  ['-L', join(packageApp, 'Contents/MacOS/DUKE Autorouter')],
+  { encoding: 'utf8' },
+);
+assert.match(linkedFrameworks, /WebKit\.framework/);
 assert.equal((await readFile(join(resources, 'AppIcon.icns'))).toString('ascii', 0, 4), 'icns');
 for (const file of ['MenuBarTemplate.png', 'MenuBarTemplate@2x.png'])
   assert.equal((await readFile(join(resources, file))).toString('hex', 0, 8), '89504e470d0a1a0a');
-pass('App icon and native menu bar image representations are included in the signed bundle');
+pass('Regular Mac application includes its Dock icon, menu bar images and native WebKit framework');
 const child = spawn(node, [join(resources, 'app/server/index.js')], {
   cwd: root,
   env,

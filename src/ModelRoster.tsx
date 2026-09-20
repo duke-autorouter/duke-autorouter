@@ -22,15 +22,8 @@ export function ModelRoster(props: Props) {
         <h2>My models</h2>
         <span>{selected.length} selected</span>
       </div>
-      <p className="quiet">
-        Choose a small set of models you want DUKE to use. Jev assesses each task and chooses from
-        this set, aiming to use only what the task needs.
-      </p>
-      {props.needsReview && (
-        <div className="notice">
-          Choose your models once to finish this update. Your connections and saved settings are
-          still here; the previously discovered catalog is available under Choose models.
-        </div>
+      {props.needsReview && selected.length > 0 && (
+        <div className="notice">Choose your models to finish this update.</div>
       )}
       {!selected.length && (
         <div className="empty-state">Choose at least one model to start routing.</div>
@@ -39,27 +32,17 @@ export function ModelRoster(props: Props) {
       <button disabled={props.busy} className="primary" onClick={() => setEditing(true)}>
         Choose models
       </button>
-      <p className="quiet">
-        Refreshing a connection adds choices to the catalog. It keeps your selection unchanged.
-      </p>
       {!!selected.length && (
         <details className="work-preferences">
           <summary>
             Starting preferences <span className="quiet">· optional</span>
           </summary>
           <p className="quiet">
-            Have a favorite for a type of work? Give Jev a starting point. It can choose another of
-            your models when the task is harder, the preferred model is unavailable, or results
-            support a more efficient choice.
+            Jev may use another model when the task or availability calls for it.
           </p>
           <PreferenceForm {...props} />
         </details>
       )}
-      <p className="quiet">
-        DUKE starts with model descriptions and your preferences. It uses automatic checks and
-        reported token usage from completed tasks to improve future choices. No scores or grading
-        required.
-      </p>
       {editing && <RosterDialog {...props} close={() => setEditing(false)} />}
     </section>
   );
@@ -85,10 +68,7 @@ function RosterDialog({ models, busy, act, api, close }: Props & { close: () => 
       }}
     >
       <h2>Choose your models</h2>
-      <p>
-        Select the models DUKE may use. A handful is a good starting point; you can change this
-        later.
-      </p>
+      <p>Select the models DUKE can choose from.</p>
       <div className="two-columns">
         <label>
           Search models
@@ -120,8 +100,7 @@ function RosterDialog({ models, busy, act, api, close }: Props & { close: () => 
         </label>
       </div>
       <p aria-live="polite">
-        {chosen.size} selected across {models.length} available models · {visible.length} matching{' '}
-        {visible.length === 1 ? 'model' : 'models'}
+        {chosen.size} selected · {visible.length} {query || provider ? 'matching' : 'available'}
       </p>
       <div className="roster-choices">
         {visible.slice(0, limit).map((m) => (
@@ -151,7 +130,7 @@ function RosterDialog({ models, busy, act, api, close }: Props & { close: () => 
             </span>
           </label>
         ))}
-        {!models.length && <p>Connect an account or refresh its models above, then return here.</p>}
+        {!models.length && <p>Connect an account to see its models.</p>}
         {!!models.length && !visible.length && <p>No models match this search.</p>}
         {visible.length > limit && (
           <button type="button" onClick={() => setLimit((n) => n + 60)}>
@@ -159,10 +138,8 @@ function RosterDialog({ models, busy, act, api, close }: Props & { close: () => 
           </button>
         )}
       </div>
-      {chosen.size >= ROSTER_LIMIT && (
-        <p className="quiet">Your roster can contain up to {ROSTER_LIMIT} models.</p>
-      )}
-      {!chosen.size && <p className="quiet">Routing will wait until you select a model.</p>}
+      {chosen.size >= ROSTER_LIMIT && <p className="quiet">Maximum {ROSTER_LIMIT} models.</p>}
+      {!chosen.size && <p className="quiet">Select at least one model to route tasks.</p>}
       <div className="button-row">
         <button
           className="primary"

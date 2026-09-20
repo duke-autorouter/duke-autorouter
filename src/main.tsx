@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import type { Task, Workspace, Model, Approval, Settings, RoutePreview } from '../server/types';
 import { brand } from '../shared/brand';
 import { Markdown } from './Markdown';
-import { SetupImport } from './SetupImport';
+import { chooseFolder } from './desktop';
+import { ImportDialog, SetupImport } from './SetupImport';
 import { ModelRoster } from './ModelRoster';
 import { SpendingLedger } from './SpendingLedger';
 import { UsageControl, SubscriptionCards, UsageDisplaySelect } from './UsageControl';
@@ -39,6 +40,37 @@ function Mark() {
     <div className="mark" aria-hidden="true">
       <img src={monogram} alt="" width="40" height="27" />
     </div>
+  );
+}
+function TaskArrow() {
+  return (
+    <svg className="task-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M5 15 15 5M5 5h10v10"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+function NavigationIcon({ kind }: { kind: 'tasks' | 'connections' | 'usage' }) {
+  const paths = {
+    tasks: 'M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01',
+    connections: 'M9 3v4m6-4v4M7 7h10v4a5 5 0 0 1-10 0V7Zm5 9v3a2 2 0 0 1-2 2H8',
+    usage: 'M21 12a9 9 0 1 1-9-9v9h9ZM16 3.9a9 9 0 0 1 4.1 4.1H16V3.9Z',
+  };
+  return (
+    <svg className="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d={paths[kind]}
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 function App() {
@@ -149,54 +181,48 @@ function App() {
           <img className="brand-wordmark" src={wordmark} alt="" width="190" height="53" />
           <img className="brand-symbol" src={monogram} alt="" width="40" height="27" />
         </a>
-        <span className="side-label">Your projects</span>
         <button className="new-task" onClick={newTask}>
-          <span>＋</span> New task <kbd>↗</kbd>
+          <span aria-hidden="true">＋</span> New task <TaskArrow />
         </button>
         <nav>
           <button
             className={screen === 'tasks' ? 'nav active' : 'nav'}
             onClick={() => setScreen('tasks')}
           >
-            <span>▤</span> Tasks <small>{tasks.length}</small>
+            <NavigationIcon kind="tasks" /> Tasks <small>{tasks.length}</small>
           </button>
           <button
             className={screen === 'setup' ? 'nav active' : 'nav'}
             onClick={() => setScreen('setup')}
           >
-            <span>◇</span> Connections & setup
+            <NavigationIcon kind="connections" />
+            Connections & setup
           </button>
           <button
             className={screen === 'usage' ? 'nav active' : 'nav'}
             onClick={() => setScreen('usage')}
           >
-            <span>◷</span> Usage & routing
+            <NavigationIcon kind="usage" /> Usage & routing
           </button>
         </nav>
-        <div className="task-history">
-          <span className="side-label">Recent work</span>
-          {!tasks.length && <p className="quiet">Your tasks will appear here.</p>}
-          {tasks.slice(0, 15).map((t) => (
-            <button
-              key={t.id}
-              onClick={() => {
-                setSelected(t.id);
-                setScreen('tasks');
-              }}
-              className={'history-item ' + (selected === t.id ? 'selected' : '')}
-            >
-              <i className={'status-dot ' + t.status} />
-              <span>{t.title}</span>
-            </button>
-          ))}
-        </div>
-        <div className="side-bottom">
-          <div>
-            <i className="live-dot" /> Local on this Mac
+        {!!tasks.length && (
+          <div className="task-history">
+            <span className="side-label">Recent work</span>
+            {tasks.slice(0, 15).map((t) => (
+              <button
+                key={t.id}
+                onClick={() => {
+                  setSelected(t.id);
+                  setScreen('tasks');
+                }}
+                className={'history-item ' + (selected === t.id ? 'selected' : '')}
+              >
+                <i className={'status-dot ' + t.status} />
+                <span>{t.title}</span>
+              </button>
+            ))}
           </div>
-          <p>Use only what the task needs.</p>
-          <span className="version">Local router · 0.1</span>
-        </div>
+        )}
       </aside>
       <main>
         <header className="topbar">
@@ -220,12 +246,13 @@ function App() {
         {screen === 'tasks' && !selected && (
           <div className="home">
             <h1>What are we working on?</h1>
-            <p className="intro">Describe the work. DUKE chooses the model and gets started.</p>
             <Composer
               workspaces={data.workspaces}
               models={data.models}
               revision={refresh}
               busy={busy}
+              desktop={data.desktop}
+              act={act}
               onSetup={() => setScreen('setup')}
               onSubmit={(input) =>
                 act(async () => {
@@ -234,32 +261,9 @@ function App() {
                 })
               }
             />
-            <div className="connection-strip">
-              <div>
-                <span className="side-label">Your model connections</span>
-                <p>
-                  {data.health.filter((h: any) => h.ready).length
-                    ? `${data.health.filter((h: any) => h.ready).length} connected`
-                    : 'Connect a runtime to get started'}
-                </p>
-              </div>
-              <div className="provider-tags">
-                {Object.entries(providers).map(([id, name]) => {
-                  const h = data.health.find((h: any) => h.provider === id);
-                  return (
-                    <button key={id} onClick={() => setScreen('setup')}>
-                      <i className={h?.ready ? 'live-dot' : 'empty-dot'} />
-                      {name}
-                      {id === 'jev' && <small>model selection</small>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
             {!!active.length && (
               <p className="quiet">
-                {active.length} task{active.length === 1 ? '' : 's'} in progress. Work is saved
-                locally.
+                {active.length} task{active.length === 1 ? '' : 's'} in progress.
               </p>
             )}
           </div>
@@ -275,12 +279,126 @@ function App() {
         )}
         {screen === 'setup' && <Setup data={data} act={act} busy={busy} />}
         {screen === 'usage' && <Usage data={data} act={act} busy={busy} />}
-        <footer>
-          <span>Built around your work.</span>
-          <span>Saved here. Task context goes to enabled providers.</span>
-        </footer>
       </main>
     </div>
+  );
+}
+function ProjectForm({
+  desktop,
+  busy,
+  act,
+  onCreated,
+  onCancel,
+}: {
+  desktop: boolean;
+  busy: boolean;
+  act: (fn: () => Promise<any>) => Promise<any>;
+  onCreated?: (workspace: Workspace) => void;
+  onCancel?: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [path, setPath] = useState('');
+  const [allowed, setAllowed] = useState(['codex', 'claude', 'openrouter']);
+  const [error, setError] = useState('');
+  return (
+    <form
+      className="form-panel"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setError('');
+        void act(async () => {
+          try {
+            const workspace = await api('/workspaces', { name, path, providers: allowed });
+            setName('');
+            setPath('');
+            onCreated?.(workspace);
+          } catch (error) {
+            setError((error as Error).message);
+          }
+        });
+      }}
+    >
+      {error && (
+        <p className="notice" role="alert">
+          {error}
+        </p>
+      )}
+      <div className="two-columns">
+        <label>
+          Project name
+          <input
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="My project"
+            required
+          />
+        </label>
+        <label>
+          Project folder
+          <div className="folder-input">
+            <input
+              aria-label="Project folder"
+              value={path}
+              onChange={(event) => setPath(event.target.value)}
+              placeholder="/Users/you/Projects/my-project"
+              required
+            />
+            {desktop && (
+              <button
+                type="button"
+                aria-label="Choose project folder"
+                disabled={busy}
+                onClick={() =>
+                  void act(async () => {
+                    const selected = await chooseFolder(api);
+                    if (selected.path) {
+                      setPath(selected.path);
+                      if (!name) setName(selected.path.split('/').pop() ?? '');
+                    }
+                  })
+                }
+              >
+                Choose folder…
+              </button>
+            )}
+          </div>
+        </label>
+      </div>
+      <details className="project-account-options">
+        <summary>Account access</summary>
+        <fieldset className="project-accounts">
+          <legend>Accounts for this project</legend>
+          <div className="checks">
+            {['codex', 'claude', 'openrouter'].map((provider) => (
+              <label key={provider}>
+                <input
+                  type="checkbox"
+                  checked={allowed.includes(provider)}
+                  onChange={() =>
+                    setAllowed(
+                      allowed.includes(provider)
+                        ? allowed.filter((value) => value !== provider)
+                        : [...allowed, provider],
+                    )
+                  }
+                />
+                {providers[provider as keyof typeof providers]}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </details>
+      <div className="button-row">
+        <button className="primary" disabled={busy || !allowed.length}>
+          Add project
+        </button>
+        {onCancel && (
+          <button type="button" disabled={busy} onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
   );
 }
 function Composer({
@@ -288,6 +406,8 @@ function Composer({
   models,
   revision,
   busy,
+  desktop,
+  act,
   onSetup,
   onSubmit,
 }: {
@@ -295,6 +415,8 @@ function Composer({
   models: Model[];
   revision: number;
   busy: boolean;
+  desktop: boolean;
+  act: (fn: () => Promise<any>) => Promise<any>;
   onSetup: () => void;
   onSubmit: (input: any) => void;
 }) {
@@ -303,6 +425,7 @@ function Composer({
     [modelOverride, setModel] = useState(''),
     [caps, setCaps] = useState<string[]>(['files', 'shell', 'web', 'browser', 'artifacts']),
     [advanced, setAdvanced] = useState(false),
+    [addingProject, setAddingProject] = useState(false),
     [expected, setExpected] = useState(''),
     [files, setFiles] = useState(''),
     [command, setCommand] = useState(''),
@@ -358,185 +481,237 @@ function Composer({
     };
   }, [previewInput, previewKey]);
   return (
-    <form
-      className="composer"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit(taskInput);
-      }}
-    >
-      <label htmlFor="prompt" className="sr-only">
-        Describe your task
-      </label>
-      <textarea
-        id="prompt"
-        placeholder="What would you like to get done?"
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        required
-        rows={4}
-      />
-      <div className="composer-controls">
-        <div className="composer-selects">
-          <label className="project-picker">
-            Project
-            <select
-              aria-label="Project"
-              value={workspace}
-              onChange={(e) => {
-                setWorkspace(e.target.value);
-                setModel('');
-              }}
-            >
-              <option value="" disabled>
-                Choose a project
-              </option>
-              {workspaces.map((w) => (
-                <option key={w.id} value={w.id}>
-                  {w.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <span className="routing-mode">
-            {selectedModel ? 'Manual model override' : '↗ Automatic routing'}
-          </span>
-        </div>
-        <button
-          type="submit"
-          className="primary"
-          disabled={busy || !workspace || !prompt.trim() || checkingRoute || blockedRoute}
-        >
-          Start task <span>↗</span>
-        </button>
-      </div>
-      {!!workspace && !!prompt.trim() && (
-        <div
-          className={'routing-check ' + (blockedRoute ? 'blocked' : '')}
-          role="status"
-          aria-label="Route preview"
-        >
-          {checkingRoute ? (
-            <span>Checking the available routes…</span>
-          ) : currentPreview?.error ? (
-            <p>
-              Preview unavailable: {currentPreview.error} Routing will be checked when you start.
-            </p>
-          ) : (
-            <>
-              <b>
-                {currentPreview?.value?.route
-                  ? `Estimated model: ${currentPreview.value.modelLabel}`
-                  : 'Before you start'}
-              </b>
-              <p>
-                {currentPreview?.value?.route && currentPreview.value.jevMayRefine
-                  ? `${currentPreview.value.route.assessment.difficulty} ${currentPreview.value.route.kind} · local rules estimate; Jev may choose another model when you start.`
-                  : currentPreview?.value?.message}
-              </p>
-              {currentPreview?.value?.status === 'blocked' && (
-                <button type="button" className="text-button" onClick={onSetup}>
-                  Open setup →
-                </button>
-              )}
-              <small>
-                This preview makes no model requests.
-                {currentPreview?.value?.jevMayRefine
-                  ? ' Jev assesses difficulty and selects the worker automatically when you start.'
-                  : ' Connection, quota, and API budget checks run when the task starts.'}
-              </small>
-            </>
-          )}
-        </div>
-      )}
-      <div className="composer-bottom">
-        <button type="button" className="text-button" onClick={() => setAdvanced(!advanced)}>
-          {advanced ? '− Hide task options' : '+ Task options'}
-        </button>
-        <span>Files stay in your selected project</span>
-      </div>
-      {!workspaces.length && (
-        <div className="inline-note">
-          Choose a folder and connect a model to begin.{' '}
-          <button type="button" onClick={onSetup}>
-            Open setup →
+    <>
+      <form
+        className="composer"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit(taskInput);
+        }}
+      >
+        <label htmlFor="prompt" className="sr-only">
+          Describe your task
+        </label>
+        <textarea
+          id="prompt"
+          placeholder="What would you like to get done?"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          required
+          rows={4}
+        />
+        <div className="composer-controls">
+          <div className="composer-selects">
+            {workspaces.length ? (
+              <label className="project-picker">
+                Project
+                <select
+                  aria-label="Project"
+                  value={workspace}
+                  onChange={(e) => {
+                    if (e.target.value === '__add_project__') {
+                      setAddingProject(true);
+                      return;
+                    }
+                    setWorkspace(e.target.value);
+                    setModel('');
+                  }}
+                >
+                  <option value="" disabled>
+                    Choose a project
+                  </option>
+                  {workspaces.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
+                  ))}
+                  <option value="__add_project__">＋ Add a project…</option>
+                </select>
+              </label>
+            ) : (
+              <button type="button" className="add-project" onClick={() => setAddingProject(true)}>
+                ＋ Add a project
+              </button>
+            )}
+            <span className="routing-mode">
+              {selectedModel ? 'Manual model override' : '↗ Automatic routing'}
+            </span>
+          </div>
+          <button
+            type="submit"
+            className="primary"
+            disabled={busy || !workspace || !prompt.trim() || checkingRoute || blockedRoute}
+          >
+            Start task <TaskArrow />
           </button>
         </div>
-      )}
-      {advanced && (
-        <div className="advanced">
-          <label>
-            Model override
-            <select
-              aria-label="Model routing"
-              value={selectedModel}
-              onChange={(e) => setModel(e.target.value)}
-            >
-              <option value="">Automatic — let DUKE choose</option>
-              {compatibleModels.map((m) => (
-                <option value={m.id} key={m.id}>
-                  {m.label} · {m.provider}
-                </option>
-              ))}
-            </select>
-            <small>Use a specific model for this task. Automatic routing is the default.</small>
-          </label>
-          <label>
-            Available tools
-            <div className="checks">
-              {['files', 'shell', 'web', 'browser', 'artifacts'].map((c) => (
-                <label key={c}>
-                  <input
-                    type="checkbox"
-                    checked={caps.includes(c)}
-                    onChange={() =>
-                      setCaps(caps.includes(c) ? caps.filter((x) => x !== c) : [...caps, c])
-                    }
-                  />
-                  {c}
-                </label>
-              ))}
-            </div>
-          </label>
-          <label>
-            What should the finished result contain?
-            <input
-              value={expected}
-              onChange={(e) => setExpected(e.target.value)}
-              placeholder="A sourced comparison and a one-page recommendation"
-            />
-          </label>
-          <div className="two-columns">
+        {!!workspace && !!prompt.trim() && (
+          <div
+            className={'routing-check ' + (blockedRoute ? 'blocked' : '')}
+            role="status"
+            aria-label="Route preview"
+          >
+            {checkingRoute ? (
+              <span>Checking the available routes…</span>
+            ) : currentPreview?.error ? (
+              <p>
+                Preview unavailable: {currentPreview.error} Routing will be checked when you start.
+              </p>
+            ) : (
+              <>
+                <b>
+                  {currentPreview?.value?.route
+                    ? `Estimated model: ${currentPreview.value.modelLabel}`
+                    : 'Before you start'}
+                </b>
+                <p>
+                  {currentPreview?.value?.route && currentPreview.value.jevMayRefine
+                    ? `${currentPreview.value.route.assessment.difficulty} ${currentPreview.value.route.kind} · local rules estimate; Jev may choose another model when you start.`
+                    : currentPreview?.value?.message}
+                </p>
+                {currentPreview?.value?.status === 'blocked' && (
+                  <button type="button" className="text-button" onClick={onSetup}>
+                    Open setup →
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+        <div className="composer-bottom">
+          <button type="button" className="text-button" onClick={() => setAdvanced(!advanced)}>
+            {advanced ? '− Hide task options' : '+ Task options'}
+          </button>
+        </div>
+        {advanced && (
+          <div className="advanced">
+            {!!compatibleModels.length && (
+              <label>
+                Model override
+                <select
+                  aria-label="Model routing"
+                  value={selectedModel}
+                  onChange={(e) => setModel(e.target.value)}
+                >
+                  <option value="">Automatic — let DUKE choose</option>
+                  {compatibleModels.map((m) => (
+                    <option value={m.id} key={m.id}>
+                      {m.label} · {m.provider}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {!!workspace && !compatibleModels.length && (
+              <p className="quiet">
+                No selected models support these tools for this project.{' '}
+                <button type="button" className="text-button" onClick={onSetup}>
+                  Choose models →
+                </button>
+              </p>
+            )}
             <label>
-              Expected files · one per line
-              <textarea
-                value={files}
-                onChange={(e) => setFiles(e.target.value)}
-                placeholder="artifacts/report.pdf"
-                rows={2}
+              Result instructions (optional)
+              <input
+                value={expected}
+                onChange={(e) => setExpected(e.target.value)}
+                placeholder="e.g. A one-page comparison with sources"
               />
             </label>
             <label>
-              Project attachments · one per line
+              Attachments (optional)
               <textarea
                 value={attachments}
                 onChange={(e) => setAttachments(e.target.value)}
                 placeholder="brief.md"
                 rows={2}
+                aria-describedby="attachments-help"
               />
+              <small id="attachments-help">
+                Files already in your project folder, one path per line.
+              </small>
             </label>
+            <details className="task-advanced-options">
+              <summary>Advanced options</summary>
+              <fieldset className="project-accounts">
+                <legend>Tool permissions</legend>
+                <p className="quiet">Tools the model must support and may use for this task.</p>
+                <div className="checks">
+                  {Object.entries({
+                    files: 'Read and write files',
+                    shell: 'Run terminal commands',
+                    web: 'Search the web',
+                    browser: 'Use a browser',
+                    artifacts: 'Create documents',
+                  }).map(([capability, label]) => (
+                    <label key={capability}>
+                      <input
+                        type="checkbox"
+                        checked={caps.includes(capability)}
+                        onChange={() =>
+                          setCaps(
+                            caps.includes(capability)
+                              ? caps.filter((c) => c !== capability)
+                              : [...caps, capability],
+                          )
+                        }
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <label>
+                Files to check for
+                <textarea
+                  value={files}
+                  onChange={(e) => setFiles(e.target.value)}
+                  placeholder="artifacts/report.pdf"
+                  rows={2}
+                  aria-describedby="files-help"
+                />
+                <small id="files-help">
+                  Optional output paths to verify after the task, one per line.
+                </small>
+              </label>
+              <label>
+                Test command
+                <input
+                  value={command}
+                  onChange={(e) => setCommand(e.target.value)}
+                  placeholder="npm test"
+                  aria-describedby="command-help"
+                />
+                <small id="command-help">
+                  Optional command to run in the project folder after the task.
+                </small>
+              </label>
+            </details>
           </div>
-          <label>
-            Verification command
-            <input
-              value={command}
-              onChange={(e) => setCommand(e.target.value)}
-              placeholder="npm test"
-            />
-          </label>
-        </div>
+        )}
+      </form>
+      {addingProject && (
+        <ImportDialog
+          label="Add a project"
+          close={() => {
+            if (!busy) setAddingProject(false);
+          }}
+        >
+          <h2>Add a project</h2>
+          <ProjectForm
+            desktop={desktop}
+            busy={busy}
+            act={act}
+            onCancel={() => setAddingProject(false)}
+            onCreated={(project) => {
+              setWorkspace(project.id);
+              setModel('');
+              setAddingProject(false);
+            }}
+          />
+        </ImportDialog>
       )}
-    </form>
+    </>
   );
 }
 function TaskView({ detail, approvals, busy, act }: any) {
@@ -669,7 +844,7 @@ function TaskView({ detail, approvals, busy, act }: any) {
                 <span className="file-icon">▧</span>
                 <div>
                   <b>{a.path}</b>
-                  <small>{(a.bytes / 1024).toFixed(1)} KB · version recorded</small>
+                  <small>{(a.bytes / 1024).toFixed(1)} KB</small>
                 </div>
                 <button onClick={() => setPreview(a)}>Preview</button>
                 <a href={'/api/artifacts/' + a.id + '?download=1'} download>
@@ -760,7 +935,7 @@ function TaskView({ detail, approvals, busy, act }: any) {
           >
             Needs work
           </button>
-          {detail.feedback && <small>Saved for future routing choices.</small>}
+          {detail.feedback && <small>Saved.</small>}
         </div>
       )}
       {preview && (
@@ -902,7 +1077,7 @@ function TaskView({ detail, approvals, busy, act }: any) {
       ) : (
         <div className="running-row">
           <span>
-            <i className="live-dot" /> {statusLabel(t.status)} · work is being saved
+            <i className="live-dot" /> {statusLabel(t.status)}
           </span>
           <button onClick={() => act(() => api('/tasks/' + t.id + '/cancel', {}))}>
             Stop task
@@ -919,9 +1094,6 @@ function Setup({ data, act, busy }: any) {
     [claudeLogin, setClaudeLogin] = useState<ClaudeLoginState>(),
     [claudeSetupOpen, setClaudeSetupOpen] = useState(false),
     [editWorkspace, setEditWorkspace] = useState<Workspace>(),
-    [name, setName] = useState(''),
-    [path, setPath] = useState(''),
-    [allowed, setAllowed] = useState(['codex', 'claude', 'openrouter']),
     [importW, setImportW] = useState(''),
     [importPath, setImportPath] = useState(''),
     [importPreview, setImportPreview] = useState<any>();
@@ -933,10 +1105,8 @@ function Setup({ data, act, busy }: any) {
     });
   return (
     <div className="page">
-      <h1>Connect and get started</h1>
-      <p className="intro">Connect your accounts, choose your models, then give DUKE a task.</p>
       <div className="section-heading">
-        <h2>Model connections</h2>
+        <h1>Connections & setup</h1>
         <button disabled={busy} onClick={() => act(() => api('/health', {}))}>
           Check connections ↻
         </button>
@@ -959,12 +1129,12 @@ function Setup({ data, act, busy }: any) {
             </div>
             <p>
               {p === 'codex'
-                ? 'ChatGPT subscription via Codex app-server'
+                ? 'ChatGPT subscription'
                 : p === 'claude'
-                  ? 'Your account through Claude Code on this Mac'
+                  ? 'Claude Code account'
                   : p === 'openrouter'
-                    ? 'Optional: individual models through an API'
-                    : 'Task difficulty assessment and automatic model selection'}
+                    ? 'API models'
+                    : 'Automatic model selection'}
             </p>
             <small>{health(p)?.message ?? 'Not checked yet'}</small>
             <div className="button-row">
@@ -1005,7 +1175,6 @@ function Setup({ data, act, busy }: any) {
             {p === 'claude' && (
               <details className="claude-signin-options">
                 <summary>Other sign-in options</summary>
-                <p>Use Claude Code’s own sign-in flow for your account.</p>
                 <div className="button-row">
                   <button
                     className="text-button"
@@ -1023,8 +1192,8 @@ function Setup({ data, act, busy }: any) {
                   </button>
                 </div>
                 <small>
-                  Console accounts use separate API billing. DUKE currently routes Claude tasks
-                  through subscriptions; connecting Console does not enable paid execution.
+                  Console uses separate API billing. DUKE currently runs Claude tasks through
+                  subscriptions.
                 </small>
                 {data.claudeSetupAvailable && (
                   <>
@@ -1042,9 +1211,8 @@ function Setup({ data, act, busy }: any) {
                       Open full Claude Code setup
                     </button>
                     <small>
-                      Opens Claude Code in Terminal for API keys, cloud providers and other options.
-                      Account changes there also apply to DUKE. When finished, choose Check
-                      connections.
+                      Opens Terminal. Account changes apply to DUKE; check connections when
+                      finished.
                     </small>
                   </>
                 )}
@@ -1067,7 +1235,6 @@ function Setup({ data, act, busy }: any) {
             Finish your {claudeLogin.method === 'console' ? 'Claude Console' : 'Claude'} sign-in in
             the browser
           </b>
-          <p>DUKE uses Claude’s own sign-in flow. Your account status updates when it finishes.</p>
           {claudeLogin.authUrl && (
             <a href={claudeLogin.authUrl} target="_blank" rel="noreferrer">
               Open secure login →
@@ -1108,7 +1275,6 @@ function Setup({ data, act, busy }: any) {
       <section className="settings-section">
         <div className="section-heading">
           <h2>Projects</h2>
-          <span>Only the folders you choose</span>
         </div>
         {data.workspaces.map((w: Workspace) => (
           <div className="workspace-row" key={w.id}>
@@ -1116,87 +1282,17 @@ function Setup({ data, act, busy }: any) {
             <div>
               <b>{w.name}</b>
               <small>{w.path}</small>
-              <small>
-                {w.instructions.length} imported instruction file
-                {w.instructions.length === 1 ? '' : 's'}
-              </small>
+              {!!w.instructions.length && (
+                <small>
+                  {w.instructions.length} instruction file{w.instructions.length === 1 ? '' : 's'}
+                </small>
+              )}
             </div>
             <button onClick={() => setImportW(w.id)}>Import instructions</button>
             <button onClick={() => setEditWorkspace(w)}>Project settings</button>
           </div>
         ))}
-        <form
-          className="form-panel"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void act(async () => {
-              await api('/workspaces', { name, path, providers: allowed });
-              setName('');
-              setPath('');
-            });
-          }}
-        >
-          <div className="two-columns">
-            <label>
-              Project name
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="My project"
-                required
-              />
-            </label>
-            <label>
-              Absolute folder path
-              <div className="folder-input">
-                <input
-                  value={path}
-                  onChange={(e) => setPath(e.target.value)}
-                  placeholder="/Users/you/Projects/my-project"
-                  required
-                />
-                {data.desktop && (
-                  <button
-                    type="button"
-                    aria-label="Choose project folder"
-                    onClick={() =>
-                      act(async () => {
-                        const selected = await api('/system/choose-folder', {});
-                        if (selected.path) {
-                          setPath(selected.path);
-                          if (!name) setName(selected.path.split('/').pop());
-                        }
-                      })
-                    }
-                  >
-                    Choose folder…
-                  </button>
-                )}
-              </div>
-            </label>
-          </div>
-          <div className="checks">
-            {['codex', 'claude', 'openrouter'].map((p) => (
-              <label key={p}>
-                <input
-                  type="checkbox"
-                  checked={allowed.includes(p)}
-                  onChange={() =>
-                    setAllowed(
-                      allowed.includes(p) ? allowed.filter((a) => a !== p) : [...allowed, p],
-                    )
-                  }
-                />
-                {providers[p as keyof typeof providers]}
-              </label>
-            ))}
-          </div>
-          <p className="quiet">
-            Jev assesses your tasks and chooses the model automatically. Select which accounts can
-            carry out this project’s work.
-          </p>
-          <button disabled={busy || !allowed.length}>Add project</button>
-        </form>
+        <ProjectForm desktop={data.desktop} busy={busy} act={act} />
       </section>
       {editWorkspace && (
         <div className="modal-backdrop">
@@ -1220,28 +1316,28 @@ function Setup({ data, act, busy }: any) {
               />
             </label>
             <p className="quiet">{editWorkspace.path}</p>
-            <div className="checks">
-              {(['codex', 'claude', 'openrouter'] as const).map((p) => (
-                <label key={p}>
-                  <input
-                    type="checkbox"
-                    checked={editWorkspace.providers.includes(p)}
-                    onChange={(e) =>
-                      setEditWorkspace({
-                        ...editWorkspace,
-                        providers: e.target.checked
-                          ? [...editWorkspace.providers, p]
-                          : editWorkspace.providers.filter((v) => v !== p),
-                      })
-                    }
-                  />
-                  {providers[p]}
-                </label>
-              ))}
-            </div>
-            <p className="quiet">
-              Jev assesses your tasks and chooses from the accounts selected above automatically.
-            </p>
+            <fieldset className="project-accounts">
+              <legend>Accounts for this project</legend>
+              <div className="checks">
+                {(['codex', 'claude', 'openrouter'] as const).map((p) => (
+                  <label key={p}>
+                    <input
+                      type="checkbox"
+                      checked={editWorkspace.providers.includes(p)}
+                      onChange={(e) =>
+                        setEditWorkspace({
+                          ...editWorkspace,
+                          providers: e.target.checked
+                            ? [...editWorkspace.providers, p]
+                            : editWorkspace.providers.filter((v) => v !== p),
+                        })
+                      }
+                    />
+                    {providers[p]}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <div className="button-row">
               <button className="primary" disabled={busy || !editWorkspace.providers.length}>
                 Save project settings
@@ -1267,15 +1363,19 @@ function Setup({ data, act, busy }: any) {
             }}
           >
             <h2>Connect {providers[keyProvider as keyof typeof providers]}</h2>
-            <p>The key is saved in your Mac’s Keychain. It is never included in task exports.</p>
+            <p>Saved in your Mac’s Keychain; excluded from exports.</p>
             {keyProvider === 'jev' && (
-              <p>
-                Jev chooses the model and checks the result automatically. It receives your task
-                brief, bounded excerpts of selected attachments, task files read by the worker,
-                deliverables, progress, retrieved source excerpts, and model profiles. Imported
-                personal instructions and setup files are not included directly. Its requests use
-                your API budget.
-              </p>
+              <>
+                <p>Jev selects models and checks results using your API budget.</p>
+                <details>
+                  <summary>What Jev receives</summary>
+                  <p>
+                    Your task brief, model profiles, and limited excerpts of attachments, task
+                    files, deliverables, progress, and retrieved sources. Imported setup files are
+                    not sent directly.
+                  </p>
+                </details>
+              </>
             )}
             <label>
               API key
@@ -1308,9 +1408,7 @@ function Setup({ data, act, busy }: any) {
         <div className="modal-backdrop">
           <div className="modal">
             <h2>Import selected instructions</h2>
-            <p>
-              Review a Markdown or text file before making it part of this project’s task context.
-            </p>
+            <p>Choose a Markdown or text file to use as project instructions.</p>
             <label>
               File path
               <input
@@ -1387,9 +1485,8 @@ function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean
         {m.catalog && <p className="quiet">{m.catalog.description}</p>}
         {m.evaluated && (
           <p className="quiet">
-            Your declared evaluation covers {Object.keys(m.quality).join(', ')}. Declared difficulty
-            limit: {m.maxDifficulty ?? 'routine'}. Other work uses the initial catalog profile;
-            these declarations are not DUKE benchmark results.
+            Your evaluation: {Object.keys(m.quality).join(', ')} · up to{' '}
+            {m.maxDifficulty ?? 'routine'} difficulty. Other work uses the catalog profile.
           </p>
         )}
         {!!m.feedback && m.feedback.worked + m.feedback.needsWork > 0 && (
@@ -1401,8 +1498,7 @@ function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean
           <p className="quiet">
             Local automatic checks: {m.observations.reduce((n, o) => n + o.passed, 0)} passed ·{' '}
             {m.observations.reduce((n, o) => n + o.failed, 0)} found issues ·{' '}
-            {m.observations.reduce((n, o) => n + o.unverified, 0)} incomplete. These are
-            observations from your tasks, not benchmark scores.
+            {m.observations.reduce((n, o) => n + o.unverified, 0)} incomplete.
           </p>
         )}
         <div className="checks">
@@ -1425,7 +1521,6 @@ function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean
               onChange={(e) => setM({ ...m, routingNotes: e.target.value })}
               placeholder="Any preferences Jev should consider when choosing this model"
             />
-            <small>Shared with Jev when it chooses a model.</small>
           </label>
           {m.provider === 'openrouter' && (
             <>
@@ -1535,21 +1630,13 @@ function Usage({ data, act, busy }: any) {
   const recoveryUnknown = evidence.reduce((n: number, e: any) => n + (e.recoveryUnknown ?? 0), 0);
   return (
     <div className="page">
-      <span className="eyebrow">Clear limits, visible choices</span>
-      <h1>Make every route count.</h1>
-      <p className="intro">
-        See reported token use alongside subscription capacity and API spending.
-      </p>
+      <h1>Usage & routing</h1>
       <div className="usage-preferences">
         <UsageDisplaySelect
           value={data.preferences?.usageDisplay ?? 'compact'}
           disabled={busy}
           onChange={(usageDisplay) => void act(() => api('/preferences', { usageDisplay }, 'PUT'))}
         />
-        <p className="quiet">
-          Choose what stays visible while you work. Routing and budget limits stay active in every
-          display mode.
-        </p>
       </div>
       <div className="metrics">
         <div>
@@ -1567,7 +1654,7 @@ function Usage({ data, act, busy }: any) {
         <div>
           <span>Unreconciled requests</span>
           <b>{data.spend.unreconciled}</b>
-          <small>Uncertain charges stay counted in their original budget windows.</small>
+          <small>Includes reserved charges.</small>
         </div>
       </div>
       <div className="notice">
@@ -1580,21 +1667,15 @@ function Usage({ data, act, busy }: any) {
         <p>
           Includes routing, worker attempts, and review.{' '}
           {data.tasks.filter((t: Task) => t.usage && !t.usage.complete).length} tasks have
-          incomplete token reports. No savings estimate is claimed before comparable results exist.
+          incomplete token reports.
         </p>
       </div>
-      <div className="notice">
-        These spending totals cover this app. Day and month boundaries use {data.settings.timezone}.
-        Subscription usage is never counted as API dollars.
-      </div>
+      <div className="notice">API spending in DUKE · {data.settings.timezone}</div>
       <section className="notice" aria-label="Learning evidence">
         <b>
           {sampledTasks} of {evidenceTasks} eligible past tasks have complete checks and usage
         </b>
-        <p>
-          DUKE can compare these results for your selected models under the current settings. Other
-          results stay visible with their limitations. No grading is required.
-        </p>
+        <p>These results inform future model choices.</p>
         <p className="quiet">
           {recoveredTasks} accepted tasks needed recovery; their full cost stays with the initial
           route.{' '}
@@ -1634,11 +1715,11 @@ function Usage({ data, act, busy }: any) {
               />
             </label>
           </div>
-          <p className="quiet">
-            {s.jevMode === 'assist'
-              ? 'Jev assesses your task, chooses a capable model, and checks the result. Local check outcomes inform later choices; your feedback is optional.'
-              : 'Routing diagnostics are active. Restore Automatic selection below for normal Jev routing.'}
-          </p>
+          {s.jevMode !== 'assist' && (
+            <p className="notice">
+              Routing diagnostics are active. Restore Automatic selection below to use Jev.
+            </p>
+          )}
           <details>
             <summary>Advanced routing diagnostics</summary>
             <label>
@@ -1684,12 +1765,6 @@ function Usage({ data, act, busy }: any) {
                 />
               </label>
             </div>
-            <p className="quiet">
-              Jev assesses task difficulty, chooses a qualified model, and DUKE starts it
-              automatically. It receives bounded task evidence and checks the deliverable.
-              Capability-first rules handle uncertain selections. Shadow test is an optional
-              diagnostic mode.
-            </p>
           </details>
           <button className="primary" disabled={busy}>
             Save routing policy
@@ -1704,8 +1779,7 @@ function Usage({ data, act, busy }: any) {
           </button>
         </div>
         <p className="quiet">
-          Account-wide usage includes other apps. Each window has its own allowance and reset time.
-          Readings older than 15 minutes need a refresh.
+          Includes usage outside DUKE. Refresh readings older than 15 minutes.
         </p>
         <SubscriptionCards health={data.health} />
       </section>
