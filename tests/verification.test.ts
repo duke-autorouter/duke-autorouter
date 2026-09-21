@@ -99,9 +99,29 @@ async function fixture(kind: TaskKind = 'writing') {
                 model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
               }
             : Object.fromEntries(
-                Object.entries(verdict(body)).map(([id, v]) => [
+                Object.entries({
+                  ...Object.fromEntries(
+                    Object.keys(body.questions)
+                      .filter((id) => /^(claim|requirement)_/.test(id))
+                      .map((id) => [id, 'pass']),
+                  ),
+                  ...verdict(body),
+                }).map(([id, v]) => [
                   id,
-                  typeof v === 'string' ? choice(['pass', 'fail', 'unknown'], v) : v,
+                  typeof v === 'string'
+                    ? choice(
+                        Object.keys(
+                          body.questions[id]?.criteria ?? { pass: '', fail: '', unknown: '' },
+                        ),
+                        id.startsWith('claim_')
+                          ? v === 'pass'
+                            ? 'supported'
+                            : v === 'fail'
+                              ? 'contradicted'
+                              : v
+                          : v,
+                      )
+                    : v,
                 ]),
               );
       return Response.json({
@@ -349,7 +369,7 @@ test('bounded context includes progress, marks truncation, and never reads impor
   }
 });
 
-test('failed content checks retry the same model one effort step higher and retain all usage', async () => {
+test('a focused defect missed by broad checks retries the same model and retains all usage', async () => {
   const f = await fixture();
   try {
     f.add(
@@ -366,7 +386,7 @@ test('failed content checks retry the same model one effort step higher and reta
         });
         if (c.model.effort === 'medium') {
           assert.match(c.prompt, /Recover from/);
-          assert.match(c.prompt, /Jev: brief/);
+          assert.match(c.prompt, /Jev: claim_0/);
         }
         await c.tool('write_file', {
           path: 'result.md',
@@ -381,7 +401,8 @@ test('failed content checks retry the same model one effort step higher and reta
       },
     };
     f.verdict((body) => ({
-      brief: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
+      brief: 'pass',
+      claim_0: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
       support: 'pass',
       completion: 'pass',
     }));
