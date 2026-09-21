@@ -1,0 +1,97 @@
+{
+  "platform": "darwin-arm64",
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "evaluationCorpus": "80 cases validated; no model-quality inference",
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG app and Applications shortcut",
+    "preserved upstream Claude signature"
+  ],
+  "release": "0.1.7",
+  "verifiedAt": "2026-09-21",
+  "packageSourceCommit": "ded6a86e72d65332da28bec137758c5f039a8190",
+  "localSourceTests": {
+    "passed": 220,
+    "failed": 0
+  },
+  "browserWorkflows": "Passed with synthetic workers",
+  "standaloneChecks": {
+    "adHocSignedDevelopmentPackagePassed": 12,
+    "developerIDSignedPackagePassed": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 947,
+    "mismatches": [],
+    "sourceCommit": "ded6a86e72d65332da28bec137758c5f039a8190"
+  },
+  "notarization": {
+    "submissionId": "da4fb99f-8408-43c6-afea-c75e9cf8b653",
+    "status": "Accepted and stapled"
+  },
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "secrets": {
+    "knownCredentialsCompared": 8,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1171,
+        "readErrors": 0
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19754,
+        "readErrors": 0
+      },
+      {
+        "scope": "download-metadata",
+        "files": 3,
+        "readErrors": 0
+      }
+    ],
+    "matches": 0,
+    "privateKeyPEMScan": {
+      "files": 19753,
+      "privateKeyPEMMatches": [],
+      "method": "Complete PEM blocks, excluding library marker strings"
+    },
+    "gitleaks": "Full history, tracked files and commit metadata passed",
+    "limits": "Known-value and pattern scans are not exhaustive; library PEM marker strings are not private-key blocks."
+  },
+  "limits": [
+    "Small development sample, not held-out accuracy evidence",
+    "Original passing response remains unverified",
+    "Original PDF cause judgment blocks automatic repair",
+    "No new natural efficiency comparison on 0.1.7",
+    "No second physical Mac",
+    "No successful recorded OpenRouter live worker result"
+  ],
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.7-mac-arm64.dmg",
+      "sha256": "a955d4134ef402db9546260d7bd7cf183a372a68be4eab050f104a00a5bbfc2c"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.7-mac-arm64.zip",
+      "sha256": "5644f04e58de639a1ce43b40f98023f9aff6e096806d252f515821054ba99e51"
+    }
+  ],
+  "installedUpgrade": {
+    "fromVersion": "0.1.6",
+    "toVersion": "0.1.7",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskAndProjectContentHashesPreserved": true,
+    "existingSettingsPreferencesAndEnabledModelHashesPreserved": true,
+    "nativeWindowLoadedAndVisuallyChecked": true,
+    "activeTasksBeforeUpdate": 0
+  }
+}
