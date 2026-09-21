@@ -24,3 +24,11 @@ Every attempt and diagnosis remains in usage and event receipts. Routing policy 
 Always selecting a larger model would spend more without distinguishing missing facts or broken tools. Always increasing effort would have the same problem. A one-rung retry after a narrow diagnosis keeps automatic repair bounded and visible.
 
 This policy will miss mistakes the reviewer does not detect. The 0.9 diagnosis threshold is a conservative policy choice, not a calibrated success probability. A successful controlled repair proves that path works for that fixture; fresh natural tasks and independent acceptance are still required to assess usefulness.
+
+## Live evidence
+
+The [frozen development comparison](../AUTOMATIC_RECOVERY_VALIDATION_20260921.md)
+records a successful controlled Low-to-Medium correction, an incomplete final
+review, and a natural document error that did not trigger repair. Three automatic
+outputs and four Astra Medium outputs were independently accepted. The detection
+limit remains; the policy was not changed after seeing these results.

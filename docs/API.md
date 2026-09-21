@@ -142,3 +142,11 @@ OCR is not bundled.
 
 Execution evidence includes `duke-tools-v2` and the hashes of packaged skills.
 Changes to these invalidate incompatible learning observations.
+
+## Recovery settings
+
+`PUT /api/settings` accepts `maxRecovery` (integer 0 through 5) and
+`recoveryEffortCeiling` (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, or `ultra`).
+Defaults are two retries and Medium. Zero disables worker recovery. The engine
+requires the next effort to be advertised by that same model and no higher than
+the ceiling. A fixed task effort override is never increased automatically.
