@@ -37,9 +37,11 @@ Analysis and recovery support is additive:
 - `51b56e9bc802797097edd96897a420c43bc07b53` - explicit cost-uncertainty bounds.
 - `909e76026309e1e45ec883b2d10bd935700452a0` - independent review overlays.
 
-These identifiers record the local benchmark source history. This PR publishes the
-reports and summaries; the benchmark implementation chain has not yet been
-integrated into the public branch. No merge to `main` is implied.
+These identifiers record the retained local benchmark source history. The current
+branch integrates a privacy-reviewed snapshot of the harness, without importing
+private intermediate history. The original runs used the historical commits above;
+new runs must record their own clean source commit. The released 0.1.3 download
+predates this integration.
 
 ## Exclude from a public repository
 

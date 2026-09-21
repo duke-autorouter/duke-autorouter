@@ -73,6 +73,9 @@ export const TaskInput = z.object({
   expectedResult: z.string().max(4000).default(''),
   required: z.array(Cap).default(['files']),
   modelOverride: z.string().optional(),
+  effortOverride: z
+    .enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'])
+    .optional(),
   attachments: z.array(z.string()).max(20).default([]),
   evaluation: z.boolean().default(false),
   verification: z

@@ -170,6 +170,21 @@ test('Jev gives content review a longer deadline than routing and preserves the 
   }
 });
 
+test('manual model overrides bypass Jev routing but receive the same assist-mode content review', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    const task = await f.run({ modelOverride: 'worker' });
+    assert.equal(task.status, 'completed');
+    assert.equal(task.route?.selectionSource, 'manual');
+    assert.equal(task.review?.status, 'passed');
+    assert.equal(f.calls.length, 1);
+    assert.ok(f.store.events(task.id).some((event) => event.kind === 'jev_review'));
+  } finally {
+    await f.close();
+  }
+});
+
 test('configured fallback permits an economical attempt without treating it as proven complex capability', () => {
   const w: Workspace = {
     id: 'w',

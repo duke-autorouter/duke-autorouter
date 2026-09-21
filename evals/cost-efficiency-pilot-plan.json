@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-20",
+  "split": "development",
+  "caseIds": [
+    "coding-unique",
+    "research-sqlite-wal",
+    "writing-brief",
+    "documents-handoff-docx"
+  ],
+  "heldOutTouched": false,
+  "roster": [
+    "codex:gpt-6-astra",
+    "codex:gpt-5.6-sol",
+    "codex:gpt-5.6-luna"
+  ],
+  "modes": [
+    {
+      "id": "strong-medium",
+      "selection": "fixed codex:gpt-6-astra",
+      "effort": "medium",
+      "jevRouting": false,
+      "jevReview": true
+    },
+    {
+      "id": "strong-max",
+      "selection": "fixed codex:gpt-6-astra",
+      "effort": "ultra",
+      "jevRouting": false,
+      "jevReview": true
+    },
+    {
+      "id": "jev",
+      "selection": "automatic among the frozen roster",
+      "effort": "automatic among advertised supported efforts",
+      "jevRouting": true,
+      "jevReview": true
+    }
+  ],
+  "controls": {
+    "sameCases": true,
+    "sameCorpusAndCaseHashes": true,
+    "sameToolsAndApprovalPolicy": true,
+    "sameRecoveryAndReviewPolicy": true,
+    "independentAcceptanceRequired": true,
+    "fixedModesBypassRoutingOnly": true,
+    "allModesReceiveJevContentReview": true,
+    "disposableEmptyProfiles": true,
+    "sequentialExecution": true
+  },
+  "primaryMetric": "API-equivalent worker cost plus actual billed routing/review API cost, divided by independently accepted completed tasks; all attempts and failures remain in the numerator.",
+  "costBoundaries": {
+    "actualBilledAPI": "Only metered provider charges recorded by the harness; Codex subscription workers are not presented as API charges.",
+    "apiEquivalentWorkerEstimate": "Observed worker input, cached-input, cache-write and output tokens valued at the dated Standard short-context API rates for the exact worker model.",
+    "subscriptionUsage": "Observed account-window percentage-point changes only. No conversion to dollars or inferred quota multiplier."
+  },
+  "pricing": {
+    "asOf": "2026-09-20",
+    "tier": "Standard, short context",
+    "unit": "USD per 1M tokens",
+    "source": "https://developers.openai.com/api/docs/pricing/",
+    "models": {
+      "codex:gpt-6-astra": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 50 },
+      "codex:gpt-5.6-sol": { "input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 20 },
+      "codex:gpt-5.6-luna": { "input": 0.2, "cachedInput": 0.02, "cacheWrite": 0.25, "output": 1.2 }
+    }
+  },
+  "budget": {
+    "sharedCapUSD": 1,
+    "additionalCapUSD": 0,
+    "reservationUSD": { "strong-medium": 0.01, "strong-max": 0.01, "jev": 0.02 }
+  },
+  "claimBoundary": "This four-case development comparison can compare these exact runs only. It cannot establish general savings, quota conversion, production reliability or held-out quality."
+}

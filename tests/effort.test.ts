@@ -84,6 +84,41 @@ test('explicit fallback is honored, and its absence or lost effort support canno
   assert.throws(() => workerEffort({ ...luna, effort: 'max' }), /no longer supported/);
 });
 
+test('an explicit evaluation override fixes both model and supported effort', () => {
+  const strong = {
+    ...model('gpt-strong'),
+    supportedEfforts: ['low', 'medium', 'high'] as Model['supportedEfforts'],
+  };
+  const selected = route(
+    {
+      prompt: 'Implement a function',
+      required: ['files'],
+      modelOverride: strong.id,
+      effortOverride: 'medium',
+    },
+    workspace,
+    [strong],
+    defaults,
+  );
+  assert.equal(selected.modelId, strong.id);
+  assert.equal(selected.effort, 'medium');
+  assert.throws(
+    () =>
+      route(
+        {
+          prompt: 'Implement a function',
+          required: ['files'],
+          modelOverride: strong.id,
+          effortOverride: 'max',
+        },
+        workspace,
+        [strong],
+        defaults,
+      ),
+    /unavailable/,
+  );
+});
+
 test('effort-specific observations do not mix with another level or legacy unknown effort', () => {
   const store = new Store(':memory:');
   try {

@@ -18,7 +18,7 @@ import { effortVariants } from './effort.js';
 import { orderedEfforts } from '../shared/effort.js';
 
 export const difficultyRank = { routine: 0, standard: 1, complex: 2 } as const;
-export type RoutingTask = Pick<Task, 'prompt' | 'required' | 'modelOverride'> &
+export type RoutingTask = Pick<Task, 'prompt' | 'required' | 'modelOverride' | 'effortOverride'> &
   Partial<Pick<Task, 'expectedResult' | 'attachments' | 'checkpoint'>>;
 
 export function applyDifficultyFloor(
@@ -164,13 +164,21 @@ export function route(
   decision?: RoutingDecision,
   preview = false,
 ): Route {
+  if (task.effortOverride && !task.modelOverride)
+    throw new Blocked('A fixed reasoning effort requires an explicit model selection.');
   const assessment = applyDifficultyFloor(
     task,
     task.modelOverride ? assessLocally(task) : (decision?.assessment ?? assessLocally(task)),
   );
   const eligible = eligibleModels(task, workspace, models, unavailable).flatMap(effortVariants);
   const qualified = qualifiedModels(eligible, assessment, settings);
-  let chosen = task.modelOverride ? eligible.find((m) => m.id === task.modelOverride) : undefined;
+  let chosen = task.modelOverride
+    ? eligible.find(
+        (m) =>
+          m.id === task.modelOverride &&
+          (task.effortOverride === undefined || m.effort === task.effortOverride),
+      )
+    : undefined;
   if (task.modelOverride && !chosen)
     throw new Blocked(
       'Your selected model is unavailable or cannot meet this task’s permissions, tools, and budget.',
