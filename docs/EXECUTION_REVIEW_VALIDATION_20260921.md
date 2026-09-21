@@ -19,6 +19,6 @@ Two live diagnostic runs reused the original coding receipt without rerunning a 
 | Unavailable test | Failed | Unverified |
 | Unrelated deployment claim | Failed | Failed |
 
-The original false failure is removed, but the response still does not receive a complete passing review. These are development controls, not an independent held-out accuracy result. Total recorded Jev cost was $0.001851 across both runs. The natural efficiency comparison remains a 0.1.6 result and has not been rerun on 0.1.7.
+The original false failure is removed, but the response still does not receive a complete passing review. These are development controls, not an independent held-out accuracy result. Total recorded Jev cost was $0.001751 across both runs. The natural efficiency comparison remains a 0.1.6 result and has not been rerun on 0.1.7.
 
 The original PDF recovery probe still blocks on uncertain failure cause. The next evaluation should distinguish reasoning errors from missing context and tool failures using known causes. Changing the recovery threshold requires separate evidence; this patch does not change it.
