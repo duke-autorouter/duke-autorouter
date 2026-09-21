@@ -18,10 +18,12 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.6 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.6/DUKE-Autorouter-0.1.6-mac-arm64.dmg).
+The current prerelease is **0.1.7 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.7/DUKE-Autorouter-0.1.7-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.7 gives focused response review the actual verifier receipts, fixing a false failure on correct coding work. Unavailable execution stays unverified. The [diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) records the live controls and remaining uncertainty.
 
 Version 0.1.6 checks specific claims and ownership relationships against source
 evidence. An uncertain passage can receive one focused follow-up review before
@@ -125,9 +127,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.6 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.6/DUKE-Autorouter-0.1.6-mac-arm64.dmg)**
+**[Download DUKE 0.1.7 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.7/DUKE-Autorouter-0.1.7-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.6)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.7)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -192,7 +194,10 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The current source passes 217 automated tests. The 0.1.6 package passes 12
+The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
+
+
+The current source passes 220 automated tests. The 0.1.7 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical

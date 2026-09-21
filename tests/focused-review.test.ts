@@ -233,3 +233,99 @@ test('an unresolved checklist action without an assigned owner is not an unsuppo
   );
   assert.equal(checks.find((c) => c.name === 'Jev: claim_0')?.status, 'unverified');
 });
+
+test("focused response review retains observed test receipts in both bounded passes", async (t) => {
+  const { jev, task, calls } = await fixture(t, (body, count) => {
+    assert.equal(body.state.executionEvidence.checks[0].status, "passed");
+    assert.match(
+      body.state.executionEvidence.checks[0].detail,
+      /node --test verify.mjs\nExit 0/,
+    );
+    assert.equal(body.state.executionEvidence.files[0].path, "solution.mjs");
+    assert.equal(body.state.executionEvidence.files[0].text, undefined);
+    assert.ok(
+      body.state.focusedPassages.every((p: any) =>
+        p.sources.every((s: any) => s.path !== "solution.mjs"),
+      ),
+    );
+    return { claim_0: claim(count === 1 ? "unknown" : "supported") };
+  });
+  const e = evidence();
+  e.result = "Verification passed: node --test verify.mjs.";
+  e.files = [
+    {
+      ...e.files[0],
+      path: "solution.mjs",
+      format: ".mjs",
+      text: "export const done = true;",
+    },
+  ];
+  e.checks = [
+    {
+      name: "Tests",
+      status: "passed",
+      detail: "node --test verify.mjs\nExit 0\n1 test passed.",
+    },
+  ];
+  const checks = await jev.review(task, e, new AbortController().signal);
+  assert.equal(calls.length, 2);
+  assert.equal(checks.find((c) => c.name === "Jev: claim_0")?.status, "passed");
+});
+
+test("unavailable checks never become passing receipts and do not enter document sources", async (t) => {
+  const { jev, task, calls } = await fixture(t, (body) => {
+    assert.equal(body.state.executionEvidence.checks[0].status, "unverified");
+    return { claim_0: claim("contradicted") };
+  });
+  const e = evidence();
+  e.result = "Tests passed.";
+  e.files = [];
+  e.checks = [
+    {
+      name: "Tests",
+      status: "unverified",
+      detail: "Check incomplete: timed_out",
+    },
+  ];
+  const checks = await jev.review(task, e, new AbortController().signal);
+  assert.equal(
+    checks.find((c) => c.name === "Jev: claim_0")?.status,
+    "unverified",
+  );
+  assert.equal(calls.length, 2);
+  const other = await fixture(t, (body) => {
+    assert.equal(body.state.executionEvidence, undefined);
+    return { claim_0: claim("contradicted") };
+  });
+  const doc = evidence();
+  doc.checks = [
+    { name: "Tests", status: "passed", detail: "All local checks passed." },
+  ];
+  const docChecks = await other.jev.review(
+    other.task,
+    doc,
+    new AbortController().signal,
+  );
+  assert.equal(
+    docChecks.find((c) => c.name === "Jev: claim_0")?.status,
+    "failed",
+  );
+});
+
+test("truncated execution observations cannot prove unsupported completion claims", async (t) => {
+  const { jev, task } = await fixture(t, (body) => {
+    assert.equal(body.state.executionEvidence.truncated, true);
+    assert.equal(body.state.focusedPassages[0].sourceCoverageComplete, false);
+    return { claim_0: claim("unsupported") };
+  });
+  const e = evidence();
+  e.files = [];
+  e.inputs = [];
+  e.result = "Verification passed.";
+  e.checks = [{ name: "Tests", status: "passed", detail: "x".repeat(7000) }];
+  const checks = await jev.review(task, e, new AbortController().signal);
+  assert.equal(
+    checks.find((c) => c.name === "Jev: claim_0")?.status,
+    "unverified",
+  );
+});

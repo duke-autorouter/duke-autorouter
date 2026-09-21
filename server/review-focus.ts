@@ -1,6 +1,6 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v5';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v6';
 export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {
@@ -113,3 +113,36 @@ export const unresolvedChecklistAction = (text: string) =>
   /^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])\s*.+?[—–]\s*(?:TBD|unknown|unassigned)\s*;\s*unresolved\s*$/i.test(
     text,
   );
+
+// These are verifier observations about this run, not factual sources for a
+// deliverable. Keep them separate from source windows and worker-authored text.
+export function executionObservations(evidence: ReviewEvidence) {
+  const checks = evidence.checks.filter(
+    (c) => !c.judgment && !c.name.startsWith("Jev:"),
+  );
+  let remaining = 16000;
+  let truncated = checks.length > 24 || evidence.files.length > 20;
+  const observedChecks = checks.slice(0, 24).map((c) => {
+    const detail = c.detail.slice(0, Math.min(6000, remaining));
+    remaining -= detail.length;
+    truncated ||= detail.length < c.detail.length || c.name.length > 300;
+    return { name: c.name.slice(0, 300), status: c.status, detail };
+  });
+  const files = evidence.files.slice(0, 20).map((f) => {
+    truncated ||= f.path.length > 1000;
+    return {
+      path: f.path.slice(0, 1000),
+      sha256: f.sha256,
+      bytes: f.bytes,
+      inspectionIncomplete: f.incomplete,
+    };
+  });
+  return {
+    scope:
+      "Current task verifier observations, not worker assertions or source facts",
+    checks: observedChecks,
+    files,
+    incomplete: checks.some((c) => c.status === "unverified") || evidence.files.some((f) => f.incomplete),
+    truncated,
+  };
+}

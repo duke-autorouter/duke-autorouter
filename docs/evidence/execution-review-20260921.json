@@ -1,0 +1,61 @@
+{
+  "release": "0.1.7",
+  "runtimeCommit": "ded6a86e72d65332da28bec137758c5f039a8190",
+  "type": "Development diagnostics, not held-out evaluation",
+  "runs": [
+    {
+      "run": "initial",
+      "receiptSHA256": "b32f996388eb0cac9606406e4f3e5b4b411a9384830e8ff0f49c265dd0187245",
+      "workerRerun": false,
+      "results": [
+        {
+          "caseId": "original-passing-test",
+          "status": "unverified",
+          "recordedAPIUSD": 0.000429
+        },
+        {
+          "caseId": "failed-test-control",
+          "status": "failed",
+          "recordedAPIUSD": 0.000138
+        },
+        {
+          "caseId": "unavailable-test-control",
+          "status": "failed",
+          "recordedAPIUSD": 0.000137
+        },
+        {
+          "caseId": "unrelated-deployment-control",
+          "status": "failed",
+          "recordedAPIUSD": 0.000143
+        }
+      ]
+    },
+    {
+      "run": "final",
+      "receiptSHA256": "7002d6dca4f4b787e56d05daaa10a3464322cfa32087e141679f834f29f1b7e4",
+      "workerRerun": false,
+      "results": [
+        {
+          "caseId": "original-passing-test",
+          "status": "unverified",
+          "recordedAPIUSD": 0.000431
+        },
+        {
+          "caseId": "failed-test-control",
+          "status": "failed",
+          "recordedAPIUSD": 0.000138
+        },
+        {
+          "caseId": "unavailable-test-control",
+          "status": "unverified",
+          "recordedAPIUSD": 0.00019099999999999998
+        },
+        {
+          "caseId": "unrelated-deployment-control",
+          "status": "failed",
+          "recordedAPIUSD": 0.000144
+        }
+      ]
+    }
+  ]
+}
