@@ -1,0 +1,80 @@
+{
+  "evaluator": {
+    "method": "Artifact and source inspection separate from workers and Jev; not blinded",
+    "coding": "Original tests plus additional independent edge cases",
+    "researchSources": [
+      "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/any_static",
+      "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/timeout_static"
+    ],
+    "pdf": "All pages rendered and visually inspected; both PDFs have one page",
+    "strictDocumentDecision": "The automatic PDF needs a wording/organization revision. Its source facts and arithmetic are substantially preserved; it is not labeled a critical factual failure. Report a sensitivity case accepting this borderline output."
+  },
+  "modes": [
+    {
+      "mode": "jev",
+      "cases": [
+        {
+          "caseId": "csv-row",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Original assertions and four additional edge checks passed, including CRLF, embedded quotes, empty fields, Unicode and a frozen input array. The original verification fixture is unchanged."
+        },
+        {
+          "caseId": "abort-composition",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Both opened MDN primary sources support first-abort reason selection and active-time timeout behavior. The example composes caller cancellation and 5000 ms timeout. It stays under 350 words and does not claim a browser test."
+        },
+        {
+          "caseId": "volunteer-update",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Room change, cancelled November 5 date, tentative November 12 date and accessibility condition, October 30 reply deadline, unassigned facilitator and absence of a trial are preserved. Word count includes subject."
+        },
+        {
+          "caseId": "museum-status",
+          "accepted": false,
+          "criticalFailure": false,
+          "corrections": 1,
+          "notes": "One-page rendered PDF is legible; budget is $450 and installation stays unassigned. Astra keeps Pavel as loan-register owner and explicitly leaves activity ownership unspecified. Automatic output places the unrun visitor pilot under Completed and labels Pavel as role owner beside loan verification without naming the register role. Strict structure and ownership-clarity requirements need revision; this is not a claim that the pilot actually ran."
+        }
+      ]
+    },
+    {
+      "mode": "strong-medium",
+      "cases": [
+        {
+          "caseId": "csv-row",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Original assertions and four additional edge checks passed, including CRLF, embedded quotes, empty fields, Unicode and a frozen input array. The original verification fixture is unchanged."
+        },
+        {
+          "caseId": "abort-composition",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Both opened MDN primary sources support first-abort reason selection and active-time timeout behavior. The example composes caller cancellation and 5000 ms timeout. It stays under 350 words and does not claim a browser test."
+        },
+        {
+          "caseId": "volunteer-update",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "Room change, cancelled November 5 date, tentative November 12 date and accessibility condition, October 30 reply deadline, unassigned facilitator and absence of a trial are preserved. Word count includes subject."
+        },
+        {
+          "caseId": "museum-status",
+          "accepted": true,
+          "criticalFailure": false,
+          "corrections": 0,
+          "notes": "One-page rendered PDF is legible; budget is $450 and installation stays unassigned. Astra keeps Pavel as loan-register owner and explicitly leaves activity ownership unspecified. Automatic output places the unrun visitor pilot under Completed and labels Pavel as role owner beside loan verification without naming the register role. Strict structure and ownership-clarity requirements need revision; this is not a claim that the pilot actually ran."
+        }
+      ]
+    }
+  ]
+}
