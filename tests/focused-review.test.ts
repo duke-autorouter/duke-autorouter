@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Store } from '../server/store.js';
 import { Jev } from '../server/adapters/jev.js';
-import { focusReview, sourceWindows } from '../server/review-focus.js';
+import { focusReview, sourceWindows, ownershipClaim } from '../server/review-focus.js';
 import type { ReviewEvidence } from '../server/task-evidence.js';
 import type { Task } from '../server/types.js';
 
@@ -214,4 +214,22 @@ test('PDF continuation lines retain their relation and empty checkbox rows are n
   );
   assert.equal(plan.passages[1].facet, 'ownership');
   assert.ok(!plan.passages.some((p) => p.text === '- [ ]'));
+});
+
+test('ownership extraction separates a person-to-item assertion from role and status', () => {
+  assert.deepEqual(
+    ownershipClaim('- [ ] Internal workshop before invitations — Ana (delivery); unresolved'),
+    { item: 'Internal workshop before invitations', person: 'Ana' },
+  );
+  assert.equal(ownershipClaim('- [ ] Readiness review — TBD; unresolved'), undefined);
+  assert.equal(ownershipClaim('Proposal: review meeting owner: Sam.'), undefined);
+});
+test('an unresolved checklist action without an assigned owner is not an unsupported-fact failure', async (t) => {
+  const f = await fixture(t, () => ({ claim_0: claim('unsupported') }));
+  const checks = await f.jev.review(
+    f.task,
+    evidence('- [ ] Readiness review — TBD; unresolved'),
+    new AbortController().signal,
+  );
+  assert.equal(checks.find((c) => c.name === 'Jev: claim_0')?.status, 'unverified');
 });

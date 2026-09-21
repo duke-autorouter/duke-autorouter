@@ -1,6 +1,6 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v3';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v4';
 export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {
@@ -92,3 +92,24 @@ export function sourceWindows(claim: string, sources: ReviewSource[], expanded =
   const selected = candidates.sort((a, b) => b.score - a.score).slice(0, expanded ? 4 : 2);
   return selected.map(({ score: _score, ...window }) => window);
 }
+
+// Only parse literal assignment-shaped text. These are candidate claims, never facts.
+export function ownershipClaim(text: string): { item: string; person: string } | undefined {
+  if (/\b(proposal|proposed|suggested|suggestion)\b/i.test(text)) return;
+  const clean = text.replace(/^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])?\s*/, '');
+  const match =
+    clean.match(/^(.+?)\s+[—–]\s+([^;()]+)(?:\([^)]*\))?(?:;.*)?$/) ??
+    clean.match(
+      /(?:^|[.!?]\s+)([^.!?]+?)\s+(?:owner|assignee|responsible person):\s*([^.;]+)(?:[.;]|$)/i,
+    );
+  if (!match) return;
+  const item = match[1].trim(),
+    person = match[2].trim();
+  if (!item || !person || /^(?:TBD|unknown|unassigned|unresolved|not assigned)$/i.test(person))
+    return;
+  return { item, person };
+}
+export const unresolvedChecklistAction = (text: string) =>
+  /^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])\s*.+?[—–]\s*(?:TBD|unknown|unassigned)\s*;\s*unresolved\s*$/i.test(
+    text,
+  );

@@ -39,3 +39,12 @@ error was caught. Version 3 adds a separate person-to-item ownership judgment,
 joins lower-case PDF continuation lines, and ignores empty checkbox-only rows.
 Re-run the same 20 fixtures and the two untouched saved PDFs. Keep all prior
 receipts and charges; do not claim these repeated cases are held out.
+
+## Fourth development run
+
+The third run still left the original ownership error uncertain. The fourth
+policy supplies a literal person-to-item candidate parsed from assignment-shaped
+output; role and unresolved status remain separate from that candidate. It also
+keeps an unsupported verdict neutral for a checklist action explicitly marked
+TBD and unresolved, which does not assert an owner or a completed outcome.
+Repeat the preserved PDFs and 20 development cases, retaining all costs.
