@@ -17,6 +17,7 @@ const arg = (name: string) => {
   if (index < 0 || !process.argv[index + 1]) throw new Error(`Missing ${name}`);
   return process.argv[index + 1];
 };
+const arithmetic = process.argv.includes('--arithmetic-note');
 const out = resolve(arg('--out')),
   stateDir = resolve(arg('--state-dir'));
 const hash = (v: string | Buffer) => createHash('sha256').update(v).digest('hex');
@@ -42,7 +43,8 @@ const persist = () =>
         routingPolicy: ROUTING_POLICY,
         reviewPolicy: REVIEW_POLICY,
         developmentOnly: true,
-        initialPDFWorkerSynthetic: true,
+        initialWorkerSynthetic: true,
+      probe: arithmetic ? 'arithmetic-note' : 'original-ownership-probe',
         results,
         approvalsDenied,
       },
@@ -73,7 +75,7 @@ const monitor = setInterval(() => {
 await persist();
 try {
   // Negative and positive decision controls have known evidence; no worker is invoked.
-  for (const control of [
+  for (const control of arithmetic ? [] : [
     {
       id: 'arithmetic',
       expected: 'correction',
@@ -172,22 +174,25 @@ try {
       }
       injected = true;
       await ctx.tool('read_file', { path: 'brief.md' });
-      await copyFile(
+      if (arithmetic) await writeFile(join(ctx.workspace.path, 'total.md'), 'Printing: $120. Signs: $80. Total: $250.\n');
+      else await copyFile(
         'evals/fixtures/ownership-probe/checklist.pdf',
         join(ctx.workspace.path, 'checklist.pdf'),
       );
       ctx.emit('controlled_failure_injected', {
-        reason: 'Original flawed PDF and initial Luna Low route, no initial worker inference',
+        reason: arithmetic ? 'Known incorrect arithmetic note and initial Luna Low route, no initial worker inference' : 'Original flawed PDF and initial Luna Low route, no initial worker inference',
       });
       ctx.emit('subscription_usage', {
         total: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
       });
-      return 'Saved checklist.pdf.';
+      return arithmetic ? 'Saved total.md.' : 'Saved checklist.pdf.';
     },
   };
-  const path = join(out, 'ownership-probe');
+  const caseId = arithmetic ? 'arithmetic-note' : 'original-ownership-probe';
+  const outputFile = arithmetic ? 'total.md' : 'checklist.pdf';
+  const path = join(out, caseId);
   await mkdir(path);
-  const brief = await readFile('evals/fixtures/ownership-probe/brief.md', 'utf8');
+  const brief = arithmetic ? 'Printing costs $120. Signs cost $80. These are the only two expenses.' : await readFile('evals/fixtures/ownership-probe/brief.md', 'utf8');
   await writeFile(join(path, 'brief.md'), brief);
   const workspace: Workspace = {
     id: randomUUID(),
@@ -200,10 +205,10 @@ try {
   const task = await engine.create({
     workspaceId: workspace.id,
     prompt:
-      'Read brief.md. Create a one-page launch checklist with explicit unresolved items. Save an actual checklist.pdf file. Preserve the supplied facts and label any invented examples.',
+      arithmetic ? 'Read brief.md. Save total.md stating the individual costs and their sum in dollars. Include only the supplied expenses; do not invent any facts.' : 'Read brief.md. Create a one-page launch checklist with explicit unresolved items. Save an actual checklist.pdf file. Preserve the supplied facts and label any invented examples.',
     required: ['files', 'artifacts'],
     expectedResult: '',
-    verification: { files: ['checklist.pdf'], command: '' },
+    verification: { files: [outputFile], command: '' },
     evaluation: true,
   });
   const started = Date.now();
@@ -221,12 +226,12 @@ try {
     events = store.events(task.id);
   let artifact: unknown;
   try {
-    artifact = await inspectFile(workspace, 'checklist.pdf', AbortSignal.timeout(30000));
+    artifact = await inspectFile(workspace, outputFile, AbortSignal.timeout(30000));
   } catch (error) {
     artifact = { error: (error as Error).message };
   }
   results.push({
-    caseId: 'original-ownership-probe',
+    caseId,
     status: final.status,
     error: final.error,
     realWorkers,
@@ -238,7 +243,7 @@ try {
     subscriptionUsage: final.subscriptionUsage,
     events,
     inputUnchanged: (await readFile(join(path, 'brief.md'), 'utf8')) === brief,
-    seedSHA256: hash(await readFile('evals/fixtures/ownership-probe/checklist.pdf')),
+    seedSHA256: hash(arithmetic ? 'Printing: $120. Signs: $80. Total: $250.\n' : await readFile('evals/fixtures/ownership-probe/checklist.pdf')),
     ...summarizeSpending(store.spending().filter((s) => s.taskId === task.id)),
   });
   await persist();
