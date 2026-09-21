@@ -1,29 +1,33 @@
 # Version 0.1 release record
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
-The current maintenance release is 0.1.7. This page separates current checks from
+The current maintenance release is 0.1.8. This page separates current checks from
 historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 220 automated tests, TypeScript, the production
+- The integrated source passes 226 automated tests, TypeScript, the production
   build and evaluation-corpus validation. GitHub also scans source history for
   secrets on each push.
-- The 0.1.7 package passes 12 standalone checks with isolated state and no
+- The 0.1.8 package passes 12 standalone checks with isolated state and no
   developer PATH. These cover bundled workers and browser startup, native
   document tools, project setup, imports, persistence and restart. They do not
   call provider models.
-- Updating the installed app from 0.1.6 to 0.1.7 preserved all 14 saved tasks,
+- Updating the installed app from 0.1.7 to 0.1.8 preserved all 14 saved tasks,
   two projects, existing settings, preferences and selected models by hash comparison.
   The native window loaded the saved work and passed visual inspection.
 - The packaged application files match the generated build output. The
-  [distribution receipt](evidence/distribution-0.1.7-verification.json) records the
+  [distribution receipt](evidence/distribution-0.1.8-verification.json) records the
   signing, notarization, checksums and final package audit.
 - [The evidence audit](SOURCE_FIDELITY_AUDIT.md) records repaired web revision
   markers and Word table structure. The [diagnostic protocol](FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)
   holds task requirements fixed while separating tool changes from model effort.
 
-## Latest frozen comparison and review fix
+## Latest correction checks
+
+The [0.1.8 report](CORRECTION_VALIDATION_20260921.md) records one real Luna Low correction that passed the unchanged verifier, a blocked overall workflow, a later review-only fix, and an unresolved arithmetic false acceptance. The original PDF did not reach repair. All phases and the threshold calibration are retained; no held-out reliability or new efficiency claim is made.
+
+## Earlier frozen comparison and review fix
 
 The [frozen 0.1.6 report](FROZEN_VALIDATION_20260921.md) detected six planted defects with no false failures among six correct examples, five of which remained unverified. The original PDF was detected but did not reach repair because cause confidence was below threshold. Four natural tasks show substantial model-priced savings with explicit quality and workflow limits. The [0.1.7 diagnostics](EXECUTION_REVIEW_VALIDATION_20260921.md) remove a false failure caused by omitted verifier evidence; unavailable execution stays neutral.
 
@@ -51,7 +55,7 @@ Earlier 0.1 checks exercised Codex and Claude on coding, research, writing and
 basic documents. Fifteen browser workflows used synthetic workers. Nine Jev
 review diagnostics met their expected outcomes after the probability correction.
 These are scoped historical checks, not a fresh live validation of every adapter
-for 0.1.7. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
+for 0.1.8. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
 [workflow validation](CURRENT_STATUS.md#live-workflow-validation), and the
 [review-scoring record](REVIEW_SCORING.md).
 

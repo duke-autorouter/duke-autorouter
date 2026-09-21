@@ -2,9 +2,13 @@
 
 Updated September 21, 2026.
 
-The desktop maintenance release is **0.1.7**. Its release assets and verification
+The desktop maintenance release is **0.1.8**. Its release assets and verification
 record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
 development work.
+
+## Same-effort correction
+
+Version 0.1.8 adds one bounded correction at unchanged model and effort before escalation. All 226 local tests pass. A live Luna Low worker corrected a deterministic total and passed the original test, but its final semantic review falsely failed. The later review-only evidence fix leaves the correct result unverified and rejects the wrong-total control. The original PDF remains blocked and an arithmetic-note error was missed. See the [full report](CORRECTION_VALIDATION_20260921.md); these results do not establish general recovery reliability.
 
 ## Execution evidence
 
