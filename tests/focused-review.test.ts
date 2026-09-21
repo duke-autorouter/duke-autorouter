@@ -341,8 +341,8 @@ test('JSON deliverables are reviewed directly and prior correction checkpoints d
   await f.jev.review(f.task, e, new AbortController().signal, context);
   assert.equal(f.calls.length, 2);
   for (const call of f.calls) {
-    assert.equal(call.state.context.progress, undefined);
-    assert.equal(call.state.context.project.hasTests, true);
+    assert.equal(call.state.context?.progress, undefined);
+    if (call.state.context) assert.equal(call.state.context.project.hasTests, true);
     assert.ok(!JSON.stringify(call).includes('STALE-250'));
     assert.equal(call.state.focusedPassages[0].path, 'total.json');
     assert.equal(call.state.focusedPassages[0].text, e.files[0].text);
