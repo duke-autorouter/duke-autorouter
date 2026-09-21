@@ -431,8 +431,8 @@ export class Jev {
     const skipped = (detail: string): Check[] => [
       { name: 'Content review', status: 'unverified', detail },
     ];
-    if (this.store.settings().jevMode !== 'assist' || task.modelOverride)
-      return skipped('Automatic content review is inactive for this diagnostic or manual run.');
+    if (this.store.settings().jevMode !== 'assist')
+      return skipped('Automatic content review is inactive for this diagnostic run.');
     try {
       const key = await this.secrets.get('jev');
       if (!key) return skipped('Jev is not connected, so content quality was not assessed.');

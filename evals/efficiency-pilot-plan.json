@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "releaseBaseCommit": "bcc9ab0ac67d3f18576f8416eef53726c4f4fa77",
+  "split": "development",
+  "roster": [
+    "codex:gpt-6-astra",
+    "codex:gpt-5.6-sol",
+    "codex:gpt-5.6-luna"
+  ],
+  "rosterLimitation": "The workflow preflight established that the disposable Claude profile is not signed in. Claude is excluded rather than counted as free or available; this pilot compares the three connected Codex subscription models only.",
+  "caseSetHash": "a557bf48ae3c004a47446cd9be4cf64159f2336c03a7b8cace5ee60ae2db5d64",
+  "cases": [
+    {
+      "id": "coding-unique",
+      "kind": "coding",
+      "inputHash": "a8be11e9dde8a68fd60852116fe955ef22620ac245ea19911189ba4112e3667f",
+      "independentChecks": [
+        "Rerun node --test verify.mjs",
+        "Confirm verify.mjs hash is unchanged",
+        "Inspect the saved solution for scope and avoid granting credit for worker assertions alone"
+      ],
+      "criticalFailures": [
+        "Any fixture assertion fails",
+        "The verification fixture changes",
+        "A write escapes the case workspace"
+      ]
+    },
+    {
+      "id": "research-sqlite-wal",
+      "kind": "research",
+      "inputHash": "15b0c00df720b78fca4c95d7808877b36da4498cdf54eb398da0ae55f9bb38e8",
+      "independentChecks": [
+        "Open every cited primary-source URL",
+        "Map material factual claims to the SQLite source",
+        "Check that inference and uncertainty are labeled",
+        "Confirm the memo answers concurrency limits, not only WAL setup"
+      ],
+      "criticalFailures": [
+        "A material claim conflicts with the cited primary source",
+        "A cited link was not opened or does not support its claim",
+        "The requested memo is missing or unusable"
+      ]
+    },
+    {
+      "id": "writing-brief",
+      "kind": "writing",
+      "inputHash": "7ed31005ec8ac12ecf52cddad6d15bad5a5438c9cab0d05b8b03f6225cb7228d",
+      "independentChecks": [
+        "Count words with one frozen tokenizer across all modes",
+        "Check purpose, audience, three capabilities and a measurable finish line",
+        "Compare every factual statement with brief.md",
+        "Assess clarity without using Jev's verdict"
+      ],
+      "criticalFailures": [
+        "Invents a live-provider, daily-use or production outcome",
+        "Misses a required content element",
+        "The requested draft is missing or materially outside the length constraint"
+      ]
+    },
+    {
+      "id": "documents-handoff-docx",
+      "kind": "documents",
+      "inputHash": "b33abbef4a6fa0e302dacf09bea869f1693a12e07371389fad2a920bdcb1a5c1",
+      "independentChecks": [
+        "Open the actual DOCX with the native DUKE document inspection path",
+        "Render and inspect every page for clipping, blank pages and legibility",
+        "Compare dates, owners, budget, statuses, decision and open question with brief.md",
+        "Check that invented examples or estimates are labeled"
+      ],
+      "criticalFailures": [
+        "The file is corrupt or is not a real DOCX",
+        "A supplied fact or arithmetic total is materially wrong",
+        "The rendered handoff is unusable",
+        "Invented completion or commitment is presented as fact"
+      ]
+    }
+  ],
+  "modes": [
+    {
+      "id": "strong",
+      "selection": "Explicit codex:gpt-6-astra subscription model",
+      "effort": "medium",
+      "jevRouting": false,
+      "jevReview": true
+    },
+    {
+      "id": "rules",
+      "selection": "Configured codex:gpt-5.6-luna fallback",
+      "effort": "lowest advertised supported effort",
+      "jevRouting": false,
+      "jevReview": false
+    },
+    {
+      "id": "jev",
+      "selection": "Normal Jev automatic model-and-effort choice among Astra, Sol and Luna",
+      "effort": "selected by Jev from advertised supported efforts",
+      "jevRouting": true,
+      "jevReview": true
+    }
+  ],
+  "independentEvaluator": {
+    "model": "gpt-5.6-sol",
+    "effort": "medium",
+    "blinding": "Review artifact copies labeled only by randomized receipt key where practical; deterministic checks run before identity is revealed.",
+    "limitations": "The evaluator is a Codex model and is not independent of Codex as a provider. Jev review is retained as raw evidence but is never the benchmark acceptance verdict."
+  },
+  "claimBoundary": "Four development cases can reveal defects and compare these exact runs. They do not establish general savings, calibrated routing quality or the held-out release threshold."
+}
