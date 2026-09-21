@@ -2,8 +2,9 @@
 
 Updated September 21, 2026.
 
-The downloadable Mac prerelease remains **0.1.2**. Development changes and
-validation results below do not imply a new signed download has been published.
+The desktop maintenance release is **0.1.3**. Its release assets and verification
+record are published with the matching GitHub release. iOS and benchmark harness
+integration remain separate development work.
 
 ## Desktop reliability
 

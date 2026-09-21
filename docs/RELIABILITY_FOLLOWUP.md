@@ -1,6 +1,6 @@
 # Reliability follow-up after 0.1.2
 
-This unreleased patch addresses Claude review findings F5 and F6.
+Version 0.1.3 addresses Claude review findings F5 and F6.
 
 Workers have a five-minute inactivity limit alongside the existing one-minute
 startup limit. Messages, text deltas, API execution starts and session events reset
@@ -23,5 +23,5 @@ Validation on the development Mac: TypeScript, production build and all 187 test
 passed. Added regression coverage checks progress extending the timer, concurrent
 tools, resuming the timer after tools, cancellation during a pending tool, stalled
 worker write fencing and neutral outcomes, and deleted review evidence. All model
-responses in these tests are synthetic. No release artifact has been built for
-this follow-up, and these results do not establish live routing efficiency.
+responses in these tests are synthetic. Distribution checks are recorded with the 0.1.3 release. These synthetic results
+do not establish live routing efficiency.

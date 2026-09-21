@@ -17,10 +17,13 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.2 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg).
+The current prerelease is **0.1.3 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.3/DUKE-Autorouter-0.1.3-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.3 adds worker inactivity protection and clearer recovery when reviewed
+files are missing. See the [reliability follow-up](docs/RELIABILITY_FOLLOWUP.md).
 
 Version 0.1.2 updates follow-up requirements, bounds stalled preparation, and adds
 **Retry checks** for saved results with incomplete verification. It also accepts
@@ -101,7 +104,7 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.2 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg)**
+**[Download DUKE 0.1.2 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.3/DUKE-Autorouter-0.1.3-mac-arm64.dmg)**
 
 The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
