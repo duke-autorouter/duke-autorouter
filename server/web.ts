@@ -164,25 +164,7 @@ export async function parsePublicContent(
         return [];
       }
     });
-  const fullText = html
-    ? body
-        .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
-        .replace(/<[^>]*>/g, ' ')
-        .replace(
-          /&(?:amp|lt|gt|quot|apos|nbsp);/g,
-          (entity) =>
-            ({
-              '&amp;': '&',
-              '&lt;': '<',
-              '&gt;': '>',
-              '&quot;': '"',
-              '&apos;': "'",
-              '&nbsp;': ' ',
-            })[entity]!,
-        )
-        .replace(/\s+/g, ' ')
-        .trim()
-    : body.trim();
+  const fullText = html ? researchHTMLText(body) : body.trim();
   if (!fullText) throw new Error('The page returned no readable body.');
   return {
     url,
@@ -285,4 +267,30 @@ export async function searchPublic(
     truncated: result.results.length > 6,
     note: 'Discovery results only. Read each original source with web_read before citing it. Search uses Tavily keyless access, which has service limits; it does not use a paid account.',
   };
+}
+
+// Preserve source revision cues as data before removing presentation markup.
+// This does not render CSS or infer whether a statement is currently correct.
+export function researchHTMLText(body: string): string {
+  return body
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/<(s|strike|del)\b[^>]*>/gi, ' [source text marked deleted or struck through: ')
+    .replace(/<\/(?:s|strike|del)\s*>/gi, ' :end marked text] ')
+    .replace(/<ins\b[^>]*>/gi, ' [source insertion: ')
+    .replace(/<\/ins\s*>/gi, ' :end insertion] ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(
+      /&(?:amp|lt|gt|quot|apos|nbsp);/g,
+      (entity) =>
+        ({
+          '&amp;': '&',
+          '&lt;': '<',
+          '&gt;': '>',
+          '&quot;': '"',
+          '&apos;': "'",
+          '&nbsp;': ' ',
+        })[entity]!,
+    )
+    .replace(/\s+/g, ' ')
+    .trim();
 }
