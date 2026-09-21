@@ -18,12 +18,12 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.6 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.6/DUKE-Autorouter-0.1.6-mac-arm64.dmg).
+The current prerelease is **0.1.7 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.7/DUKE-Autorouter-0.1.7-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
 
-Version 0.1.6 checks specific claims and ownership relationships against source
+Version 0.1.7 checks specific claims and ownership relationships against source
 evidence. An uncertain passage can receive one focused follow-up review before
 DUKE decides whether a worker repair is justified. The [development checks](docs/FOCUSED_REVIEW_VALIDATION_20260921.md)
 include the original missed PDF error, correct examples and false alarms found
@@ -125,9 +125,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.6 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.6/DUKE-Autorouter-0.1.6-mac-arm64.dmg)**
+**[Download DUKE 0.1.7 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.7/DUKE-Autorouter-0.1.7-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.6)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.7)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -192,7 +192,7 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The current source passes 217 automated tests. The 0.1.6 package passes 12
+The current source passes 217 automated tests. The 0.1.7 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical

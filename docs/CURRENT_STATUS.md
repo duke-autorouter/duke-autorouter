@@ -2,9 +2,13 @@
 
 Updated September 21, 2026.
 
-The desktop maintenance release is **0.1.6**. Its release assets and verification
+The desktop maintenance release is **0.1.7**. Its release assets and verification
 record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
 development work.
+
+## Execution evidence
+
+Version 0.1.7 supplies verifier observations to focused response review. All 220 local tests pass. The live recheck no longer falsely rejects the original passing test; it remains unverified. Failed-test and unrelated-deployment controls still fail, and unavailable execution stays neutral. See the [diagnostic report](EXECUTION_REVIEW_VALIDATION_20260921.md) and [frozen comparison](FROZEN_VALIDATION_20260921.md). The original PDF recovery probe still blocks on uncertain failure cause.
 
 ## Focused error detection
 

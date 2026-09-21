@@ -68,3 +68,5 @@ when superseded and link their replacement. Open validation gates belong in
 [release readiness](RELEASE_READINESS.md), not in an invented historical success
 claim. This log describes the entire project; the tool audit is one supporting
 record.
+
+- [0019: Verifier evidence in response review](adr/0019-verifier-evidence-in-response-review.md)
