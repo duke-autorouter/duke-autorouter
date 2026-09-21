@@ -10,6 +10,7 @@ import {
 import {
   RECOVERY_POLICY,
   RECOVERY_MIN_PROBABILITY,
+  CORRECTION_MIN_PROBABILITY,
   type RecoveryStage,
   type RecoveryCause,
   type RecoveryJudgment,
@@ -139,6 +140,7 @@ export class Jev {
 
   async recovery(task: Task, evidence: unknown, signal: AbortSignal, stage: RecoveryStage = 'escalation'): Promise<RecoveryJudgment> {
     const unknown: RecoveryJudgment = { cause: 'unknown', probability: 0 };
+    const threshold = stage === 'correction' ? CORRECTION_MIN_PROBABILITY : RECOVERY_MIN_PROBABILITY;
     if (this.store.settings().jevMode !== 'assist') return unknown;
     try {
       const key = await this.secrets.get('jev');
@@ -187,12 +189,12 @@ export class Jev {
         policy: RECOVERY_POLICY,
         stage,
         answer,
-        threshold: RECOVERY_MIN_PROBABILITY,
+        threshold,
       });
       const probability = answer.probabilities[answer.choice];
       return {
         cause:
-          probability >= RECOVERY_MIN_PROBABILITY ? (answer.choice as RecoveryCause) : 'unknown',
+          probability >= threshold ? (answer.choice as RecoveryCause) : 'unknown',
         probability,
       };
     } catch (error) {

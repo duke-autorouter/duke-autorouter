@@ -1,8 +1,10 @@
 import { effortLevels, orderedEfforts, type Effort } from '../shared/effort.js';
 import type { Model, Settings, Task } from './types.js';
 
-export const RECOVERY_POLICY = 'duke-recovery-v2';
+export const RECOVERY_POLICY = 'duke-recovery-v3';
 export const RECOVERY_MIN_PROBABILITY = 0.9;
+// A single unchanged-effort correction uses the established defect-review gate.
+export const CORRECTION_MIN_PROBABILITY = 0.8;
 export type RecoveryStage = 'correction' | 'escalation';
 export type RecoveryCause =
   'correction' | 'reasoning' | 'missing_context' | 'tool_failure' | 'unknown';

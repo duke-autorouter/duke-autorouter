@@ -21,3 +21,10 @@ The original PDF's correction verdict reached 0.78 and did not meet the unchange
 ## Deterministic detection control, declared before its call
 
 The arithmetic-note run falsely passed the unchanged $250 total and therefore did not reach recovery. Retain that false acceptance as a separate detection failure. To test the recovery mechanism without relying on the same detector, run one `--deterministic-arithmetic` probe. Its supplied, immutable Node verifier requires exactly `{printing:120, signs:80, total:200}` in `total.json`; the seed contains total 250. The worker may edit the output, not the brief or verifier. Verify both input files remain byte-identical. The actual verifier must fail before correction and pass afterward. Jev still decides correction and performs final content review; any uncertainty remains visible. This is a separate instrumented mechanism control, not a rerun that replaces either earlier result. Reserve $0.04 under the same cap. Do not change runtime code or thresholds.
+
+
+## Policy v3 development calibration
+
+All three original runs remain attached to recovery v2. The deterministic verifier correctly failed, but Jev chose correction at 0.80, with tool failure 0.15, below the initial 0.90 correction gate. The actual command exited with an assertion mismatch; its stderr also contained a shell startup warning. The new correction decision had inherited the higher-cost escalation gate without a separate risk rationale.
+
+Recovery v3 uses the established 0.80 defect-review threshold for one targeted attempt at unchanged effort, while effort escalation retains 0.90. This is an explicit cost/risk policy choice informed by development evidence, not a calibrated likelihood of successful repair. Uncertain or missing-context/tool verdicts do not authorize correction. Run the deterministic control once more on v3, retaining the earlier block; do not rerun the PDF or arithmetic-note detector. This repeated control is calibration evidence only. Reserve $0.04 under the original shared cap. Future held-out cases must assess incorrect corrections and total cost as well as successful repairs.

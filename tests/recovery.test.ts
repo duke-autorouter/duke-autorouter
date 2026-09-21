@@ -120,7 +120,7 @@ test('same-effort correction honors retry limits, fixed effort and changed effor
 });
 
 test('correction asks about available evidence at unchanged effort and retains the probability gate', async () => {
-  for (const probability of [0.9, 0.89]) {
+  for (const probability of [0.8, 0.79]) {
     const store = new Store(':memory:');
     try {
       const jev = new Jev(store, { get: async () => 'fixture' } as any, async (_url, options) => {
@@ -156,7 +156,7 @@ test('correction asks about available evidence at unchanged effort and retains t
         revision: 0,
       } as unknown as Task;
       const result = await jev.recovery(task, {}, new AbortController().signal, 'correction');
-      assert.equal(result.cause, probability === 0.9 ? 'correction' : 'unknown');
+      assert.equal(result.cause, probability === 0.8 ? 'correction' : 'unknown');
       assert.equal(
         store.events(task.id).find((e) => e.kind === 'recovery_judged')?.data.stage,
         'correction',
