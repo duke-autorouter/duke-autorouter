@@ -13,7 +13,7 @@ import { brand } from '../shared/brand.js';
 import { setupPrompt } from './setup-import.js';
 import { routingContext } from './task-evidence.js';
 import { verifyTask, assertReviewEvidence } from './verification.js';
-import { bounded, PhaseTimeout } from './deadline.js';
+import { bounded, whileActive, PhaseTimeout } from './deadline.js';
 import { requirements, taskBrief, taskInputKey } from './task-revisions.js';
 import { REVIEW_POLICY, ROUTING_POLICY } from './outcomes.js';
 import { WorkerUsage, summarizeUsage } from './usage.js';
@@ -54,6 +54,7 @@ export class Engine {
       routing: 15000,
       verification: 180000,
       startup: 60000,
+      inactivity: 300000,
       cleanup: 5000,
     },
   ) {}
@@ -191,7 +192,10 @@ export class Engine {
     const excluded = new Set(unavailable);
     const spend = this.store.spend();
     const budget = Math.min(spend.dailyLimit - spend.day, spend.monthlyLimit - spend.month);
-    const tools = definitions(task.required).map((d) => ({ type: 'function', function: d }));
+    const tools = definitions(task.required).map((d) => ({
+      type: 'function',
+      function: d,
+    }));
     for (const model of models) {
       if (model.provider === 'openrouter') {
         try {
@@ -291,7 +295,10 @@ export class Engine {
       attempt: 0,
     };
     this.store.save(task);
-    this.store.event(task.id, 'created', { title: task.title, prompt: task.prompt });
+    this.store.event(task.id, 'created', {
+      title: task.title,
+      prompt: task.prompt,
+    });
     void this.drain();
     return task;
   }
@@ -384,7 +391,10 @@ export class Engine {
     try {
       while (stages < 6) {
         signal.throwIfAborted();
-        let task = this.store.update(id, { status: 'routing', error: undefined });
+        let task = this.store.update(id, {
+          status: 'routing',
+          error: undefined,
+        });
         const workspace = this.store.get<Workspace>('workspace', task.workspaceId)!;
         await this.phase(
           id,
@@ -564,68 +574,77 @@ export class Engine {
             'Starting the model',
             this.limits.startup,
             signal,
-            (workerSignal, ready) =>
-              this.workers[model.provider].run({
-                task: { ...currentTask, route: decision },
-                workspace,
-                model,
-                signal: workerSignal,
-                prompt,
-                tool: (name, args) => {
-                  workerSignal.throwIfAborted();
-                  ready();
-                  if (++toolCalls > this.store.settings().maxSteps)
-                    throw new Blocked(
-                      'Stage tool limit reached. Review the checkpoint before continuing.',
-                    );
-                  return this.tools.call(id, name, args, workerSignal);
-                },
-                emit: (kind, data) => {
-                  if (workerSignal.aborted) return;
-                  if (['message', 'message_delta', 'api_request_started'].includes(kind)) ready();
-                  usage.accept(kind, data);
-                  this.store.event(
-                    id,
-                    kind,
-                    kind === 'allowance_snapshot'
-                      ? { ...(data as Record<string, unknown>), usageId }
-                      : data,
-                  );
-                  if (kind === 'api_usage' || kind === 'subscription_usage')
-                    this.store.event(id, 'usage_report', {
-                      id: usageId,
-                      usage: usage.snapshot(false),
-                    });
-                  if (kind === 'quota')
-                    this.store.put('health', model.provider, {
-                      provider: model.provider,
-                      ready: true,
-                      message: 'Subscription connected',
-                      checkedAt: now(),
-                      quotaCheckedAt: now(),
-                      quota: data,
-                    });
-                },
-                session: (sessionId) => {
-                  workerSignal.throwIfAborted();
-                  ready();
-                  const current = this.store.task(id);
-                  this.store.update(id, {
-                    checkpoint: {
-                      summary: current.checkpoint?.summary ?? '',
-                      remaining: current.checkpoint?.remaining ?? task.prompt,
-                      artifacts: current.checkpoint?.artifacts ?? [],
-                      repairDifficulty: current.checkpoint?.repairDifficulty,
-                      session: {
-                        provider: model.provider,
-                        id: sessionId,
-                        model: model.model,
-                      },
-                      at: now(),
+            (startupSignal, ready) =>
+              whileActive(
+                startupSignal,
+                this.limits.inactivity,
+                (workerSignal, activity, activeTool) =>
+                  this.workers[model.provider].run({
+                    task: { ...currentTask, route: decision },
+                    workspace,
+                    model,
+                    signal: workerSignal,
+                    prompt,
+                    tool: (name, args) => {
+                      workerSignal.throwIfAborted();
+                      ready();
+                      if (++toolCalls > this.store.settings().maxSteps)
+                        throw new Blocked(
+                          'Stage tool limit reached. Review the checkpoint before continuing.',
+                        );
+                      return activeTool(() => this.tools.call(id, name, args, workerSignal));
                     },
-                  });
-                },
-              }),
+                    emit: (kind, data) => {
+                      if (workerSignal.aborted) return;
+                      if (['message', 'message_delta', 'api_request_started'].includes(kind)) {
+                        ready();
+                        activity();
+                      }
+                      usage.accept(kind, data);
+                      this.store.event(
+                        id,
+                        kind,
+                        kind === 'allowance_snapshot'
+                          ? { ...(data as Record<string, unknown>), usageId }
+                          : data,
+                      );
+                      if (kind === 'api_usage' || kind === 'subscription_usage')
+                        this.store.event(id, 'usage_report', {
+                          id: usageId,
+                          usage: usage.snapshot(false),
+                        });
+                      if (kind === 'quota')
+                        this.store.put('health', model.provider, {
+                          provider: model.provider,
+                          ready: true,
+                          message: 'Subscription connected',
+                          checkedAt: now(),
+                          quotaCheckedAt: now(),
+                          quota: data,
+                        });
+                    },
+                    session: (sessionId) => {
+                      workerSignal.throwIfAborted();
+                      activity();
+                      ready();
+                      const current = this.store.task(id);
+                      this.store.update(id, {
+                        checkpoint: {
+                          summary: current.checkpoint?.summary ?? '',
+                          remaining: current.checkpoint?.remaining ?? task.prompt,
+                          artifacts: current.checkpoint?.artifacts ?? [],
+                          repairDifficulty: current.checkpoint?.repairDifficulty,
+                          session: {
+                            provider: model.provider,
+                            id: sessionId,
+                            model: model.model,
+                          },
+                          at: now(),
+                        },
+                      });
+                    },
+                  }),
+              ),
           );
           workerFinished = true;
           signal.throwIfAborted();
@@ -910,7 +929,12 @@ export class Engine {
     if (uncertain.length && followup.trim().length < 10)
       throw new Blocked('Describe the verified external outcome in the follow-up before resuming.');
     for (const e of uncertain) {
-      if (e.id) this.store.put('effect', e.id, { ...e, state: 'reviewed', outcome: followup });
+      if (e.id)
+        this.store.put('effect', e.id, {
+          ...e,
+          state: 'reviewed',
+          outcome: followup,
+        });
     }
     if (uncertain.length)
       this.store.event(id, 'external_outcome_reviewed', {

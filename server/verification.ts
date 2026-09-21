@@ -52,16 +52,25 @@ export async function assertReviewEvidence(task: Task, workspace: Workspace, sig
     );
   for (const file of evidence.files) {
     signal.throwIfAborted();
-    const path = await scoped(workspace.path, file.path);
-    if (
-      (await stat(path)).size > 2_000_000 ||
-      createHash('sha256')
-        .update(await readFile(path, { signal }))
-        .digest('hex') !== file.sha256
-    )
-      throw new Blocked(
-        `${file.path} changed after the last review. Describe the change in a follow-up before checking it again.`,
-      );
+    try {
+      const path = await scoped(workspace.path, file.path);
+      if (
+        (await stat(path)).size > 2_000_000 ||
+        createHash('sha256')
+          .update(await readFile(path, { signal }))
+          .digest('hex') !== file.sha256
+      )
+        throw new Blocked(
+          `${file.path} changed after the last review. Describe the change in a follow-up before checking it again.`,
+        );
+    } catch (error) {
+      signal.throwIfAborted();
+      if (['ENOENT', 'ENOTDIR'].includes((error as NodeJS.ErrnoException).code ?? ''))
+        throw new Blocked(
+          `${file.path} is missing. Restore it or describe the change in a follow-up before checking it again.`,
+        );
+      throw error;
+    }
   }
   signal.throwIfAborted();
   return evidence.complete;
