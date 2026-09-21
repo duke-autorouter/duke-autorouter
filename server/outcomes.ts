@@ -4,7 +4,7 @@ import { modelExecutionKey, scopeRelevance } from './work-profile.js';
 
 export const REVIEW_POLICY = 'duke-review-v7';
 // Acceptance labels feed whole-task efficiency as well as quality history.
-export const ROUTING_POLICY = 'duke-routing-v11';
+export const ROUTING_POLICY = 'duke-routing-v12';
 export const REVIEW_MIN_PROBABILITY = 0.8;
 
 const scope = (o: Pick<TaskAssessment, 'kind' | 'difficulty' | 'workType' | 'briefSize'>) =>

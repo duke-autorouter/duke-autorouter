@@ -92,7 +92,7 @@ async function fixture(kind: TaskKind = 'writing') {
           }
         : body.questions.recovery
           ? {
-              recovery: choice(Object.keys(body.questions.recovery.criteria), 'reasoning'),
+              recovery: choice(Object.keys(body.questions.recovery.criteria), body.state.recoveryStage === 'correction' ? 'correction' : 'reasoning'),
             }
           : body.questions.model
             ? {
@@ -384,15 +384,15 @@ test('a focused defect missed by broad checks retries the same model and retains
         c.emit('subscription_usage', {
           total: { inputTokens: 80, outputTokens: 20, totalTokens: 100 },
         });
-        if (c.model.effort === 'medium') {
+        if (f.runs.length > 1) {
           assert.match(c.prompt, /Recover from/);
           assert.match(c.prompt, /Jev: claim_0/);
         }
         await c.tool('write_file', {
           path: 'result.md',
-          content: c.model.effort === 'low' ? 'TODO' : 'A complete introduction.',
+          content: f.runs.length === 1 ? 'TODO' : 'A complete introduction.',
         });
-        return c.model.effort === 'low' ? 'BAD placeholder' : 'Created the complete introduction.';
+        return f.runs.length === 1 ? 'BAD placeholder' : 'Created the complete introduction.';
       },
     };
     f.engine.workers.claude = {
@@ -411,7 +411,7 @@ test('a focused defect missed by broad checks retries the same model and retains
     assert.equal(task.review?.status, 'passed');
     assert.equal(task.attempt, 1);
     assert.deepEqual(f.runs, ['first', 'first']);
-    assert.deepEqual(efforts, ['low', 'medium']);
+    assert.deepEqual(efforts, ['low', 'low']);
     assert.equal(task.usage?.reportedTokens, 250);
     assert.equal(task.usage?.complete, true);
     assert.deepEqual(task.usage?.byRole, {
@@ -431,7 +431,7 @@ test('a focused defect missed by broad checks retries the same model and retains
         .sort(),
       [
         ['low', 'failed'],
-        ['medium', 'passed'],
+        ['low', 'passed'],
       ],
     );
     assert.equal(f.calls.filter((c) => c.questions.recovery).length, 1);
@@ -454,7 +454,7 @@ test('failed checks without a suitable alternative retain the deliverable and ca
     assert.equal(task.status, 'blocked');
     assert.equal(task.review?.status, 'failed');
     assert.ok(task.result);
-    assert.equal(f.runs.length, 1);
+    assert.equal(f.runs.length, 2);
     assert.ok(!f.store.events(task.id).some((e) => e.kind === 'completed'));
   } finally {
     await f.close();
@@ -698,7 +698,7 @@ test('an independently rerun task check can fail and trigger recovery before sem
     });
     assert.equal(task.status, 'blocked');
     assert.equal(task.review?.status, 'failed');
-    assert.equal(runs, 1);
+    assert.equal(runs, 2);
     assert.equal(f.calls.filter((c) => c.questions.brief).length, 0);
   } finally {
     await f.close();
@@ -1074,19 +1074,19 @@ test('quality recovery respects fixed effort, disabled retries, medium ceiling a
         completion: 'pass',
       }));
       if (scenario === 'disabled') f.store.put('settings', 'main', { ...defaults, maxRecovery: 0 });
-      f.jev.recovery = async () => {
+      f.jev.recovery = async (_task, _evidence, _signal, stage) => {
         if (scenario === 'availability')
           f.store.put('model', 'worker', {
             ...f.store.get<Model>('model', 'worker'),
             enabled: false,
           });
-        return { cause: 'reasoning', probability: 1 };
+        return { cause: stage === 'correction' ? 'correction' : 'reasoning', probability: 1 };
       };
       const task = await f.run(
         scenario === 'fixed' ? { modelOverride: 'worker', effortOverride: 'low' } : {},
       );
       assert.equal(task.status, 'blocked');
-      assert.equal(f.runs.length, scenario === 'ceiling' ? 2 : 1);
+      assert.equal(f.runs.length, scenario === 'ceiling' ? 3 : scenario === 'fixed' ? 2 : 1);
       assert.ok(
         !f.store.events(task.id).some((e) => e.kind === 'route' && e.data.effort === 'high'),
       );
@@ -1117,4 +1117,67 @@ test('cancellation while diagnosing recovery rejects a late judgment and cannot 
   } finally {
     await f.close();
   }
+});
+
+
+test('a failed same-effort correction can escalate once, preserving requirements and counting every attempt', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker', { supportedEfforts: ['low', 'medium', 'high'] }));
+    const efforts: (string | undefined)[] = [];
+    const run = f.engine.workers.codex.run;
+    f.engine.workers.codex.run = async (c) => {
+      efforts.push(c.model.effort);
+      assert.equal(c.task.expectedResult, 'Preserve all original facts.');
+      if (efforts.length > 1) assert.match(c.prompt, /Do not invent missing facts/);
+      return run(c);
+    };
+    f.verdict(() => ({ brief: 'pass', claim_0: efforts.length < 3 ? 'fail' : 'pass', support: 'pass', completion: 'pass' }));
+    const task = await f.run({ expectedResult: 'Preserve all original facts.' });
+    assert.equal(task.status, 'completed');
+    assert.deepEqual(efforts, ['low', 'low', 'medium']);
+    assert.equal(task.attempt, 2);
+    const retries = f.store.events(task.id).filter((e) => e.kind === 'quality_retry');
+    assert.deepEqual(retries.map((e) => e.data.stage), ['correction', 'escalation']);
+    assert.equal(task.usage?.byRole.worker, 300);
+    assert.equal(f.calls.filter((c) => c.questions.recovery).length, 2);
+    assert.equal(f.store.list<any>('routing_run')[0].usage.reportedTokens, task.usage?.reportedTokens);
+  } finally { await f.close(); }
+});
+
+test('uncertain correction and cancellation pause without escalating or launching a new worker', async () => {
+  for (const cancel of [false, true]) {
+    const f = await fixture();
+    try {
+      f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
+      f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+      f.jev.recovery = async (task, _evidence, _signal, stage) => {
+        assert.equal(stage, 'correction');
+        if (cancel) f.engine.cancel(task.id);
+        return { cause: 'unknown', probability: 0.79 };
+      };
+      const task = await f.run();
+      assert.equal(task.status, cancel ? 'cancelled' : 'blocked');
+      assert.equal(f.runs.length, 1);
+      assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+    } finally { await f.close(); }
+  }
+});
+
+test('one correction per unchanged task survives resume and keeps provider-default effort unchanged', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    const efforts: (string | undefined)[] = [];
+    const run = f.engine.workers.codex.run;
+    f.engine.workers.codex.run = async (c) => { efforts.push(c.model.effort); return run(c); };
+    f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+    const task = await f.run();
+    assert.equal(task.status, 'blocked');
+    assert.deepEqual(efforts, [undefined, undefined]);
+    f.engine.resume(task.id);
+    await f.engine.execute(task.id);
+    assert.equal(f.store.events(task.id).filter((e) => e.kind === 'quality_retry' && e.data.stage === 'correction').length, 1);
+    assert.deepEqual(efforts, [undefined, undefined, undefined]);
+  } finally { await f.close(); }
 });
