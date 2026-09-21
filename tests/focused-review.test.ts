@@ -72,7 +72,10 @@ async function fixture(t: any, reply: (body: any, count: number) => any) {
     const verdicts = reply(body, calls.length);
     return Response.json({
       answers: Object.fromEntries(
-        Object.keys(body.questions).map((id) => [id, verdicts[id] ?? answer('pass')]),
+        Object.keys(body.questions).map((id) => [
+          id,
+          verdicts[id] ?? (id.startsWith('claim_') ? claim('pass') : answer('pass')),
+        ]),
       ),
       usage: { input_tokens: 10 },
     });
@@ -141,15 +144,15 @@ test('continued uncertainty and passage overflow cannot become verified success'
   assert.equal(checks.find((c) => c.name === 'Jev: claim_0')?.status, 'unverified');
   assert.equal(checks.find((c) => c.name === 'Focused review coverage')?.status, 'unverified');
 });
-test('malformed claim does not discard a confirmed broad failure', async (t) => {
+test('an uncorroborated broad failure stays neutral when a claim is malformed', async (t) => {
   const f = await fixture(t, () => ({
     brief: answer('fail'),
     claim_0: { type: 'choice' },
   }));
   const checks = await f.jev.review(f.task, evidence(), new AbortController().signal);
-  assert.equal(checks.find((c) => c.name === 'Jev: brief')?.status, 'failed');
+  assert.equal(checks.find((c) => c.name === 'Jev: brief')?.status, 'unverified');
   assert.equal(checks.find((c) => c.name === 'Jev: claim_0')?.status, 'unverified');
-  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls.length, 2);
 });
 test('cancellation prevents a resolution request', async (t) => {
   const ac = new AbortController();
@@ -174,4 +177,28 @@ test('literal requirements are checked separately and findings cannot waive them
   const checks = await f.jev.review(f.task, evidence(), new AbortController().signal);
   assert.equal(checks.find((c) => c.name === 'Jev: requirement_1')?.status, 'failed');
   assert.match(f.calls[0].questions.requirement_1.instructions, /Label proposals/);
+});
+
+test('supported passages and literal requirements pass without an unnecessary second request', async (t) => {
+  const f = await fixture(t, () => ({}));
+  const checks = await f.jev.review(
+    f.task,
+    evidence('Internal workshop owner: unknown.'),
+    new AbortController().signal,
+  );
+  assert.ok(checks.every((c) => c.status === 'passed'));
+  assert.equal(f.calls.length, 1);
+});
+test('missing source keeps broad negative judgments neutral', async (t) => {
+  const f = await fixture(t, () => ({
+    brief: answer('fail'),
+    support: answer('fail'),
+    requirement_0: answer('fail'),
+    claim_0: claim('unknown'),
+  }));
+  const e = evidence();
+  e.incomplete = true;
+  const checks = await f.jev.review(f.task, e, new AbortController().signal);
+  assert.ok(checks.every((c) => c.status !== 'failed'));
+  assert.equal(f.calls.length, 2);
 });

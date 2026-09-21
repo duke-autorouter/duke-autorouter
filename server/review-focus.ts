@@ -1,6 +1,6 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v1';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v2';
 export type ReviewPassage = { id: string; path: string; text: string };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {

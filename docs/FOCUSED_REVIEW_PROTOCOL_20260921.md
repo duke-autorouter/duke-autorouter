@@ -17,3 +17,15 @@ Local tests cover verdict normalization, malformed responses, incomplete source
 coverage, cancellation, source separation, bounded excerpts and the existing
 same-model repair path. Live verdicts must be inspected independently against the
 frozen labels; synthetic transport tests do not establish detection accuracy.
+
+## Second development run
+
+The first 14-case run detected all seven defects but falsely failed a labeled
+proposal and missing source. Preserve its receipt and cost. Focused review v2
+requires a specific failed claim or requirement to corroborate a broad negative
+judgment, and keeps source-dependent broad failures neutral when evidence is
+incomplete. It explicitly distinguishes proposals from factual assertions.
+
+Freeze this change before repeating the original cases and six fresh transfer
+cases (owner assignments, approval status and proposed dates). Report the
+original 14 and fresh six separately. These remain development cases.

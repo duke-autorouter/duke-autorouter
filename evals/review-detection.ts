@@ -89,4 +89,40 @@ export const reviewDetectionCases = [
     output: 'Workshop owner: Ana.',
     incomplete: true,
   },
+  {
+    id: 'fresh-owner-correct',
+    expected: 'pass',
+    brief: 'Zoe owns the receipt log. Nikhil owns venue booking. Catering has no assigned owner.',
+    output: 'Receipt log: Zoe. Venue booking: Nikhil. Catering owner: unknown.',
+  },
+  {
+    id: 'fresh-owner-wrong',
+    expected: 'fail',
+    brief: 'Zoe owns the receipt log. Nikhil owns venue booking. Catering has no assigned owner.',
+    output: 'Receipt log: Nikhil. Venue booking: Zoe. Catering owner: unknown.',
+  },
+  {
+    id: 'fresh-status-correct',
+    expected: 'pass',
+    brief: 'Research draft is ready. Approval has not been requested.',
+    output: 'Research draft ready; approval not yet requested.',
+  },
+  {
+    id: 'fresh-status-wrong',
+    expected: 'fail',
+    brief: 'Research draft is ready. Approval has not been requested.',
+    output: 'Research is approved and ready for publication.',
+  },
+  {
+    id: 'fresh-proposal-correct',
+    expected: 'pass',
+    brief: 'No delivery date is set. Clearly labeled suggestions are allowed.',
+    output: 'Delivery date: not set. Suggested date for discussion: November 4; not a commitment.',
+  },
+  {
+    id: 'fresh-proposal-wrong',
+    expected: 'fail',
+    brief: 'No delivery date is set. Clearly labeled suggestions are allowed.',
+    output: 'Delivery date confirmed for November 4.',
+  },
 ] as const;
