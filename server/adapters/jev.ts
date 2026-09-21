@@ -705,7 +705,9 @@ export class Jev {
       // A single bounded evidence-resolution pass. Keep confirmed failures; never
       // seek a second opinion simply to erase one. Unknown stays neutral.
       const uncertain = new Set(
-        checks.filter((c) => c.status === 'unverified').map((c) => c.name.slice(5)),
+        checks
+          .filter((c) => c.status === 'unverified' && c.name.startsWith('Jev: claim_'))
+          .map((c) => c.name.slice(5)),
       );
       if (uncertain.size && !checks.some((c) => c.status === 'failed')) {
         try {
@@ -715,10 +717,11 @@ export class Jev {
             {
               model: this.store.settings().jevModel,
               state: {
-                ...baseState,
+                reviewPolicy: FOCUSED_REVIEW_POLICY,
+                task: baseState.task,
+                expectedResult: baseState.expectedResult,
                 resolutionPass: 1,
                 focusedPassages: expandedPassages.filter((p) => uncertain.has(p.id)),
-                priorUncertainChecks: checks.filter((c) => c.status === 'unverified'),
               },
               questions: Object.fromEntries(
                 Object.entries(questions).filter(([id]) => uncertain.has(id)),

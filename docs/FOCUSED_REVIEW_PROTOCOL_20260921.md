@@ -48,3 +48,12 @@ output; role and unresolved status remain separate from that candidate. It also
 keeps an unsupported verdict neutral for a checklist action explicitly marked
 TBD and unresolved, which does not assert an owner or a completed outcome.
 Repeat the preserved PDFs and 20 development cases, retaining all costs.
+
+## Fifth development run
+
+The literal ownership pair reached an unsupported verdict below the existing
+threshold; it stayed unverified. Version 5 narrows the one resolution request to
+uncertain passages and their expanded source windows. It omits the worker
+summary, unrelated output and prior verdict probabilities. Broad uncertain
+judgments remain incomplete instead of being repeated unchanged. The original
+threshold is retained. Recheck the two saved PDFs and all 20 development cases.
