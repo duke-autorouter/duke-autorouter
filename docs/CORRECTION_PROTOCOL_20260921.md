@@ -28,3 +28,11 @@ The arithmetic-note run falsely passed the unchanged $250 total and therefore di
 All three original runs remain attached to recovery v2. The deterministic verifier correctly failed, but Jev chose correction at 0.80, with tool failure 0.15, below the initial 0.90 correction gate. The actual command exited with an assertion mismatch; its stderr also contained a shell startup warning. The new correction decision had inherited the higher-cost escalation gate without a separate risk rationale.
 
 Recovery v3 uses the established 0.80 defect-review threshold for one targeted attempt at unchanged effort, while effort escalation retains 0.90. This is an explicit cost/risk policy choice informed by development evidence, not a calibrated likelihood of successful repair. Uncertain or missing-context/tool verdicts do not authorize correction. Run the deterministic control once more on v3, retaining the earlier block; do not rerun the PDF or arithmetic-note detector. This repeated control is calibration evidence only. Reserve $0.04 under the original shared cap. Future held-out cases must assess incorrect corrections and total cost as well as successful repairs.
+
+## Review-only follow-up after a successful worker correction
+
+The v3 control authorized Luna Low, which produced the exact correct JSON and passed the unchanged verifier. The final semantic review falsely rejected the result, and the escalation judgment stayed below 0.90. Keep the blocked workflow and successful artifact correction separate.
+
+Code inspection found that final review still received preparation-time progress from the failed attempt and that JSON deliverables were excluded from direct focused passages. Remove that stale progress from final review and include current JSON text. These are evidence-handling fixes; they do not establish that either omission alone caused Jev's false failure. Review policy v8 and focused-review policy v7 identify the change.
+
+Run `scripts/diagnose-correction-review.ts` once on the saved corrected receipt, plus a synthetic wrong-total negative control. No worker runs or files change. Preserve all checks and costs. A review-only success is not a new complete end-to-end run. Reserve $0.02 under the original cap.

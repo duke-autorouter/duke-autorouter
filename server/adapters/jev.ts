@@ -635,7 +635,8 @@ export class Jev {
         task: taskBrief(task).slice(0, 6000),
         expectedResult: task.expectedResult.slice(0, 1000),
         kind: task.route?.kind,
-        context,
+        // Preparation checkpoints describe earlier attempts, not the current result.
+        context: context ? { ...context, progress: undefined } : undefined,
         evidence: publicEvidence,
         executionEvidence,
       };

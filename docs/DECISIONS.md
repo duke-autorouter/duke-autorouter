@@ -70,3 +70,5 @@ claim. This log describes the entire project; the tool audit is one supporting
 record.
 
 - [0019: Verifier evidence in response review](adr/0019-verifier-evidence-in-response-review.md)
+
+- [0020: Bounded correction before effort escalation](adr/0020-bounded-correction-before-effort-escalation.md)

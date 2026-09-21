@@ -329,3 +329,23 @@ test("truncated execution observations cannot prove unsupported completion claim
     "unverified",
   );
 });
+
+
+test('JSON deliverables are reviewed directly and prior correction checkpoints do not enter final review', async (t) => {
+  const f = await fixture(t, (_body, count) => ({ claim_0: count === 1 ? claim('unknown') : claim('pass') }));
+  const e = evidence('{"printing":120,"signs":80,"total":200}');
+  e.files[0].path = 'total.json';
+  e.files[0].format = '.json';
+  e.result = 'Summary must not replace the actual JSON';
+  const context = { attachments: [], project: { entries: 2, fileTypes: { '.json': 1 }, hasTests: true }, progress: { summary: 'STALE-250', remaining: 'OLD-FAILED-TEST' }, incomplete: false };
+  await f.jev.review(f.task, e, new AbortController().signal, context);
+  assert.equal(f.calls.length, 2);
+  for (const call of f.calls) {
+    assert.equal(call.state.context.progress, undefined);
+    assert.equal(call.state.context.project.hasTests, true);
+    assert.ok(!JSON.stringify(call).includes('STALE-250'));
+    assert.equal(call.state.focusedPassages[0].path, 'total.json');
+    assert.equal(call.state.focusedPassages[0].text, e.files[0].text);
+  }
+  assert.equal(context.progress.summary, 'STALE-250');
+});
