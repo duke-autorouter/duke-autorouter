@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
 Updated September 21, 2026. Policy identifiers: `duke-routing-v11`, `duke-efficiency-v2` and
-`duke-review-v5`. This document describes implemented behavior, not measured
+`duke-review-v6`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -356,3 +356,11 @@ does not change the token denominator or retroactively discard failed attempts.
 The usage page separates eligible history, complete token coverage and recovered
 successes. These counts describe retained compatible evidence, not all historical
 tasks and not measured routing superiority.
+
+## Focused review in 0.1.6
+
+Content checks now include literal requirements and source-linked output passages,
+with ownership judged separately. One bounded follow-up can expand the evidence
+for uncertain passages. Broad concerns need a specific failed check before
+recovery; missing evidence remains neutral. The [review decision](adr/0018-focused-review-and-evidence-resolution.md)
+and [development results](FOCUSED_REVIEW_VALIDATION_20260921.md) record limits and false alarms.

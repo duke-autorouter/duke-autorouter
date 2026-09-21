@@ -99,9 +99,29 @@ async function fixture(kind: TaskKind = 'writing') {
                 model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
               }
             : Object.fromEntries(
-                Object.entries(verdict(body)).map(([id, v]) => [
+                Object.entries({
+                  ...Object.fromEntries(
+                    Object.keys(body.questions)
+                      .filter((id) => /^(claim|requirement)_/.test(id))
+                      .map((id) => [id, 'pass']),
+                  ),
+                  ...verdict(body),
+                }).map(([id, v]) => [
                   id,
-                  typeof v === 'string' ? choice(['pass', 'fail', 'unknown'], v) : v,
+                  typeof v === 'string'
+                    ? choice(
+                        Object.keys(
+                          body.questions[id]?.criteria ?? { pass: '', fail: '', unknown: '' },
+                        ),
+                        id.startsWith('claim_')
+                          ? v === 'pass'
+                            ? 'supported'
+                            : v === 'fail'
+                              ? 'contradicted'
+                              : v
+                          : v,
+                      )
+                    : v,
                 ]),
               );
       return Response.json({
@@ -349,7 +369,7 @@ test('bounded context includes progress, marks truncation, and never reads impor
   }
 });
 
-test('failed content checks retry the same model one effort step higher and retain all usage', async () => {
+test('a focused defect missed by broad checks retries the same model and retains all usage', async () => {
   const f = await fixture();
   try {
     f.add(
@@ -366,7 +386,7 @@ test('failed content checks retry the same model one effort step higher and reta
         });
         if (c.model.effort === 'medium') {
           assert.match(c.prompt, /Recover from/);
-          assert.match(c.prompt, /Jev: brief/);
+          assert.match(c.prompt, /Jev: claim_0/);
         }
         await c.tool('write_file', {
           path: 'result.md',
@@ -381,7 +401,8 @@ test('failed content checks retry the same model one effort step higher and reta
       },
     };
     f.verdict((body) => ({
-      brief: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
+      brief: 'pass',
+      claim_0: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
       support: 'pass',
       completion: 'pass',
     }));
@@ -423,7 +444,12 @@ test('failed checks without a suitable alternative retain the deliverable and ca
   const f = await fixture();
   try {
     f.add(model('only'));
-    f.verdict(() => ({ brief: 'fail', support: 'pass', completion: 'pass' }));
+    f.verdict(() => ({
+      brief: 'fail',
+      requirement_0: 'fail',
+      support: 'pass',
+      completion: 'pass',
+    }));
     const task = await f.run();
     assert.equal(task.status, 'blocked');
     assert.equal(task.review?.status, 'failed');
@@ -440,7 +466,7 @@ test('review gates use verdict probability and retain the full distribution sepa
     ['observed coding distribution', { pass: 0.8, fail: 0.18, unknown: 0.02 }, 0.7, 'passed'],
     ['observed document distribution', { pass: 0.83, fail: 0.13, unknown: 0.04 }, 0.75, 'passed'],
     ['below pass threshold', { pass: 0.799, fail: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
-    ['at fail threshold', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'failed'],
+    ['uncorroborated broad failure', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'unverified'],
     ['below fail threshold', { fail: 0.799, pass: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
     ['certain unknown', { unknown: 1, pass: 0, fail: 0 }, 1, 'unverified'],
   ] as const) {
@@ -1016,7 +1042,12 @@ test('context gaps and tool failures pause without spending another worker attem
     const f = await fixture();
     try {
       f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
-      f.verdict(() => ({ brief: 'fail', support: 'pass', completion: 'pass' }));
+      f.verdict(() => ({
+        brief: 'fail',
+        requirement_0: 'fail',
+        support: 'pass',
+        completion: 'pass',
+      }));
       f.jev.recovery = async () => ({ cause, probability: 1 });
       const task = await f.run();
       assert.equal(task.status, 'blocked');
@@ -1036,7 +1067,12 @@ test('quality recovery respects fixed effort, disabled retries, medium ceiling a
     const f = await fixture();
     try {
       f.add(model('worker', { supportedEfforts: ['low', 'medium', 'high'] }));
-      f.verdict(() => ({ brief: 'fail', support: 'pass', completion: 'pass' }));
+      f.verdict(() => ({
+        brief: 'fail',
+        requirement_0: 'fail',
+        support: 'pass',
+        completion: 'pass',
+      }));
       if (scenario === 'disabled') f.store.put('settings', 'main', { ...defaults, maxRecovery: 0 });
       f.jev.recovery = async () => {
         if (scenario === 'availability')
@@ -1064,7 +1100,12 @@ test('cancellation while diagnosing recovery rejects a late judgment and cannot 
   const f = await fixture();
   try {
     f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
-    f.verdict(() => ({ brief: 'fail', support: 'pass', completion: 'pass' }));
+    f.verdict(() => ({
+      brief: 'fail',
+      requirement_0: 'fail',
+      support: 'pass',
+      completion: 'pass',
+    }));
     f.jev.recovery = async (task) => {
       f.engine.cancel(task.id);
       return { cause: 'reasoning', probability: 1 };

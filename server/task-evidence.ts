@@ -36,6 +36,8 @@ export type RoutingContext = {
   incomplete: boolean;
 };
 export type ReviewEvidence = {
+  // Local-only full allowed excerpts for bounded review resolution. Never spread into API state.
+  resolutionSources?: { path: string; text: string; incomplete?: boolean }[];
   result: string;
   files: FileEvidence[];
   inputs: { path: string; text: string }[];

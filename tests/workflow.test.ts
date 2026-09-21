@@ -87,8 +87,10 @@ async function fixture(t: TestContext, kind: TaskKind = 'writing') {
                 Object.keys(question.criteria),
                 key === 'model'
                   ? 'candidate_0'
-                  : body.questions.brief
-                    ? control.verdict
+                  : body.state?.reviewPolicy
+                    ? key.startsWith('claim_') && control.verdict === 'pass'
+                      ? 'supported'
+                      : control.verdict
                     : control.requirement,
               ),
             ]),

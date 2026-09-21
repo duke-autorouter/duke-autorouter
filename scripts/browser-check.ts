@@ -285,11 +285,16 @@ try {
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   console.log('PASS five artifact formats, sandboxed HTML preview');
   for (const format of ['pdf', 'docx', 'xlsx']) {
-    await page.locator('.artifact').filter({ hasText: `artifacts/example.${format}` })
-      .getByRole('button', { name: 'Preview' }).click();
+    await page
+      .locator('.artifact')
+      .filter({ hasText: `artifacts/example.${format}` })
+      .getByRole('button', { name: 'Preview' })
+      .click();
     const previewImage = page.locator('.document-preview img');
     await previewImage.waitFor();
-    await waitFor(() => previewImage.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 10));
+    await waitFor(() =>
+      previewImage.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 10),
+    );
     await page.getByRole('button', { name: 'Close', exact: true }).click();
   }
   console.log('PASS PDF, Word and spreadsheet previews render images');
@@ -321,7 +326,10 @@ try {
   await page.getByLabel(/^Maximum automatic retries/).fill('1');
   await page.getByLabel(/^Automatic repair effort ceiling/).selectOption('high');
   await page.getByRole('button', { name: 'Save routing policy' }).click();
-  await waitFor(async () => r.store.settings().maxRecovery === 1 && r.store.settings().recoveryEffortCeiling === 'high');
+  await waitFor(
+    async () =>
+      r.store.settings().maxRecovery === 1 && r.store.settings().recoveryEffortCeiling === 'high',
+  );
   await page.reload();
   await page.getByRole('button', { name: 'Usage & routing' }).click();
   await page.getByText('Advanced routing options', { exact: true }).click();
@@ -354,15 +362,20 @@ try {
               probabilities: { '0': 0, '1': 0, '2': 1 },
             },
           }
-        : body.questions.brief
+        : body.state?.reviewPolicy
           ? Object.fromEntries(
-              ['brief', 'support', 'completion'].map((id) => [
+              Object.keys(body.questions).map((id) => [
                 id,
                 {
                   type: 'choice',
-                  choice: 'pass',
+                  choice: id.startsWith('claim_') ? 'supported' : 'pass',
                   confidence: 1,
-                  probabilities: { pass: 1, fail: 0, unknown: 0 },
+                  probabilities: Object.fromEntries(
+                    Object.keys(body.questions[id].criteria).map((key) => [
+                      key,
+                      +(key === (id.startsWith('claim_') ? 'supported' : 'pass')),
+                    ]),
+                  ),
                 },
               ]),
             )

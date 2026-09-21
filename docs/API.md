@@ -150,3 +150,7 @@ Changes to these invalidate incompatible learning observations.
 Defaults are two retries and Medium. Zero disables worker recovery. The engine
 requires the next effort to be advertised by that same model and no higher than
 the ceiling. A fixed task effort override is never increased automatically.
+
+Review-only retries can include one bounded Jev evidence-resolution request for
+uncertain passages. Both calls are recorded as review usage. They do not invoke
+a worker or change the model/effort override. Coverage gaps remain unverified.

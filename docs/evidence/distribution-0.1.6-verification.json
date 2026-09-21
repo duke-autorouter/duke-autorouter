@@ -1,0 +1,108 @@
+{
+  "release": "0.1.6",
+  "verifiedAt": "2026-09-21",
+  "packageSourceCommit": "bbb31858ad689d39b17ffc5e66d9471232aa4067",
+  "platform": "darwin-arm64",
+  "localSourceTests": {
+    "passed": 217,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "browserWorkflows": "passed with synthetic workers",
+  "evaluationCorpus": "80 cases validated; no model-quality inference",
+  "standaloneChecks": {
+    "adHocSignedDevelopmentPackagePassed": 12,
+    "developerIDSignedPackagePassed": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "sourceCommit": "bbb31858ad689d39b17ffc5e66d9471232aa4067",
+    "matchedFiles": 947,
+    "mismatches": []
+  },
+  "notarization": {
+    "submissionId": "4e83b37a-55c3-4d13-9c6c-5e6865c664aa",
+    "status": "Accepted and stapled"
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG app and Applications shortcut",
+    "preserved upstream Claude signature"
+  ],
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.6-mac-arm64.dmg",
+      "sha256": "3f53b2e878e4456dd84debda54eb173d45ae67fe1a0f6db02ac5745e1367881d"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.6-mac-arm64.zip",
+      "sha256": "b78552be4b1fda100635841f34a87b8175085d2530dc4c48da5a5042651de85e"
+    }
+  ],
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "secrets": {
+    "knownCredentialsCompared": 7,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1156,
+        "readErrors": 0
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19754,
+        "readErrors": 0
+      },
+      {
+        "scope": "download-metadata",
+        "files": 2,
+        "readErrors": 0
+      }
+    ],
+    "matches": 0,
+    "privateKeyPEMScan": {
+      "files": 19754,
+      "privateKeyPEMMatches": []
+    },
+    "gitleaks": "8.30.1; full history, tracked files and commit metadata passed",
+    "limits": "Known-value comparison is not exhaustive. The offloaded Apple signing-key file could not be re-read for this exact-value comparison; the complete packaged app was also checked for PEM private-key blocks, with no matches. The same key was included in prior release scans."
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.5",
+    "toVersion": "0.1.6",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskAndProjectContentHashesPreserved": true,
+    "existingSettingsPreferencesAndEnabledModelHashesPreserved": true,
+    "nativeWindowLoadedAndVisuallyChecked": true,
+    "activeTasksBeforeUpdate": 0
+  },
+  "liveEvaluation": {
+    "report": "focused-review-20260921.json",
+    "finalPlantedDefectsDetected": 10,
+    "finalCorrectPassed": 7,
+    "finalCorrectUnverified": 2,
+    "finalCorrectFailed": 0,
+    "missingSource": "unverified",
+    "originalPDFOwnerError": "detected in one final recheck at P(choice)=0.82",
+    "correctPDF": "unverified with no failed checks",
+    "newPDFWorkerRepairExecuted": false,
+    "allEightRunsRecordedAPIUSD": 0.01995,
+    "costBasis": "Reported input tokens at configured rate; not invoice verified"
+  },
+  "limits": [
+    "Repeated development calibration is not held-out accuracy evidence",
+    "Correct proposals and the correct PDF can remain unverified",
+    "No new end-to-end live repair of the saved PDFs",
+    "No second physical Mac available for validation",
+    "No successful recorded OpenRouter live worker result"
+  ]
+}
