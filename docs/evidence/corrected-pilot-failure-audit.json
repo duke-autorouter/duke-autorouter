@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-09-21",
+  "liveInferenceRun": false,
+  "originalArtifactsPreserved": true,
+  "cases": [
+    {
+      "caseId": "research-sqlite-wal",
+      "worker": { "modelId": "codex:gpt-5.6-luna", "effort": "low" },
+      "causeClassification": "source-evidence-fidelity-confound",
+      "primaryCauseEstablished": false,
+      "workerJudgmentIsolated": false,
+      "sourceReceipt": {
+        "characters": 31466,
+        "obsoleteTextIndex": 3226,
+        "currentCorrectionIndex": 3637,
+        "revisionSemanticsPreserved": false,
+        "bothStatementsInsideReviewerExcerpt": true
+      },
+      "review": {
+        "overall": "unverified",
+        "brief": { "choice": "unknown", "probability": 0.48, "threshold": 0.8 },
+        "support": { "choice": "pass", "probability": 0.35, "threshold": 0.8 },
+        "completion": { "choice": "fail", "probability": 0.62, "threshold": 0.8 },
+        "namedMaterialDefect": false
+      },
+      "firstRepair": "corrected source evidence with the same Luna Low worker"
+    },
+    {
+      "caseId": "documents-handoff-docx",
+      "worker": { "modelId": "codex:gpt-5.6-luna", "effort": "low" },
+      "causeClassification": "worker-authored-association-with-self-check-evidence-confound",
+      "primaryCauseEstablished": false,
+      "workerInputComplete": true,
+      "authoredUnsupportedAssociation": true,
+      "completedWorkerPreview": false,
+      "workerSelfCheckPreservedTableStructure": false,
+      "reviewEvidencePreservedTableStructure": false,
+      "review": {
+        "overall": "unverified",
+        "brief": { "choice": "unknown", "probability": 0.5, "threshold": 0.8 },
+        "support": { "choice": "pass", "probability": 0.93, "threshold": 0.8 },
+        "completion": { "choice": "unknown", "probability": 0.5, "threshold": 0.8 },
+        "namedMaterialDefect": false
+      },
+      "firstRepair": "same Luna Low worker with structured table evidence and working preview",
+      "conditionalNextRepair": "same Luna worker at Medium with unchanged task and acceptance rubric"
+    }
+  ],
+  "protocol": {
+    "order": [
+      "research source fix at Luna Low",
+      "conditional research rerun at Luna Medium",
+      "document evidence fix at Luna Low",
+      "conditional document rerun at Luna Medium",
+      "independent review with unchanged rubric",
+      "fresh development validation",
+      "separately authorized held-out evaluation before claims"
+    ],
+    "freshDevelopmentCaseIds": ["research-mdn-csp", "documents-budget-xlsx"],
+    "maximumNewReservationUSD": 0.012,
+    "costRule": "full sunk plus repair cost to independently acceptable result",
+    "premiumEscalationAuthorized": false
+  },
+  "integrity": {
+    "researchMemoSha256": "2631acf26ce940edbe61af7ed70de66abef8edd4e0107397ed22613d3933482f",
+    "documentBriefSha256": "d7c43b4897cbea4d4a516708dae371634cb97c41f4e957c2b9e2029b99b25e44",
+    "documentSha256": "b0a28f87c83c0f81f6ea2e096527d4a86b5ae787bfc1040d732ed82354f2becd",
+    "jevRunReceiptSha256": "2879f01eb1ac3589284f797bf2dfeecfc4b7d8210eb8ed889c756068e0ba3a1a"
+  }
+}

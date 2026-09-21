@@ -95,6 +95,12 @@ unconfigured model. Routes record optional `effort`; omission means provider
 default. Model profiles expose advertised `supportedEfforts` and per-effort
 `effortProfiles` evidence. Provider catalog refresh owns supported levels.
 
+Task input may include `modelOverride` and `effortOverride`. A fixed effort requires
+an explicit model, and the chosen level must be advertised by that model. Invalid
+or unavailable combinations block; they do not select another model silently.
+An explicit model bypasses Jev routing, while assist-mode content review remains
+enabled. The development harness uses this path for comparable fixed baselines.
+
 ## Shared worker tools
 
 These are model-facing tool calls through the adapters, not unauthenticated HTTP

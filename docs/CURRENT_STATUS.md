@@ -2,17 +2,19 @@
 
 Updated September 21, 2026.
 
-The desktop maintenance release is **0.1.3**. Its release assets and verification
-record are published with the matching GitHub release. iOS and benchmark harness
-integration remain separate development work.
+The desktop maintenance release is **0.1.4**. Its release assets and verification
+record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
+development work.
 
 ## Desktop reliability
 
-The maintenance branch adds a five-minute worker inactivity limit and a clear
+Version 0.1.3 added a five-minute worker inactivity limit and a clear
 message when a previously reviewed file is missing. Active tools and approval
 waits suspend the inactivity timer. Saved work survives; infrastructure timeouts
-do not count as model quality failures. All 187 local tests, TypeScript and the
-production build passed. See [the follow-up](RELIABILITY_FOLLOWUP.md).
+do not count as model quality failures. That release passed 187 local tests, TypeScript and the
+production build. The 0.1.4 source passes 199 tests and includes source-revision
+markers, Word table boundaries and symmetric content review for explicit model
+choices. See [the follow-up](RELIABILITY_FOLLOWUP.md).
 
 ## Live workflow validation
 
@@ -48,10 +50,26 @@ measure the full cost of an adaptive workflow that corrects mistakes. The origin
 pilot also had unequal automatic review behavior; it must not be presented as a
 controlled cost comparison. Neither pilot used the held-out benchmark cases.
 
-Next: audit prompt clarity and tool-provided evidence, investigate whether source
-extraction preserved obsolete-text markings, and measure bounded repair with
-specific feedback, higher effort or a different model. Validate improvements on
-fresh cases. No automatic premium fallback is introduced by this investigation.
+The [failure audit and protocol](FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)
+records source-formatting loss, Word table extraction and a real worker ownership
+error. Controlled reruns preserve the original outputs and costs. They do not
+change the original first-attempt results or introduce a premium fallback.
+
+## Bounded follow-up validation
+
+The [follow-up report](BOUNDED_VALIDATION_20260921.md) records five new runs.
+Research passed at Luna Low after source-extraction repair. The document still
+failed at Low and passed at Medium. Two fresh development cases passed at fixed
+Luna Medium. Including the original four-case run and every rerun, the combined
+worker API-equivalent and Jev proxy was $0.06726648, versus about $1.42 and $1.76
+for the original Astra baselines.
+
+Those are operator-directed clean reruns, not demonstrated automatic recovery.
+Independent review was not blinded, its offline cost is excluded, and the fresh
+pair has no strong-model comparison. Jev remained unverified overall and missed
+the document association in a high-probability support judgment. The results
+support the economic premise within this sample; broader savings, calibrated
+review and attributable subscription allowance savings remain unestablished.
 
 ## iOS companion
 
