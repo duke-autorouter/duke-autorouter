@@ -1,7 +1,12 @@
-import type { ReviewEvidence } from './task-evidence.js';
+import type { ReviewEvidence } from "./task-evidence.js";
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v5';
-export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
+export const FOCUSED_REVIEW_POLICY = "duke-focused-review-v6";
+export type ReviewPassage = {
+  id: string;
+  path: string;
+  text: string;
+  facet?: "ownership";
+};
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {
   passages: ReviewPassage[];
@@ -17,7 +22,7 @@ export function passages(text: string, width = 700): string[] {
     const line = raw.trim();
     if (/^(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])$/.test(line)) continue;
     if (lines.length && /^[a-z]/.test(line) && !/[.!?:;]$/.test(lines.at(-1)!))
-      lines[lines.length - 1] += ' ' + line;
+      lines[lines.length - 1] += " " + line;
     else lines.push(line);
   }
   return lines.flatMap((line) => {
@@ -36,8 +41,10 @@ export function focusReview(evidence: ReviewEvidence): FocusedReview {
   );
   const outputs = textFiles.length
     ? textFiles.map((f) => ({ path: f.path, text: f.text! }))
-    : [{ path: 'response', text: evidence.result }];
-  const all = outputs.flatMap((f) => passages(f.text).map((text) => ({ path: f.path, text })));
+    : [{ path: "response", text: evidence.result }];
+  const all = outputs.flatMap((f) =>
+    passages(f.text).map((text) => ({ path: f.path, text })),
+  );
   const outputPaths = new Set(evidence.files.map((f) => f.path));
   const sources: ReviewSource[] = (
     evidence.resolutionSources ?? [
@@ -49,12 +56,16 @@ export function focusReview(evidence: ReviewEvidence): FocusedReview {
   const boundedSources = sources.slice(0, 12).map((source) => {
     const text = source.text.slice(0, Math.min(budget, 32000));
     budget -= text.length;
-    return { ...source, text, incomplete: !!source.incomplete || text.length < source.text.length };
+    return {
+      ...source,
+      text,
+      incomplete: !!source.incomplete || text.length < source.text.length,
+    };
   });
   return {
     passages: all.slice(0, 24).flatMap((p, i) => [
       { id: `claim_${i}`, ...p },
-      { id: `claim_${i}_ownership`, ...p, facet: 'ownership' as const },
+      { id: `claim_${i}_ownership`, ...p, facet: "ownership" as const },
     ]),
     sources: boundedSources,
     complete:
@@ -67,7 +78,11 @@ export function focusReview(evidence: ReviewEvidence): FocusedReview {
 
 // Rank literal source windows locally. No network requests, worker invocation,
 // file discovery, or generated interpretation is allowed in this second pass.
-export function sourceWindows(claim: string, sources: ReviewSource[], expanded = false) {
+export function sourceWindows(
+  claim: string,
+  sources: ReviewSource[],
+  expanded = false,
+) {
   const words = new Set(claim.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) ?? []);
   const width = expanded ? 1800 : 900;
   const candidates = sources.flatMap((s) => {
@@ -79,7 +94,9 @@ export function sourceWindows(claim: string, sources: ReviewSource[], expanded =
     }> = [];
     for (let offset = 0; offset < s.text.length; offset += width / 2) {
       const text = s.text.slice(offset, offset + width);
-      const terms = new Set(text.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) ?? []);
+      const terms = new Set(
+        text.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) ?? [],
+      );
       result.push({
         path: s.path,
         offset,
@@ -89,14 +106,18 @@ export function sourceWindows(claim: string, sources: ReviewSource[], expanded =
     }
     return result;
   });
-  const selected = candidates.sort((a, b) => b.score - a.score).slice(0, expanded ? 4 : 2);
+  const selected = candidates
+    .sort((a, b) => b.score - a.score)
+    .slice(0, expanded ? 4 : 2);
   return selected.map(({ score: _score, ...window }) => window);
 }
 
 // Only parse literal assignment-shaped text. These are candidate claims, never facts.
-export function ownershipClaim(text: string): { item: string; person: string } | undefined {
+export function ownershipClaim(
+  text: string,
+): { item: string; person: string } | undefined {
   if (/\b(proposal|proposed|suggested|suggestion)\b/i.test(text)) return;
-  const clean = text.replace(/^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])?\s*/, '');
+  const clean = text.replace(/^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])?\s*/, "");
   const match =
     clean.match(/^(.+?)\s+[—–]\s+([^;()]+)(?:\([^)]*\))?(?:;.*)?$/) ??
     clean.match(
@@ -105,7 +126,11 @@ export function ownershipClaim(text: string): { item: string; person: string } |
   if (!match) return;
   const item = match[1].trim(),
     person = match[2].trim();
-  if (!item || !person || /^(?:TBD|unknown|unassigned|unresolved|not assigned)$/i.test(person))
+  if (
+    !item ||
+    !person ||
+    /^(?:TBD|unknown|unassigned|unresolved|not assigned)$/i.test(person)
+  )
     return;
   return { item, person };
 }
@@ -113,3 +138,35 @@ export const unresolvedChecklistAction = (text: string) =>
   /^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])\s*.+?[—–]\s*(?:TBD|unknown|unassigned)\s*;\s*unresolved\s*$/i.test(
     text,
   );
+
+// These are verifier observations about this run, not factual sources for a
+// deliverable. Keep them separate from source windows and worker-authored text.
+export function executionObservations(evidence: ReviewEvidence) {
+  const checks = evidence.checks.filter(
+    (c) => !c.judgment && !c.name.startsWith("Jev:"),
+  );
+  let remaining = 16000;
+  let truncated = checks.length > 24 || evidence.files.length > 20;
+  const observedChecks = checks.slice(0, 24).map((c) => {
+    const detail = c.detail.slice(0, Math.min(6000, remaining));
+    remaining -= detail.length;
+    truncated ||= detail.length < c.detail.length || c.name.length > 300;
+    return { name: c.name.slice(0, 300), status: c.status, detail };
+  });
+  const files = evidence.files.slice(0, 20).map((f) => {
+    truncated ||= f.path.length > 1000;
+    return {
+      path: f.path.slice(0, 1000),
+      sha256: f.sha256,
+      bytes: f.bytes,
+      inspectionIncomplete: f.incomplete,
+    };
+  });
+  return {
+    scope:
+      "Current task verifier observations, not worker assertions or source facts",
+    checks: observedChecks,
+    files,
+    truncated,
+  };
+}
