@@ -2,9 +2,21 @@
 
 Updated September 21, 2026.
 
-The desktop maintenance release is **0.1.5**. Its release assets and verification
+The desktop maintenance release is **0.1.6**. Its release assets and verification
 record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
 development work.
+
+## Focused error detection
+
+Version 0.1.6 adds requirement and passage checks, a separate ownership judgment,
+and one bounded evidence-resolution request. The [development report](FOCUSED_REVIEW_VALIDATION_20260921.md)
+retains all calibration runs. The final 20-case run detected ten planted defects;
+seven correct examples passed and two remained unverified, with no false failures.
+Missing source material stayed neutral. The original PDF owner error crossed the
+unchanged threshold in one final recheck; the correct PDF remained unverified.
+
+The source passes 217 tests. The recorded Jev API cost of all eight live diagnostic runs was $0.019950. No worker reran or repaired the saved PDFs. These repeated development
+cases establish a narrower observed improvement, not general detection accuracy.
 
 ## Automatic recovery and fresh comparison
 

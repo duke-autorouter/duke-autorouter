@@ -1,30 +1,38 @@
 # Version 0.1 release record
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
-The current maintenance release is 0.1.5. This page separates current checks from
+The current maintenance release is 0.1.6. This page separates current checks from
 historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 204 automated tests, TypeScript, the production
+- The integrated source passes 217 automated tests, TypeScript, the production
   build and evaluation-corpus validation. GitHub also scans source history for
   secrets on each push.
-- The 0.1.5 package passes 12 standalone checks with isolated state and no
+- The 0.1.6 package passes 12 standalone checks with isolated state and no
   developer PATH. These cover bundled workers and browser startup, native
   document tools, project setup, imports, persistence and restart. They do not
   call provider models.
-- Updating the installed app from 0.1.4 to 0.1.5 preserved all 14 saved tasks,
+- Updating the installed app from 0.1.5 to 0.1.6 preserved all 14 saved tasks,
   two projects, existing settings, preferences and selected models by hash comparison.
-  The new recovery effort ceiling defaults to Medium.
   The native window loaded the saved work and passed visual inspection.
 - The packaged application files match the generated build output. The
-  [distribution receipt](evidence/distribution-0.1.5-verification.json) records the
+  [distribution receipt](evidence/distribution-0.1.6-verification.json) records the
   signing, notarization, checksums and final package audit.
 - [The evidence audit](SOURCE_FIDELITY_AUDIT.md) records repaired web revision
   markers and Word table structure. The [diagnostic protocol](FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)
   holds task requirements fixed while separating tool changes from model effort.
 
-## Current live recovery checks
+## Current live detection checks
+
+The final focused-review development run detected ten planted defects with no
+false failures among nine correct examples. Two correct examples remained
+unverified. The saved PDF ownership error was identified in one final recheck;
+the correct PDF had no failed checks but remained unverified. The
+[full report](FOCUSED_REVIEW_VALIDATION_20260921.md) preserves earlier false alarms,
+all $0.019950 in recorded Jev API cost and the repeated-development-sample limits.
+
+## Earlier live recovery checks
 
 A controlled coding failure triggered a live Jev diagnosis and a same-model
 Luna Low-to-Medium repair that passed the original test. Final content review
@@ -39,7 +47,7 @@ Earlier 0.1 checks exercised Codex and Claude on coding, research, writing and
 basic documents. Fifteen browser workflows used synthetic workers. Nine Jev
 review diagnostics met their expected outcomes after the probability correction.
 These are scoped historical checks, not a fresh live validation of every adapter
-for 0.1.5. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
+for 0.1.6. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
 [workflow validation](CURRENT_STATUS.md#live-workflow-validation), and the
 [review-scoring record](REVIEW_SCORING.md).
 
