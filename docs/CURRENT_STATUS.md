@@ -114,3 +114,5 @@ Completed changes and evidence should be published through reviewable branches
 and pull requests as work progresses. Keep released downloads, development code
 and experimental findings explicitly distinguished. A release claim requires a
 matching packaged artifact and verification record.
+
+Latest completed evaluation: [frozen 0.1.6 validation](FROZEN_VALIDATION_20260921.md).
