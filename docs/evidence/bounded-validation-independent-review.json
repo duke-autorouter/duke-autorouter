@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-21",
+  "reviewMethod": {
+    "independentOfAutomaticVerdict": true,
+    "blinded": false,
+    "conditioningDisclosure": "The reviewer knew these were reruns of the two prior failed development cases and knew the earlier defect descriptions. Acceptance was judged from the saved outputs, frozen rubrics, original inputs and current primary sources; Jev verdicts were not used as acceptance decisions.",
+    "heldOutCasesOpened": false
+  },
+  "testedSource": {
+    "commit": "7939309d2d6a4cc5f7341fc1cf38affa3f6d14ee",
+    "dirty": false
+  },
+  "cases": [
+    {
+      "caseId": "research-sqlite-wal",
+      "phase": "research-source-low",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "artifact": {
+        "path": "research-sqlite-wal/report.md",
+        "sha256": "d66771a655c1d2343ec976cdd8e0a38777be50fd789a922f9a45f0ae80639f43"
+      },
+      "rubric": {
+        "claimsMatchOpenedPrimarySources": "pass",
+        "sourceLinksSupportClaims": "pass",
+        "uncertaintyExplicit": "pass",
+        "answersRequestedQuestion": "pass"
+      },
+      "factualBasis": [
+        "The memo correctly states that WAL permits concurrent readers and a writer but only one writer at a time.",
+        "It correctly describes reader snapshots, checkpoint starvation, WAL growth, checkpoint mode tradeoffs, host-local shared-memory constraints and documented SQLITE_BUSY cases.",
+        "It does not repeat the obsolete large-transaction guidance. Its practical conclusions are labeled as inference and its limits are explicit."
+      ],
+      "primarySources": [
+        "https://www.sqlite.org/wal.html",
+        "https://www.sqlite.org/lang_transaction.html",
+        "https://www.sqlite.org/c3ref/wal_checkpoint_v2.html"
+      ],
+      "executionObservations": {
+        "taskCompleted": true,
+        "workerAttempts": 1,
+        "workerRetries": 0,
+        "workerStages": 1,
+        "completedPublicSourceReads": 3,
+        "artifactSavedAndReopened": true,
+        "usageComplete": true,
+        "unreconciledAPIRequests": 0,
+        "automaticReviewStatus": "unverified",
+        "automaticReviewObservedOnly": true
+      },
+      "cost": {
+        "originalWorkerAPIEquivalentUSD": 0.01101952,
+        "rerunWorkerAPIEquivalentUSD": 0.00956912,
+        "cumulativeWorkerAPIEquivalentUSD": 0.02058864,
+        "originalActualBilledAPIUSD": 0.000588,
+        "rerunActualBilledAPIUSD": 0.000293,
+        "cumulativeActualBilledAPIUSD": 0.000881,
+        "cumulativeCombinedCostProxyUSD": 0.02146964,
+        "costReachedIndependentAcceptance": true
+      }
+    },
+    {
+      "caseId": "documents-handoff-docx",
+      "phase": "document-source-low",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "accepted": false,
+      "criticalFailure": true,
+      "corrections": 1,
+      "artifact": {
+        "path": "documents-handoff-docx/handoff.docx",
+        "sha256": "66e18c30158bcb8c2773a46d38284f16f09c3836a5cd79b118f420c449ce959a",
+        "renderedPagesInspected": 2
+      },
+      "rubric": {
+        "opensInAppropriateViewer": "pass",
+        "preservesFactsAndArithmetic": "fail",
+        "requestedStructureAndConstraints": "pass",
+        "renderedLayoutLegible": "pass",
+        "noInventedCompletedOutcomes": "pass"
+      },
+      "criticalFinding": "The Owners and responsibilities table places 'participant trial has not yet been run' in Sam's Handoff responsibility / asset cell. The source brief assigns Sam only to operations and the sign-in sheet; it gives the participant-trial status no owner. The saved table therefore repeats the unsupported Sam/trial association. A separate unowned status list elsewhere does not remove the table-level association.",
+      "executionObservations": {
+        "taskCompleted": true,
+        "workerAttempts": 1,
+        "workerRetries": 0,
+        "workerStages": 1,
+        "briefReadCompleteAndUntruncated": true,
+        "structuredTableSelfCheckCompleted": true,
+        "completedQuickLookPreviews": 2,
+        "artifactSavedAndReopened": true,
+        "usageComplete": true,
+        "unreconciledAPIRequests": 0,
+        "automaticReviewStatus": "unverified",
+        "automaticReviewSupportChoice": "pass",
+        "automaticReviewSupportProbability": 0.9,
+        "automaticReviewObservedOnly": true
+      },
+      "cost": {
+        "originalWorkerAPIEquivalentUSD": 0.0061016,
+        "rerunWorkerAPIEquivalentUSD": 0.00782268,
+        "cumulativeWorkerAPIEquivalentUSD": 0.01392428,
+        "originalActualBilledAPIUSD": 0.000137,
+        "rerunActualBilledAPIUSD": 0.000136,
+        "cumulativeActualBilledAPIUSD": 0.000273,
+        "cumulativeCombinedCostProxyUSD": 0.01419728,
+        "costReachedIndependentAcceptance": false
+      },
+      "nextProtocolStep": "Run the preregistered clean document case at the same Luna model with Medium effort; keep the task, structured evidence environment and independent acceptance rubric unchanged."
+    },
+    {
+      "caseId": "documents-handoff-docx",
+      "phase": "document-medium",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "medium",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "artifact": {
+        "path": "documents-handoff-docx/handoff.docx",
+        "sha256": "446963b127af5f1501353ea924271fe51f4bb7f8f931e2dc760b05f27d083b51",
+        "renderedPagesInspected": 2
+      },
+      "rubric": {
+        "opensInAppropriateViewer": "pass",
+        "preservesFactsAndArithmetic": "pass",
+        "requestedStructureAndConstraints": "pass",
+        "renderedLayoutLegible": "pass",
+        "noInventedCompletedOutcomes": "pass"
+      },
+      "factualBasis": [
+        "The owners table limits Ana, Lee and Sam to the roles and assets assigned in the brief. The participant-trial status is now a separate unowned status item.",
+        "The dates, decision, open accessibility question, status items and 300 plus 400 plus 200 equals 900 budget are present.",
+        "The launch date is explicitly labeled a target rather than a commitment, and no completed trial or source review is invented.",
+        "Both rendered pages are readable without clipping or an unintended blank page. The budget table continues across the page boundary with a repeated header."
+      ],
+      "interpretationNote": "The document normalizes the kickoff and review into the same 2026 project sequence as the dated launch target and labels them scheduled. This does not contradict the supplied sequence or invent a completed outcome; the launch remains explicitly noncommittal.",
+      "executionObservations": {
+        "taskCompleted": true,
+        "workerAttempts": 1,
+        "workerRetries": 0,
+        "workerStages": 1,
+        "briefReadCompleteAndUntruncated": true,
+        "structuredTableSelfCheckCompleted": true,
+        "completedQuickLookPreviews": 2,
+        "artifactSavedAndReopened": true,
+        "usageComplete": true,
+        "unreconciledAPIRequests": 0,
+        "automaticReviewStatus": "unverified",
+        "automaticReviewSupportChoice": "pass",
+        "automaticReviewSupportProbability": 0.93,
+        "automaticReviewObservedOnly": true
+      },
+      "cost": {
+        "originalWorkerAPIEquivalentUSD": 0.0061016,
+        "lowRerunWorkerAPIEquivalentUSD": 0.00782268,
+        "mediumRerunWorkerAPIEquivalentUSD": 0.01008356,
+        "cumulativeWorkerAPIEquivalentUSD": 0.02400784,
+        "originalActualBilledAPIUSD": 0.000137,
+        "lowRerunActualBilledAPIUSD": 0.000136,
+        "mediumRerunActualBilledAPIUSD": 0.000127,
+        "cumulativeActualBilledAPIUSD": 0.0004,
+        "cumulativeCombinedCostProxyUSD": 0.02440784,
+        "costReachedIndependentAcceptance": true
+      }
+    }
+  ],
+  "decision": {
+    "researchMediumRun": "skip",
+    "documentMediumRun": "completed-and-accepted",
+    "freshDevelopmentValidation": "completed-two-of-two-accepted-at-medium",
+    "reason": "The corrected-evidence research case passed at Low. The corrected-evidence document case failed at Low but passed the unchanged rubric at Medium. The preregistered lowest shared passing effort was therefore Medium. Both untouched fresh development cases then passed independent review at operator-fixed Luna Medium. This is a two-case validation result, not evidence for automatic routing or general quality-preserving savings."
+  },
+  "freshValidation": {
+    "costsSeparateFromRepairedCohort": true,
+    "operatorFixedModelAndEffort": true,
+    "routingSelectionTested": false,
+    "heldOutCasesOpened": false,
+    "testedSource": {
+      "commit": "7939309d2d6a4cc5f7341fc1cf38affa3f6d14ee",
+      "dirty": false
+    },
+    "cases": [
+      {
+        "caseId": "research-mdn-csp",
+        "modelId": "codex:gpt-5.6-luna",
+        "effort": "medium",
+        "accepted": true,
+        "criticalFailure": false,
+        "corrections": 0,
+        "artifact": {
+          "path": "research-mdn-csp/report.md",
+          "sha256": "ac83f326fb50cb089fe822bbe9d35d7777eee1cce25b99feec0e5daa7fcc81e3"
+        },
+        "rubric": {
+          "claimsMatchOpenedPrimarySources": "pass",
+          "sourceLinksSupportClaims": "pass",
+          "uncertaintyExplicit": "pass",
+          "answersRequestedQuestion": "pass"
+        },
+        "factualBasis": [
+          "The report correctly distinguishes a CSP sandbox applied by the document owner from an iframe sandbox applied by the embedder.",
+          "It accurately explains opaque-origin behavior without allow-same-origin, the allow-scripts plus allow-same-origin warning, and important limits of sandboxing.",
+          "Operational recommendations and browser-behavior caveats are labeled as recommendations or inferences rather than measured outcomes."
+        ],
+        "primarySources": [
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/sandbox",
+          "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox",
+          "https://html.spec.whatwg.org/multipage/iframe-embed-object.html#attr-iframe-sandbox",
+          "https://www.w3.org/TR/CSP3/#directive-sandbox"
+        ],
+        "executionObservations": {
+          "taskCompleted": true,
+          "workerAttempts": 1,
+          "workerRetries": 0,
+          "workerStages": 1,
+          "completedPublicSourceReads": 9,
+          "usageComplete": true,
+          "unreconciledAPIRequests": 0,
+          "automaticReviewStatus": "unverified",
+          "automaticReviewBriefChoice": "unknown",
+          "automaticReviewBriefProbability": 0.38,
+          "automaticReviewSupportChoice": "fail",
+          "automaticReviewSupportProbability": 0.39,
+          "automaticReviewCompletionChoice": "fail",
+          "automaticReviewCompletionProbability": 0.5,
+          "automaticReviewObservedOnly": true
+        },
+        "cost": {
+          "workerUsage": {
+            "inputTokens": 290494,
+            "outputTokens": 2500,
+            "cachedInputTokens": 235776,
+            "cacheWriteInputTokens": 0
+          },
+          "workerAPIEquivalentUSD": 0.01865912,
+          "actualBilledAPIUSD": 0.000533,
+          "combinedCostProxyUSD": 0.01919212
+        }
+      },
+      {
+        "caseId": "documents-budget-xlsx",
+        "modelId": "codex:gpt-5.6-luna",
+        "effort": "medium",
+        "accepted": true,
+        "criticalFailure": false,
+        "corrections": 0,
+        "artifact": {
+          "path": "documents-budget-xlsx/budget.xlsx",
+          "sha256": "0a22d1659cb12b90af343ae8f9de0a5175359871d90bf4960770991d0f7af42c",
+          "renderedSheetsInspected": 2
+        },
+        "rubric": {
+          "opensInAppropriateViewer": "pass",
+          "preservesFactsAndArithmetic": "pass",
+          "requestedStructureAndConstraints": "pass",
+          "renderedLayoutLegible": "pass",
+          "noInventedCompletedOutcomes": "pass"
+        },
+        "factualBasis": [
+          "The Budget sheet preserves Materials 300, Venue 400 and Printing 200, with B6 equal to SUM(B3:B5) and a recalculated value of 900.",
+          "The Project Notes sheet preserves the supplied owners, dates, target qualification, decision, open question, assets and status facts without adding completed outcomes.",
+          "Both rendered sheets are readable without clipping or unintended blank output, and the workbook contains no spreadsheet formula errors."
+        ],
+        "executionObservations": {
+          "taskCompleted": true,
+          "workerAttempts": 3,
+          "workerRetries": 0,
+          "workerStages": 3,
+          "workbookSheets": 2,
+          "workbookTables": 2,
+          "formulasRecalculated": 1,
+          "formulaErrors": 0,
+          "renderedSheetsInspected": 2,
+          "usageComplete": true,
+          "unreconciledAPIRequests": 0,
+          "automaticReviewStatus": "unverified",
+          "automaticReviewSupportChoice": "pass",
+          "automaticReviewSupportProbability": 0.64,
+          "automaticReviewObservedOnly": true
+        },
+        "cost": {
+          "workerUsage": {
+            "inputTokens": 389302,
+            "outputTokens": 2353,
+            "cachedInputTokens": 276992,
+            "cacheWriteInputTokens": 0
+          },
+          "workerAPIEquivalentUSD": 0.03082544,
+          "actualBilledAPIUSD": 0.0001,
+          "combinedCostProxyUSD": 0.03092544
+        }
+      }
+    ],
+    "aggregate": {
+      "acceptedCases": 2,
+      "totalCases": 2,
+      "workerAPIEquivalentUSD": 0.04948456,
+      "actualBilledAPIUSD": 0.000633,
+      "combinedCostProxyUSD": 0.05011756
+    },
+    "interpretation": "Both fresh development cases passed independent review at the preregistered shared effort. Two cases are too few to establish generalization, quality-preserving savings or a routing policy."
+  },
+  "costAccountingBoundary": {
+    "failedOriginalAttemptsRetained": true,
+    "cleanRerunsAddedToSunkCost": true,
+    "freshValidationCostsIncludedInRepairedCohort": false,
+    "freshValidationCostsReportedSeparately": true,
+    "subscriptionWorkerEquivalentIsNotActualSubscriptionCharge": true
+  }
+}

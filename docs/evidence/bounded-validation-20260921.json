@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-09-21",
+  "scope": "Bounded repair and fresh development validation for the corrected four-case pilot",
+  "testedSourceCommit": "7939309d2d6a4cc5f7341fc1cf38affa3f6d14ee",
+  "sourceDirty": false,
+  "protocol": {
+    "originalArtifactsPreserved": true,
+    "cleanWorkspacesUsed": true,
+    "sameFrozenTasksAndRubricsForRepairs": true,
+    "operatorFixedModels": true,
+    "automaticRoutingTested": false,
+    "jevVerdictsUsedForAcceptance": false,
+    "heldOutCasesOpened": false
+  },
+  "failureAudit": {
+    "research-sqlite-wal": {
+      "originalVerdict": "rejected",
+      "detail": "The browser extraction removed deletion semantics from obsolete SQLite guidance, so the worker saw obsolete and corrected statements adjacent without their revision relationship. The automatic reviewer remained unverified and did not identify the defect.",
+      "causeClassification": "demonstrated source-fidelity confound; primary cause not established"
+    },
+    "documents-handoff-docx": {
+      "originalVerdict": "rejected",
+      "primaryCause": "worker synthesis error compounded by weak table-aware checking",
+      "detail": "The worker had the complete brief but placed the unowned participant-trial status in Sam's table row. The original self-check flattened row and cell boundaries, and the preview evidence was incomplete."
+    }
+  },
+  "repairRuns": [
+    {
+      "caseId": "research-sqlite-wal",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "workerAPIEquivalentUSD": 0.00956912,
+      "actualBilledAPIUSD": 0.000293,
+      "artifactSha256": "d66771a655c1d2343ec976cdd8e0a38777be50fd789a922f9a45f0ae80639f43"
+    },
+    {
+      "caseId": "documents-handoff-docx",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "low",
+      "accepted": false,
+      "criticalFailure": true,
+      "corrections": 1,
+      "workerAPIEquivalentUSD": 0.00782268,
+      "actualBilledAPIUSD": 0.000136,
+      "artifactSha256": "66e18c30158bcb8c2773a46d38284f16f09c3836a5cd79b118f420c449ce959a"
+    },
+    {
+      "caseId": "documents-handoff-docx",
+      "modelId": "codex:gpt-5.6-luna",
+      "effort": "medium",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "workerAPIEquivalentUSD": 0.01008356,
+      "actualBilledAPIUSD": 0.000127,
+      "artifactSha256": "446963b127af5f1501353ea924271fe51f4bb7f8f931e2dc760b05f27d083b51"
+    }
+  ],
+  "repairedOriginalCohort": {
+    "eventuallyAcceptedCases": 4,
+    "totalCases": 4,
+    "originalWorkerAPIEquivalentUSD": 0.03791312,
+    "repairWorkerAPIEquivalentUSD": 0.02747536,
+    "fullWorkerAPIEquivalentUSD": 0.06538848,
+    "originalActualBilledAPIUSD": 0.001322,
+    "repairActualBilledAPIUSD": 0.000556,
+    "fullActualBilledAPIUSD": 0.001878,
+    "fullCombinedCostProxyUSD": 0.06726648,
+    "includesFailedAttempts": true,
+    "offlineIndependentReviewLaborIncluded": false,
+    "interpretation": "All four original development cases eventually reached independent acceptance after two targeted repairs and one failed intermediate repair. This is manual recovery evidence, not an automatic-routing result."
+  },
+  "originalBaselines": {
+    "strong-medium": {
+      "acceptedCases": 4,
+      "totalCases": 4,
+      "workerAPIEquivalentUSD": 1.42109,
+      "actualBilledAPIUSD": 0.000557,
+      "unresolvedAPIRequests": 1,
+      "reservedAPIUSD": 0.001453,
+      "combinedCostProxyLowerBoundUSD": 1.421647,
+      "combinedCostProxyUpperBoundUSD": 1.4231
+    },
+    "strong-ultra": {
+      "sourceLabel": "strong-max",
+      "acceptedCases": 4,
+      "totalCases": 4,
+      "workerAPIEquivalentUSD": 1.757092,
+      "actualBilledAPIUSD": 0.000618,
+      "combinedCostProxyUSD": 1.75771
+    }
+  },
+  "descriptiveCostComparison": {
+    "repairedCohortVersusStrongMediumLowerBoundPercentLower": 95.268412,
+    "repairedCohortVersusStrongMediumUpperBoundPercentLower": 95.273243,
+    "repairedCohortVersusStrongUltraPercentLower": 96.173062,
+    "claimLimit": "Descriptive comparison on four development cases only. It does not establish quality-preserving savings, generalization or production economics."
+  },
+  "freshValidation": {
+    "modelId": "codex:gpt-5.6-luna",
+    "effort": "medium",
+    "selectionSource": "manual",
+    "acceptedCases": 2,
+    "totalCases": 2,
+    "workerAPIEquivalentUSD": 0.04948456,
+    "actualBilledAPIUSD": 0.000633,
+    "combinedCostProxyUSD": 0.05011756,
+    "costsIncludedInRepairedOriginalCohort": false,
+    "cases": [
+      {
+        "caseId": "research-mdn-csp",
+        "accepted": true,
+        "criticalFailure": false,
+        "corrections": 0,
+        "workerAPIEquivalentUSD": 0.01865912,
+        "actualBilledAPIUSD": 0.000533,
+        "artifactSha256": "ac83f326fb50cb089fe822bbe9d35d7777eee1cce25b99feec0e5daa7fcc81e3"
+      },
+      {
+        "caseId": "documents-budget-xlsx",
+        "accepted": true,
+        "criticalFailure": false,
+        "corrections": 0,
+        "workerAPIEquivalentUSD": 0.03082544,
+        "actualBilledAPIUSD": 0.0001,
+        "artifactSha256": "0a22d1659cb12b90af343ae8f9de0a5175359871d90bf4960770991d0f7af42c"
+      }
+    ],
+    "claimLimit": "Two fresh development cases passed independent review. This is insufficient to establish generalization or an automatic routing policy."
+  },
+  "conclusion": {
+    "boundedRepairSuccessful": true,
+    "freshPairPassed": true,
+    "automaticRoutingValidated": false,
+    "qualityPreservingSavingsEstablished": false,
+    "productionReadinessEstablished": false,
+    "nextEvidenceNeeded": "A preregistered, materially larger untouched test set with operator-independent routing, symmetric review and full cost receipts."
+  },
+  "reviewBoundary": {
+    "blinded": false,
+    "offlineIndependentReviewLaborAndModelUsageIncludedInProxy": false,
+    "singleStochasticRerunsEstablishCausality": false,
+    "freshStrongBaselineRun": false,
+    "apiCostMeaning": "Settled metered API cost recorded by the harness; not independently reconciled invoices."
+  }
+}

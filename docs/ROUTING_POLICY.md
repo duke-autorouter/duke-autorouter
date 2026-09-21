@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
-Updated September 20, 2026. Policy identifiers: `duke-routing-v9`, `duke-efficiency-v2` and
-`duke-review-v3`. This document describes implemented behavior, not measured
+Updated September 21, 2026. Policy identifiers: `duke-routing-v10`, `duke-efficiency-v2` and
+`duke-review-v4`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -35,8 +35,9 @@ flowchart TD
 Jev classifies coding, research, writing or documents, identifies the specific work type (for example UI, debugging or editing), and scores routine,
 standard or complex reasoning. The normal path uses two sequential requests:
 assessment, then model choice. A third request reviews completed work. Independent
-review questions are batched together. Diagnostic Off/Shadow and explicit manual
-worker selections do not perform an automatic Jev content review.
+review questions are batched together. Diagnostic Off/Shadow modes do not perform
+automatic content review. An explicit worker selection bypasses routing but still
+receives content review when Jev is in assist mode.
 
 Routing includes up to 6,000 prompt characters, 1,000 expected-result characters,
 selected attachment excerpts (2,000 each / 8,000 total), root-level project
@@ -163,6 +164,10 @@ success. Deterministic failures are handled before asking Jev to judge content.
 | Research | Source URLs must have retrieved-body receipts from `web_read` or `browser` when web/browser research is requested; Jev assesses whether the excerpts support material claims. Search snippets alone do not qualify. URLs in code examples or source-code artifacts are not treated as citations. |
 | Writing | Jev checks the requested brief, factual support and completeness against bounded task inputs and outputs. |
 | Documents | Required files, core Office XML/text or PDF page structure; Jev checks readable content against the brief. Generated PDF text is used only while its bytes match the generation receipt. |
+
+Word text preserves table, row and cell boundaries. Public web text preserves
+semantic deletion and insertion markers; visual styling supplied only through CSS
+is not recovered. These cues are source evidence, not trusted instructions.
 
 Office ZIP inspection bounds compressed/expanded sizes, validates inspected XML
 checksums, and never extracts files or executes macros. Binary formats, oversized

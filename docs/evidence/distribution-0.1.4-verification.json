@@ -1,0 +1,88 @@
+{
+  "release": "0.1.4",
+  "verifiedAt": "2026-09-21",
+  "packageSourceCommit": "3018d6752bde0e242f1f27300ab4c71a54e2d182",
+  "liveDiagnosticSourceCommit": "7939309d2d6a4cc5f7341fc1cf38affa3f6d14ee",
+  "platform": "darwin-arm64",
+  "localSourceTests": {
+    "passed": 199,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "standaloneChecks": {
+    "unsignedDevelopmentPackagePassed": 12,
+    "developerIDSignedPackagePassed": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 945,
+    "mismatches": [],
+    "scope": "Generated server/shared trees, dist, bundled skills, package files and third-party notice"
+  },
+  "notarization": {
+    "submissionId": "d8d6e18f-a6d5-431d-8d55-227b5736c66a",
+    "status": "Accepted and stapled"
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG app and Applications shortcut",
+    "preserved upstream Claude signature"
+  ],
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.4-mac-arm64.dmg",
+      "sha256": "3bbe3c6c0044c4315c215998cac3deb4a110bcecc0eb1fb3aeb11e79990fbdc2"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.4-mac-arm64.zip",
+      "sha256": "b62e541e0776f7dcd35d1d36645394886938561ecce0540b5633faf3537cc6bf"
+    }
+  ],
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "secrets": {
+    "gitleaks": "8.30.1; full history, tracked files and commit metadata passed",
+    "knownCredentialsCompared": 8,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1138,
+        "readErrors": 0
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19752,
+        "readErrors": 0
+      },
+      {
+        "scope": "download-metadata",
+        "files": 2,
+        "readErrors": 0
+      }
+    ],
+    "matches": 0,
+    "limits": "Known-value comparison is not exhaustive; source scanning does not replace package inspection."
+  },
+  "liveDiagnostics": {
+    "runs": 5,
+    "researchLowAccepted": true,
+    "documentLowAccepted": false,
+    "documentMediumAccepted": true,
+    "freshMediumAccepted": 2,
+    "freshMediumTotal": 2,
+    "operatorDirected": true
+  },
+  "limits": [
+    "No second physical Mac validation",
+    "No new installed-profile native-window check for this build",
+    "No successful recorded OpenRouter live worker result",
+    "No general automatic-recovery or subscription-savings claim"
+  ]
+}

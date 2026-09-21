@@ -11,16 +11,22 @@ chooses an eligible model and supported reasoning effort, and reviews the result
 
 DUKE aims to use only the model capability and reasoning effort a task needs.
 That applies to subscription capacity as well as API spending. A small development comparison found substantially lower model-priced cost with
-automatic routing, alongside quality failures that still need correction. See
+automatic routing, alongside quality failures. Follow-up checks separate tool
+evidence problems from model effort and retain the cost of failed attempts. See
 [current development status](docs/CURRENT_STATUS.md) for the results, limitations,
 and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.3 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.3/DUKE-Autorouter-0.1.3-mac-arm64.dmg).
+The current prerelease is **0.1.4 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.4/DUKE-Autorouter-0.1.4-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.4 preserves source revision cues and Word table structure in tool
+evidence. Explicit model choices now retain Jev content review. The repository
+also includes the cost-comparison harness and bounded development checks. See the
+[evidence audit](docs/SOURCE_FIDELITY_AUDIT.md).
 
 Version 0.1.3 adds worker inactivity protection and clearer recovery when reviewed
 files are missing. See the [reliability follow-up](docs/RELIABILITY_FOLLOWUP.md).
@@ -104,9 +110,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.2 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.3/DUKE-Autorouter-0.1.3-mac-arm64.dmg)**
+**[Download DUKE 0.1.4 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.4/DUKE-Autorouter-0.1.4-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.4)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -171,15 +177,19 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The release passes 182 automated tests and 12 standalone package checks. Another
-15 browser workflows exercise the app and files with synthetic workers. Live
-Codex and Claude checks cover coding, sourced research, writing, basic documents,
-fallback, and cancellation/resume. Nine live Jev diagnostic reviews passed their
-expected outcomes after a [scoring correction](docs/REVIEW_SCORING.md).
+The current source passes 199 automated tests. The 0.1.4 package passes 12
+standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
+synthetic workers; earlier live Codex and Claude checks cover coding, research,
+writing, basic documents, fallback, and cancellation/resume. These historical
+checks are not a fresh live test of every provider on every release. Nine Jev
+diagnostic reviews passed their expected outcomes after a
+[scoring correction](docs/REVIEW_SCORING.md).
 The [verification record](docs/VERIFICATION.md) and [tool audit](docs/TOOL_AUDIT.md)
 include the failures, fixes, sample outputs, and exact scope of those checks.
 
-Automatic reviews can remain incomplete when evidence or API capacity is missing.
+Automatic reviews can remain incomplete, and a confident individual judgment can
+miss a factual error. Independent development review remains necessary to measure
+quality; routine users are not asked to grade models.
 OpenRouter has no successful live worker result yet, and a second physical Mac
 has not been tested. Routing accuracy, resource savings, and multi-day reliability
 have not been established. Intel Macs, Windows, and Linux are not release-tested.

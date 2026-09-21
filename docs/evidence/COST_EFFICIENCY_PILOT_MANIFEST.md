@@ -15,7 +15,16 @@ This manifest separates public, reviewable evidence from private operating recei
 - `docs/evidence/corrected-cost-efficiency-pilot.json` is the privacy-safe corrected
   machine summary.
 
-## Exact implementation commits
+## Current public implementation
+
+The bounded validation ran from clean public commit
+[`7939309`](https://github.com/duke-autorouter/duke-autorouter/commit/7939309d2d6a4cc5f7341fc1cf38affa3f6d14ee).
+It includes web revision markers, Word table boundaries, symmetric content review
+and explicit fixed-effort development runs. The original comparison below used
+older local commits; their identifiers are retained as provenance, not links to
+public intermediate history.
+
+## Historical implementation commits
 
 The historical execution and report are preserved through:
 
@@ -63,6 +72,6 @@ on the model-priced proxy but passed only two of four cases. No quality-recovery
 occurred; Jev writing used three stages in its initial path and the other cases used one.
 These runs therefore do not measure the full adaptive cost of repair or escalation.
 
-The next investigation should inspect prompt, context and tool fidelity, evaluate a
-bounded same-model higher-effort repair for failed development work, and validate any
-tuned policy on fresh cases before opening the held-out set.
+The [failure audit and protocol](../FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)
+records the subsequent investigation. Keep its controlled reruns separate from the
+original first-attempt comparison.
