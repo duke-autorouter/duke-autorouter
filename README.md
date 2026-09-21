@@ -23,7 +23,9 @@ macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com
 This repository contains the source, tests, design decisions, and verification
 records.
 
-Version 0.1.7 checks specific claims and ownership relationships against source
+Version 0.1.7 gives focused response review the actual verifier receipts, fixing a false failure on correct coding work. Unavailable execution stays unverified. The [diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) records the live controls and remaining uncertainty.
+
+Version 0.1.6 checks specific claims and ownership relationships against source
 evidence. An uncertain passage can receive one focused follow-up review before
 DUKE decides whether a worker repair is justified. The [development checks](docs/FOCUSED_REVIEW_VALIDATION_20260921.md)
 include the original missed PDF error, correct examples and false alarms found
