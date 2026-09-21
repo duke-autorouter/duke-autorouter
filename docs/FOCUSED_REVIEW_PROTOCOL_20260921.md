@@ -29,3 +29,13 @@ incomplete. It explicitly distinguishes proposals from factual assertions.
 Freeze this change before repeating the original cases and six fresh transfer
 cases (owner assignments, approval status and proposed dates). Report the
 original 14 and fresh six separately. These remain development cases.
+
+## Third development run
+
+Version 2 removed false failures on the synthetic correct and missing-source
+cases, but the original PDF ownership claim stayed uncertain. Its negative
+verdict came from a different checklist item and is not evidence that the original
+error was caught. Version 3 adds a separate person-to-item ownership judgment,
+joins lower-case PDF continuation lines, and ignores empty checkbox-only rows.
+Re-run the same 20 fixtures and the two untouched saved PDFs. Keep all prior
+receipts and charges; do not claim these repeated cases are held out.

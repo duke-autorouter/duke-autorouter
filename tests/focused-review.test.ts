@@ -202,3 +202,16 @@ test('missing source keeps broad negative judgments neutral', async (t) => {
   assert.ok(checks.every((c) => c.status !== 'failed'));
   assert.equal(f.calls.length, 2);
 });
+
+test('PDF continuation lines retain their relation and empty checkbox rows are not claims', () => {
+  const e = evidence(
+    '☐ Small internal workshop: completion, owner and\ndate not supplied.\n- [ ]\nBudget $900.',
+  );
+  const plan = focusReview(e);
+  assert.equal(
+    plan.passages[0].text,
+    '☐ Small internal workshop: completion, owner and date not supplied.',
+  );
+  assert.equal(plan.passages[1].facet, 'ownership');
+  assert.ok(!plan.passages.some((p) => p.text === '- [ ]'));
+});

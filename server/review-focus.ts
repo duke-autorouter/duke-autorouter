@@ -1,7 +1,7 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v2';
-export type ReviewPassage = { id: string; path: string; text: string };
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v3';
+export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {
   passages: ReviewPassage[];
@@ -12,7 +12,15 @@ export type FocusedReview = {
 // Deterministic excerpts, not generated facts. Keep rows intact so ownership and
 // status relationships remain visible. A coverage limit must never imply success.
 export function passages(text: string, width = 700): string[] {
-  return text.split(/\n+/).flatMap((line) => {
+  const lines: string[] = [];
+  for (const raw of text.split(/\n+/)) {
+    const line = raw.trim();
+    if (/^(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])$/.test(line)) continue;
+    if (lines.length && /^[a-z]/.test(line) && !/[.!?:;]$/.test(lines.at(-1)!))
+      lines[lines.length - 1] += ' ' + line;
+    else lines.push(line);
+  }
+  return lines.flatMap((line) => {
     const trimmed = line.trim();
     if (!trimmed || /^[-| :]+$/.test(trimmed)) return [];
     const chunks: string[] = [];
@@ -44,7 +52,10 @@ export function focusReview(evidence: ReviewEvidence): FocusedReview {
     return { ...source, text, incomplete: !!source.incomplete || text.length < source.text.length };
   });
   return {
-    passages: all.slice(0, 24).map((p, i) => ({ id: `claim_${i}`, ...p })),
+    passages: all.slice(0, 24).flatMap((p, i) => [
+      { id: `claim_${i}`, ...p },
+      { id: `claim_${i}_ownership`, ...p, facet: 'ownership' as const },
+    ]),
     sources: boundedSources,
     complete:
       all.length <= 24 &&
