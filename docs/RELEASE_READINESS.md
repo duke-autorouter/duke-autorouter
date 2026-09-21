@@ -13,6 +13,9 @@ historical live coverage and the gaps that remain.
   developer PATH. These cover bundled workers and browser startup, native
   document tools, project setup, imports, persistence and restart. They do not
   call provider models.
+- Updating the installed app from 0.1.2 to 0.1.4 preserved all 14 saved tasks,
+  two projects, settings, preferences and selected models by hash comparison.
+  The native window loaded the saved work and passed visual inspection.
 - The packaged application files match the generated build output. The
   [distribution receipt](evidence/distribution-0.1.4-verification.json) records the
   signing, notarization, checksums and final package audit.

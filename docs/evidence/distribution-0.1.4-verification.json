@@ -81,8 +81,18 @@
   },
   "limits": [
     "No second physical Mac validation",
-    "No new installed-profile native-window check for this build",
     "No successful recorded OpenRouter live worker result",
     "No general automatic-recovery or subscription-savings claim"
-  ]
+  ],
+  "installedUpgrade": {
+    "fromVersion": "0.1.2",
+    "toVersion": "0.1.4",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskAndProjectContentHashesPreserved": true,
+    "settingsPreferencesAndEnabledModelHashesPreserved": true,
+    "nativeWindowLoadedAndVisuallyChecked": true,
+    "activeTasksBeforeUpdate": 0,
+    "source": "Verified notarized candidate; GitHub asset digests matched local downloads"
+  }
 }
