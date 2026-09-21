@@ -25,6 +25,8 @@ decision was documented when first made.
 | [Preserve task requirements and bound incomplete operations](adr/0015-task-revisions-and-bounded-checks.md) | Implemented for 0.1.2 | Follow-ups retain applicable tests, preparation has deadlines, and incomplete reviews can be retried without another worker run. |
 | [Check evidence before increasing model effort](adr/0016-evidence-fidelity-and-bounded-evaluation.md) | Implemented for 0.1.4; bounded development validation | Preserve source structure, compare equivalent review behavior, and count failed attempts. Controlled reruns do not prove automatic recovery. |
 
+| [Retry reasoning failures within explicit limits](adr/0017-bounded-same-model-recovery.md) | Implemented; live evaluation pending | Jev diagnoses the failure; a same-model effort step respects user limits and retains full costs. |
+
 ## What changed after testing
 
 - The identity settled on **DUKE Autorouter**, with DUKE meaning **Decides Using Knowledge and Evidence**. Exact combined-name screening informed the choice; it did not establish trademark clearance.

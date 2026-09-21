@@ -317,6 +317,19 @@ try {
   await page.getByLabel(/^Jev fallback model/).selectOption('fixture');
   await page.getByRole('button', { name: 'Save routing policy' }).click();
   await waitFor(async () => r.store.settings().jevFallbackModel === 'fixture');
+  await page.getByText('Advanced routing options', { exact: true }).click();
+  await page.getByLabel(/^Maximum automatic retries/).fill('1');
+  await page.getByLabel(/^Automatic repair effort ceiling/).selectOption('high');
+  await page.getByRole('button', { name: 'Save routing policy' }).click();
+  await waitFor(async () => r.store.settings().maxRecovery === 1 && r.store.settings().recoveryEffortCeiling === 'high');
+  await page.reload();
+  await page.getByRole('button', { name: 'Usage & routing' }).click();
+  await page.getByText('Advanced routing options', { exact: true }).click();
+  assert.equal(await page.getByLabel(/^Maximum automatic retries/).inputValue(), '1');
+  assert.equal(await page.getByLabel(/^Automatic repair effort ceiling/).inputValue(), 'high');
+  await page.screenshot({ path: 'outputs/recovery-settings.png', fullPage: true });
+  console.log('PASS recovery controls persist through the authenticated settings API and reload');
+
   // Exercise the actual Jev adapter and UI using a synthetic transport in this
   // temporary test app. No remote inference or personal workspace permission changes.
   let jevCalls = 0;

@@ -13,6 +13,7 @@ export function executionKey(store: Store) {
       JSON.stringify({
         maxSteps: s.maxSteps,
         maxRecovery: s.maxRecovery,
+        recoveryEffortCeiling: s.recoveryEffortCeiling,
         jevModel: s.jevModel,
         mode: s.jevMode,
         jevFallbackModel: s.jevFallbackModel ?? '',
@@ -50,6 +51,7 @@ export function rosterKey(store: Store) {
         ),
         qualityFloor: store.settings().qualityFloor,
         maxRecovery: store.settings().maxRecovery,
+        recoveryEffortCeiling: store.settings().recoveryEffortCeiling,
         maxSteps: store.settings().maxSteps,
         jevModel: store.settings().jevModel,
       }),

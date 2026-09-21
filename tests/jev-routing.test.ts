@@ -639,6 +639,7 @@ test('legacy evaluations do not imply complex-work coverage', () => {
         jevValidated: false,
         maxSteps: 24,
         maxRecovery: 2,
+        recoveryEffortCeiling: 'medium',
       }),
     /complex/,
   );
@@ -714,7 +715,7 @@ test('Jev receives only selected profiles with scoped work preferences and an ef
     assert.equal(selected.criteria.candidate_0.observedEfficiency, null);
     assert.equal(selected.criteria.candidate_1, undefined);
     assert.doesNotMatch(JSON.stringify(f.calls), /outside/);
-    assert.match(selected.instructions, /least total token consumption/);
+    assert.match(selected.instructions, /model-specific prices/);
     assert.equal(task.route?.modelId, 'selected');
   } finally {
     await f.close();
