@@ -17,7 +17,15 @@ const arg = (name: string) => {
   if (index < 0 || !process.argv[index + 1]) throw new Error(`Missing ${name}`);
   return process.argv[index + 1];
 };
-const arithmetic = process.argv.includes('--arithmetic-note');
+const deterministic = process.argv.includes('--deterministic-arithmetic');
+const arithmetic = deterministic || process.argv.includes('--arithmetic-note');
+const seedNote = 'Printing: $120. Signs: $80. Total: $250.\n';
+const seedJSON = JSON.stringify({ printing: 120, signs: 80, total: 250 }) + '\n';
+const verificationScript = `import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+assert.deepEqual(JSON.parse(readFileSync('total.json', 'utf8')), { printing: 120, signs: 80, total: 200 });
+console.log('Exact supplied costs and sum verified.');
+`;
 const out = resolve(arg('--out')),
   stateDir = resolve(arg('--state-dir'));
 const hash = (v: string | Buffer) => createHash('sha256').update(v).digest('hex');
@@ -44,7 +52,11 @@ const persist = () =>
         reviewPolicy: REVIEW_POLICY,
         developmentOnly: true,
         initialWorkerSynthetic: true,
-      probe: arithmetic ? 'arithmetic-note' : 'original-ownership-probe',
+        probe: deterministic
+          ? 'deterministic-arithmetic'
+          : arithmetic
+            ? 'arithmetic-note'
+            : 'original-ownership-probe',
         results,
         approvalsDenied,
       },
@@ -75,34 +87,36 @@ const monitor = setInterval(() => {
 await persist();
 try {
   // Negative and positive decision controls have known evidence; no worker is invoked.
-  for (const control of arithmetic ? [] : [
-    {
-      id: 'arithmetic',
-      expected: 'correction',
-      prompt: 'Using the supplied costs, write their total.',
-      source: 'Printing costs $120 and signs cost $80.',
-      output: 'The total is $250.',
-      failure: 'The sum must be $200; the output says $250.',
-    },
-    {
-      id: 'missing-decision',
-      expected: 'missing_context',
-      prompt:
-        'Name the person the user has selected as the final workshop owner. Do not propose an owner or leave this required decision unspecified.',
-      source: 'The user has not selected an owner. Only the user can make this decision.',
-      output: 'The owner is unspecified.',
-      failure: 'The required owner decision is absent.',
-    },
-    {
-      id: 'unavailable-tool',
-      expected: 'tool_failure',
-      prompt: 'Read the supplied PDF and summarize its contents.',
-      source:
-        'The native PDF reader is unavailable. No PDF text or alternate permitted reader is available.',
-      output: 'I could not read the PDF.',
-      failure: 'Execution receipt: PDF reader unavailable; no content was extracted.',
-    },
-  ]) {
+  for (const control of arithmetic
+    ? []
+    : [
+        {
+          id: 'arithmetic',
+          expected: 'correction',
+          prompt: 'Using the supplied costs, write their total.',
+          source: 'Printing costs $120 and signs cost $80.',
+          output: 'The total is $250.',
+          failure: 'The sum must be $200; the output says $250.',
+        },
+        {
+          id: 'missing-decision',
+          expected: 'missing_context',
+          prompt:
+            'Name the person the user has selected as the final workshop owner. Do not propose an owner or leave this required decision unspecified.',
+          source: 'The user has not selected an owner. Only the user can make this decision.',
+          output: 'The owner is unspecified.',
+          failure: 'The required owner decision is absent.',
+        },
+        {
+          id: 'unavailable-tool',
+          expected: 'tool_failure',
+          prompt: 'Read the supplied PDF and summarize its contents.',
+          source:
+            'The native PDF reader is unavailable. No PDF text or alternate permitted reader is available.',
+          output: 'I could not read the PDF.',
+          failure: 'Execution receipt: PDF reader unavailable; no content was extracted.',
+        },
+      ]) {
     const task = {
       id: control.id,
       prompt: control.prompt,
@@ -174,26 +188,41 @@ try {
       }
       injected = true;
       await ctx.tool('read_file', { path: 'brief.md' });
-      if (arithmetic) await writeFile(join(ctx.workspace.path, 'total.md'), 'Printing: $120. Signs: $80. Total: $250.\n');
-      else await copyFile(
-        'evals/fixtures/ownership-probe/checklist.pdf',
-        join(ctx.workspace.path, 'checklist.pdf'),
-      );
+      if (deterministic) await writeFile(join(ctx.workspace.path, 'total.json'), seedJSON);
+      else if (arithmetic) await writeFile(join(ctx.workspace.path, 'total.md'), seedNote);
+      else
+        await copyFile(
+          'evals/fixtures/ownership-probe/checklist.pdf',
+          join(ctx.workspace.path, 'checklist.pdf'),
+        );
       ctx.emit('controlled_failure_injected', {
-        reason: arithmetic ? 'Known incorrect arithmetic note and initial Luna Low route, no initial worker inference' : 'Original flawed PDF and initial Luna Low route, no initial worker inference',
+        reason: arithmetic
+          ? 'Known incorrect arithmetic note and initial Luna Low route, no initial worker inference'
+          : 'Original flawed PDF and initial Luna Low route, no initial worker inference',
       });
       ctx.emit('subscription_usage', {
         total: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
       });
-      return arithmetic ? 'Saved total.md.' : 'Saved checklist.pdf.';
+      return deterministic
+        ? 'Saved total.json.'
+        : arithmetic
+          ? 'Saved total.md.'
+          : 'Saved checklist.pdf.';
     },
   };
-  const caseId = arithmetic ? 'arithmetic-note' : 'original-ownership-probe';
-  const outputFile = arithmetic ? 'total.md' : 'checklist.pdf';
+  const caseId = deterministic
+    ? 'deterministic-arithmetic'
+    : arithmetic
+      ? 'arithmetic-note'
+      : 'original-ownership-probe';
+  const outputFile = deterministic ? 'total.json' : arithmetic ? 'total.md' : 'checklist.pdf';
   const path = join(out, caseId);
   await mkdir(path);
-  const brief = arithmetic ? 'Printing costs $120. Signs cost $80. These are the only two expenses.' : await readFile('evals/fixtures/ownership-probe/brief.md', 'utf8');
+  const brief = arithmetic
+    ? 'Printing costs $120. Signs cost $80. These are the only two expenses.'
+    : await readFile('evals/fixtures/ownership-probe/brief.md', 'utf8');
   await writeFile(join(path, 'brief.md'), brief);
+  if (deterministic) await writeFile(join(path, 'verify-total.mjs'), verificationScript);
   const workspace: Workspace = {
     id: randomUUID(),
     name: 'Correction validation',
@@ -204,11 +233,14 @@ try {
   store.put('workspace', workspace.id, workspace);
   const task = await engine.create({
     workspaceId: workspace.id,
-    prompt:
-      arithmetic ? 'Read brief.md. Save total.md stating the individual costs and their sum in dollars. Include only the supplied expenses; do not invent any facts.' : 'Read brief.md. Create a one-page launch checklist with explicit unresolved items. Save an actual checklist.pdf file. Preserve the supplied facts and label any invented examples.',
-    required: ['files', 'artifacts'],
+    prompt: deterministic
+      ? 'Read brief.md. Create total.json with exactly three numeric dollar fields: printing, signs, and total. Preserve both supplied costs and compute their sum. Check it with node verify-total.mjs in read-only shell mode; do not change the supplied brief or verifier.'
+      : arithmetic
+        ? 'Read brief.md. Save total.md stating the individual costs and their sum in dollars. Include only the supplied expenses; do not invent any facts.'
+        : 'Read brief.md. Create a one-page launch checklist with explicit unresolved items. Save an actual checklist.pdf file. Preserve the supplied facts and label any invented examples.',
+    required: deterministic ? ['files', 'shell', 'artifacts'] : ['files', 'artifacts'],
     expectedResult: '',
-    verification: { files: [outputFile], command: '' },
+    verification: { files: [outputFile], command: deterministic ? 'node verify-total.mjs' : '' },
     evaluation: true,
   });
   const started = Date.now();
@@ -243,12 +275,21 @@ try {
     subscriptionUsage: final.subscriptionUsage,
     events,
     inputUnchanged: (await readFile(join(path, 'brief.md'), 'utf8')) === brief,
-    seedSHA256: hash(arithmetic ? 'Printing: $120. Signs: $80. Total: $250.\n' : await readFile('evals/fixtures/ownership-probe/checklist.pdf')),
+    verifierUnchanged: deterministic
+      ? (await readFile(join(path, 'verify-total.mjs'), 'utf8')) === verificationScript
+      : undefined,
+    seedSHA256: hash(
+      deterministic
+        ? seedJSON
+        : arithmetic
+          ? seedNote
+          : await readFile('evals/fixtures/ownership-probe/checklist.pdf'),
+    ),
     ...summarizeSpending(store.spending().filter((s) => s.taskId === task.id)),
   });
   await persist();
   console.log(
-    `ownership-probe: ${final.status}; real workers ${realWorkers}; review ${final.review?.status}`,
+    `${caseId}: ${final.status}; real workers ${realWorkers}; review ${final.review?.status}`,
   );
 } finally {
   clearInterval(monitor);

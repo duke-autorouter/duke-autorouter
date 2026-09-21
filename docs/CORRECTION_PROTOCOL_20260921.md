@@ -16,3 +16,8 @@ Run `scripts/validate-correction.ts` through `scripts/with-live-budget-gate.ts` 
 ## Additional mechanism probe, declared before its call
 
 The original PDF's correction verdict reached 0.78 and did not meet the unchanged gate. Retain that result. Run one separate arithmetic-note probe using `--arithmetic-note`; do not repeat the decision controls or PDF. The seed note says printing $120, signs $80, total $250. The complete brief contains only those two expenses. A successful correction must preserve both amounts and state a $200 total, without new facts. Detection, authorization, Luna Low correction and final review remain live. This is a known-defect mechanism check, not additional independent routing-efficiency evidence. Reserve another $0.04 under the same original cap. No runtime or threshold changes precede this additional probe.
+
+
+## Deterministic detection control, declared before its call
+
+The arithmetic-note run falsely passed the unchanged $250 total and therefore did not reach recovery. Retain that false acceptance as a separate detection failure. To test the recovery mechanism without relying on the same detector, run one `--deterministic-arithmetic` probe. Its supplied, immutable Node verifier requires exactly `{printing:120, signs:80, total:200}` in `total.json`; the seed contains total 250. The worker may edit the output, not the brief or verifier. Verify both input files remain byte-identical. The actual verifier must fail before correction and pass afterward. Jev still decides correction and performs final content review; any uncertainty remains visible. This is a separate instrumented mechanism control, not a rerun that replaces either earlier result. Reserve $0.04 under the same cap. Do not change runtime code or thresholds.
