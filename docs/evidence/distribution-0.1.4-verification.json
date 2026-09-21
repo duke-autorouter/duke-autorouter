@@ -11,7 +11,7 @@
   "typecheck": "passed",
   "productionBuild": "passed",
   "standaloneChecks": {
-    "unsignedDevelopmentPackagePassed": 12,
+    "adHocSignedDevelopmentPackagePassed": 12,
     "developerIDSignedPackagePassed": 12,
     "usesInference": false
   },
