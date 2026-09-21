@@ -10,8 +10,10 @@ Claude subscriptions and optional OpenRouter models. Jev assesses the task,
 chooses an eligible model and supported reasoning effort, and reviews the result.
 
 DUKE aims to use only the model capability and reasoning effort a task needs.
-That applies to subscription capacity as well as API spending. Routing quality
-and savings have not yet been measured.
+That applies to subscription capacity as well as API spending. A small development comparison found substantially lower model-priced cost with
+automatic routing, alongside quality failures that still need correction. See
+[current development status](docs/CURRENT_STATUS.md) for the results, limitations,
+and work not yet included in the downloadable release.
 
 ## Version 0.1
 
