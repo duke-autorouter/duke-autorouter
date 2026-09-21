@@ -125,6 +125,7 @@ if (!has('--run')) {
         workPreferences: state.settings.workPreferences,
         qualityFloor: state.settings.qualityFloor,
         maxRecovery: state.settings.maxRecovery,
+        recoveryEffortCeiling: state.settings.recoveryEffortCeiling,
         maxSteps: state.settings.maxSteps,
         routingPolicy: ROUTING_POLICY,
         reviewPolicy: REVIEW_POLICY,

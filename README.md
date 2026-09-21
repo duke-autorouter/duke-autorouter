@@ -18,10 +18,16 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.4 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.4/DUKE-Autorouter-0.1.4-mac-arm64.dmg).
+The current prerelease is **0.1.5 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.5/DUKE-Autorouter-0.1.5-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.5 adds bounded same-model effort recovery. Jev can diagnose a failed
+check and retry at the next supported effort within your limits. A controlled
+live probe repaired a failing implementation. A fresh four-task comparison found
+lower model-priced cost with three accepted automatic outputs versus four for
+Astra Medium. See the [recovery report](docs/AUTOMATIC_RECOVERY_VALIDATION_20260921.md).
 
 Version 0.1.4 preserves source revision cues and Word table structure in tool
 evidence. Explicit model choices now retain Jev content review. The repository
@@ -73,8 +79,10 @@ switching to another model. A close choice between suitable models does not
 automatically escalate to a more powerful one.
 
 After execution, DUKE checks files, test results, and retrieved sources where
-applicable. Jev reviews the available content. Failed checks can trigger another
-attempt with a suitable model; unfinished checks stay visible in the result.
+applicable. Jev reviews the available content. When Jev identifies a reasoning failure, DUKE can retry the same model one effort
+level higher, within your retry count and effort ceiling. Missing context, tool
+failures and uncertain diagnoses pause the task. Unfinished checks stay visible
+in the result.
 Use **Retry checks** to review saved work without starting another worker.
 Follow-ups preserve previous results and keep relevant requirements; explicit
 changes can supersede an earlier output format.
@@ -110,9 +118,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.4 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.4/DUKE-Autorouter-0.1.4-mac-arm64.dmg)**
+**[Download DUKE 0.1.5 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.5/DUKE-Autorouter-0.1.5-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.4)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.5)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -177,7 +185,7 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The current source passes 199 automated tests. The 0.1.4 package passes 12
+The current source passes 204 automated tests. The 0.1.5 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical
@@ -191,7 +199,7 @@ Automatic reviews can remain incomplete, and a confident individual judgment can
 miss a factual error. Independent development review remains necessary to measure
 quality; routine users are not asked to grade models.
 OpenRouter has no successful live worker result yet, and a second physical Mac
-has not been tested. Routing accuracy, resource savings, and multi-day reliability
+has not been tested. General routing accuracy, quality-preserving savings, and multi-day reliability
 have not been established. Intel Macs, Windows, and Linux are not release-tested.
 See the [0.1 release limits](docs/RELEASE_READINESS.md).
 

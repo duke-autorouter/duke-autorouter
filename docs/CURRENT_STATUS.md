@@ -2,9 +2,27 @@
 
 Updated September 21, 2026.
 
-The desktop maintenance release is **0.1.4**. Its release assets and verification
+The desktop maintenance release is **0.1.5**. Its release assets and verification
 record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
 development work.
+
+## Automatic recovery and fresh comparison
+
+Version 0.1.5 adds bounded same-model effort recovery and passes 204 local tests.
+A controlled live probe repaired a failed coding test by moving Luna from Low to
+Medium after Jev diagnosed a reasoning failure. The final content review remained
+unverified.
+
+The [fresh comparison](AUTOMATIC_RECOVERY_VALIDATION_20260921.md) accepted three of
+four automatic outputs and all four Astra Medium outputs. The combined
+model-priced worker and actual Jev proxy was $0.243538 versus $1.245957, including
+the failed output. Cost per accepted result was about 74% lower. Three automatic
+tasks used the economical fallback after uncertain assessment; Jev directly
+selected Sol Low for research. No natural task triggered recovery. An unsupported
+PDF ownership assignment remained unverified and was caught independently.
+
+These are four development cases, not proof of equal quality or general savings.
+The report preserves the failed artifact, route sources and complete cost basis.
 
 ## Desktop reliability
 

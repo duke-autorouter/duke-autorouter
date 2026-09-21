@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
-Updated September 21, 2026. Policy identifiers: `duke-routing-v10`, `duke-efficiency-v2` and
-`duke-review-v4`. This document describes implemented behavior, not measured
+Updated September 21, 2026. Policy identifiers: `duke-routing-v11`, `duke-efficiency-v2` and
+`duke-review-v5`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -23,9 +23,11 @@ flowchart TD
   Review --> Result{Check result}
   Result -->|Passed| Save[Return work and record checked outcome]
   Result -->|Incomplete| Unknown[Return work with checks incomplete]
-  Result -->|Failed| Retry[Exclude failed worker, raise difficulty floor]
-  Retry -->|Within recovery limit| Assess
-  Retry -->|No suitable alternative or limit reached| Block[Preserve work and explain the issue]
+  Result -->|Failed| Diagnose[Jev diagnoses the failure]
+  Diagnose -->|Reasoning error, probability at least 0.9| Retry[Same model, next supported effort]
+  Retry -->|Within retry and effort limits, hard gates rechecked| Work
+  Diagnose -->|Missing context, tool problem or uncertainty| Block[Preserve work and explain the issue]
+  Retry -->|Limit reached| Block
   Save --> History[Scoped quality and whole-task token history]
   History --> Candidates
 ```
@@ -44,8 +46,9 @@ selected attachment excerpts (2,000 each / 8,000 total), root-level project
 structure counts, and checkpoint progress. An attachment alone no longer forces
 complexity. Truncation and unsupported binary input retain a conservative
 difficulty estimate. An uncertain or unavailable assessment uses the configured
-fallback; an unknown difficulty is recorded without promoting the worker. A quality retry
-raises the previous difficulty requirement by one level, capped at complex.
+fallback; an unknown difficulty is recorded without promoting the worker. A quality retry preserves the task assessment and advances one supported effort
+step on the same model after a probability-gated diagnosis. It does not raise the
+difficulty floor or switch models. See [the recovery decision](adr/0017-bounded-same-model-recovery.md).
 
 Assessment uses a `0.8` distribution-confidence threshold. Review instead requires
 at least `0.8` probability on its selected pass or fail answer. These are different

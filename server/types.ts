@@ -355,6 +355,7 @@ export type Settings = {
   jevValidated: boolean;
   maxSteps: number;
   maxRecovery: number;
+  recoveryEffortCeiling: import('../shared/effort.js').Effort;
   workPreferences?: WorkPreferences;
 };
 export const defaults: Settings = {
@@ -369,6 +370,7 @@ export const defaults: Settings = {
   jevValidated: false,
   maxSteps: 24,
   maxRecovery: 2,
+  recoveryEffortCeiling: 'medium',
   workPreferences: {},
 };
 export type Health = {
