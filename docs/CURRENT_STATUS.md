@@ -25,6 +25,9 @@ message assertion; their resource use was retained.
 
 ## Development efficiency comparison
 
+Read the [corrected report](COST_EFFICIENCY_PILOT_20260920.md) and
+[public evidence manifest](evidence/COST_EFFICIENCY_PILOT_MANIFEST.md).
+
 The corrected comparison used four development tasks per mode and the same Jev
 content-review behavior. Independent review accepted four outputs from Astra
 Medium, four from Astra Ultra, and two from automatic routing. Jev selected Luna
