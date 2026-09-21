@@ -184,7 +184,14 @@ in the receipt. A Jev content judgment can also be wrong; it is not the release
 benchmark's final judge.
 
 Failed checks use the existing recovery limit (two retries by default) and preserve
-files, checkpoint and external-action ledger. Permission failures and uncertain
+files, checkpoint and external-action ledger. Jev first decides whether available
+facts and tools support one targeted correction at unchanged model and effort,
+using a 0.80 selected-probability gate. That correction consumes one retry and is
+limited to one per unchanged task input and revision, including resumes. If it
+still fails, a separate reasoning judgment at 0.90 can authorize the next supported
+effort within the user's ceiling and remaining allowance. Missing essential
+context, tool problems and uncertain judgments pause. These policy thresholds
+are not calibrated repair-success probabilities. See [decision 0020](adr/0020-bounded-correction-before-effort-escalation.md). Permission failures and uncertain
 external actions remain blocked; they cannot trigger an authority-bypassing retry.
 An unavailable, cancelled, malformed, uncertain or unaffordable review does
 not count as a quality failure. Incomplete checks never count as positive evidence.

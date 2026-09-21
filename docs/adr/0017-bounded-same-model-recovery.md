@@ -1,7 +1,7 @@
 # 0017 — Retry reasoning failures on the same model within explicit limits
 
 Date: 2026-09-21
-Status: Accepted
+Status: Accepted; extended by [0020](0020-bounded-correction-before-effort-escalation.md), which adds a bounded same-effort correction before escalation.
 
 ## Context
 

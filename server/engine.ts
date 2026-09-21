@@ -12,7 +12,7 @@ import { requestBudget } from './request-budget.js';
 import { brand } from '../shared/brand.js';
 import { setupPrompt } from './setup-import.js';
 import { routingContext, inspectFile } from './task-evidence.js';
-import { nextRecoveryEffort, recoveryPause, RECOVERY_POLICY } from './recovery.js';
+import { nextRecoveryEffort, sameEffortCorrectionAllowed, correctionFeedback, recoveryPause, RECOVERY_POLICY } from './recovery.js';
 import type { Effort } from '../shared/effort.js';
 import { verifyTask, assertReviewEvidence } from './verification.js';
 import { bounded, whileActive, PhaseTimeout } from './deadline.js';
@@ -331,7 +331,8 @@ export class Engine {
     let recovery:
       | {
           modelId: string;
-          effort: Effort;
+          effort?: Effort;
+          stage: 'correction' | 'escalation';
           from: Model;
           assessment: Route['assessment'];
         }
@@ -559,11 +560,13 @@ export class Engine {
             !qualifiedModels([refreshed], recovery.assessment, settings, true).length ||
             refreshed.model !== recovery.from.model ||
             refreshed.provider !== recovery.from.provider ||
-            nextRecoveryEffort(
-              { ...task, attempt: task.attempt - 1 },
-              { ...refreshed, effort: recovery.from.effort },
-              settings,
-            ) !== recovery.effort
+            (recovery.stage === 'correction'
+              ? !sameEffortCorrectionAllowed({ ...task, attempt: task.attempt - 1 }, recovery.from, refreshed, settings)
+              : nextRecoveryEffort(
+                  { ...task, attempt: task.attempt - 1 },
+                  { ...refreshed, effort: recovery.from.effort },
+                  settings,
+                ) !== recovery.effort)
           )
             throw new Blocked(
               'The approved recovery configuration changed. Review your model and recovery settings before continuing.',
@@ -587,7 +590,9 @@ export class Engine {
           decision.selectionSource = 'jev';
           decision.assessment = recovery.assessment;
           decision.kind = recovery.assessment.kind;
-          decision.reason = `Jev approved a bounded repair on the same model at ${recovery.effort} effort.`;
+          decision.reason = recovery.stage === 'correction'
+            ? `Jev approved one targeted correction on the same model at unchanged ${recovery.effort ?? 'provider-default'} effort.`
+            : `Jev approved a bounded repair on the same model at ${recovery.effort} effort after a correction attempt.`;
           decision.fallbacks = [];
         }
         const model = {
@@ -624,8 +629,11 @@ export class Engine {
               whileActive(
                 startupSignal,
                 this.limits.inactivity,
-                (workerSignal, activity, activeTool) =>
-                  this.workers[model.provider].run({
+                (workerSignal, activity, activeTool) => {
+                  workerSignal.throwIfAborted();
+                  if (recovery?.stage === 'correction')
+                    this.store.event(id, 'correction_started', { policy: RECOVERY_POLICY, inputKey: taskInputKey(task), model: model.id, effort: model.effort });
+                  return this.workers[model.provider].run({
                     task: { ...currentTask, route: decision },
                     workspace,
                     model,
@@ -689,7 +697,8 @@ export class Engine {
                         },
                       });
                     },
-                  }),
+                  });
+                },
               ),
           );
           workerFinished = true;
@@ -759,6 +768,11 @@ export class Engine {
           if (current.attempt >= this.store.settings().maxRecovery)
             throw new Blocked(`Recovery limit reached: ${(e as Error).message}`);
           if (e instanceof QualityFailure) {
+            const inputKey = taskInputKey(current);
+            const correctionUsed = this.store.events(id).some((event) =>
+              event.kind === 'correction_started' && event.data.inputKey === inputKey,
+            );
+            const stage = correctionUsed ? 'escalation' : 'correction';
             const judgment = await this.phase(
               id,
               'Assessing a repair',
@@ -787,7 +801,7 @@ export class Engine {
                   text: event.data.result.text.slice(0, 6000),
                   incomplete: event.data.result.text.length > 6000,
                 }));
-                const judged = await this.jev.recovery(current, { context, files, inputs, sources }, lease);
+                const judged = await this.jev.recovery(current, { context, files, inputs, sources }, lease, stage);
                 await assertReviewEvidence(current, workspace, lease);
                 return judged;
               },
@@ -799,7 +813,7 @@ export class Engine {
               return { cause: 'unknown' as const, probability: 0 };
             });
             signal.throwIfAborted();
-            if (judgment.cause !== 'reasoning') {
+            if (judgment.cause !== (stage === 'correction' ? 'correction' : 'reasoning')) {
               if (['missing_context', 'tool_failure'].includes(judgment.cause)) {
                 runStatus = 'unverified';
                 const neutral = {
@@ -823,19 +837,22 @@ export class Engine {
               }
               throw new Blocked(recoveryPause(judgment.cause));
             }
-            const effort = nextRecoveryEffort(current, model, this.store.settings());
-            if (!effort)
+            const effort = stage === 'correction' ? model.effort : nextRecoveryEffort(current, model, this.store.settings());
+            if (stage === 'correction' ? !sameEffortCorrectionAllowed(current, model, model, this.store.settings()) : !effort)
               throw new Blocked(
                 'Automatic repair stopped at your effort or retry limit, or this model has no next supported effort. Your files are saved. Continue with clarification or an explicit model/effort choice.',
               );
             recovery = {
               modelId: model.id,
               effort,
+              stage,
               from: model,
               assessment: decision.assessment,
             };
             this.store.event(id, 'quality_retry', {
               policy: RECOVERY_POLICY,
+              stage,
+              inputKey,
               model: model.id,
               reason: (e as Error).message,
               fromEffort: model.effort,
@@ -857,7 +874,9 @@ export class Engine {
                 current.checkpoint?.summary ||
                 current.result ||
                 'Worker interrupted; inspect files and tool evidence before continuing.',
-              remaining: `Recover from: ${(e as Error).message}`,
+              remaining: e instanceof QualityFailure
+                ? `Recover from: ${(e as Error).message}\n${correctionFeedback(current)}`
+                : `Recover from: ${(e as Error).message}`,
               repairDifficulty: current.checkpoint?.repairDifficulty,
               artifacts: this.store
                 .list<any>('artifact')

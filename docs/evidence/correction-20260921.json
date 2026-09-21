@@ -1,0 +1,1937 @@
+{
+  "developmentOnly": true,
+  "heldOut": false,
+  "runs": [
+    {
+      "name": "v2-original",
+      "sourceCommit": "f20ce6dbf5d5ad424d917c307900de4852059b6c",
+      "receiptSHA256": "64cfed6fd4e29f7ff875828673e3ae2ba79eea5a01db2f89ab5095a86801e252",
+      "recoveryPolicy": "duke-recovery-v2",
+      "reviewPolicy": "duke-review-v7",
+      "workerRerun": null,
+      "results": [
+        {
+          "caseId": "arithmetic",
+          "expected": "correction",
+          "judgment": {
+            "cause": "correction",
+            "probability": 0.97
+          },
+          "apiCostUSD": 3.4e-05,
+          "unreconciledRequests": 0,
+          "reviewStatus": null,
+          "checks": [],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v2",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "correction",
+                  "confidence": 0.97,
+                  "probabilities": {
+                    "missing_context": 0.01,
+                    "tool_failure": 0,
+                    "unknown": 0.02,
+                    "correction": 0.97
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "workerUsage": []
+        },
+        {
+          "caseId": "missing-decision",
+          "expected": "missing_context",
+          "judgment": {
+            "cause": "unknown",
+            "probability": 0.75
+          },
+          "apiCostUSD": 3.4e-05,
+          "unreconciledRequests": 0,
+          "reviewStatus": null,
+          "checks": [],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v2",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "missing_context",
+                  "confidence": 0.66,
+                  "probabilities": {
+                    "correction": 0.21,
+                    "missing_context": 0.75,
+                    "tool_failure": 0,
+                    "unknown": 0.04
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "workerUsage": []
+        },
+        {
+          "caseId": "unavailable-tool",
+          "expected": "tool_failure",
+          "judgment": {
+            "cause": "tool_failure",
+            "probability": 0.97
+          },
+          "apiCostUSD": 3.4e-05,
+          "unreconciledRequests": 0,
+          "reviewStatus": null,
+          "checks": [],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v2",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "tool_failure",
+                  "confidence": 0.95,
+                  "probabilities": {
+                    "tool_failure": 0.97,
+                    "unknown": 0,
+                    "missing_context": 0.01,
+                    "correction": 0.02
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "workerUsage": []
+        },
+        {
+          "caseId": "original-ownership-probe",
+          "status": "blocked",
+          "realWorkers": 0,
+          "inputUnchanged": true,
+          "seedSHA256": "4878f35ef80fa81b627285cf5b904a05089d8344e12ea6a178055c2c0d97f73d",
+          "apiCostUSD": 0.002113,
+          "unreconciledRequests": 0,
+          "reviewStatus": "failed",
+          "checks": [
+            {
+              "name": "Response",
+              "status": "passed"
+            },
+            {
+              "name": "checklist.pdf",
+              "status": "passed"
+            },
+            {
+              "name": "Jev: requirement_0",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.83,
+                "confidence": 0.73,
+                "probabilities": {
+                  "fail": 0.13,
+                  "unknown": 0.04,
+                  "pass": 0.83
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_1",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.78,
+                "confidence": 0.66,
+                "probabilities": {
+                  "fail": 0.17,
+                  "unknown": 0.05,
+                  "pass": 0.78
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_2",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.93,
+                "confidence": 0.9,
+                "probabilities": {
+                  "fail": 0.02,
+                  "unknown": 0.05,
+                  "pass": 0.93
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_3",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.63,
+                "confidence": 0.44,
+                "probabilities": {
+                  "fail": 0.36,
+                  "unknown": 0.01,
+                  "pass": 0.63
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: brief",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.49,
+                "confidence": 0.23,
+                "probabilities": {
+                  "fail": 0.47,
+                  "unknown": 0.04,
+                  "pass": 0.49
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: support",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.78,
+                "confidence": 0.67,
+                "probabilities": {
+                  "fail": 0.21,
+                  "unknown": 0.01,
+                  "pass": 0.78
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: completion",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.59,
+                "confidence": 0.39,
+                "probabilities": {
+                  "fail": 0.37,
+                  "unknown": 0.04,
+                  "pass": 0.59
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.89,
+                "confidence": 0.87,
+                "probabilities": {
+                  "not_factual": 0.89,
+                  "contradicted": 0.01,
+                  "unknown": 0.01,
+                  "unsupported": 0.01,
+                  "supported": 0.08
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.95,
+                "confidence": 0.94,
+                "probabilities": {
+                  "not_factual": 0.95,
+                  "supported": 0.01,
+                  "unsupported": 0.02,
+                  "unknown": 0.01,
+                  "contradicted": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_1",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.91,
+                "confidence": 0.88,
+                "probabilities": {
+                  "not_factual": 0.91,
+                  "contradicted": 0.02,
+                  "unknown": 0,
+                  "unsupported": 0.01,
+                  "supported": 0.06
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_1_ownership",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.6,
+                "confidence": 0.5,
+                "probabilities": {
+                  "not_factual": 0.17,
+                  "supported": 0.01,
+                  "unsupported": 0.6,
+                  "unknown": 0.01,
+                  "contradicted": 0.21
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_2",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.99,
+                "confidence": 0.98,
+                "probabilities": {
+                  "not_factual": 0,
+                  "contradicted": 0,
+                  "unknown": 0,
+                  "unsupported": 0.01,
+                  "supported": 0.99
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_2_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.86,
+                "confidence": 0.84,
+                "probabilities": {
+                  "not_factual": 0.86,
+                  "unsupported": 0.05,
+                  "unknown": 0.01,
+                  "contradicted": 0.05,
+                  "supported": 0.03
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_3",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.97,
+                "confidence": 0.96,
+                "probabilities": {
+                  "not_factual": 0.97,
+                  "unsupported": 0.01,
+                  "unknown": 0,
+                  "supported": 0.02,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_3_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.95,
+                "confidence": 0.94,
+                "probabilities": {
+                  "not_factual": 0.95,
+                  "unsupported": 0.02,
+                  "unknown": 0.01,
+                  "contradicted": 0.02,
+                  "supported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_4",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.39999999999999997,
+                "confidence": 0.26,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "supported": 0.36,
+                  "unsupported": 0.39999999999999997,
+                  "unknown": 0.02,
+                  "contradicted": 0.21
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_4_ownership",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.85,
+                "confidence": 0.8,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "supported": 0.09,
+                  "unsupported": 0.85,
+                  "unknown": 0.03,
+                  "contradicted": 0.02
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_5",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9400000000000001,
+                "confidence": 0.91,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0.06,
+                  "unknown": 0,
+                  "contradicted": 0,
+                  "supported": 0.9400000000000001
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_5_ownership",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.6,
+                "confidence": 0.5,
+                "probabilities": {
+                  "not_factual": 0.6,
+                  "supported": 0.19,
+                  "unsupported": 0.19,
+                  "unknown": 0.02,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_6",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.87,
+                "confidence": 0.84,
+                "probabilities": {
+                  "unsupported": 0.03,
+                  "contradicted": 0.09,
+                  "unknown": 0.01,
+                  "not_factual": 0,
+                  "supported": 0.87
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_6_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.82,
+                "confidence": 0.78,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "unsupported": 0.06,
+                  "unknown": 0.02,
+                  "supported": 0.82,
+                  "contradicted": 0.09
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_7",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.83,
+                "confidence": 0.78,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0.04,
+                  "unknown": 0.13,
+                  "contradicted": 0,
+                  "supported": 0.83
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_7_ownership",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.56,
+                "confidence": 0.45,
+                "probabilities": {
+                  "not_factual": 0.56,
+                  "supported": 0.13,
+                  "unsupported": 0.28,
+                  "unknown": 0.02,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_8",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.67,
+                "confidence": 0.59,
+                "probabilities": {
+                  "not_factual": 0.03,
+                  "supported": 0.67,
+                  "unsupported": 0.24,
+                  "unknown": 0.02,
+                  "contradicted": 0.04
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_8_ownership",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.6,
+                "confidence": 0.49,
+                "probabilities": {
+                  "not_factual": 0.6,
+                  "supported": 0.05,
+                  "unsupported": 0.31,
+                  "unknown": 0.04,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_9",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.95,
+                "confidence": 0.93,
+                "probabilities": {
+                  "not_factual": 0.95,
+                  "unsupported": 0,
+                  "unknown": 0,
+                  "contradicted": 0,
+                  "supported": 0.05
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_9_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.98,
+                "confidence": 0.98,
+                "probabilities": {
+                  "not_factual": 0.98,
+                  "unsupported": 0.01,
+                  "unknown": 0,
+                  "contradicted": 0.01,
+                  "supported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_10",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.89,
+                "confidence": 0.85,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0.01,
+                  "unknown": 0.09,
+                  "contradicted": 0.01,
+                  "supported": 0.89
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_10_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 1,
+                "confidence": 0.99,
+                "probabilities": {
+                  "not_factual": 0,
+                  "supported": 1,
+                  "unsupported": 0,
+                  "unknown": 0,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_11",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.91,
+                "confidence": 0.89,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0.03,
+                  "unknown": 0.01,
+                  "contradicted": 0.05,
+                  "supported": 0.91
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_11_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.98,
+                "confidence": 0.98,
+                "probabilities": {
+                  "unsupported": 0.01,
+                  "contradicted": 0.01,
+                  "unknown": 0,
+                  "not_factual": 0,
+                  "supported": 0.98
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_12",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.94,
+                "confidence": 0.92,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0.04,
+                  "unknown": 0.01,
+                  "contradicted": 0.01,
+                  "supported": 0.94
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_12_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.99,
+                "confidence": 0.99,
+                "probabilities": {
+                  "not_factual": 0,
+                  "contradicted": 0,
+                  "unknown": 0,
+                  "unsupported": 0.01,
+                  "supported": 0.99
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_13",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9400000000000001,
+                "confidence": 0.92,
+                "probabilities": {
+                  "not_factual": 0.9400000000000001,
+                  "unsupported": 0,
+                  "unknown": 0,
+                  "contradicted": 0,
+                  "supported": 0.06
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_13_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.99,
+                "confidence": 0.98,
+                "probabilities": {
+                  "unsupported": 0.01,
+                  "contradicted": 0,
+                  "unknown": 0,
+                  "not_factual": 0.99,
+                  "supported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_14",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 1,
+                "confidence": 0.99,
+                "probabilities": {
+                  "not_factual": 0,
+                  "unsupported": 0,
+                  "unknown": 0,
+                  "contradicted": 0,
+                  "supported": 1
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_14_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.86,
+                "confidence": 0.83,
+                "probabilities": {
+                  "not_factual": 0.86,
+                  "unsupported": 0.07,
+                  "unknown": 0.01,
+                  "supported": 0.02,
+                  "contradicted": 0.04
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_15",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.93,
+                "confidence": 0.91,
+                "probabilities": {
+                  "not_factual": 0.93,
+                  "contradicted": 0,
+                  "unknown": 0,
+                  "unsupported": 0,
+                  "supported": 0.07
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_15_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 1,
+                "confidence": 0.99,
+                "probabilities": {
+                  "not_factual": 1,
+                  "unsupported": 0,
+                  "unknown": 0,
+                  "contradicted": 0,
+                  "supported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_16",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.92,
+                "confidence": 0.89,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "supported": 0.92,
+                  "unsupported": 0.04,
+                  "unknown": 0,
+                  "contradicted": 0.03
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_16_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.8,
+                "confidence": 0.75,
+                "probabilities": {
+                  "not_factual": 0.8,
+                  "unsupported": 0.02,
+                  "unknown": 0.17,
+                  "supported": 0.01,
+                  "contradicted": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_17",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.91,
+                "confidence": 0.9,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "supported": 0.91,
+                  "unsupported": 0.06,
+                  "unknown": 0.01,
+                  "contradicted": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_17_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.8,
+                "confidence": 0.75,
+                "probabilities": {
+                  "not_factual": 0.8,
+                  "contradicted": 0,
+                  "unknown": 0.11,
+                  "unsupported": 0.03,
+                  "supported": 0.06
+                },
+                "threshold": 0.8
+              }
+            }
+          ],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v2",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "correction",
+                  "confidence": 0.7,
+                  "probabilities": {
+                    "missing_context": 0.05,
+                    "tool_failure": 0,
+                    "unknown": 0.17,
+                    "correction": 0.78
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "artifact": {
+            "path": "checklist.pdf",
+            "text": "\n[Page 1]\nHarbor \u2014 Launch Checklist\nInvented project. Target: Oct 15, 2026 (target, not commitment). Kickoff: Oct 1. Review: Oct 8.\nLaunch gates\n- [ ]\n- [ ] Internal workshop before external invitations \u2014 Ana (delivery); unresolved\n- [ ]\n- [ ] Participant trial \u2014 TBD; not yet run\n- [ ]\n- [ ] Source review \u2014 Lee (research); in progress\n- [ ]\n- [ ] Room accessibility confirmation \u2014 TBD; open/unresolved\n- [ ]\n- [ ] Readiness review \u2014 TBD; unresolved\nAssets\n- [ ]\n- [ ] Workshop outline \u2014 Ana; completed\n- [ ]\n- [ ] Source list \u2014 Lee; in progress\n- [ ]\n- [ ] Sign-in sheet \u2014 Sam (operations); status not specified\nBudget\nMaterials $300 + Venue $400 + Printing $200 = Total $900\nExplicit unresolved items\nOpen: room accessibility; participant trial; source review; internal workshop before external\ninvitations; readiness review.\nUnspecified: owners/statuses for participant trial, accessibility confirmation, readiness review.",
+            "sha256": "4878f35ef80fa81b627285cf5b904a05089d8344e12ea6a178055c2c0d97f73d",
+            "bytes": 85545
+          },
+          "workerUsage": [
+            {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "v2-arithmetic-note",
+      "sourceCommit": "282001b5c54a29b3fbf5b50cc671385a4c356030",
+      "receiptSHA256": "c6f57b2b965e76abf8bf6381633401eb22c0a8f1d162a200b9ae955569617711",
+      "recoveryPolicy": "duke-recovery-v2",
+      "reviewPolicy": "duke-review-v7",
+      "workerRerun": null,
+      "results": [
+        {
+          "caseId": "arithmetic-note",
+          "status": "completed",
+          "realWorkers": 0,
+          "inputUnchanged": true,
+          "seedSHA256": "1f1edc93ae0ce2149c94d4cacc107a14d5bd521e6b4bb53d4e144c74cea844e0",
+          "apiCostUSD": 0.000144,
+          "unreconciledRequests": 0,
+          "reviewStatus": "passed",
+          "checks": [
+            {
+              "name": "Response",
+              "status": "passed"
+            },
+            {
+              "name": "total.md",
+              "status": "passed"
+            },
+            {
+              "name": "Jev: requirement_0",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9400000000000001,
+                "confidence": 0.9,
+                "probabilities": {
+                  "unknown": 0.03,
+                  "fail": 0.03,
+                  "pass": 0.9400000000000001
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_1",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.98,
+                "confidence": 0.96,
+                "probabilities": {
+                  "unknown": 0,
+                  "fail": 0.02,
+                  "pass": 0.98
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_2",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.98,
+                "confidence": 0.97,
+                "probabilities": {
+                  "unknown": 0,
+                  "fail": 0.02,
+                  "pass": 0.98
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: brief",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.92,
+                "confidence": 0.88,
+                "probabilities": {
+                  "unknown": 0.01,
+                  "fail": 0.07,
+                  "pass": 0.92
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: support",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9400000000000001,
+                "confidence": 0.9,
+                "probabilities": {
+                  "unknown": 0,
+                  "fail": 0.06,
+                  "pass": 0.9400000000000001
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: completion",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.94,
+                "confidence": 0.91,
+                "probabilities": {
+                  "unknown": 0,
+                  "fail": 0.06,
+                  "pass": 0.94
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9,
+                "confidence": 0.88,
+                "probabilities": {
+                  "unknown": 0,
+                  "contradicted": 0.09,
+                  "unsupported": 0.01,
+                  "supported": 0.9,
+                  "not_factual": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9,
+                "confidence": 0.88,
+                "probabilities": {
+                  "unknown": 0.01,
+                  "contradicted": 0,
+                  "unsupported": 0.01,
+                  "supported": 0.08,
+                  "not_factual": 0.9
+                },
+                "threshold": 0.8
+              }
+            }
+          ],
+          "decisions": [],
+          "artifact": {
+            "path": "total.md",
+            "text": "Printing: $120. Signs: $80. Total: $250.\n",
+            "sha256": "1f1edc93ae0ce2149c94d4cacc107a14d5bd521e6b4bb53d4e144c74cea844e0",
+            "bytes": 41
+          },
+          "workerUsage": [
+            {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "v2-deterministic",
+      "sourceCommit": "c41e22935947c740519b4737cda74b8410eacb14",
+      "receiptSHA256": "5f89cd2722bb46ac4afe4d363b434ae023ce46049471d3319d876a1e24ebd599",
+      "recoveryPolicy": "duke-recovery-v2",
+      "reviewPolicy": "duke-review-v7",
+      "workerRerun": null,
+      "results": [
+        {
+          "caseId": "deterministic-arithmetic",
+          "status": "blocked",
+          "realWorkers": 0,
+          "inputUnchanged": true,
+          "verifierUnchanged": true,
+          "seedSHA256": "2bb1d14fb0c137ea50a4ec97e766eeefa40251bde5aaa158b3968e05ba7abfb3",
+          "apiCostUSD": 8e-05,
+          "unreconciledRequests": 0,
+          "reviewStatus": "failed",
+          "checks": [
+            {
+              "name": "Response",
+              "status": "passed"
+            },
+            {
+              "name": "total.json",
+              "status": "passed"
+            },
+            {
+              "name": "Tests",
+              "status": "failed"
+            }
+          ],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v2",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "correction",
+                  "confidence": 0.72,
+                  "probabilities": {
+                    "missing_context": 0.02,
+                    "correction": 0.8,
+                    "unknown": 0.03,
+                    "tool_failure": 0.15
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "artifact": {
+            "path": "total.json",
+            "text": "{\"printing\":120,\"signs\":80,\"total\":250}\n",
+            "sha256": "2bb1d14fb0c137ea50a4ec97e766eeefa40251bde5aaa158b3968e05ba7abfb3",
+            "bytes": 40
+          },
+          "workerUsage": [
+            {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "v3-deterministic",
+      "sourceCommit": "61ee61d2793eb06e46e17c60ce2cfd0efd21bed2",
+      "receiptSHA256": "a6bc56f87ac003121da826831ddeb3a82265f97b351d6eb6451383b74537c45d",
+      "recoveryPolicy": "duke-recovery-v3",
+      "reviewPolicy": "duke-review-v7",
+      "workerRerun": null,
+      "results": [
+        {
+          "caseId": "deterministic-arithmetic",
+          "status": "blocked",
+          "realWorkers": 1,
+          "inputUnchanged": true,
+          "verifierUnchanged": true,
+          "seedSHA256": "2bb1d14fb0c137ea50a4ec97e766eeefa40251bde5aaa158b3968e05ba7abfb3",
+          "apiCostUSD": 0.000934,
+          "unreconciledRequests": 0,
+          "reviewStatus": "failed",
+          "checks": [
+            {
+              "name": "Response",
+              "status": "passed"
+            },
+            {
+              "name": "total.json",
+              "status": "passed"
+            },
+            {
+              "name": "Tests",
+              "status": "passed"
+            },
+            {
+              "name": "Jev: requirement_0",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.59,
+                "confidence": 0.38,
+                "probabilities": {
+                  "fail": 0.24,
+                  "unknown": 0.17,
+                  "pass": 0.59
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_1",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.66,
+                "confidence": 0.49,
+                "probabilities": {
+                  "fail": 0.31,
+                  "unknown": 0.03,
+                  "pass": 0.66
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_2",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.64,
+                "confidence": 0.47,
+                "probabilities": {
+                  "fail": 0.32,
+                  "unknown": 0.04,
+                  "pass": 0.64
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_3",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.72,
+                "confidence": 0.58,
+                "probabilities": {
+                  "fail": 0.72,
+                  "unknown": 0.11,
+                  "pass": 0.17
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: brief",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.63,
+                "confidence": 0.45,
+                "probabilities": {
+                  "fail": 0.63,
+                  "unknown": 0.03,
+                  "pass": 0.34
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: support",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.73,
+                "confidence": 0.59,
+                "probabilities": {
+                  "fail": 0.73,
+                  "unknown": 0.02,
+                  "pass": 0.25
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: completion",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.7,
+                "confidence": 0.55,
+                "probabilities": {
+                  "fail": 0.7,
+                  "unknown": 0.02,
+                  "pass": 0.28
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.57,
+                "confidence": 0.46,
+                "probabilities": {
+                  "not_factual": 0.1,
+                  "supported": 0.13,
+                  "unsupported": 0.05,
+                  "unknown": 0.15,
+                  "contradicted": 0.57
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.89,
+                "confidence": 0.86,
+                "probabilities": {
+                  "supported": 0.04,
+                  "unsupported": 0.03,
+                  "not_factual": 0.89,
+                  "unknown": 0.03,
+                  "contradicted": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_1",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.93,
+                "confidence": 0.91,
+                "probabilities": {
+                  "supported": 0.03,
+                  "unsupported": 0,
+                  "not_factual": 0.93,
+                  "unknown": 0.01,
+                  "contradicted": 0.03
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_1_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.99,
+                "confidence": 0.99,
+                "probabilities": {
+                  "supported": 0,
+                  "contradicted": 0,
+                  "not_factual": 0.99,
+                  "unknown": 0.01,
+                  "unsupported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_2",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.86,
+                "confidence": 0.83,
+                "probabilities": {
+                  "not_factual": 0.01,
+                  "supported": 0.07,
+                  "unsupported": 0.01,
+                  "unknown": 0.05,
+                  "contradicted": 0.86
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_2_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9,
+                "confidence": 0.87,
+                "probabilities": {
+                  "supported": 0.01,
+                  "unsupported": 0.02,
+                  "not_factual": 0.9,
+                  "unknown": 0.02,
+                  "contradicted": 0.05
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_3",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.95,
+                "confidence": 0.94,
+                "probabilities": {
+                  "supported": 0.03,
+                  "unsupported": 0,
+                  "not_factual": 0.95,
+                  "unknown": 0.01,
+                  "contradicted": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_3_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.99,
+                "confidence": 0.99,
+                "probabilities": {
+                  "supported": 0,
+                  "contradicted": 0,
+                  "not_factual": 0.99,
+                  "unknown": 0.01,
+                  "unsupported": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_4",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.67,
+                "confidence": 0.59,
+                "probabilities": {
+                  "contradicted": 0.67,
+                  "supported": 0.23,
+                  "unsupported": 0.03,
+                  "unknown": 0.07,
+                  "not_factual": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_4_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.84,
+                "confidence": 0.8,
+                "probabilities": {
+                  "supported": 0.01,
+                  "unsupported": 0.07,
+                  "not_factual": 0.84,
+                  "unknown": 0.02,
+                  "contradicted": 0.06
+                },
+                "threshold": 0.8
+              }
+            }
+          ],
+          "decisions": [
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v3",
+                "stage": "correction",
+                "answer": {
+                  "type": "choice",
+                  "choice": "correction",
+                  "confidence": 0.82,
+                  "probabilities": {
+                    "correction": 0.87,
+                    "tool_failure": 0.11,
+                    "missing_context": 0.01,
+                    "unknown": 0.01
+                  }
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "kind": "quality_retry",
+              "data": {
+                "policy": "duke-recovery-v3",
+                "stage": "correction",
+                "model": "codex:gpt-5.6-luna",
+                "fromEffort": "low",
+                "effort": "low",
+                "probability": 0.87
+              }
+            },
+            {
+              "kind": "correction_started",
+              "data": {
+                "policy": "duke-recovery-v3",
+                "model": "codex:gpt-5.6-luna",
+                "effort": "low"
+              }
+            },
+            {
+              "kind": "recovery_judged",
+              "data": {
+                "policy": "duke-recovery-v3",
+                "stage": "escalation",
+                "answer": {
+                  "type": "choice",
+                  "choice": "reasoning",
+                  "confidence": 0.29,
+                  "probabilities": {
+                    "missing_context": 0.02,
+                    "reasoning": 0.45999999999999996,
+                    "unknown": 0.06,
+                    "tool_failure": 0.46
+                  }
+                },
+                "threshold": 0.9
+              }
+            }
+          ],
+          "artifact": {
+            "path": "total.json",
+            "text": "{\"printing\":120,\"signs\":80,\"total\":200}\n",
+            "sha256": "c0944c0a5b132254cbe6a5a4302b4a6b4607d69fc6bb2f6d585f3f3ddb35d760",
+            "bytes": 40
+          },
+          "workerUsage": [
+            {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            },
+            {
+              "inputTokens": 92261,
+              "outputTokens": 513,
+              "totalTokens": 92774,
+              "cachedInputTokens": 75264,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 60,
+              "complete": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "final-review-only",
+      "sourceCommit": "3816c8f0ecf090a0f5b534e1fe60ab683df0303e",
+      "receiptSHA256": "f245168b60ab149d2be72a34f3812e1907a10d673d83f7463aba7bc7e0ce07ee",
+      "recoveryPolicy": null,
+      "reviewPolicy": null,
+      "workerRerun": false,
+      "results": [
+        {
+          "caseId": "saved-correct-total",
+          "status": "unverified",
+          "apiCostUSD": 0.000232,
+          "unreconciledRequests": 0,
+          "reviewStatus": null,
+          "checks": [
+            {
+              "name": "Jev: requirement_0",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.91,
+                "confidence": 0.86,
+                "probabilities": {
+                  "fail": 0.06,
+                  "pass": 0.91,
+                  "unknown": 0.03
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_1",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.96,
+                "confidence": 0.95,
+                "probabilities": {
+                  "fail": 0.03,
+                  "pass": 0.96,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_2",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.95,
+                "confidence": 0.93,
+                "probabilities": {
+                  "fail": 0.04,
+                  "pass": 0.95,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_3",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.6,
+                "confidence": 0.41,
+                "probabilities": {
+                  "fail": 0.27,
+                  "pass": 0.6,
+                  "unknown": 0.13
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: brief",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.9,
+                "confidence": 0.84,
+                "probabilities": {
+                  "fail": 0.09,
+                  "pass": 0.9,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: support",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.89,
+                "confidence": 0.83,
+                "probabilities": {
+                  "fail": 0.1,
+                  "pass": 0.89,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: completion",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.88,
+                "confidence": 0.82,
+                "probabilities": {
+                  "fail": 0.11,
+                  "pass": 0.88,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.6,
+                "confidence": 0.51,
+                "probabilities": {
+                  "supported": 0.3,
+                  "not_factual": 0.02,
+                  "unsupported": 0.01,
+                  "unknown": 0.07,
+                  "contradicted": 0.6
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.96,
+                "confidence": 0.93,
+                "probabilities": {
+                  "supported": 0,
+                  "contradicted": 0.03,
+                  "unsupported": 0,
+                  "not_factual": 0.96,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            }
+          ],
+          "decisions": [],
+          "workerUsage": []
+        },
+        {
+          "caseId": "wrong-total-control",
+          "status": "failed",
+          "apiCostUSD": 0.000176,
+          "unreconciledRequests": 0,
+          "reviewStatus": null,
+          "checks": [
+            {
+              "name": "Jev: requirement_0",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.65,
+                "confidence": 0.48,
+                "probabilities": {
+                  "pass": 0.65,
+                  "fail": 0.32,
+                  "unknown": 0.03
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_1",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.6,
+                "confidence": 0.39,
+                "probabilities": {
+                  "pass": 0.6,
+                  "fail": 0.4,
+                  "unknown": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_2",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.99,
+                "confidence": 0.98,
+                "probabilities": {
+                  "pass": 0.01,
+                  "fail": 0.99,
+                  "unknown": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: requirement_3",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.99,
+                "confidence": 0.99,
+                "probabilities": {
+                  "pass": 0,
+                  "fail": 0.99,
+                  "unknown": 0.01
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: brief",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 1,
+                "confidence": 1,
+                "probabilities": {
+                  "pass": 0,
+                  "fail": 1,
+                  "unknown": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: support",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 1,
+                "confidence": 1,
+                "probabilities": {
+                  "pass": 0,
+                  "fail": 1,
+                  "unknown": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: completion",
+              "status": "failed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 1,
+                "confidence": 0.99,
+                "probabilities": {
+                  "pass": 0,
+                  "fail": 1,
+                  "unknown": 0
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0",
+              "status": "unverified",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "fail",
+                "probability": 0.66,
+                "confidence": 0.57,
+                "probabilities": {
+                  "contradicted": 0.66,
+                  "unknown": 0.03,
+                  "unsupported": 0.01,
+                  "not_factual": 0.01,
+                  "supported": 0.29
+                },
+                "threshold": 0.8
+              }
+            },
+            {
+              "name": "Jev: claim_0_ownership",
+              "status": "passed",
+              "judgment": {
+                "model": "jev-1.13.0",
+                "choice": "pass",
+                "probability": 0.92,
+                "confidence": 0.89,
+                "probabilities": {
+                  "not_factual": 0.92,
+                  "unknown": 0.05,
+                  "unsupported": 0.01,
+                  "contradicted": 0.01,
+                  "supported": 0.01
+                },
+                "threshold": 0.8
+              }
+            }
+          ],
+          "decisions": [],
+          "workerUsage": []
+        }
+      ]
+    }
+  ],
+  "recordedJevAPIUSD": 0.003781,
+  "unresolvedRequests": 0,
+  "actualWorkerRuns": 1,
+  "independentAcceptance": {
+    "originalPDF": "Unchanged unsupported ownership assignment; no repair worker ran",
+    "arithmeticNote": "Rejected: 120 plus 80 is 200, not 250; Jev falsely passed it",
+    "deterministicV2": "Rejected: total 250; genuine test failure, no repair worker ran",
+    "deterministicV3": "Accepted artifact: exactly printing 120, signs 80, total 200; original brief and verifier unchanged; original verifier passed. Workflow remained blocked on false semantic rejection.",
+    "finalReviewOnly": "Correct saved result unverified with no failed checks; wrong-total control failed; no worker rerun."
+  },
+  "limits": [
+    "No natural routing-efficiency comparison",
+    "Repeated development evidence informed the correction threshold and evidence-handling fixes",
+    "No final-runtime end-to-end provider rerun",
+    "No successful repair of the original PDF",
+    "Semantic arithmetic false acceptance remains unresolved",
+    "No causal isolation between removing stale progress and adding JSON passages",
+    "Reported Jev input usage at configured price, not invoice reconciliation",
+    "Subscription usage is not an attributable dollar charge"
+  ]
+}

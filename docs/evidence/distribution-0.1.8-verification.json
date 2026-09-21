@@ -1,0 +1,105 @@
+{
+  "platform": "darwin-arm64",
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "evaluationCorpus": "80 cases validated; no model-quality inference",
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG app and Applications shortcut",
+    "preserved upstream Claude signature"
+  ],
+  "release": "0.1.8",
+  "verifiedAt": "2026-09-21",
+  "packageSourceCommit": "3816c8f0ecf090a0f5b534e1fe60ab683df0303e",
+  "localSourceTests": {
+    "passed": 226,
+    "failed": 0
+  },
+  "browserWorkflows": "Passed with synthetic workers",
+  "standaloneChecks": {
+    "adHocSignedDevelopmentPackagePassed": 12,
+    "developerIDSignedPackagePassed": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 947,
+    "mismatches": [],
+    "sourceCommit": "3816c8f0ecf090a0f5b534e1fe60ab683df0303e"
+  },
+  "secrets": {
+    "knownCredentialsCompared": 8,
+    "matches": 0,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1178,
+        "readErrors": 0
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19754,
+        "readErrors": 0
+      },
+      {
+        "scope": "download-metadata",
+        "files": 3,
+        "readErrors": 0
+      }
+    ],
+    "gitleaks": "Full history, tracked files and commit metadata passed",
+    "privateKeyPEMScan": {
+      "files": 19753,
+      "privateKeyPEMMatches": []
+    },
+    "limits": "Pattern and known-value scans are not exhaustive."
+  },
+  "liveEvaluation": {
+    "report": "correction-20260921.json",
+    "recordedJevAPIUSD": 0.003781,
+    "realWorkers": 1,
+    "artifactCorrection": "Exact correct JSON; unchanged source and verifier; test passed",
+    "workflow": "Blocked by false semantic review; later review-only recheck unverified without failed checks",
+    "negativeControl": "Wrong total failed final review-only diagnostic"
+  },
+  "limits": [
+    "Development calibration, not held-out accuracy",
+    "No final-runtime end-to-end provider rerun",
+    "Original PDF remains unrepaired",
+    "Semantic arithmetic false acceptance remains unresolved",
+    "No second physical Mac",
+    "No successful recorded OpenRouter live worker result",
+    "iOS remains a separate draft PR"
+  ],
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.8-mac-arm64.dmg",
+      "sha256": "bd212409f3164784bf9410d345ee50c5b109e9ba7d5389088001209c0a67c6dd"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.8-mac-arm64.zip",
+      "sha256": "1b9644cdf9c078481fe67f98297edb97f1cde5a312a9dbe82881e507b454c79f"
+    }
+  ],
+  "notarization": {
+    "submissionId": "44386354-8c08-4e47-8142-1b255b98e538",
+    "status": "Accepted and stapled"
+  },
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.7",
+    "toVersion": "0.1.8",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskAndProjectContentHashesPreserved": true,
+    "existingSettingsPreferencesAndEnabledModelHashesPreserved": true,
+    "nativeWindowLoadedAndVisuallyChecked": true,
+    "activeTasksBeforeUpdate": 0
+  }
+}

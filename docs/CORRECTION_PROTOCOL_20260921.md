@@ -1,0 +1,38 @@
+# Same-effort correction development protocol
+
+Commit this protocol and runtime before provider calls. Run once; retain uncertainty and failures. This is a development check, not a held-out benchmark or a natural efficiency comparison.
+
+The correction decision asks whether a confirmed defect can be addressed using available facts and tools at the current model and effort. Its selected probability must reach 0.90. It does not ask whether more reasoning is needed. After that attempt, a remaining failed result may receive the existing 0.90-gated effort-escalation diagnosis. Both attempts count toward the configured recovery limit. Missing essential context and unavailable tools pause; no model switch, permission expansion, or requirement change is allowed.
+
+Three decision controls cover an arithmetic correction, a required user decision that is missing, and an unavailable PDF reader. These contain invented evidence and invoke Jev without a worker.
+
+The full-loop probe starts with the original flawed checklist PDF and a synthetic Luna Low initial route/worker. Detection, correction judgment, any real worker correction, and recheck use the actual engine. Preserve the original source brief and PDF seed. A successful correction must remove the unsupported workshop-owner assignment, preserve all other supplied facts and unresolved items, and remain a legible one-page PDF. Inspect the final artifact independently of Jev. An unverified review is distinct from an incorrect artifact.
+
+The original shared $1 total API cap remains in force, including previous spending and unresolved reservations. Reserve $0.04 through the shared ledger and lock, with a $0.03 disposable-app limit. Use existing Codex subscription authorization and public/invented material only. Deny tool approval requests. Record all review, correction, escalation and worker usage, including failures. Do not infer subscription savings from tokens or rounded quota readings.
+
+Run `scripts/validate-correction.ts` through `scripts/with-live-budget-gate.ts` with `DUKE_CORRECTION_VALIDATION_AUTHORIZED=1`. Keep raw receipts private; publish sanitized results and limitations. No repeated run solely to obtain a passing result.
+
+
+## Additional mechanism probe, declared before its call
+
+The original PDF's correction verdict reached 0.78 and did not meet the unchanged gate. Retain that result. Run one separate arithmetic-note probe using `--arithmetic-note`; do not repeat the decision controls or PDF. The seed note says printing $120, signs $80, total $250. The complete brief contains only those two expenses. A successful correction must preserve both amounts and state a $200 total, without new facts. Detection, authorization, Luna Low correction and final review remain live. This is a known-defect mechanism check, not additional independent routing-efficiency evidence. Reserve another $0.04 under the same original cap. No runtime or threshold changes precede this additional probe.
+
+
+## Deterministic detection control, declared before its call
+
+The arithmetic-note run falsely passed the unchanged $250 total and therefore did not reach recovery. Retain that false acceptance as a separate detection failure. To test the recovery mechanism without relying on the same detector, run one `--deterministic-arithmetic` probe. Its supplied, immutable Node verifier requires exactly `{printing:120, signs:80, total:200}` in `total.json`; the seed contains total 250. The worker may edit the output, not the brief or verifier. Verify both input files remain byte-identical. The actual verifier must fail before correction and pass afterward. Jev still decides correction and performs final content review; any uncertainty remains visible. This is a separate instrumented mechanism control, not a rerun that replaces either earlier result. Reserve $0.04 under the same cap. Do not change runtime code or thresholds.
+
+
+## Policy v3 development calibration
+
+All three original runs remain attached to recovery v2. The deterministic verifier correctly failed, but Jev chose correction at 0.80, with tool failure 0.15, below the initial 0.90 correction gate. The actual command exited with an assertion mismatch; its stderr also contained a shell startup warning. The new correction decision had inherited the higher-cost escalation gate without a separate risk rationale.
+
+Recovery v3 uses the established 0.80 defect-review threshold for one targeted attempt at unchanged effort, while effort escalation retains 0.90. This is an explicit cost/risk policy choice informed by development evidence, not a calibrated likelihood of successful repair. Uncertain or missing-context/tool verdicts do not authorize correction. Run the deterministic control once more on v3, retaining the earlier block; do not rerun the PDF or arithmetic-note detector. This repeated control is calibration evidence only. Reserve $0.04 under the original shared cap. Future held-out cases must assess incorrect corrections and total cost as well as successful repairs.
+
+## Review-only follow-up after a successful worker correction
+
+The v3 control authorized Luna Low, which produced the exact correct JSON and passed the unchanged verifier. The final semantic review falsely rejected the result, and the escalation judgment stayed below 0.90. Keep the blocked workflow and successful artifact correction separate.
+
+Code inspection found that final review still received preparation-time progress from the failed attempt and that JSON deliverables were excluded from direct focused passages. Remove that stale progress from final review and include current JSON text. These are evidence-handling fixes; they do not establish that either omission alone caused Jev's false failure. Review policy v8 and focused-review policy v7 identify the change.
+
+Run `scripts/diagnose-correction-review.ts` once on the saved corrected receipt, plus a synthetic wrong-total negative control. No worker runs or files change. Preserve all checks and costs. A review-only success is not a new complete end-to-end run. Reserve $0.02 under the original cap.

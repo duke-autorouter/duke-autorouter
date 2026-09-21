@@ -1,6 +1,6 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v6';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v7';
 export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {
@@ -32,7 +32,7 @@ export function passages(text: string, width = 700): string[] {
 
 export function focusReview(evidence: ReviewEvidence): FocusedReview {
   const textFiles = evidence.files.filter(
-    (f) => f.text && /\.(?:md|txt|pdf|docx|html|xlsx|csv)$/i.test(f.path),
+    (f) => f.text && /\.(?:md|txt|pdf|docx|html|xlsx|csv|json)$/i.test(f.path),
   );
   const outputs = textFiles.length
     ? textFiles.map((f) => ({ path: f.path, text: f.text! }))
