@@ -35,7 +35,13 @@ if (!has('--run')) {
   const mode = has('--mode') ? value('--mode') : 'rules',
     receiptMode = has('--receipt-mode') ? value('--receipt-mode') : mode,
     split = has('--split') ? value('--split') : 'development',
-    limit = has('--limit') ? Number(value('--limit')) : 4;
+    limit = has('--limit') ? Number(value('--limit')) : 4,
+    requestedCaseIds = has('--case-ids')
+      ? value('--case-ids')
+          .split(',')
+          .map((id) => id.trim())
+          .filter(Boolean)
+      : [];
   if (
     !['strong', 'rules', 'jev'].includes(mode) ||
     !['development', 'held-out'].includes(split) ||
@@ -44,6 +50,8 @@ if (!has('--run')) {
     limit > 40
   )
     throw new Error('Invalid evaluation mode, split, or limit');
+  if (requestedCaseIds.length !== new Set(requestedCaseIds).size)
+    throw new Error('Evaluation case IDs must be unique.');
   if (!['strong', 'rules', 'jev', 'strong-medium', 'strong-max'].includes(receiptMode))
     throw new Error('Invalid receipt mode.');
   if (mode === 'strong' && !has('--model'))
@@ -128,7 +136,15 @@ if (!has('--run')) {
     out = has('--out') ? resolve(value('--out')) : resolve('outputs/evaluations', runId);
   await mkdir(out, { recursive: true });
   const results: any[] = [];
-  const selected = balancedCases(cases, split === 'held-out' ? 'held-out' : 'development', limit);
+  const selected = requestedCaseIds.length
+    ? requestedCaseIds.map((id) => {
+        const selectedCase = cases.find((candidate) => candidate.id === id);
+        if (!selectedCase) throw new Error(`Unknown evaluation case: ${id}`);
+        if (selectedCase.split !== split)
+          throw new Error(`Evaluation case ${id} is not in the ${split} split.`);
+        return selectedCase;
+      })
+    : balancedCases(cases, split === 'held-out' ? 'held-out' : 'development', limit);
   const corpusHash = createHash('sha256').update(JSON.stringify(cases)).digest('hex');
   const caseSetHash = createHash('sha256').update(JSON.stringify(selected)).digest('hex');
   const policyHash = createHash('sha256')
@@ -246,10 +262,7 @@ if (!has('--run')) {
       review: { accepted: null, criticalFailure: null, corrections: null, notes: '' },
       events: detail.events,
     });
-    await writeFile(
-      join(out, 'results.json'),
-      JSON.stringify(receipt(), null, 2),
-    );
+    await writeFile(join(out, 'results.json'), JSON.stringify(receipt(), null, 2));
     console.log(`${c.id}: ${detail.task.status}`);
   }
   console.log(
