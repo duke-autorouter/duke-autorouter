@@ -5,10 +5,21 @@ import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { marked } from 'marked';
 import { scoped } from './paths.js';
-import { inspectFile, type ReviewEvidence, type RoutingContext } from './task-evidence.js';
+import {
+  inspectFile,
+  type ReviewEvidence,
+  type RoutingContext,
+} from './task-evidence.js';
 import { REVIEW_POLICY } from './outcomes.js';
 import { currentEvents, taskInputKey } from './task-revisions.js';
-import { Blocked, now, type Task, type Workspace, type TaskReview, type Check } from './types.js';
+import {
+  Blocked,
+  now,
+  type Task,
+  type Workspace,
+  type TaskReview,
+  type Check,
+} from './types.js';
 
 function urlKey(raw: string) {
   try {
@@ -43,7 +54,11 @@ function repeatableTest(command: string) {
   );
 }
 
-export async function assertReviewEvidence(task: Task, workspace: Workspace, signal: AbortSignal) {
+export async function assertReviewEvidence(
+  task: Task,
+  workspace: Workspace,
+  signal: AbortSignal,
+) {
   const evidence = task.review?.evidence;
   if (!evidence) return false;
   if (evidence.inputKey !== taskInputKey(task))
@@ -65,7 +80,11 @@ export async function assertReviewEvidence(task: Task, workspace: Workspace, sig
         );
     } catch (error) {
       signal.throwIfAborted();
-      if (['ENOENT', 'ENOTDIR'].includes((error as NodeJS.ErrnoException).code ?? ''))
+      if (
+        ['ENOENT', 'ENOTDIR'].includes(
+          (error as NodeJS.ErrnoException).code ?? '',
+        )
+      )
         throw new Blocked(
           `${file.path} is missing. Restore it or describe the change in a follow-up before checking it again.`,
         );
@@ -92,7 +111,9 @@ export async function verifyTask(
   const revisionEvents = currentEvents(events);
   const lastRoute = events.findLastIndex((e) => e.kind === 'route');
   const stageEvents = events.slice(lastRoute + 1);
-  const artifacts = store.list<any>('artifact').filter((a) => a.taskId === task.id);
+  const artifacts = store
+    .list<any>('artifact')
+    .filter((a) => a.taskId === task.id);
   const touched = new Set(
     revisionEvents.filter((e) => e.kind === 'artifact').map((e) => e.data.path),
   );
@@ -103,15 +124,18 @@ export async function verifyTask(
         e.data.name === 'remove_file' &&
         e.data.result?.removed === path,
     );
-    const write = events.findLastIndex((e) => e.kind === 'artifact' && e.data.path === path);
+    const write = events.findLastIndex(
+      (e) => e.kind === 'artifact' && e.data.path === path,
+    );
     return removal >= 0 && removal > write;
   };
   const paths = [
     ...new Set([
       ...task.verification.files,
-      ...[...artifacts.map((a) => a.path), ...(task.checkpoint?.artifacts ?? [])].filter(
-        (p) => !removed(p) && (!task.continuation || touched.has(p)),
-      ),
+      ...[
+        ...artifacts.map((a) => a.path),
+        ...(task.checkpoint?.artifacts ?? []),
+      ].filter((p) => !removed(p) && (!task.continuation || touched.has(p))),
     ]),
   ];
   const receipt: NonNullable<TaskReview['evidence']> = {
@@ -134,7 +158,9 @@ export async function verifyTask(
     limitations,
   };
   if (evidence.incomplete)
-    limitations.push('Some task or response context exceeds the review excerpt limits.');
+    limitations.push(
+      'Some task or response context exceeds the review excerpt limits.',
+    );
   if (task.continuation?.uncertain) {
     evidence.incomplete = true;
     limitations.push(
@@ -176,7 +202,9 @@ export async function verifyTask(
     if (excerpt) evidence.inputs.push({ path, text: excerpt });
     if (excerpt.length < text.length) {
       evidence.incomplete = true;
-      limitations.push(`${path}: only an excerpt of the task input was reviewed.`);
+      limitations.push(
+        `${path}: only an excerpt of the task input was reviewed.`,
+      );
     }
   }
   checks.push({
@@ -246,7 +274,8 @@ export async function verifyTask(
       });
     }
   }
-  receipt.complete = paths.length <= 20 && receipt.files.length === paths.length;
+  receipt.complete =
+    paths.length <= 20 && receipt.files.length === paths.length;
   signal.throwIfAborted();
   store.put('review_evidence', task.id, receipt);
   const previousTest = stageEvents.findLast(
@@ -257,6 +286,34 @@ export async function verifyTask(
       repeatableTest(e.data.args.command),
   );
   const command = task.verification.command || previousTest?.data.args.command;
+  const coverage = task.verification.coverage;
+  let coverageCurrent = false;
+  if (coverage) {
+    const snapshot = coverage.snapshot;
+    coverageCurrent =
+      !!snapshot &&
+      snapshot.commandSHA256 ===
+        createHash('sha256').update(task.verification.command).digest('hex');
+    if (coverageCurrent && snapshot)
+      for (const verifier of snapshot.verifierFiles) {
+        try {
+          const path = await scoped(workspace.path, verifier.path);
+          if (
+            (await stat(path)).size > 2_000_000 ||
+            createHash('sha256')
+              .update(await readFile(path, { signal }))
+              .digest('hex') !== verifier.sha256
+          )
+            coverageCurrent = false;
+        } catch {
+          coverageCurrent = false;
+        }
+      }
+    if (!coverageCurrent)
+      limitations.push(
+        'Requirement coverage is unverified because its predeclared command or verifier files changed.',
+      );
+  }
   const sourcePath =
     /\.(?:[cm]?[jt]sx?|py|pyw|rb|go|rs|swift|java|kt|c|cc|cpp|h|hpp|cs|sh|bash|zsh|sql|vue|svelte)$/i;
   const changedCode = revisionEvents.some(
@@ -265,7 +322,9 @@ export async function verifyTask(
       (e.kind === 'tool_completed' &&
         e.data.name === 'remove_file' &&
         sourcePath.test(e.data.result?.removed ?? '')) ||
-      (e.kind === 'tool_started' && e.data.name === 'shell' && e.data.args?.writable),
+      (e.kind === 'tool_started' &&
+        e.data.name === 'shell' &&
+        e.data.args?.writable),
   );
   const requestedBehavior =
     task.route?.kind === 'coding' &&
@@ -274,11 +333,44 @@ export async function verifyTask(
     );
   if (command && task.required.includes('shell')) {
     const test = await tools.shell(workspace, command, false, signal);
+    const testStatus: Check['status'] =
+      test.status !== 'exited'
+        ? 'unverified'
+        : test.code === 0
+          ? 'passed'
+          : 'failed';
     checks.push({
       name: 'Tests',
-      status: test.status !== 'exited' ? 'unverified' : test.code === 0 ? 'passed' : 'failed',
+      status: testStatus,
       detail: `${command}\n${test.status === 'exited' ? `Exit ${test.code}` : `Check incomplete: ${test.status}`}\n${String(test.stdout ?? '').slice(-4000)}\n${String(test.stderr ?? '').slice(-2000)}`,
     });
+    if (coverage) {
+      if (coverageCurrent)
+        for (const verifier of coverage.snapshot!.verifierFiles) {
+          const path = await scoped(workspace.path, verifier.path);
+          if (createHash('sha256').update(await readFile(path, { signal })).digest('hex') !== verifier.sha256)
+            coverageCurrent = false;
+        }
+      const status: Check['status'] = 'unverified';
+      receipt.coverage = coverage.requirements.map((requirement) => ({
+        requirement,
+        revision: task.revision ?? 0,
+        commandSHA256: coverage.snapshot?.commandSHA256 ?? '',
+        verifierFiles: coverage.snapshot?.verifierFiles ?? [],
+        status,
+      }));
+      checks.push(
+        ...coverage.requirements.map((requirement) => ({
+          name: `Verifier: ${requirement}`,
+          status,
+          detail:
+            coverageCurrent && testStatus === 'passed'
+              ? `Diagnostic only: the command exited 0 with unchanged declared verifier files, but arbitrary dependencies are not a secured execution boundary.`
+              : `Diagnostic only: command or declared verifier provenance is incomplete.`,
+        })),
+      );
+      store.put('review_evidence', task.id, receipt);
+    }
     if (test.status !== 'exited') {
       evidence.incomplete = true;
       limitations.push(
@@ -297,14 +389,27 @@ export async function verifyTask(
     limitations.push('Executable behavior has not been verified.');
   }
   const readSources = events
-    .filter((e) => e.kind === 'tool_completed' && ['web_read', 'browser'].includes(e.data.name))
+    .filter(
+      (e) =>
+        e.kind === 'tool_completed' &&
+        ['web_read', 'browser'].includes(e.data.name),
+    )
     .map((e) => e.data.result)
     .filter((s) => s?.url && typeof s.text === 'string');
   const citationText = [
     result,
     ...evidence.files
       .filter((f) =>
-        ['.md', '.markdown', '.txt', '.html', '.htm', '.pdf', '.docx', '.xlsx'].includes(f.format),
+        [
+          '.md',
+          '.markdown',
+          '.txt',
+          '.html',
+          '.htm',
+          '.pdf',
+          '.docx',
+          '.xlsx',
+        ].includes(f.format),
       )
       .map((f) => f.text ?? ''),
   ].join('\n');
@@ -315,7 +420,9 @@ export async function verifyTask(
   ) {
     const untraced = citations.filter(
       (url) =>
-        !readSources.some((s) => urlKey(s.url) === url || urlKey(s.requestedUrl ?? '') === url),
+        !readSources.some(
+          (s) => urlKey(s.url) === url || urlKey(s.requestedUrl ?? '') === url,
+        ),
     );
     checks.push({
       name: 'Citations',
@@ -328,7 +435,9 @@ export async function verifyTask(
     });
   }
   const relevant = readSources.filter((s) =>
-    citations.some((url) => urlKey(s.url) === url || urlKey(s.requestedUrl ?? '') === url),
+    citations.some(
+      (url) => urlKey(s.url) === url || urlKey(s.requestedUrl ?? '') === url,
+    ),
   );
   evidence.resolutionSources.push(
     ...relevant.slice(-6).map((s) => ({
@@ -337,7 +446,9 @@ export async function verifyTask(
       incomplete: s.text.length > 32000,
     })),
   );
-  evidence.sources = relevant.slice(-6).map((s) => ({ url: s.url, text: s.text.slice(0, 6000) }));
+  evidence.sources = relevant
+    .slice(-6)
+    .map((s) => ({ url: s.url, text: s.text.slice(0, 6000) }));
   if (relevant.length > 6) {
     evidence.incomplete = true;
     limitations.push('Only six cited source excerpts fit in the review.');
@@ -346,7 +457,9 @@ export async function verifyTask(
     limitations.push('Source support was assessed using excerpts.');
   if (
     task.route?.kind === 'documents' &&
-    !evidence.files.some((f) => ['.pdf', '.docx', '.xlsx', '.md', '.html'].includes(f.format))
+    !evidence.files.some((f) =>
+      ['.pdf', '.docx', '.xlsx', '.md', '.html'].includes(f.format),
+    )
   )
     checks.push({
       name: 'Document',

@@ -3,41 +3,41 @@
 All `/api/*` routes except the session exchange require the local session cookie.
 They are local application interfaces, not a remote service contract.
 
-| Method and path | Purpose |
-| --- | --- |
-| POST `/api/session` | Exchange the launch token for an HttpOnly cookie |
-| GET `/api/state` | Task summaries, workspaces, roster, settings, usage, approvals |
-| GET `/api/events` | SSE change notifications; refetch persisted state on reconnect |
-| POST `/api/workspaces` | Register a canonical project path and provider permissions |
-| PUT `/api/workspaces/:id` | Update project name and worker provider permissions |
-| POST `/api/system/choose-folder` | Open the installed app’s native folder picker |
-| POST `/api/tasks/:id/feedback` | Save or replace the task’s Worked / Needs work rating |
-| POST `/api/login/claude` | Start official browser sign-in; `method` is `subscription` (default), `console`, or `sso` |
-| POST `/api/login/claude/cancel` | Cancel pending sign-in and re-read the existing account without signing it out |
-| POST `/api/claude/setup` | Open the unmodified interactive Claude Code runtime in Terminal on macOS; no prompt supplied |
-| POST `/api/logout/:provider` | Disconnect an idle account |
-| POST `/api/workspaces/:id/import-preview` | Read one explicitly selected instruction file |
-| POST `/api/workspaces/:id/import` | Save the reviewed instruction copy and hash |
-| POST `/api/routes/preview` | Preview eligibility and model choice from local state; no inference, queued task, or spend reservation |
-| POST `/api/tasks` | Queue a task with required capabilities and success checks |
-| GET `/api/tasks/:id` | Persisted task, complete ordered event history, artifacts |
-| POST `/api/tasks/:id/cancel` | Stop the worker and retain evidence |
-| POST `/api/tasks/:id/resume` | Resume from checkpoint with optional follow-up |
-| POST `/api/tasks/:id/review` | Queue a retry of incomplete checks on a saved result; no worker execution |
-| POST `/api/approvals/:id` | Resolve one live approval with its operation hash |
-| PUT `/api/models/:id` | Edit a profile or record user-declared evaluation evidence |
-| GET `/api/models/:id/endpoints` | Discover exact OpenRouter providers and prices |
-| PUT `/api/settings` | Update spending limits and Jev routing policy |
-| PUT `/api/preferences` | Save `usageDisplay`: `compact`, `api`, `subscriptions`, or `both`; rejects unrelated settings |
-| POST `/api/usage/refresh` | Read connected Codex/Claude subscription metadata without inference; one-minute cooldown and concurrent-request deduplication |
-| POST `/api/keys/:provider` | Store an OpenRouter/TypeSafe key in macOS Keychain |
-| POST `/api/health` | Read runtime account and quota metadata without inference |
-| POST `/api/login/codex` | Start supported ChatGPT sign-in |
-| POST `/api/discover/:provider` | Discover models and descriptions; new entries remain unselected |
-| GET `/api/spending` | Reservations, settlements and audited corrections |
-| POST `/api/spending/:id/reconcile` | Record `actualUSD`, expected `reservedMicros` and a billing `note` for a stopped task; rejects stale or duplicate corrections |
-| GET `/api/artifacts/:id` | Hash-checked file; `?download=1` for download |
-| GET `/api/artifacts/:id/preview` | Authenticated, hash-checked image preview; optional PDF `page` or workbook `sheet`/`range`. Returns bounded coverage metadata. |
+| Method and path                           | Purpose                                                                                                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| POST `/api/session`                       | Exchange the launch token for an HttpOnly cookie                                                                               |
+| GET `/api/state`                          | Task summaries, workspaces, roster, settings, usage, approvals                                                                 |
+| GET `/api/events`                         | SSE change notifications; refetch persisted state on reconnect                                                                 |
+| POST `/api/workspaces`                    | Register a canonical project path and provider permissions                                                                     |
+| PUT `/api/workspaces/:id`                 | Update project name and worker provider permissions                                                                            |
+| POST `/api/system/choose-folder`          | Open the installed app’s native folder picker                                                                                  |
+| POST `/api/tasks/:id/feedback`            | Save or replace the task’s Worked / Needs work rating                                                                          |
+| POST `/api/login/claude`                  | Start official browser sign-in; `method` is `subscription` (default), `console`, or `sso`                                      |
+| POST `/api/login/claude/cancel`           | Cancel pending sign-in and re-read the existing account without signing it out                                                 |
+| POST `/api/claude/setup`                  | Open the unmodified interactive Claude Code runtime in Terminal on macOS; no prompt supplied                                   |
+| POST `/api/logout/:provider`              | Disconnect an idle account                                                                                                     |
+| POST `/api/workspaces/:id/import-preview` | Read one explicitly selected instruction file                                                                                  |
+| POST `/api/workspaces/:id/import`         | Save the reviewed instruction copy and hash                                                                                    |
+| POST `/api/routes/preview`                | Preview eligibility and model choice from local state; no inference, queued task, or spend reservation                         |
+| POST `/api/tasks`                         | Queue a task with required capabilities and success checks                                                                     |
+| GET `/api/tasks/:id`                      | Persisted task, complete ordered event history, artifacts                                                                      |
+| POST `/api/tasks/:id/cancel`              | Stop the worker and retain evidence                                                                                            |
+| POST `/api/tasks/:id/resume`              | Resume from checkpoint with optional follow-up                                                                                 |
+| POST `/api/tasks/:id/review`              | Queue a retry of incomplete checks on a saved result; no worker execution                                                      |
+| POST `/api/approvals/:id`                 | Resolve one live approval with its operation hash                                                                              |
+| PUT `/api/models/:id`                     | Edit a profile or record user-declared evaluation evidence                                                                     |
+| GET `/api/models/:id/endpoints`           | Discover exact OpenRouter providers and prices                                                                                 |
+| PUT `/api/settings`                       | Update spending limits and Jev routing policy                                                                                  |
+| PUT `/api/preferences`                    | Save `usageDisplay`: `compact`, `api`, `subscriptions`, or `both`; rejects unrelated settings                                  |
+| POST `/api/usage/refresh`                 | Read connected Codex/Claude subscription metadata without inference; one-minute cooldown and concurrent-request deduplication  |
+| POST `/api/keys/:provider`                | Store an OpenRouter/TypeSafe key in macOS Keychain                                                                             |
+| POST `/api/health`                        | Read runtime account and quota metadata without inference                                                                      |
+| POST `/api/login/codex`                   | Start supported ChatGPT sign-in                                                                                                |
+| POST `/api/discover/:provider`            | Discover models and descriptions; new entries remain unselected                                                                |
+| GET `/api/spending`                       | Reservations, settlements and audited corrections                                                                              |
+| POST `/api/spending/:id/reconcile`        | Record `actualUSD`, expected `reservedMicros` and a billing `note` for a stopped task; rejects stale or duplicate corrections  |
+| GET `/api/artifacts/:id`                  | Hash-checked file; `?download=1` for download                                                                                  |
+| GET `/api/artifacts/:id/preview`          | Authenticated, hash-checked image preview; optional PDF `page` or workbook `sheet`/`range`. Returns bounded coverage metadata. |
 
 The local interface also owns iPhone consent. `POST
 /api/remote/pairing-challenges` creates an expiring, one-use challenge for an
@@ -59,15 +59,15 @@ The default production mode also requires Tailscale Serve's authenticated
 per-device bearer credential. Other routes require that credential and apply
 its saved project scope.
 
-| Method and path | Purpose |
-| --- | --- |
-| GET `/remote/v1/state` | Scoped projects, task summaries, pending approvals and artifacts; revisions, attempts and incomplete checks remain visible |
-| GET `/remote/v1/tasks/:id` | One scoped task, user-facing persisted history and artifacts; routing and model events are omitted |
-| POST `/remote/v1/tasks` | Start work without a model or effort override |
-| POST `/remote/v1/tasks/:id/follow-ups` | Continue stopped work with a user follow-up |
-| POST `/remote/v1/tasks/:id/cancel` | Stop current work without claiming to undo completed effects |
-| POST `/remote/v1/approvals/:id` | Decide a live approval using its stored operation hash |
-| GET `/remote/v1/artifacts/:id` | Download one scoped, hash-checked artifact |
+| Method and path                        | Purpose                                                                                                                    |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| GET `/remote/v1/state`                 | Scoped projects, task summaries, pending approvals and artifacts; revisions, attempts and incomplete checks remain visible |
+| GET `/remote/v1/tasks/:id`             | One scoped task, user-facing persisted history and artifacts; routing and model events are omitted                         |
+| POST `/remote/v1/tasks`                | Start work without a model or effort override                                                                              |
+| POST `/remote/v1/tasks/:id/follow-ups` | Continue stopped work with a user follow-up                                                                                |
+| POST `/remote/v1/tasks/:id/cancel`     | Stop current work without claiming to undo completed effects                                                               |
+| POST `/remote/v1/approvals/:id`        | Decide a live approval using its stored operation hash                                                                     |
+| GET `/remote/v1/artifacts/:id`         | Download one scoped, hash-checked artifact                                                                                 |
 
 Every remote mutation requires a UUID `Idempotency-Key`. The Mac stores the
 request fingerprint and result. Identical retries return the saved result;
@@ -144,25 +144,31 @@ or unavailable combinations block; they do not select another model silently.
 An explicit model bypasses Jev routing, while assist-mode content review remains
 enabled. The development harness uses this path for comparable fixed baselines.
 
+### Optional verifier coverage
+
+`verification.coverage` is optional diagnostic metadata. It snapshots a predeclared command and declared verifier files before work, then rechecks those files after the command. It never marks a requirement passed or suppresses semantic review: arbitrary command dependencies and inputs are not a secured execution boundary. A changed command or verifier, changed revision, timeout, unavailable runner, or output limit leaves the receipt unverified.
+
+The user must explicitly declare the command, exact expected-result sentences, and all verifier files relied on. Legacy tasks and tasks without this metadata keep the existing verification flow. This is provenance for declared verifier files, not a general proof that arbitrary command dependencies or task outputs are correct.
+
 ## Shared worker tools
 
 These are model-facing tool calls through the adapters, not unauthenticated HTTP
 endpoints. Task capabilities and project scope are enforced by the service.
 
-| Tool | Contract and limits |
-| --- | --- |
-| `setup_list`, `setup_read` | Read packaged core skills and approved task setup snapshots. A setup cannot grant permissions. |
-| `list_files` | Sorted directory entries, 500 per page; `offset`, `total` and `nextOffset` expose pagination. |
-| `read_file` | UTF-8, saved PDF text, Word main text and XLSX cells/formulas; 2 MB input, bounded lines and explicit extraction limits. |
-| `search_files` | Literal text, project scope, line numbers; at most 1,000 files/10 MB/100 matches; excludes credentials, links, dependencies and binary files. |
-| `write_file`, `edit_file` | Text output or one unique exact replacement, with retained previous bytes. Ambiguous replacements fail without modifying the file. |
-| `remove_file` | Approved, recoverable removal with content revalidation. |
-| `shell` | Network-isolated execution; project writes need approval. Node is bundled; other language runtimes are project prerequisites. |
-| `web_search`, `web_read` | Keyless Tavily discovery and public HTTPS source reading, including text-based PDFs under 2 MB. Search results alone cannot support citations. Rate limits, unsupported binary pages and empty responses fail explicitly. |
-| `browser` | Isolated public browser; approved clicks/fills, bounded reads and viewport screenshots. |
-| `create_artifact` | Markdown, HTML, basic Word/PDF, and XLSX with `rows` or named `sheets`. Formula cells use `{ "formula": "SUM(B2:B4)" }`; strings beginning with `=` remain text. |
-| `preview_file` | PDF `page`, PNG/JPEG, static HTML viewport, Word Quick Look thumbnail, or XLSX `sheet` and `range` (for example `A1:D12`). XLSX previews show saved cells, up to 50 rows and 12 columns, rather than native Excel styling. Word previews may cover only the first page. Returns image data and coverage. |
-| `checkpoint` | Completed work, remaining work and artifact paths for the next stage. |
+| Tool                       | Contract and limits                                                                                                                                                                                                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setup_list`, `setup_read` | Read packaged core skills and approved task setup snapshots. A setup cannot grant permissions.                                                                                                                                                                                                           |
+| `list_files`               | Sorted directory entries, 500 per page; `offset`, `total` and `nextOffset` expose pagination.                                                                                                                                                                                                            |
+| `read_file`                | UTF-8, saved PDF text, Word main text and XLSX cells/formulas; 2 MB input, bounded lines and explicit extraction limits.                                                                                                                                                                                 |
+| `search_files`             | Literal text, project scope, line numbers; at most 1,000 files/10 MB/100 matches; excludes credentials, links, dependencies and binary files.                                                                                                                                                            |
+| `write_file`, `edit_file`  | Text output or one unique exact replacement, with retained previous bytes. Ambiguous replacements fail without modifying the file.                                                                                                                                                                       |
+| `remove_file`              | Approved, recoverable removal with content revalidation.                                                                                                                                                                                                                                                 |
+| `shell`                    | Network-isolated execution; project writes need approval. Node is bundled; other language runtimes are project prerequisites.                                                                                                                                                                            |
+| `web_search`, `web_read`   | Keyless Tavily discovery and public HTTPS source reading, including text-based PDFs under 2 MB. Search results alone cannot support citations. Rate limits, unsupported binary pages and empty responses fail explicitly.                                                                                |
+| `browser`                  | Isolated public browser; approved clicks/fills, bounded reads and viewport screenshots.                                                                                                                                                                                                                  |
+| `create_artifact`          | Markdown, HTML, basic Word/PDF, and XLSX with `rows` or named `sheets`. Formula cells use `{ "formula": "SUM(B2:B4)" }`; strings beginning with `=` remain text.                                                                                                                                         |
+| `preview_file`             | PDF `page`, PNG/JPEG, static HTML viewport, Word Quick Look thumbnail, or XLSX `sheet` and `range` (for example `A1:D12`). XLSX previews show saved cells, up to 50 rows and 12 columns, rather than native Excel styling. Word previews may cover only the first page. Returns image data and coverage. |
+| `checkpoint`               | Completed work, remaining work and artifact paths for the next stage.                                                                                                                                                                                                                                    |
 
 Images use each adapter's image-content protocol, with only metadata retained in
 tool event receipts. Codex's code-mode bridge receives instructions to emit the

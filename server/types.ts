@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import type { WorkType, WorkPreferences, BriefSize } from '../shared/routing.js';
+import type {
+  WorkType,
+  WorkPreferences,
+  BriefSize,
+} from '../shared/routing.js';
 import type { ClaudeConnection } from '../shared/claude-connection.js';
 
 export const Provider = z.enum(['codex', 'claude', 'openrouter']);
@@ -82,10 +86,35 @@ export const TaskInput = z.object({
     .object({
       files: z.array(z.string()).max(20).default([]),
       command: z.string().max(4000).default(''),
+      // Optional, explicit mapping for a user-supplied command. It is inert until
+      // Engine snapshots every declared verifier before worker execution.
+      coverage: z
+        .object({
+          requirements: z
+            .array(z.string().trim().min(1).max(1000))
+            .min(1)
+            .max(8),
+          verifierFiles: z
+            .array(z.string().trim().min(1).max(1000))
+            .min(1)
+            .max(20),
+        })
+        .optional(),
     })
     .default({ files: [], command: '' }),
 });
-export type Task = z.infer<typeof TaskInput> & {
+export type VerifierCoverage = {
+  requirements: string[];
+  verifierFiles: string[];
+  snapshot?: {
+    commandSHA256: string;
+    verifierFiles: { path: string; sha256: string }[];
+  };
+};
+export type Task = Omit<z.infer<typeof TaskInput>, 'verification'> & {
+  verification: Omit<z.infer<typeof TaskInput>['verification'], 'coverage'> & {
+    coverage?: VerifierCoverage;
+  };
   id: string;
   title: string;
   status: Status;
@@ -116,7 +145,18 @@ export const ModelInput = z.object({
   model: z.string().min(1),
   label: z.string().min(1),
   supportedEfforts: z
-    .array(z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra']))
+    .array(
+      z.enum([
+        'none',
+        'minimal',
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+        'max',
+        'ultra',
+      ]),
+    )
     .optional(),
   enabled: z.boolean().default(false),
   capabilities: z.array(Cap),
@@ -139,10 +179,15 @@ export const ModelInput = z.object({
     })
     .optional(),
   catalogOverrides: z
-    .array(z.enum(['inputPrice', 'outputPrice', 'requestPrice', 'contextLimit']))
+    .array(
+      z.enum(['inputPrice', 'outputPrice', 'requestPrice', 'contextLimit']),
+    )
     .optional(),
   feedback: z
-    .object({ worked: z.number().int().nonnegative(), needsWork: z.number().int().nonnegative() })
+    .object({
+      worked: z.number().int().nonnegative(),
+      needsWork: z.number().int().nonnegative(),
+    })
     .optional(),
   inputPrice: z.number().finite().nonnegative().optional(),
   outputPrice: z.number().finite().nonnegative().optional(),
@@ -186,6 +231,13 @@ export type TaskReview = {
     inputKey: string;
     files: { path: string; sha256: string }[];
     complete: boolean;
+    coverage?: {
+      requirement: string;
+      revision: number;
+      commandSHA256: string;
+      verifierFiles: { path: string; sha256: string }[];
+      status: Check['status'];
+    }[];
   };
 };
 export type Outcome = {
@@ -385,7 +437,10 @@ export type Health = {
   version?: string;
   connection?: ClaudeConnection;
 };
-export type SubscriptionStatus = Pick<Health, 'quota' | 'quotaCheckedAt' | 'usageError'> & {
+export type SubscriptionStatus = Pick<
+  Health,
+  'quota' | 'quotaCheckedAt' | 'usageError'
+> & {
   ready?: boolean;
   connection?: ClaudeConnection;
   message?: string;

@@ -6,6 +6,12 @@ export type Requirement = {
   kind: 'result' | 'file' | 'command';
   value: string;
 };
+export function explicitRequirements(task: Pick<Task, 'expectedResult'>) {
+  return task.expectedResult
+    .split(/\n+|(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 export function requirements(task: Task): Requirement[] {
   return [
     ...(task.expectedResult
@@ -50,7 +56,11 @@ export function taskInputKey(task: Task) {
     .digest('hex');
 }
 
-export function currentEvents<T extends { kind: string; data: any }>(events: T[]) {
-  const start = events.findLastIndex((e) => e.kind === 'resumed' && e.data.followup?.trim());
+export function currentEvents<T extends { kind: string; data: any }>(
+  events: T[],
+) {
+  const start = events.findLastIndex(
+    (e) => e.kind === 'resumed' && e.data.followup?.trim(),
+  );
   return events.slice(start + 1);
 }

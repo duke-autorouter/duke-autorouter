@@ -68,7 +68,9 @@ export async function routingContext(
     };
   });
   // Only aggregate project structure; private setup documents are never copied to Jev.
-  const entries = (await readdir(workspace.path, { withFileTypes: true })).filter(
+  const entries = (
+    await readdir(workspace.path, { withFileTypes: true })
+  ).filter(
     (e) => !sensitive(e.name) && !e.name.startsWith('.') && !e.isSymbolicLink(),
   );
   signal?.throwIfAborted();
@@ -83,7 +85,9 @@ export async function routingContext(
     project: {
       entries: entries.length,
       fileTypes,
-      hasTests: entries.some((e) => /^(tests?|__tests__|specs?)(\.|$)/i.test(e.name)),
+      hasTests: entries.some((e) =>
+        /^(tests?|__tests__|specs?)(\.|$)/i.test(e.name),
+      ),
     },
     progress: task.checkpoint
       ? {
@@ -95,7 +99,8 @@ export async function routingContext(
     incomplete:
       bounded.some((a) => a.truncated) ||
       (!!task.checkpoint &&
-        (task.checkpoint.summary.length > 1500 || task.checkpoint.remaining.length > 2500)),
+        (task.checkpoint.summary.length > 1500 ||
+          task.checkpoint.remaining.length > 2500)),
   };
 }
 
@@ -139,7 +144,8 @@ export function officeXML(bytes: Buffer): Map<string, string> {
   const count = bytes.readUInt16LE(end + 10);
   let cursor = bytes.readUInt32LE(end + 16),
     expanded = 0;
-  if (count > 2000) throw new InspectionLimit('Office archive exceeds inspection limits');
+  if (count > 2000)
+    throw new InspectionLimit('Office archive exceeds inspection limits');
   if (cursor >= end) throw new Error('Invalid Office archive directory');
   const files = new Map<string, string>();
   for (let i = 0; i < count; i++) {
@@ -153,31 +159,52 @@ export function officeXML(bytes: Buffer): Map<string, string> {
       extra = bytes.readUInt16LE(cursor + 30),
       comment = bytes.readUInt16LE(cursor + 32);
     const offset = bytes.readUInt32LE(cursor + 42);
-    if (cursor + 46 + nameLength + extra + comment > end) throw new Error('Invalid Office entry');
-    const name = bytes.subarray(cursor + 46, cursor + 46 + nameLength).toString('utf8');
+    if (cursor + 46 + nameLength + extra + comment > end)
+      throw new Error('Invalid Office entry');
+    const name = bytes
+      .subarray(cursor + 46, cursor + 46 + nameLength)
+      .toString('utf8');
     expanded += size;
-    if (flags & 1 || size > 2_000_000 || expanded > 6_000_000 || ![0, 8].includes(method))
+    if (
+      flags & 1 ||
+      size > 2_000_000 ||
+      expanded > 6_000_000 ||
+      ![0, 8].includes(method)
+    )
       throw new InspectionLimit(
         'Office archive exceeds inspection limits or uses unsupported encryption/compression',
       );
     if (offset + 30 > bytes.length || bytes.readUInt32LE(offset) !== 0x04034b50)
       throw new Error('Invalid Office entry');
-    const start = offset + 30 + bytes.readUInt16LE(offset + 26) + bytes.readUInt16LE(offset + 28);
-    if (start + compressed > bytes.length) throw new Error('Invalid Office entry size');
+    const start =
+      offset +
+      30 +
+      bytes.readUInt16LE(offset + 26) +
+      bytes.readUInt16LE(offset + 28);
+    if (start + compressed > bytes.length)
+      throw new Error('Invalid Office entry size');
     if (
       /^(?:\[Content_Types\]\.xml|word\/document\.xml|xl\/(?:workbook|sharedStrings|worksheets\/sheet\d+)\.xml)$/.test(
         name,
       )
     ) {
       const data = bytes.subarray(start, start + compressed);
-      const xml = method === 8 ? inflateRawSync(data, { maxOutputLength: 2_000_000 }) : data;
-      if (xml.length !== size || crc32(xml) !== bytes.readUInt32LE(cursor + 16) || files.has(name))
+      const xml =
+        method === 8
+          ? inflateRawSync(data, { maxOutputLength: 2_000_000 })
+          : data;
+      if (
+        xml.length !== size ||
+        crc32(xml) !== bytes.readUInt32LE(cursor + 16) ||
+        files.has(name)
+      )
         throw new Error('Invalid Office XML checksum, size or duplicate entry');
       files.set(name, xml.toString('utf8'));
     }
     cursor += 46 + nameLength + extra + comment;
   }
-  if (!files.has('[Content_Types].xml')) throw new Error('Missing Office content types');
+  if (!files.has('[Content_Types].xml'))
+    throw new Error('Missing Office content types');
   return files;
 }
 
@@ -188,7 +215,8 @@ export async function inspectFile(
 ): Promise<FileEvidence> {
   const p = await scoped(workspace.path, path),
     metadata = await stat(p);
-  if (!metadata.isFile() || !metadata.size) throw new Error(`${path} is missing or empty`);
+  if (!metadata.isFile() || !metadata.size)
+    throw new Error(`${path} is missing or empty`);
   if (metadata.size > 2_000_000)
     return {
       path,
@@ -212,12 +240,16 @@ export async function inspectFile(
     const pdf = await PDFDocument.load(bytes, { updateMetadata: false });
     if (!pdf.getPageCount()) throw new Error('PDF has no pages');
     try {
-      const extracted = await nativeDocument({ operation: 'pdf_text', path: p }, signal);
+      const extracted = await nativeDocument(
+        { operation: 'pdf_text', path: p },
+        signal,
+      );
       const missingPages = extracted.pagesWithoutText ?? [];
       return {
         ...result,
         text: extracted.hasText ? extracted.text : undefined,
-        incomplete: extracted.truncated || !extracted.hasText || missingPages.length > 0,
+        incomplete:
+          extracted.truncated || !extracted.hasText || missingPages.length > 0,
         detail: `PDF opens with ${pdf.getPageCount()} pages. ${extracted.hasText ? 'Text extracted from saved PDF.' : 'No extractable text; OCR is not included.'}${missingPages.length ? ` Pages ${missingPages.join(', ')} have no extractable text and may be blank or image-only; OCR is not included.` : ''} Layout requires visual inspection.`,
       };
     } catch (error) {
@@ -233,7 +265,8 @@ export async function inspectFile(
     try {
       files = officeXML(bytes);
     } catch (e) {
-      if (e instanceof InspectionLimit) return { ...result, incomplete: true, detail: e.message };
+      if (e instanceof InspectionLimit)
+        return { ...result, incomplete: true, detail: e.message };
       throw e;
     }
     if (format === '.docx') {
@@ -244,8 +277,11 @@ export async function inspectFile(
       result.detail =
         'Main Word document text and table row/cell boundaries inspected. Comments, tracked changes, embedded images and rendered layout are not assessed.';
     } else {
-      if (!files.has('xl/workbook.xml')) throw new Error('Missing Excel workbook');
-      const sheets = [...files].filter(([name]) => name.startsWith('xl/worksheets/'));
+      if (!files.has('xl/workbook.xml'))
+        throw new Error('Missing Excel workbook');
+      const sheets = [...files].filter(([name]) =>
+        name.startsWith('xl/worksheets/'),
+      );
       if (!sheets.length) throw new Error('Workbook has no worksheets');
       if (!sheets.some(([, xml]) => /<(?:v|t)>[^<]+<\//.test(xml)))
         throw new Error('Workbook has no readable cells');
@@ -272,13 +308,15 @@ export async function inspectFile(
         );
       }
     }
-    if (!result.text.trim()) throw new Error('Office document has no readable text or cells');
+    if (!result.text.trim())
+      throw new Error('Office document has no readable text or cells');
   } else if (!bytes.includes(0)) {
     try {
       result.text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     } catch {
       result.incomplete = true;
-      result.detail = 'Binary or non-UTF-8 content is not supported by the text verifier.';
+      result.detail =
+        'Binary or non-UTF-8 content is not supported by the text verifier.';
     }
   } else {
     result.incomplete = true;

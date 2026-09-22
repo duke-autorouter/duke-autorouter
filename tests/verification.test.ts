@@ -1,6 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, symlink } from 'node:fs/promises';
+import {
+  mkdtemp,
+  mkdir,
+  readFile,
+  writeFile,
+  rm,
+  realpath,
+  symlink,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Store } from '../server/store.js';
@@ -15,8 +23,12 @@ import {
   modelsWithFeedback,
 } from '../server/model-profiles.js';
 import { inspectFile, routingContext } from '../server/task-evidence.js';
-import { outcomeSummaries, interval, REVIEW_POLICY } from '../server/outcomes.js';
-import { citedURLs } from '../server/verification.js';
+import {
+  outcomeSummaries,
+  interval,
+  REVIEW_POLICY,
+} from '../server/outcomes.js';
+import { assertReviewEvidence, citedURLs } from '../server/verification.js';
 import type { ProcessStatus } from '../server/process.js';
 import {
   defaults,
@@ -92,11 +104,19 @@ async function fixture(kind: TaskKind = 'writing') {
           }
         : body.questions.recovery
           ? {
-              recovery: choice(Object.keys(body.questions.recovery.criteria), body.state.recoveryStage === 'correction' ? 'correction' : 'reasoning'),
+              recovery: choice(
+                Object.keys(body.questions.recovery.criteria),
+                body.state.recoveryStage === 'correction'
+                  ? 'correction'
+                  : 'reasoning',
+              ),
             }
           : body.questions.model
             ? {
-                model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
+                model: choice(
+                  Object.keys(body.questions.model.criteria),
+                  'candidate_0',
+                ),
               }
             : Object.fromEntries(
                 Object.entries({
@@ -111,7 +131,11 @@ async function fixture(kind: TaskKind = 'writing') {
                   typeof v === 'string'
                     ? choice(
                         Object.keys(
-                          body.questions[id]?.criteria ?? { pass: '', fail: '', unknown: '' },
+                          body.questions[id]?.criteria ?? {
+                            pass: '',
+                            fail: '',
+                            unknown: '',
+                          },
                         ),
                         id.startsWith('claim_')
                           ? v === 'pass'
@@ -149,7 +173,11 @@ async function fixture(kind: TaskKind = 'writing') {
       return 'Saved the requested introduction to result.md.';
     },
   };
-  const tools = new ToolService(store, new Approvals(store), join(root, 'state'));
+  const tools = new ToolService(
+    store,
+    new Approvals(store),
+    join(root, 'state'),
+  );
   const engine = new Engine(
     store,
     tools,
@@ -169,7 +197,8 @@ async function fixture(kind: TaskKind = 'writing') {
     verdict: (fn: typeof verdict) => {
       verdict = fn;
     },
-    add: (...models: Model[]) => models.forEach((m) => store.put('model', m.id, m)),
+    add: (...models: Model[]) =>
+      models.forEach((m) => store.put('model', m.id, m)),
     run: async (patch: Record<string, unknown> = {}) => {
       const task = await engine.create({
         prompt: 'Write a project introduction',
@@ -219,7 +248,9 @@ test('manual model overrides bypass Jev routing but receive the same assist-mode
     assert.equal(task.route?.selectionSource, 'manual');
     assert.equal(task.review?.status, 'passed');
     assert.equal(f.calls.length, 1);
-    assert.ok(f.store.events(task.id).some((event) => event.kind === 'jev_review'));
+    assert.ok(
+      f.store.events(task.id).some((event) => event.kind === 'jev_review'),
+    );
   } finally {
     await f.close();
   }
@@ -257,7 +288,10 @@ test('configured fallback permits an economical attempt without treating it as p
     required: ['files'] as ['files'],
   };
   const settings = { ...defaults, jevFallbackModel: 'routine' };
-  assert.equal(route(task, w, [unknown, routine, strong], settings).modelId, 'routine');
+  assert.equal(
+    route(task, w, [unknown, routine, strong], settings).modelId,
+    'routine',
+  );
   assert.equal(
     route(task, w, [unknown, routine, strong], settings).assessment.difficulty,
     'complex',
@@ -277,23 +311,36 @@ test('catalog refresh replaces stale prices and context while preserving explici
     pricing: { prompt: price, completion: price, request: '0' },
   });
   try {
-    const first = recordCatalog(store, 'openrouter', [raw('.000001', 32000)])[0];
+    const first = recordCatalog(store, 'openrouter', [
+      raw('.000001', 32000),
+    ])[0];
     store.put('model', first.id, {
       ...first,
       enabled: false,
       routingNotes: 'Keep this note',
     });
-    const fresh = recordCatalog(store, 'openrouter', [raw('.000010', 128000)])[0];
+    const fresh = recordCatalog(store, 'openrouter', [
+      raw('.000010', 128000),
+    ])[0];
     assert.equal(fresh.inputPrice, 10);
     assert.equal(fresh.contextLimit, 128000);
     assert.equal(fresh.enabled, false);
     assert.equal(fresh.routingNotes, 'Keep this note');
-    store.put('model', first.id, preserveModelOverrides({ ...fresh, inputPrice: 3 }, fresh));
-    const pinned = recordCatalog(store, 'openrouter', [raw('.000020', 256000)])[0];
+    store.put(
+      'model',
+      first.id,
+      preserveModelOverrides({ ...fresh, inputPrice: 3 }, fresh),
+    );
+    const pinned = recordCatalog(store, 'openrouter', [
+      raw('.000020', 256000),
+    ])[0];
     assert.equal(pinned.inputPrice, 3);
     assert.equal(pinned.outputPrice, 20);
     assert.equal(pinned.contextLimit, 256000);
-    assert.equal(recordCatalog(store, 'openrouter', [raw('0', 64000)])[0].outputPrice, 0);
+    assert.equal(
+      recordCatalog(store, 'openrouter', [raw('0', 64000)])[0].outputPrice,
+      0,
+    );
   } finally {
     store.close();
   }
@@ -322,10 +369,16 @@ test('small attachments are assessed on their contents and private setup stays o
   const f = await fixture();
   try {
     f.add(model('worker'));
-    await writeFile(join(f.workspace.path, 'note.txt'), 'A short invented note to edit.');
+    await writeFile(
+      join(f.workspace.path, 'note.txt'),
+      'A short invented note to edit.',
+    );
     const task = await f.run({ attachments: ['note.txt'] });
     assert.equal(task.route?.assessment.difficulty, 'routine');
-    assert.equal(f.calls[0].state.context.attachments[0].excerpt, 'A short invented note to edit.');
+    assert.equal(
+      f.calls[0].state.context.attachments[0].excerpt,
+      'A short invented note to edit.',
+    );
     assert.equal(f.calls[0].state.contextIncomplete, false);
     assert.doesNotMatch(JSON.stringify(f.calls), /PRIVATE-SETUP-MARKER/);
     assert.equal(task.review?.status, 'passed');
@@ -392,7 +445,9 @@ test('a focused defect missed by broad checks retries the same model and retains
           path: 'result.md',
           content: f.runs.length === 1 ? 'TODO' : 'A complete introduction.',
         });
-        return f.runs.length === 1 ? 'BAD placeholder' : 'Created the complete introduction.';
+        return f.runs.length === 1
+          ? 'BAD placeholder'
+          : 'Created the complete introduction.';
       },
     };
     f.engine.workers.claude = {
@@ -463,18 +518,45 @@ test('failed checks without a suitable alternative retain the deliverable and ca
 
 test('review gates use verdict probability and retain the full distribution separately from confidence', async (t) => {
   for (const [label, probabilities, confidence, expected] of [
-    ['observed coding distribution', { pass: 0.8, fail: 0.18, unknown: 0.02 }, 0.7, 'passed'],
-    ['observed document distribution', { pass: 0.83, fail: 0.13, unknown: 0.04 }, 0.75, 'passed'],
-    ['below pass threshold', { pass: 0.799, fail: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
-    ['uncorroborated broad failure', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'unverified'],
-    ['below fail threshold', { fail: 0.799, pass: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
+    [
+      'observed coding distribution',
+      { pass: 0.8, fail: 0.18, unknown: 0.02 },
+      0.7,
+      'passed',
+    ],
+    [
+      'observed document distribution',
+      { pass: 0.83, fail: 0.13, unknown: 0.04 },
+      0.75,
+      'passed',
+    ],
+    [
+      'below pass threshold',
+      { pass: 0.799, fail: 0.15, unknown: 0.051 },
+      0.95,
+      'unverified',
+    ],
+    [
+      'uncorroborated broad failure',
+      { fail: 0.8, pass: 0.18, unknown: 0.02 },
+      0.7,
+      'unverified',
+    ],
+    [
+      'below fail threshold',
+      { fail: 0.799, pass: 0.15, unknown: 0.051 },
+      0.95,
+      'unverified',
+    ],
     ['certain unknown', { unknown: 1, pass: 0, fail: 0 }, 1, 'unverified'],
   ] as const) {
     await t.test(label, async () => {
       const f = await fixture();
       try {
         f.add(model('worker'));
-        const selected = Object.entries(probabilities).sort((a, b) => b[1] - a[1])[0][0];
+        const selected = Object.entries(probabilities).sort(
+          (a, b) => b[1] - a[1],
+        )[0][0];
         f.verdict(() => ({
           brief: {
             type: 'choice',
@@ -496,7 +578,9 @@ test('review gates use verdict probability and retain the full distribution sepa
           probabilities[selected as keyof typeof probabilities],
         );
         assert.equal(check.judgment?.threshold, 0.8);
-        const event = f.store.events(task.id).find((e) => e.kind === 'jev_review')!;
+        const event = f.store
+          .events(task.id)
+          .find((e) => e.kind === 'jev_review')!;
         assert.equal(event.data.policy, REVIEW_POLICY);
         assert.deepEqual(event.data.judgments['Jev: brief'], check.judgment);
         assert.ok(!JSON.stringify(event.data).includes('PRIVATE-SETUP-MARKER'));
@@ -508,7 +592,12 @@ test('review gates use verdict probability and retain the full distribution sepa
 });
 
 test('uncertain, malformed and unavailable reviews are neutral, not successes or quality failures', async () => {
-  for (const mode of ['unknown', 'uncertain', 'malformed', 'unavailable'] as const) {
+  for (const mode of [
+    'unknown',
+    'uncertain',
+    'malformed',
+    'unavailable',
+  ] as const) {
     const f = await fixture();
     try {
       f.add(model('worker'));
@@ -587,7 +676,11 @@ test('coding without tests cannot become positive quality evidence even if Jev a
     f.add(model('worker'));
     const task = await f.run({ prompt: 'Fix the code' });
     assert.equal(task.review?.status, 'unverified');
-    assert.ok(task.review?.checks.some((c) => c.name === 'Tests' && c.status === 'unverified'));
+    assert.ok(
+      task.review?.checks.some(
+        (c) => c.name === 'Tests' && c.status === 'unverified',
+      ),
+    );
   } finally {
     await f.close();
   }
@@ -597,7 +690,10 @@ test('a bounded task input read by the worker supplies factual evidence to the r
   const f = await fixture();
   try {
     f.add(model('worker'));
-    await writeFile(join(f.workspace.path, 'brief.md'), 'The invented budget is 900 dollars.');
+    await writeFile(
+      join(f.workspace.path, 'brief.md'),
+      'The invented budget is 900 dollars.',
+    );
     f.engine.workers.codex = {
       run: async (c) => {
         await c.tool('read_file', { path: 'brief.md' });
@@ -620,12 +716,17 @@ test('files changed during remote review are neutral evidence even when the judg
     f.jev.transport = async (...args) => {
       const body = JSON.parse(String(args[1]?.body));
       if (body.questions.brief)
-        await writeFile(join(f.workspace.path, 'result.md'), 'An outside edit during review.');
+        await writeFile(
+          join(f.workspace.path, 'result.md'),
+          'An outside edit during review.',
+        );
       return transport(...args);
     };
     const task = await f.run();
     assert.equal(task.review?.status, 'unverified');
-    assert.ok(task.review?.checks.some((c) => c.detail.includes('changed while')));
+    assert.ok(
+      task.review?.checks.some((c) => c.detail.includes('changed while')),
+    );
     assert.equal(outcomeSummaries(f.store, model('worker'))[0].passed, 0);
   } finally {
     await f.close();
@@ -705,6 +806,165 @@ test('an independently rerun task check can fail and trigger recovery before sem
   }
 });
 
+test('predeclared verifier coverage passes only its exact requirement and leaves unrelated semantic evidence active', async () => {
+  const f = await fixture('coding');
+  try {
+    f.add(model('worker'));
+    await writeFile(join(f.workspace.path, 'verify.mjs'), 'process.exit(0);');
+    f.tools.shell = async () => ({
+      status: 'exited',
+      code: 0,
+      stdout: 'verified',
+      stderr: '',
+    });
+    f.verdict(() => ({
+      claim_0: 'unknown',
+      brief: 'pass',
+      support: 'pass',
+      completion: 'pass',
+    }));
+    const requirement = 'The exact total is 200.';
+    const task = await f.run({
+      prompt: 'Write a total',
+      expectedResult: requirement,
+      required: ['files', 'shell'],
+      verification: {
+        files: ['result.md'],
+        command: 'node verify.mjs',
+        coverage: {
+          requirements: [requirement],
+          verifierFiles: ['verify.mjs'],
+        },
+      },
+    });
+    assert.equal(
+      task.review?.checks.find((c) => c.name === `Verifier: ${requirement}`)
+        ?.status,
+      'unverified',
+    );
+    assert.equal(
+      task.review?.checks.some((c) => c.name === 'Jev: requirement_0'),
+      true,
+    );
+    assert.equal(
+      task.review?.checks.find((c) => c.name === 'Jev: claim_0')?.status,
+      'unverified',
+    );
+    assert.equal(task.review?.status, 'unverified');
+    assert.equal(task.review?.evidence?.coverage?.[0].revision, 0);
+  } finally {
+    await f.close();
+  }
+});
+
+test('verifier coverage fails closed for changed verifier bytes, non-exit infrastructure, revision supersession, and semantic contradiction', async () => {
+  for (const scenario of [
+    'changed',
+    'command',
+    'infrastructure',
+    'contradiction',
+  ] as const) {
+    const f = await fixture('coding');
+    try {
+      f.add(model('worker'));
+      await writeFile(join(f.workspace.path, 'verify.mjs'), 'process.exit(0);');
+      const requirement = 'The exact total is 200.';
+      f.tools.shell = async () =>
+        scenario === 'infrastructure'
+          ? {
+              status: 'unavailable',
+              code: null,
+              stdout: '',
+              stderr: 'Synthetic unavailable runner',
+            }
+          : { status: 'exited', code: 0, stdout: 'verified', stderr: '' };
+      if (scenario === 'contradiction')
+        f.verdict(() => ({
+          claim_0: 'fail',
+          brief: 'pass',
+          support: 'pass',
+          completion: 'pass',
+        }));
+      const created = await f.engine.create({
+        prompt: 'Write a total',
+        workspaceId: 'w',
+        expectedResult: requirement,
+        required: ['files', 'shell'],
+        verification: {
+          files: ['result.md'],
+          command: 'node verify.mjs',
+          coverage: {
+            requirements: [requirement],
+            verifierFiles: ['verify.mjs'],
+          },
+        },
+      });
+      if (scenario === 'changed')
+        await writeFile(
+          join(f.workspace.path, 'verify.mjs'),
+          'process.exit(1);',
+        );
+      if (scenario === 'command')
+        f.store.update(created.id, {
+          verification: {
+            ...f.store.task(created.id).verification,
+            command: 'node changed-verify.mjs',
+          },
+        });
+      await f.engine.execute(created.id);
+      const task = f.store.task(created.id);
+      const coverage = task.review?.checks.find(
+        (c) => c.name === `Verifier: ${requirement}`,
+      );
+      assert.equal(
+        coverage?.status,
+        'unverified',
+      );
+      assert.equal(
+        task.review?.status,
+        scenario === 'contradiction' ? 'failed' : 'unverified',
+      );
+    } finally {
+      await f.close();
+    }
+  }
+
+  const f = await fixture('coding');
+  try {
+    f.add(model('worker'));
+    await writeFile(join(f.workspace.path, 'verify.mjs'), 'process.exit(0);');
+    f.tools.shell = async () => ({
+      status: 'exited',
+      code: 0,
+      stdout: 'verified',
+      stderr: '',
+    });
+    const requirement = 'The exact total is 200.';
+    const task = await f.run({
+      expectedResult: requirement,
+      required: ['files', 'shell'],
+      verification: {
+        command: 'node verify.mjs',
+        coverage: {
+          requirements: [requirement],
+          verifierFiles: ['verify.mjs'],
+        },
+      },
+    });
+    f.store.update(task.id, { revision: 1 });
+    await assert.rejects(
+      assertReviewEvidence(
+        f.store.task(task.id),
+        f.workspace,
+        new AbortController().signal,
+      ),
+      /requirements changed/,
+    );
+  } finally {
+    await f.close();
+  }
+});
+
 test('research citations exclude code examples but retain linked and bare prose URLs', () => {
   assert.deepEqual(
     citedURLs(
@@ -743,12 +1003,20 @@ test('runner limits and unavailable execution remain neutral and do not trigger 
       });
       assert.equal(task.status, 'completed', status);
       assert.equal(task.review?.status, 'unverified', status);
-      assert.equal(task.review?.checks.find((c) => c.name === 'Tests')?.status, 'unverified');
+      assert.equal(
+        task.review?.checks.find((c) => c.name === 'Tests')?.status,
+        'unverified',
+      );
       assert.equal(task.attempt, 0);
       assert.equal(task.checkpoint?.repairDifficulty, undefined);
       assert.deepEqual(f.runs, ['worker']);
-      assert.equal(f.store.list<Outcome>('routing_outcome')[0].status, 'unverified');
-      assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+      assert.equal(
+        f.store.list<Outcome>('routing_outcome')[0].status,
+        'unverified',
+      );
+      assert.ok(
+        !f.store.events(task.id).some((e) => e.kind === 'quality_retry'),
+      );
     } finally {
       await f.close();
     }
@@ -805,7 +1073,11 @@ test('rounded review probabilities are retained without moving the acceptance th
         ),
       );
       const task = await f.run();
-      assert.equal(task.review?.status, expected, JSON.stringify(probabilities));
+      assert.equal(
+        task.review?.status,
+        expected,
+        JSON.stringify(probabilities),
+      );
     } finally {
       await f.close();
     }
@@ -844,7 +1116,8 @@ test('research requires retrieved citation receipts and gives source excerpts to
         retrieved ? 'passed' : 'failed',
       );
       assert.equal(task.review?.status, retrieved ? 'unverified' : 'failed');
-      if (retrieved) assert.match(f.calls.at(-1).state.evidence.sources[0].text, /42/);
+      if (retrieved)
+        assert.match(f.calls.at(-1).state.evidence.sources[0].text, /42/);
       else assert.match(task.review!.summary, /not read/);
     } finally {
       await f.close();
@@ -890,10 +1163,16 @@ test('documents are inspected as real Office/PDF files and corruption cannot pas
       task.error ?? task.review?.summary ?? 'Review was absent',
     );
     const files = f.calls.at(-1).state.evidence.files;
-    assert.match(files.find((x: any) => x.path === 'brief.docx').text, /Approve the invented plan/);
+    assert.match(
+      files.find((x: any) => x.path === 'brief.docx').text,
+      /Approve the invented plan/,
+    );
     assert.match(files.find((x: any) => x.path === 'budget.xlsx').text, /42/);
     assert.ok(task.review?.limitations.some((s) => /rendered layout/.test(s)));
-    await writeFile(join(f.workspace.path, 'broken.docx'), 'Not an Office document');
+    await writeFile(
+      join(f.workspace.path, 'broken.docx'),
+      'Not an Office document',
+    );
     await assert.rejects(inspectFile(f.workspace, 'broken.docx'), /ZIP/);
     await symlink('/etc/passwd', join(f.workspace.path, 'escape.txt'));
     await assert.rejects(inspectFile(f.workspace, 'escape.txt'), /Symlink/);
@@ -914,7 +1193,11 @@ test('observed outcomes are task-deduplicated, family/difficulty scoped, version
       },
     });
     f.add(worker);
-    const row = (id: string, taskId: string, patch: Partial<Outcome> = {}): Outcome => ({
+    const row = (
+      id: string,
+      taskId: string,
+      patch: Partial<Outcome> = {},
+    ): Outcome => ({
       id,
       taskId,
       modelId: worker.id,
@@ -938,20 +1221,37 @@ test('observed outcomes are task-deduplicated, family/difficulty scoped, version
     for (let i = 0; i < 40; i++)
       f.store.put('routing_outcome', String(i), row(String(i), 'same-task'));
     assert.equal(outcomeSummaries(f.store, worker)[0].passed, 1);
-    f.store.put('routing_outcome', 'ignored', row('ignored', 'other', { policy: 'old-policy' }));
-    f.store.put('routing_outcome', 'stale', row('stale', 'old', { at: '2000-01-01T00:00:00Z' }));
+    f.store.put(
+      'routing_outcome',
+      'ignored',
+      row('ignored', 'other', { policy: 'old-policy' }),
+    );
+    f.store.put(
+      'routing_outcome',
+      'stale',
+      row('stale', 'old', { at: '2000-01-01T00:00:00Z' }),
+    );
     f.store.put(
       'routing_outcome',
       'coding',
       row('coding', 'code', { kind: 'coding', difficulty: 'complex' }),
     );
     assert.equal(outcomeSummaries(f.store, worker, 'writing')[0].passed, 1);
-    assert.equal(outcomeSummaries(f.store, worker, 'coding')[0].difficulty, 'complex');
+    assert.equal(
+      outcomeSummaries(f.store, worker, 'coding')[0].difficulty,
+      'complex',
+    );
     assert.ok(interval(5, 0).lowerBound < 0.8);
     assert.ok(interval(20, 0).lowerBound > 0.8);
-    assert.equal(modelsWithFeedback(f.store, 'writing')[0].quality.writing, 0.9);
+    assert.equal(
+      modelsWithFeedback(f.store, 'writing')[0].quality.writing,
+      0.9,
+    );
     assert.equal(modelsWithFeedback(f.store, 'writing')[0].evaluated, false);
-    assert.equal(outcomeSummaries(f.store, { ...worker, model: 'a-new-model' }).length, 0);
+    assert.equal(
+      outcomeSummaries(f.store, { ...worker, model: 'a-new-model' }).length,
+      0,
+    );
   } finally {
     await f.close();
   }
@@ -980,9 +1280,16 @@ test('same-task continuation retains all token use and original routing attribut
     assert.equal(history.successful, 1);
     assert.equal(history.tokensPerSuccess, 260);
     assert.equal(history.changedRosterTasks, 1);
-    assert.equal(f.store.task(first.id).subscriptionUsage?.unobservedAttempts, 2);
+    assert.equal(
+      f.store.task(first.id).subscriptionUsage?.unobservedAttempts,
+      2,
+    );
     assert.equal(f.store.list<any>('routing_run').at(-1).modelId, 'worker');
-    f.engine.resume(first.id, false, 'Now write a different follow-up introduction.');
+    f.engine.resume(
+      first.id,
+      false,
+      'Now write a different follow-up introduction.',
+    );
     await f.engine.execute(first.id);
     assert.equal(f.store.task(first.id).usage?.reportedTokens, 390);
     assert.deepEqual(modelsWithFeedback(f.store)[0].efficiency, []);
@@ -1022,9 +1329,13 @@ test('engine persists per-attempt subscription windows and supplies early relate
     };
     const first = await f.run();
     assert.equal(first.subscriptionUsage?.unobservedAttempts, 0);
-    assert.equal(first.subscriptionUsage?.attempts[0].windows[0].changePercentagePoints, 1);
+    assert.equal(
+      first.subscriptionUsage?.attempts[0].windows[0].changePercentagePoints,
+      1,
+    );
     await f.run({ prompt: 'Rewrite the project introduction' });
-    const selection = f.calls.filter((c) => c.questions.model).at(-1).questions.model;
+    const selection = f.calls.filter((c) => c.questions.model).at(-1)
+      .questions.model;
     const candidate = selection.criteria.candidate_0;
     assert.equal(candidate.observedEfficiency.exact, null);
     assert.equal(candidate.observedEfficiency.related[0].tokensPerSuccess, 130);
@@ -1053,7 +1364,10 @@ test('context gaps and tool failures pause without spending another worker attem
       assert.equal(task.status, 'blocked');
       assert.equal(f.runs.length, 1);
       assert.equal(task.review?.status, 'unverified');
-      assert.equal(f.store.list<Outcome>('routing_outcome')[0].status, 'unverified');
+      assert.equal(
+        f.store.list<Outcome>('routing_outcome')[0].status,
+        'unverified',
+      );
       assert.equal(f.store.list<any>('routing_run')[0].status, 'unverified');
       assert.ok(task.result);
     } finally {
@@ -1063,7 +1377,12 @@ test('context gaps and tool failures pause without spending another worker attem
 });
 
 test('quality recovery respects fixed effort, disabled retries, medium ceiling and changed model permissions', async () => {
-  for (const scenario of ['fixed', 'disabled', 'ceiling', 'availability'] as const) {
+  for (const scenario of [
+    'fixed',
+    'disabled',
+    'ceiling',
+    'availability',
+  ] as const) {
     const f = await fixture();
     try {
       f.add(model('worker', { supportedEfforts: ['low', 'medium', 'high'] }));
@@ -1073,22 +1392,33 @@ test('quality recovery respects fixed effort, disabled retries, medium ceiling a
         support: 'pass',
         completion: 'pass',
       }));
-      if (scenario === 'disabled') f.store.put('settings', 'main', { ...defaults, maxRecovery: 0 });
+      if (scenario === 'disabled')
+        f.store.put('settings', 'main', { ...defaults, maxRecovery: 0 });
       f.jev.recovery = async (_task, _evidence, _signal, stage) => {
         if (scenario === 'availability')
           f.store.put('model', 'worker', {
             ...f.store.get<Model>('model', 'worker'),
             enabled: false,
           });
-        return { cause: stage === 'correction' ? 'correction' : 'reasoning', probability: 1 };
+        return {
+          cause: stage === 'correction' ? 'correction' : 'reasoning',
+          probability: 1,
+        };
       };
       const task = await f.run(
-        scenario === 'fixed' ? { modelOverride: 'worker', effortOverride: 'low' } : {},
+        scenario === 'fixed'
+          ? { modelOverride: 'worker', effortOverride: 'low' }
+          : {},
       );
       assert.equal(task.status, 'blocked');
-      assert.equal(f.runs.length, scenario === 'ceiling' ? 3 : scenario === 'fixed' ? 2 : 1);
+      assert.equal(
+        f.runs.length,
+        scenario === 'ceiling' ? 3 : scenario === 'fixed' ? 2 : 1,
+      );
       assert.ok(
-        !f.store.events(task.id).some((e) => e.kind === 'route' && e.data.effort === 'high'),
+        !f.store
+          .events(task.id)
+          .some((e) => e.kind === 'route' && e.data.effort === 'high'),
       );
     } finally {
       await f.close();
@@ -1119,7 +1449,6 @@ test('cancellation while diagnosing recovery rejects a late judgment and cannot 
   }
 });
 
-
 test('a failed same-effort correction can escalate once, preserving requirements and counting every attempt', async () => {
   const f = await fixture();
   try {
@@ -1129,20 +1458,38 @@ test('a failed same-effort correction can escalate once, preserving requirements
     f.engine.workers.codex.run = async (c) => {
       efforts.push(c.model.effort);
       assert.equal(c.task.expectedResult, 'Preserve all original facts.');
-      if (efforts.length > 1) assert.match(c.prompt, /Do not invent missing facts/);
+      if (efforts.length > 1)
+        assert.match(c.prompt, /Do not invent missing facts/);
       return run(c);
     };
-    f.verdict(() => ({ brief: 'pass', claim_0: efforts.length < 3 ? 'fail' : 'pass', support: 'pass', completion: 'pass' }));
-    const task = await f.run({ expectedResult: 'Preserve all original facts.' });
+    f.verdict(() => ({
+      brief: 'pass',
+      claim_0: efforts.length < 3 ? 'fail' : 'pass',
+      support: 'pass',
+      completion: 'pass',
+    }));
+    const task = await f.run({
+      expectedResult: 'Preserve all original facts.',
+    });
     assert.equal(task.status, 'completed');
     assert.deepEqual(efforts, ['low', 'low', 'medium']);
     assert.equal(task.attempt, 2);
-    const retries = f.store.events(task.id).filter((e) => e.kind === 'quality_retry');
-    assert.deepEqual(retries.map((e) => e.data.stage), ['correction', 'escalation']);
+    const retries = f.store
+      .events(task.id)
+      .filter((e) => e.kind === 'quality_retry');
+    assert.deepEqual(
+      retries.map((e) => e.data.stage),
+      ['correction', 'escalation'],
+    );
     assert.equal(task.usage?.byRole.worker, 300);
     assert.equal(f.calls.filter((c) => c.questions.recovery).length, 2);
-    assert.equal(f.store.list<any>('routing_run')[0].usage.reportedTokens, task.usage?.reportedTokens);
-  } finally { await f.close(); }
+    assert.equal(
+      f.store.list<any>('routing_run')[0].usage.reportedTokens,
+      task.usage?.reportedTokens,
+    );
+  } finally {
+    await f.close();
+  }
 });
 
 test('uncertain correction and cancellation pause without escalating or launching a new worker', async () => {
@@ -1150,7 +1497,12 @@ test('uncertain correction and cancellation pause without escalating or launchin
     const f = await fixture();
     try {
       f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
-      f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+      f.verdict(() => ({
+        brief: 'pass',
+        claim_0: 'fail',
+        support: 'pass',
+        completion: 'pass',
+      }));
       f.jev.recovery = async (task, _evidence, _signal, stage) => {
         assert.equal(stage, 'correction');
         if (cancel) f.engine.cancel(task.id);
@@ -1159,8 +1511,12 @@ test('uncertain correction and cancellation pause without escalating or launchin
       const task = await f.run();
       assert.equal(task.status, cancel ? 'cancelled' : 'blocked');
       assert.equal(f.runs.length, 1);
-      assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
-    } finally { await f.close(); }
+      assert.ok(
+        !f.store.events(task.id).some((e) => e.kind === 'quality_retry'),
+      );
+    } finally {
+      await f.close();
+    }
   }
 });
 
@@ -1170,14 +1526,31 @@ test('one correction per unchanged task survives resume and keeps provider-defau
     f.add(model('worker'));
     const efforts: (string | undefined)[] = [];
     const run = f.engine.workers.codex.run;
-    f.engine.workers.codex.run = async (c) => { efforts.push(c.model.effort); return run(c); };
-    f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+    f.engine.workers.codex.run = async (c) => {
+      efforts.push(c.model.effort);
+      return run(c);
+    };
+    f.verdict(() => ({
+      brief: 'pass',
+      claim_0: 'fail',
+      support: 'pass',
+      completion: 'pass',
+    }));
     const task = await f.run();
     assert.equal(task.status, 'blocked');
     assert.deepEqual(efforts, [undefined, undefined]);
     f.engine.resume(task.id);
     await f.engine.execute(task.id);
-    assert.equal(f.store.events(task.id).filter((e) => e.kind === 'quality_retry' && e.data.stage === 'correction').length, 1);
+    assert.equal(
+      f.store
+        .events(task.id)
+        .filter(
+          (e) => e.kind === 'quality_retry' && e.data.stage === 'correction',
+        ).length,
+      1,
+    );
     assert.deepEqual(efforts, [undefined, undefined, undefined]);
-  } finally { await f.close(); }
+  } finally {
+    await f.close();
+  }
 });
