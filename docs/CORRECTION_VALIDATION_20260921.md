@@ -39,3 +39,9 @@ All five phases recorded $0.003781 in Jev API usage at the configured input pric
 All 226 local tests passed. Regression coverage includes unchanged-effort correction, later escalation, fixed-effort behavior, retry ceilings, cancellation, changed model availability, provider-default effort, resume persistence, fresh JSON evidence and stale-progress exclusion. TypeScript, the production build and browser checks also passed. Signed-package verification is recorded in the [distribution receipt](evidence/distribution-0.1.8-verification.json).
 
 No final-runtime end-to-end provider rerun was performed after the review-only fix. The original PDF remains unrepaired. A fresh held-out set should test missed errors, false failures, new defects introduced during correction and total cost per independently acceptable completed task. Repeatedly adjusting these development fixtures would not establish general reliability.
+
+## Offline regression replay
+
+`npm run eval:correction-replay` replays the sanitized recorded-provider report without a provider call or worker run. It fails closed unless the retained history still exposes all three review gaps: the missed arithmetic error, the verifier-passing corrected JSON that was falsely rejected, and the later review-only result that remained unverified without a failed check. It also checks the recorded unchanged-effort correction against the current 0.80 gate and the later escalation judgment against the unchanged 0.90 gate.
+
+Tests labeled `recorded-provider replay` consume the historical provider receipts. Tests labeled `synthetic mutation` alter copies only to exercise fail-closed evidence and policy boundaries. Neither kind measures current or general Jev accuracy, and neither replaces a future held-out or live-provider evaluation.
