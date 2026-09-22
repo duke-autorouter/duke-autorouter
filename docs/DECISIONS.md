@@ -26,6 +26,9 @@ decision was documented when first made.
 | [Check evidence before increasing model effort](adr/0016-evidence-fidelity-and-bounded-evaluation.md) | Implemented for 0.1.4; bounded development validation | Preserve source structure, compare equivalent review behavior, and count failed attempts. Controlled reruns do not prove automatic recovery. |
 | [Retry reasoning failures within explicit limits](adr/0017-bounded-same-model-recovery.md) | Implemented in 0.1.5; controlled live repair passed | Jev diagnoses the failure; a same-model effort step respects user limits and retains full costs. |
 | [Check specific claims before retrying work](adr/0018-focused-review-and-evidence-resolution.md) | Implemented for 0.1.6; bounded live development checks | Separate ownership claims, resolve uncertain evidence once, and retain false-alarm results. |
+| [Carry verifier observations into response review](adr/0019-verifier-evidence-in-response-review.md) | Implemented for 0.1.7; bounded live checks | Give focused review the actual task-specific verifier receipt while keeping incomplete execution neutral. |
+| [Correct at unchanged effort before escalating](adr/0020-bounded-correction-before-effort-escalation.md) | Implemented for 0.1.8; bounded development validation | Use a 0.80 gate for one same-model, same-effort correction before the separate 0.90 effort-escalation judgment, inside the shared retry cap. |
+| [Add a narrow remote boundary for the iOS companion](adr/0021-ios-companion-remote-boundary.md) | Implemented; physical-device validation open | Keep the local API loopback-only while giving paired devices project-scoped task, approval and artifact access through an opt-in gateway. |
 
 ## What changed after testing
 
@@ -68,7 +71,3 @@ when superseded and link their replacement. Open validation gates belong in
 [release readiness](RELEASE_READINESS.md), not in an invented historical success
 claim. This log describes the entire project; the tool audit is one supporting
 record.
-
-- [0019: Verifier evidence in response review](adr/0019-verifier-evidence-in-response-review.md)
-
-- [0020: Bounded correction before effort escalation](adr/0020-bounded-correction-before-effort-escalation.md)

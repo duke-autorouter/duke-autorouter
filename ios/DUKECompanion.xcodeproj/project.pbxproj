@@ -1,0 +1,232 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000001 /* DUKECompanionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000001 /* DUKECompanionApp.swift */; };
+		A00000000000000000000002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000002 /* Models.swift */; };
+		A00000000000000000000003 /* CredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000003 /* CredentialStore.swift */; };
+		A00000000000000000000004 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000004 /* APIClient.swift */; };
+		A00000000000000000000005 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000005 /* AppModel.swift */; };
+		A00000000000000000000006 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000006 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B00000000000000000000001 /* DUKECompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DUKECompanionApp.swift; sourceTree = "<group>"; };
+		B00000000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B00000000000000000000003 /* CredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000004 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		B00000000000000000000005 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		B00000000000000000000006 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B00000000000000000000007 /* DUKE Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DUKE Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C00000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D00000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				D00000000000000000000002 /* DUKECompanion */,
+				D00000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D00000000000000000000002 /* DUKECompanion */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000001 /* DUKECompanionApp.swift */,
+				B00000000000000000000002 /* Models.swift */,
+				B00000000000000000000003 /* CredentialStore.swift */,
+				B00000000000000000000004 /* APIClient.swift */,
+				B00000000000000000000005 /* AppModel.swift */,
+				B00000000000000000000006 /* ContentView.swift */,
+			);
+			path = DUKECompanion;
+			sourceTree = "<group>";
+		};
+		D00000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000007 /* DUKE Companion.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E00000000000000000000001 /* DUKECompanion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00000000000000000000002 /* Build configuration list for PBXNativeTarget "DUKECompanion" */;
+			buildPhases = (
+				C00000000000000000000002 /* Sources */,
+				C00000000000000000000001 /* Frameworks */,
+				C00000000000000000000003 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = DUKECompanion;
+			packageProductDependencies = ();
+			productName = DUKECompanion;
+			productReference = B00000000000000000000007 /* DUKE Companion.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E00000000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					E00000000000000000000001 = { CreatedOnToolsVersion = 26.3; };
+				};
+			};
+			buildConfigurationList = F00000000000000000000001 /* Build configuration list for PBXProject "DUKECompanion" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = D00000000000000000000001;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D00000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (E00000000000000000000001 /* DUKECompanion */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C00000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C00000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000001 /* DUKECompanionApp.swift in Sources */,
+				A00000000000000000000002 /* Models.swift in Sources */,
+				A00000000000000000000003 /* CredentialStore.swift in Sources */,
+				A00000000000000000000004 /* APIClient.swift in Sources */,
+				A00000000000000000000005 /* AppModel.swift in Sources */,
+				A00000000000000000000006 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F00000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F00000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		F00000000000000000000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "DUKE";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.duke-autorouter.companion";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		F00000000000000000000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "DUKE";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.duke-autorouter.companion";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F00000000000000000000001 /* Build configuration list for PBXProject "DUKECompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (F00000000000000000000011 /* Debug */, F00000000000000000000012 /* Release */);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00000000000000000000002 /* Build configuration list for PBXNativeTarget "DUKECompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (F00000000000000000000021 /* Debug */, F00000000000000000000022 /* Release */);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E00000000000000000000002 /* Project object */;
+}

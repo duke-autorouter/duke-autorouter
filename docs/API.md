@@ -39,6 +39,49 @@ They are local application interfaces, not a remote service contract.
 | GET `/api/artifacts/:id` | Hash-checked file; `?download=1` for download |
 | GET `/api/artifacts/:id/preview` | Authenticated, hash-checked image preview; optional PDF `page` or workbook `sheet`/`range`. Returns bounded coverage metadata. |
 
+The local interface also owns iPhone consent. `POST
+/api/remote/pairing-challenges` creates an expiring, one-use challenge for an
+explicit list of registered project IDs. `GET /api/remote/devices` lists paired
+devices without credential hashes. `POST /api/remote/devices/:id/revoke`
+revokes one device. These routes retain the local session, Host and Origin
+checks above.
+
+## iPhone gateway
+
+The iPhone gateway is a separate, opt-in Fastify listener. It binds to loopback
+and requires private HTTPS termination in front of it. It is disabled unless
+`DUKE_REMOTE_ENABLE=1`. The production gateway rejects plaintext requests; the
+synthetic development fixture is the only code path that permits local HTTP.
+The default production mode also requires Tailscale Serve's authenticated
+`Tailscale-User-Login` header and binds the device credential to that identity.
+
+`POST /remote/v1/pair` exchanges a valid one-use challenge for a random
+per-device bearer credential. Other routes require that credential and apply
+its saved project scope.
+
+| Method and path | Purpose |
+| --- | --- |
+| GET `/remote/v1/state` | Scoped projects, task summaries, pending approvals and artifacts; revisions, attempts and incomplete checks remain visible |
+| GET `/remote/v1/tasks/:id` | One scoped task, user-facing persisted history and artifacts; routing and model events are omitted |
+| POST `/remote/v1/tasks` | Start work without a model or effort override |
+| POST `/remote/v1/tasks/:id/follow-ups` | Continue stopped work with a user follow-up |
+| POST `/remote/v1/tasks/:id/cancel` | Stop current work without claiming to undo completed effects |
+| POST `/remote/v1/approvals/:id` | Decide a live approval using its stored operation hash |
+| GET `/remote/v1/artifacts/:id` | Download one scoped, hash-checked artifact |
+
+Every remote mutation requires a UUID `Idempotency-Key`. The Mac stores the
+request fingerprint and result. Identical retries return the saved result;
+conflicting reuse is rejected. A command left pending by a process interruption
+is not executed again automatically.
+
+Remote task creation rejects both model and effort overrides. Responses also
+remove route, model-override and effort-override fields. Recovery remains owned
+by the Mac: the 0.80 chosen-option gate may authorize one bounded correction at
+the same model and effort before the separate 0.90 effort-escalation judgment,
+and both remain inside the shared retry cap. The phone can see the resulting
+attempt count and verification outcome but cannot promote work to another model
+or effort.
+
 `server/types.ts` defines task, route, model, workspace, checkpoint, approval, and
 worker contracts. `server/tools.ts` defines the shared tool schemas. There are no
 tools for modifying app configuration or budget policies from inside a task.

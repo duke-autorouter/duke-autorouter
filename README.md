@@ -70,6 +70,10 @@ records the earlier browser-boundary and scoring fixes.
 - **Usage and task history.** See API spending, reported Codex and Claude
   subscription allowances, and task-level token usage. Saved conversations,
   files, checks, and checkpoints remain available after a restart.
+- **Optional iPhone companion foundation.** The source includes a native SwiftUI
+  client for paired, project-scoped task control over a private Tailscale
+  connection. The gateway is disabled by default and is not part of the 0.1.8
+  Mac download or an iOS release. See the [companion guide](docs/IOS_COMPANION.md).
 
 Version 0.1 runs one task at a time. Interrupted tasks require an explicit
 resume. Imported agent definitions provide instructions; automatic teams,
@@ -128,9 +132,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.7 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg)**
+**[Download DUKE 0.1.8 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.7)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.8)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -198,7 +202,7 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
 
 
-The current source passes 226 automated tests. The 0.1.8 package passes 12
+The current source passes 233 automated tests. The 0.1.8 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical

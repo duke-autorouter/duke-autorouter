@@ -113,8 +113,10 @@ review and attributable subscription allowance savings remain unestablished.
 
 The iOS companion is separate development work, not part of the Mac download.
 SwiftUI task controls, pairing, project scoping, approvals and file previews have
-simulator coverage. Tailscale identity binding is implemented. Physical iPhone,
-private transport and live remote execution checks remain outstanding.
+simulator coverage. Tailscale identity binding is implemented, and a tailnet-only
+HTTPS mapping reached the loopback gateway while rejecting an unpaired request.
+Physical iPhone, Wi-Fi-to-cellular, background/Keychain and live provider checks
+remain outstanding.
 
 ## Repository updates
 

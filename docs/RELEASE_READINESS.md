@@ -6,7 +6,7 @@ historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 226 automated tests, TypeScript, the production
+- The integrated source passes 233 automated tests, TypeScript, the production
   build and evaluation-corpus validation. GitHub also scans source history for
   secrets on each push.
 - The 0.1.8 package passes 12 standalone checks with isolated state and no
@@ -91,6 +91,9 @@ The [distribution guide](MAC_DISTRIBUTION.md) covers maintainer commands.
 - **Coverage remains bounded.** No multi-day reliability result, Intel, Windows
   or Linux release is claimed. Setup-import prompt injection, concurrent failure
   recovery and accounting completeness still need broader adversarial coverage.
+- **The iOS companion is a mergeable foundation, not a released iOS product.**
+  Simulator and synthetic-host checks do not establish physical iPhone,
+  Wi-Fi-to-cellular, background/Keychain, live-provider or TestFlight behavior.
 
 Keep these limits with the results. Routine users should not need to grade models;
 development validation owns the benchmark work.

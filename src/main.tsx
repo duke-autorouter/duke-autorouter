@@ -1348,6 +1348,7 @@ function Setup({ data, act, busy }: any) {
         renderModel={(m) => <ModelCard key={m.id} model={m} act={act} busy={busy} />}
       />
       <SetupImport data={data} act={act} busy={busy} api={api} />
+      <RemoteAccessPanel data={data} act={act} busy={busy} />
       <section className="settings-section">
         <div className="section-heading">
           <h2>Projects</h2>
@@ -1535,6 +1536,82 @@ function Setup({ data, act, busy }: any) {
         </div>
       )}
     </div>
+  );
+}
+
+function RemoteAccessPanel({ data, act, busy }: any) {
+  const [selected, setSelected] = useState<string[]>([]),
+    [pairing, setPairing] = useState<{ code: string; expiresAt: string }>();
+  return (
+    <section className="settings-section remote-access">
+      <div className="section-heading">
+        <div>
+          <h2>iPhone access</h2>
+          <p className="quiet">Pair a phone with selected projects. Accounts, keys, model settings and project paths stay on this Mac.</p>
+        </div>
+        <span className={'tag ' + (data.remoteEnabled ? 'green' : 'amber')}>{data.remoteEnabled ? 'Private gateway on' : 'Private gateway off'}</span>
+      </div>
+      {!data.remoteEnabled && <p className="notice">The phone gateway is opt-in and still needs an approved private HTTPS transport. No public listener was opened.</p>}
+      {!!data.workspaces.length && (
+        <fieldset>
+          <legend>Projects this phone can use</legend>
+          <div className="checks">
+            {data.workspaces.map((workspace: Workspace) => (
+              <label key={workspace.id}>
+                <input
+                  type="checkbox"
+                  checked={selected.includes(workspace.id)}
+                  onChange={(event) => setSelected(event.target.checked ? [...selected, workspace.id] : selected.filter((id) => id !== workspace.id))}
+                />
+                {workspace.name}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+      <div className="button-row">
+        <button
+          disabled={busy || !data.remoteEnabled || !selected.length}
+          onClick={() =>
+            void act(async () => {
+              setPairing(
+                await api('/remote/pairing-challenges', {
+                  workspaceIds: selected,
+                }),
+              );
+            })
+          }
+        >
+          Create one-time pairing code
+        </button>
+      </div>
+      {pairing && (
+        <div className="pairing-code" role="status">
+          <b>Enter this code on the iPhone</b>
+          <code>{pairing.code}</code>
+          <small>Expires {new Date(pairing.expiresAt).toLocaleTimeString()} and works once.</small>
+        </div>
+      )}
+      {!!data.remoteDevices?.length && (
+        <div className="paired-devices">
+          <h3>Paired devices</h3>
+          {data.remoteDevices.map((device: any) => (
+            <div className="workspace-row" key={device.id}>
+              <span className="file-icon">▯</span>
+              <div>
+                <b>{device.name}</b>
+                <small>{device.revokedAt ? 'Revoked' : `${device.allowedWorkspaceIds.length} project${device.allowedWorkspaceIds.length === 1 ? '' : 's'}`}</small>
+              </div>
+              {!device.revokedAt && (
+                <button className="text-button" disabled={busy} onClick={() => act(() => api('/remote/devices/' + device.id + '/revoke', {}))}>
+                  Revoke
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 function ModelCard({ model, act, busy }: { model: Model; act: any; busy: boolean }) {
