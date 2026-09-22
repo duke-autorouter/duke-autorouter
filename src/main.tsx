@@ -4,7 +4,7 @@ import type { Task, Workspace, Model, Approval, Settings, RoutePreview } from '.
 import { brand } from '../shared/brand';
 import { Markdown } from './Markdown';
 import { displayName } from './displayNames';
-import { effortLabel } from '../shared/effort';
+import { effortLabel, type Effort } from '../shared/effort';
 import { chooseFolder } from './desktop';
 import { ImportDialog, SetupImport } from './SetupImport';
 import { ModelRoster } from './ModelRoster';
@@ -1905,7 +1905,43 @@ function Usage({ data, act, busy }: any) {
             </small>
           </label>
           <details>
-            <summary>Advanced routing diagnostics</summary>
+            <summary>Advanced routing options</summary>
+            <label>
+              Maximum automatic retries
+              <input
+                type="number"
+                min="0"
+                max="5"
+                step="1"
+                value={s.maxRecovery}
+                onChange={(e) => setS({ ...s, maxRecovery: Number(e.target.value) })}
+              />
+              <small>Set to zero to stop after the first attempt.</small>
+            </label>
+            <label>
+              Automatic repair effort ceiling
+              <select
+                value={s.recoveryEffortCeiling}
+                onChange={(e) =>
+                  setS({
+                    ...s,
+                    recoveryEffortCeiling: e.target.value as Effort,
+                  })
+                }
+              >
+                {['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'].map(
+                  (level) => (
+                    <option key={level} value={level}>
+                      {effortLabel(level as Effort)}
+                    </option>
+                  ),
+                )}
+              </select>
+              <small>
+                Jev can approve one supported effort step at a time on the same model. Missing
+                context and tool problems pause for attention.
+              </small>
+            </label>
             <label>
               Minimum success rate for declared evaluations
               <input

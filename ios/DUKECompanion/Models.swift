@@ -31,7 +31,21 @@ struct RemoteCheckpoint: Codable {
     let at: String
 }
 
-struct RemoteTask: Codable, Identifiable, Hashable {
+struct RemoteCheck: Codable, Identifiable {
+    var id: String { name }
+    let name: String
+    let status: String
+    let detail: String
+}
+
+struct RemoteReview: Codable {
+    let status: String
+    let summary: String
+    let checks: [RemoteCheck]
+    let limitations: [String]
+}
+
+struct RemoteTask: Codable, Identifiable {
     let id: String
     let workspaceId: String
     let prompt: String
@@ -42,9 +56,9 @@ struct RemoteTask: Codable, Identifiable, Hashable {
     let result: String?
     let error: String?
     let checkpoint: RemoteCheckpoint?
-
-    static func == (lhs: RemoteTask, rhs: RemoteTask) -> Bool { lhs.id == rhs.id }
-    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    let review: RemoteReview?
+    let revision: Int?
+    let attempt: Int?
 
     var isActive: Bool {
         ["queued", "routing", "running", "awaiting_approval", "verifying"].contains(status)
@@ -55,7 +69,13 @@ struct RemoteTask: Codable, Identifiable, Hashable {
     }
 
     var statusLabel: String {
-        switch status {
+        if status == "completed", review?.status == "unverified" {
+            return "Completed · checks incomplete"
+        }
+        if status == "completed", review?.status == "failed" {
+            return "Completed · checks failed"
+        }
+        return switch status {
         case "awaiting_approval": "Approval needed"
         case "interrupted": "Interrupted"
         case "cancelled": "Stopped"

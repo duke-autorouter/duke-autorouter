@@ -4,16 +4,18 @@ import { randomUUID } from 'node:crypto';
 import { Store } from './store.js';
 import { ToolService, definitions } from './tools.js';
 import { Jev } from './adapters/jev.js';
-import { route, eligibleModels, classify, type RoutingTask } from './router.js';
+import { route, eligibleModels, qualifiedModels, classify, type RoutingTask } from './router.js';
 import { modelsWithFeedback, recordCatalog } from './model-profiles.js';
 import { scoped } from './paths.js';
 import { exhaustedCapacity } from './capacity.js';
 import { requestBudget } from './request-budget.js';
 import { brand } from '../shared/brand.js';
 import { setupPrompt } from './setup-import.js';
-import { routingContext } from './task-evidence.js';
+import { routingContext, inspectFile } from './task-evidence.js';
+import { nextRecoveryEffort, sameEffortCorrectionAllowed, correctionFeedback, recoveryPause, RECOVERY_POLICY } from './recovery.js';
+import type { Effort } from '../shared/effort.js';
 import { verifyTask, assertReviewEvidence } from './verification.js';
-import { bounded, PhaseTimeout } from './deadline.js';
+import { bounded, whileActive, PhaseTimeout } from './deadline.js';
 import { requirements, taskBrief, taskInputKey } from './task-revisions.js';
 import { REVIEW_POLICY, ROUTING_POLICY } from './outcomes.js';
 import { WorkerUsage, summarizeUsage } from './usage.js';
@@ -54,6 +56,7 @@ export class Engine {
       routing: 15000,
       verification: 180000,
       startup: 60000,
+      inactivity: 300000,
       cleanup: 5000,
     },
   ) {}
@@ -191,7 +194,10 @@ export class Engine {
     const excluded = new Set(unavailable);
     const spend = this.store.spend();
     const budget = Math.min(spend.dailyLimit - spend.day, spend.monthlyLimit - spend.month);
-    const tools = definitions(task.required).map((d) => ({ type: 'function', function: d }));
+    const tools = definitions(task.required).map((d) => ({
+      type: 'function',
+      function: d,
+    }));
     for (const model of models) {
       if (model.provider === 'openrouter') {
         try {
@@ -291,7 +297,10 @@ export class Engine {
       attempt: 0,
     };
     this.store.save(task);
-    this.store.event(task.id, 'created', { title: task.title, prompt: task.prompt });
+    this.store.event(task.id, 'created', {
+      title: task.title,
+      prompt: task.prompt,
+    });
     void this.drain();
     return task;
   }
@@ -319,6 +328,15 @@ export class Engine {
     const signal = controller.signal,
       unavailable = new Set<string>();
     let stages = 0;
+    let recovery:
+      | {
+          modelId: string;
+          effort?: Effort;
+          stage: 'correction' | 'escalation';
+          from: Model;
+          assessment: Route['assessment'];
+        }
+      | undefined;
     const runId = randomUUID(),
       initialKey = rosterKey(this.store),
       initialExecution = executionKey(this.store),
@@ -384,7 +402,10 @@ export class Engine {
     try {
       while (stages < 6) {
         signal.throwIfAborted();
-        let task = this.store.update(id, { status: 'routing', error: undefined });
+        let task = this.store.update(id, {
+          status: 'routing',
+          error: undefined,
+        });
         const workspace = this.store.get<Workspace>('workspace', task.workspaceId)!;
         await this.phase(
           id,
@@ -498,17 +519,21 @@ export class Engine {
           (lease) => routingContext(task, workspace, attachments, lease),
         );
         context.privateGuidancePresent ||= snapshot.files.length > 0;
-        const jevDecision = await this.phase(
-          id,
-          'Choosing a model and effort',
-          this.limits.routing,
-          signal,
-          (lease) => this.jev.decide(task, candidates, lease, context),
-        ).catch((error) => {
-          if (!(error instanceof PhaseTimeout)) throw error;
-          this.store.event(id, 'jev_unavailable', { reason: error.message });
-          return undefined;
-        });
+        const jevDecision = recovery
+          ? undefined
+          : await this.phase(
+              id,
+              'Choosing a model and effort',
+              this.limits.routing,
+              signal,
+              (lease) => this.jev.decide(task, candidates, lease, context),
+            ).catch((error) => {
+              if (!(error instanceof PhaseTimeout)) throw error;
+              this.store.event(id, 'jev_unavailable', {
+                reason: error.message,
+              });
+              return undefined;
+            });
         skill = coreSkill(jevDecision?.assessment.kind ?? classify(task.prompt));
         prompt = `${basePrompt}\nPackaged skill (${skill.path}, ${skill.version}):\n${skill.content}\nOther default skills are available through setup_list/setup_read. User instructions take precedence.`;
         this.store.event(id, 'default_skill', {
@@ -527,14 +552,49 @@ export class Engine {
         const currentWorkspace = this.store.get<Workspace>('workspace', task.workspaceId)!;
         const settings = this.store.settings();
         const acceptedDecision = settings.jevMode === 'assist' ? jevDecision : undefined;
+        if (recovery) {
+          const refreshed = models.find((m) => m.id === recovery!.modelId);
+          if (
+            settings.jevMode !== 'assist' ||
+            !refreshed ||
+            !qualifiedModels([refreshed], recovery.assessment, settings, true).length ||
+            refreshed.model !== recovery.from.model ||
+            refreshed.provider !== recovery.from.provider ||
+            (recovery.stage === 'correction'
+              ? !sameEffortCorrectionAllowed({ ...task, attempt: task.attempt - 1 }, recovery.from, refreshed, settings)
+              : nextRecoveryEffort(
+                  { ...task, attempt: task.attempt - 1 },
+                  { ...refreshed, effort: recovery.from.effort },
+                  settings,
+                ) !== recovery.effort)
+          )
+            throw new Blocked(
+              'The approved recovery configuration changed. Review your model and recovery settings before continuing.',
+            );
+        }
         const decision = route(
-          task,
+          recovery
+            ? {
+                ...task,
+                modelOverride: recovery.modelId,
+                effortOverride: recovery.effort,
+              }
+            : task,
           currentWorkspace,
           models,
           settings,
           this.unavailableModels(models, task, unavailable, prompt),
           acceptedDecision,
         );
+        if (recovery) {
+          decision.selectionSource = 'jev';
+          decision.assessment = recovery.assessment;
+          decision.kind = recovery.assessment.kind;
+          decision.reason = recovery.stage === 'correction'
+            ? `Jev approved one targeted correction on the same model at unchanged ${recovery.effort ?? 'provider-default'} effort.`
+            : `Jev approved a bounded repair on the same model at ${recovery.effort} effort after a correction attempt.`;
+          decision.fallbacks = [];
+        }
         const model = {
           ...this.store.get<Model>('model', decision.modelId)!,
           effort: decision.effort,
@@ -548,6 +608,7 @@ export class Engine {
         const usageId = randomUUID(),
           usage = new WorkerUsage(model.provider);
         let workerFinished = false;
+        let outcomeId: string | undefined;
         this.store.event(id, 'usage_started', {
           id: usageId,
           role: 'worker',
@@ -564,68 +625,81 @@ export class Engine {
             'Starting the model',
             this.limits.startup,
             signal,
-            (workerSignal, ready) =>
-              this.workers[model.provider].run({
-                task: { ...currentTask, route: decision },
-                workspace,
-                model,
-                signal: workerSignal,
-                prompt,
-                tool: (name, args) => {
+            (startupSignal, ready) =>
+              whileActive(
+                startupSignal,
+                this.limits.inactivity,
+                (workerSignal, activity, activeTool) => {
                   workerSignal.throwIfAborted();
-                  ready();
-                  if (++toolCalls > this.store.settings().maxSteps)
-                    throw new Blocked(
-                      'Stage tool limit reached. Review the checkpoint before continuing.',
-                    );
-                  return this.tools.call(id, name, args, workerSignal);
-                },
-                emit: (kind, data) => {
-                  if (workerSignal.aborted) return;
-                  if (['message', 'message_delta', 'api_request_started'].includes(kind)) ready();
-                  usage.accept(kind, data);
-                  this.store.event(
-                    id,
-                    kind,
-                    kind === 'allowance_snapshot'
-                      ? { ...(data as Record<string, unknown>), usageId }
-                      : data,
-                  );
-                  if (kind === 'api_usage' || kind === 'subscription_usage')
-                    this.store.event(id, 'usage_report', {
-                      id: usageId,
-                      usage: usage.snapshot(false),
-                    });
-                  if (kind === 'quota')
-                    this.store.put('health', model.provider, {
-                      provider: model.provider,
-                      ready: true,
-                      message: 'Subscription connected',
-                      checkedAt: now(),
-                      quotaCheckedAt: now(),
-                      quota: data,
-                    });
-                },
-                session: (sessionId) => {
-                  workerSignal.throwIfAborted();
-                  ready();
-                  const current = this.store.task(id);
-                  this.store.update(id, {
-                    checkpoint: {
-                      summary: current.checkpoint?.summary ?? '',
-                      remaining: current.checkpoint?.remaining ?? task.prompt,
-                      artifacts: current.checkpoint?.artifacts ?? [],
-                      repairDifficulty: current.checkpoint?.repairDifficulty,
-                      session: {
-                        provider: model.provider,
-                        id: sessionId,
-                        model: model.model,
-                      },
-                      at: now(),
+                  if (recovery?.stage === 'correction')
+                    this.store.event(id, 'correction_started', { policy: RECOVERY_POLICY, inputKey: taskInputKey(task), model: model.id, effort: model.effort });
+                  return this.workers[model.provider].run({
+                    task: { ...currentTask, route: decision },
+                    workspace,
+                    model,
+                    signal: workerSignal,
+                    prompt,
+                    tool: (name, args) => {
+                      workerSignal.throwIfAborted();
+                      ready();
+                      if (++toolCalls > this.store.settings().maxSteps)
+                        throw new Blocked(
+                          'Stage tool limit reached. Review the checkpoint before continuing.',
+                        );
+                      return activeTool(() => this.tools.call(id, name, args, workerSignal));
+                    },
+                    emit: (kind, data) => {
+                      if (workerSignal.aborted) return;
+                      if (['message', 'message_delta', 'api_request_started'].includes(kind)) {
+                        ready();
+                        activity();
+                      }
+                      usage.accept(kind, data);
+                      this.store.event(
+                        id,
+                        kind,
+                        kind === 'allowance_snapshot'
+                          ? { ...(data as Record<string, unknown>), usageId }
+                          : data,
+                      );
+                      if (kind === 'api_usage' || kind === 'subscription_usage')
+                        this.store.event(id, 'usage_report', {
+                          id: usageId,
+                          usage: usage.snapshot(false),
+                        });
+                      if (kind === 'quota')
+                        this.store.put('health', model.provider, {
+                          provider: model.provider,
+                          ready: true,
+                          message: 'Subscription connected',
+                          checkedAt: now(),
+                          quotaCheckedAt: now(),
+                          quota: data,
+                        });
+                    },
+                    session: (sessionId) => {
+                      workerSignal.throwIfAborted();
+                      activity();
+                      ready();
+                      const current = this.store.task(id);
+                      this.store.update(id, {
+                        checkpoint: {
+                          summary: current.checkpoint?.summary ?? '',
+                          remaining: current.checkpoint?.remaining ?? task.prompt,
+                          artifacts: current.checkpoint?.artifacts ?? [],
+                          repairDifficulty: current.checkpoint?.repairDifficulty,
+                          session: {
+                            provider: model.provider,
+                            id: sessionId,
+                            model: model.model,
+                          },
+                          at: now(),
+                        },
+                      });
                     },
                   });
                 },
-              }),
+              ),
           );
           workerFinished = true;
           signal.throwIfAborted();
@@ -655,6 +729,7 @@ export class Engine {
             review,
             evaluation: task.evaluation || !!task.continuation || !!decision.assessment.uncertain,
           };
+          outcomeId = outcome.id;
           this.store.put('routing_outcome', outcome.id, outcome);
           this.store.update(id, { review });
           this.store.event(id, 'verification', review);
@@ -692,13 +767,105 @@ export class Engine {
           });
           if (current.attempt >= this.store.settings().maxRecovery)
             throw new Blocked(`Recovery limit reached: ${(e as Error).message}`);
-          unavailable.add(model.id);
-          if (e instanceof QualityFailure)
+          if (e instanceof QualityFailure) {
+            const inputKey = taskInputKey(current);
+            const correctionUsed = this.store.events(id).some((event) =>
+              event.kind === 'correction_started' && event.data.inputKey === inputKey,
+            );
+            const stage = correctionUsed ? 'escalation' : 'correction';
+            const judgment = await this.phase(
+              id,
+              'Assessing a repair',
+              this.limits.verification,
+              signal,
+              async (lease) => {
+                await assertReviewEvidence(current, workspace, lease);
+                const files = [];
+                for (const file of (current.review?.evidence?.files ?? []).slice(0, 6)) {
+                  lease.throwIfAborted();
+                  const inspected = await inspectFile(workspace, file.path, lease);
+                  files.push({
+                    path: file.path,
+                    text: inspected.text?.slice(0, 6000),
+                    incomplete: inspected.incomplete || (inspected.text?.length ?? 0) > 6000,
+                  });
+                }
+                const receipts = this.store.events(id).filter((event) => event.kind === 'tool_completed');
+                const inputs = receipts.filter((event) => event.data.name === 'read_file' && typeof event.data.result?.content === 'string').slice(-6).map((event) => ({
+                  path: event.data.result.path,
+                  text: event.data.result.content.slice(0, 4000),
+                  incomplete: !!event.data.result.truncated || event.data.result.content.length > 4000,
+                }));
+                const sources = receipts.filter((event) => ['web_read', 'browser'].includes(event.data.name) && typeof event.data.result?.text === 'string').slice(-6).map((event) => ({
+                  url: event.data.result.url,
+                  text: event.data.result.text.slice(0, 6000),
+                  incomplete: event.data.result.text.length > 6000,
+                }));
+                const judged = await this.jev.recovery(current, { context, files, inputs, sources }, lease, stage);
+                await assertReviewEvidence(current, workspace, lease);
+                return judged;
+              },
+            ).catch((error) => {
+              signal.throwIfAborted();
+              this.store.event(id, 'recovery_incomplete', {
+                reason: (error as Error).message,
+              });
+              return { cause: 'unknown' as const, probability: 0 };
+            });
+            signal.throwIfAborted();
+            if (judgment.cause !== (stage === 'correction' ? 'correction' : 'reasoning')) {
+              if (['missing_context', 'tool_failure'].includes(judgment.cause)) {
+                runStatus = 'unverified';
+                const neutral = {
+                  ...current.review!,
+                  status: 'unverified' as const,
+                  summary: recoveryPause(judgment.cause),
+                  limitations: [
+                    ...current.review!.limitations,
+                    'The recovery diagnosis did not attribute this failure to model quality.',
+                  ],
+                };
+                this.store.update(id, { review: neutral });
+                if (outcomeId) {
+                  const outcome = this.store.get<Outcome>('routing_outcome', outcomeId)!;
+                  this.store.put('routing_outcome', outcomeId, {
+                    ...outcome,
+                    status: 'unverified',
+                    review: neutral,
+                  });
+                }
+              }
+              throw new Blocked(recoveryPause(judgment.cause));
+            }
+            const effort = stage === 'correction' ? model.effort : nextRecoveryEffort(current, model, this.store.settings());
+            if (stage === 'correction' ? !sameEffortCorrectionAllowed(current, model, model, this.store.settings()) : !effort)
+              throw new Blocked(
+                'Automatic repair stopped at your effort or retry limit, or this model has no next supported effort. Your files are saved. Continue with clarification or an explicit model/effort choice.',
+              );
+            recovery = {
+              modelId: model.id,
+              effort,
+              stage,
+              from: model,
+              assessment: decision.assessment,
+            };
             this.store.event(id, 'quality_retry', {
+              policy: RECOVERY_POLICY,
+              stage,
+              inputKey,
               model: model.id,
               reason: (e as Error).message,
-              nextDifficulty: decision.assessment.difficulty === 'routine' ? 'standard' : 'complex',
+              fromEffort: model.effort,
+              effort,
+              probability: judgment.probability,
             });
+          } else {
+            if (recovery)
+              throw new Blocked(
+                `The repair worker stopped: ${(e as Error).message}. Your files are saved; no other model was selected.`,
+              );
+            unavailable.add(model.id);
+          }
           this.store.update(id, {
             attempt: current.attempt + 1,
             checkpoint: {
@@ -707,13 +874,10 @@ export class Engine {
                 current.checkpoint?.summary ||
                 current.result ||
                 'Worker interrupted; inspect files and tool evidence before continuing.',
-              remaining: `Recover from: ${(e as Error).message}`,
-              repairDifficulty:
-                e instanceof QualityFailure
-                  ? decision.assessment.difficulty === 'routine'
-                    ? 'standard'
-                    : 'complex'
-                  : current.checkpoint?.repairDifficulty,
+              remaining: e instanceof QualityFailure
+                ? `Recover from: ${(e as Error).message}\n${correctionFeedback(current)}`
+                : `Recover from: ${(e as Error).message}`,
+              repairDifficulty: current.checkpoint?.repairDifficulty,
               artifacts: this.store
                 .list<any>('artifact')
                 .filter((a) => a.taskId === id)
@@ -910,7 +1074,12 @@ export class Engine {
     if (uncertain.length && followup.trim().length < 10)
       throw new Blocked('Describe the verified external outcome in the follow-up before resuming.');
     for (const e of uncertain) {
-      if (e.id) this.store.put('effect', e.id, { ...e, state: 'reviewed', outcome: followup });
+      if (e.id)
+        this.store.put('effect', e.id, {
+          ...e,
+          state: 'reviewed',
+          outcome: followup,
+        });
     }
     if (uncertain.length)
       this.store.event(id, 'external_outcome_reviewed', {

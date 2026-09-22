@@ -1,6 +1,6 @@
 {
   "name": "duke-autorouter",
-  "version": "0.1.2",
+  "version": "0.1.8",
   "private": true,
   "type": "module",
   "license": "Apache-2.0",
@@ -34,6 +34,7 @@
     "test:sandbox": "node --import tsx scripts/sandbox-check.ts",
     "test:standalone": "node --import tsx scripts/standalone-check.ts",
     "eval:compare": "node --import tsx scripts/compare-evals.ts",
+    "eval:pilot": "node --import tsx scripts/summarize-efficiency-pilot.ts",
     "format": "prettier --write \"server/*.ts\" \"server/adapters/*.ts\" \"src/*.{tsx,css}\" \"scripts/*.ts\" \"tests/*.ts\" \"evals/*.ts\"",
     "source:export": "node --import tsx scripts/export-source.ts",
     "security:secrets": "node scripts/check-secrets.mjs",

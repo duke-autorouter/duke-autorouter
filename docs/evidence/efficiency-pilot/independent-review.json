@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "evaluator": {
+    "model": "gpt-5.6-sol",
+    "effort": "medium",
+    "provider": "codex"
+  },
+  "evaluatedAt": "2026-09-20T22:28:34.654Z",
+  "scope": "Twelve artifacts from four matched development cases. Held-out cases remained untouched.",
+  "blinding": {
+    "method": "Random UUID receipt-key copies were used for the final cross-mode content and render pass.",
+    "limitation": "Strong and rules identities had already been exposed during deterministic checks, so the review was only partially blinded. The evaluator is a Codex model and is not provider-independent.",
+    "mappingPath": "withheld private blind-review mapping"
+  },
+  "tokenizer": "Unicode word tokens matched by \\b[\\p{L}\\p{N}\\$]+(?:[’'-][\\p{L}\\p{N}]+)*\\b",
+  "sourceVerification": [
+    "https://www.sqlite.org/wal.html",
+    "https://www.sqlite.org/isolation.html",
+    "https://www.sqlite.org/lang_transaction.html",
+    "https://www.sqlite.org/c3ref/wal_checkpoint_v2.html",
+    "https://www.sqlite.org/c3ref/busy_timeout.html",
+    "https://www.sqlite.org/pragma.html#pragma_busy_timeout"
+  ],
+  "decisions": [
+    {
+      "mode": "strong",
+      "caseId": "coding-unique",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Independent rerun passed; verify.mjs SHA-256 a2d046cd3a24310a98e5cdfb036f9d97ae97c468fcc5b049efeac227bf05723e was unchanged; solution stayed in scope."
+    },
+    {
+      "mode": "strong",
+      "caseId": "research-sqlite-wal",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Every cited official SQLite URL was reopened; material claims, inference labels, and uncertainties were supported."
+    },
+    {
+      "mode": "strong",
+      "caseId": "writing-brief",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Frozen Unicode word tokenizer counted 153 words; purpose, audience, three capabilities, finish line, budgets, and evidence limits were present without invented outcomes."
+    },
+    {
+      "mode": "strong",
+      "caseId": "documents-handoff-docx",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 1,
+      "notes": "Facts and arithmetic matched brief.md and both rendered pages were legible. Layout correction: the source line was orphaned onto a nearly empty second page."
+    },
+    {
+      "mode": "rules",
+      "caseId": "coding-unique",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Independent rerun passed; verify.mjs SHA-256 a2d046cd3a24310a98e5cdfb036f9d97ae97c468fcc5b049efeac227bf05723e was unchanged; solution stayed in scope."
+    },
+    {
+      "mode": "rules",
+      "caseId": "research-sqlite-wal",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "The cited official SQLite WAL page was reopened; material claims, inference labels, and uncertainties were supported."
+    },
+    {
+      "mode": "rules",
+      "caseId": "writing-brief",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 1,
+      "notes": "Frozen Unicode word tokenizer counted 149 words and all required elements were present. The finish line is observable but weaker than the strong baseline because macOS-ready is not independently defined."
+    },
+    {
+      "mode": "rules",
+      "caseId": "documents-handoff-docx",
+      "accepted": false,
+      "criticalFailure": true,
+      "corrections": 3,
+      "notes": "Critical unsupported commitments: the document invented overall Status: Planning, assigned Ana as owner of the decision, and labeled kickoff/review Planned. It also visually associates the unowned participant trial with Sam. Pages rendered legibly, but these facts were not supplied."
+    },
+    {
+      "mode": "jev",
+      "caseId": "coding-unique",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Independent rerun passed; verify.mjs SHA-256 a2d046cd3a24310a98e5cdfb036f9d97ae97c468fcc5b049efeac227bf05723e was unchanged; solution stayed in scope."
+    },
+    {
+      "mode": "jev",
+      "caseId": "research-sqlite-wal",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 0,
+      "notes": "Every cited official SQLite URL was reopened; material claims, inference labels, and uncertainties were supported."
+    },
+    {
+      "mode": "jev",
+      "caseId": "writing-brief",
+      "accepted": false,
+      "criticalFailure": true,
+      "corrections": 1,
+      "notes": "Frozen Unicode word tokenizer counted exactly 150 words, but the finish line only restated already-passing tests and documentation plus vague readiness for evaluation. It omitted the requested measurable completion criterion, which the frozen plan defines as a critical failure."
+    },
+    {
+      "mode": "jev",
+      "caseId": "documents-handoff-docx",
+      "accepted": true,
+      "criticalFailure": false,
+      "corrections": 1,
+      "notes": "The one-page render was legible and the decision, dates, budget, arithmetic, target caveat, and open question matched brief.md. Correction: the owners table visually associates the unowned participant-trial status with Sam and his sign-in-sheet asset."
+    }
+  ]
+}

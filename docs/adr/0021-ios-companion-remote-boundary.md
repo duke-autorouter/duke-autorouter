@@ -1,7 +1,7 @@
-# ADR 0016: Add a narrow remote boundary for the iOS companion
+# ADR 0021: Add a narrow remote boundary for the iOS companion
 
-Status: implemented on `feature/ios-companion-private-beta`; private transport
-selection remains open
+Status: implemented on `feature/ios-companion-private-beta`; physical-device
+validation remains open
 
 ## Problem
 

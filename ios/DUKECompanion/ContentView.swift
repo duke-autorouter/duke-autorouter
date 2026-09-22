@@ -150,6 +150,12 @@ private struct TaskDetailView: View {
         List {
             Section {
                 LabeledContent("Status", value: task.statusLabel)
+                if let revision = task.revision, revision > 0 {
+                    LabeledContent("Revision", value: String(revision))
+                }
+                if let attempt = task.attempt, attempt > 1 {
+                    LabeledContent("Attempts", value: String(attempt))
+                }
                 if let error = task.error { Text(error).foregroundStyle(.secondary) }
             }
             Section("Request") { Text(task.prompt).textSelection(.enabled) }
@@ -161,6 +167,34 @@ private struct TaskDetailView: View {
                     Text(checkpoint.summary)
                     if !checkpoint.remaining.isEmpty {
                         Text(checkpoint.remaining).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            if let review = task.review {
+                Section("Checks") {
+                    LabeledContent("Outcome", value: review.status.capitalized)
+                    if !review.summary.isEmpty {
+                        Text(review.summary).textSelection(.enabled)
+                    }
+                    ForEach(review.checks) { check in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(check.name)
+                                Spacer()
+                                Text(check.status.capitalized)
+                                    .foregroundStyle(
+                                        check.status == "passed" ? Color.secondary : Color.orange
+                                    )
+                            }
+                            if !check.detail.isEmpty {
+                                Text(check.detail).font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    ForEach(review.limitations, id: \.self) { limitation in
+                        Label(limitation, systemImage: "exclamationmark.triangle")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

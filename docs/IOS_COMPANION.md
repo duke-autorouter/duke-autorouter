@@ -14,7 +14,9 @@ The client can:
 - send follow-ups to stopped tasks;
 - approve or deny a live hashed operation;
 - stop current work; and
-- download and inspect saved artifacts with Quick Look.
+- download and inspect saved artifacts with Quick Look; and
+- show task revisions, recovery-attempt counts and incomplete verification
+  without exposing model or effort controls.
 
 The device credential is stored in the iOS Keychain with
 `AfterFirstUnlockThisDeviceOnly`. The server stores only its SHA-256 hash.
@@ -59,10 +61,10 @@ override. No router port, public listener or hosted relay is required.
 ## Not yet established
 
 - physical iPhone behavior;
-- cellular connectivity;
-- a configured private HTTPS transport;
+- Wi-Fi-to-cellular transitions;
+- background refresh and reconnect behavior on a physical device;
 - push notifications;
-- background refresh guarantees;
+- physical-device Keychain persistence;
 - live provider execution from a phone-started task;
 - TestFlight or App Store availability.
 

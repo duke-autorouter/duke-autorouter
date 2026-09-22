@@ -52,16 +52,25 @@ export async function assertReviewEvidence(task: Task, workspace: Workspace, sig
     );
   for (const file of evidence.files) {
     signal.throwIfAborted();
-    const path = await scoped(workspace.path, file.path);
-    if (
-      (await stat(path)).size > 2_000_000 ||
-      createHash('sha256')
-        .update(await readFile(path, { signal }))
-        .digest('hex') !== file.sha256
-    )
-      throw new Blocked(
-        `${file.path} changed after the last review. Describe the change in a follow-up before checking it again.`,
-      );
+    try {
+      const path = await scoped(workspace.path, file.path);
+      if (
+        (await stat(path)).size > 2_000_000 ||
+        createHash('sha256')
+          .update(await readFile(path, { signal }))
+          .digest('hex') !== file.sha256
+      )
+        throw new Blocked(
+          `${file.path} changed after the last review. Describe the change in a follow-up before checking it again.`,
+        );
+    } catch (error) {
+      signal.throwIfAborted();
+      if (['ENOENT', 'ENOTDIR'].includes((error as NodeJS.ErrnoException).code ?? ''))
+        throw new Blocked(
+          `${file.path} is missing. Restore it or describe the change in a follow-up before checking it again.`,
+        );
+      throw error;
+    }
   }
   signal.throwIfAborted();
   return evidence.complete;
@@ -143,7 +152,8 @@ export async function verifyTask(
       event.data.name === 'read_file' &&
       typeof event.data.result?.content === 'string'
     ) {
-      inputs.set(event.data.result.path, event.data.result.content);
+      if (!inputs.has(event.data.result.path))
+        inputs.set(event.data.result.path, event.data.result.content);
       if (event.data.result.truncated) {
         evidence.incomplete = true;
         limitations.push(
@@ -152,7 +162,15 @@ export async function verifyTask(
       }
     }
   let inputBudget = 16000;
+  evidence.resolutionSources = [...inputs]
+    .filter(([path]) => !paths.includes(path))
+    .map(([path, text]) => ({
+      path,
+      text: text.slice(0, 32000),
+      incomplete: text.length > 32000,
+    }));
   for (const [path, text] of inputs) {
+    if (paths.includes(path)) continue;
     const excerpt = text.slice(0, Math.min(4000, inputBudget));
     inputBudget -= excerpt.length;
     if (excerpt) evidence.inputs.push({ path, text: excerpt });
@@ -311,6 +329,13 @@ export async function verifyTask(
   }
   const relevant = readSources.filter((s) =>
     citations.some((url) => urlKey(s.url) === url || urlKey(s.requestedUrl ?? '') === url),
+  );
+  evidence.resolutionSources.push(
+    ...relevant.slice(-6).map((s) => ({
+      path: s.url,
+      text: s.text.slice(0, 32000),
+      incomplete: s.text.length > 32000,
+    })),
   );
   evidence.sources = relevant.slice(-6).map((s) => ({ url: s.url, text: s.text.slice(0, 6000) }));
   if (relevant.length > 6) {

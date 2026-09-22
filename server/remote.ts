@@ -138,7 +138,13 @@ export class RemoteAccess {
 }
 
 const publicTask = (task: Task) => {
-  const { modelOverride: _, evaluation: __, route: ___, ...safe } = task;
+  const {
+    modelOverride: _,
+    effortOverride: __,
+    evaluation: ___,
+    route: ____,
+    ...safe
+  } = task;
   return safe;
 };
 
@@ -357,7 +363,7 @@ export function createRemoteApp(options: {
 
   app.post('/remote/v1/tasks', async (request, reply) => {
     const device = deviceFor(request);
-    const input = TaskInput.omit({ modelOverride: true, evaluation: true })
+    const input = TaskInput.omit({ modelOverride: true, effortOverride: true, evaluation: true })
       .strict()
       .parse(request.body);
     ensureWorkspace(device, input.workspaceId);

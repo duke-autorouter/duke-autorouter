@@ -1,0 +1,779 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-21T20:08:04.781Z",
+  "pricing": {
+    "asOf": "2026-09-20",
+    "tier": "Standard, short context",
+    "unit": "USD per 1M tokens",
+    "source": "https://developers.openai.com/api/docs/pricing/",
+    "rates": {
+      "codex:gpt-6-astra": {
+        "input": 10,
+        "cachedInput": 1,
+        "cacheWrite": 12.5,
+        "output": 50
+      },
+      "codex:gpt-5.6-sol": {
+        "input": 4,
+        "cachedInput": 0.4,
+        "cacheWrite": 5,
+        "output": 20
+      },
+      "codex:gpt-5.6-luna": {
+        "input": 0.2,
+        "cachedInput": 0.02,
+        "cacheWrite": 0.25,
+        "output": 1.2
+      }
+    },
+    "note": "Output includes visible and reasoning tokens. These prices estimate subscription-worker API equivalents; they are not Codex subscription charges."
+  },
+  "primaryMetric": "combinedCostProxyUSD / independently accepted completed tasks; all attempts and failures remain in the numerator",
+  "actualBillingBoundary": "actualBilledAPIUSD contains only metered API charges recorded by the harness.",
+  "subscriptionBoundary": "Subscription window observations are reported without dollar conversion or quota-multiplier inference.",
+  "independentReview": {
+    "role": "Independent development reviewer separate from workers and Jev",
+    "blinded": false,
+    "offlineReviewCostIncluded": false,
+    "basis": "Frozen case rubrics, actual saved artifacts, independent code checks, primary-source comparison and rendered PDF inspection"
+  },
+  "modes": [
+    {
+      "mode": "jev",
+      "testedCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+      "sourceDirty": false,
+      "acceptedCompletedTasks": 3,
+      "totalTasks": 4,
+      "workerAPIEquivalentUSD": 0.24250776,
+      "actualBilledAPIUSD": 0.00103,
+      "unresolvedAPIRequests": 0,
+      "providerReservedAPIUSD": 0,
+      "combinedCostProxyUSD": 0.24353776,
+      "combinedCostProxyUpperBoundUSD": 0.24353776,
+      "combinedCostProxyPerAcceptedTaskUSD": 0.081179253,
+      "allCasesReceivedJevReview": true,
+      "cases": [
+        {
+          "caseId": "coding-chunks",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Original verification passed on independent rerun; implementation preserves order, handles an empty array and does not mutate the input. Protected fixture is unchanged.",
+          "workerAttempts": [
+            {
+              "id": "093757e3-400f-4356-860d-02bbb4bf57c2",
+              "modelId": "codex:gpt-5.6-luna",
+              "usage": {
+                "inputTokens": 84313,
+                "outputTokens": 455,
+                "totalTokens": 84768,
+                "cachedInputTokens": 56064,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 101,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.00731708
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.00731708,
+          "actualBilledAPIUSD": 0.000106,
+          "combinedCostProxyUSD": 0.00742308,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.00742308,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 17,
+              "afterUsedPercent": 17,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "effort": "low",
+              "selectionSource": "rules",
+              "reason": "Your configured fallback \u00b7 Jev did not select an available model; trying this worker before using more resources."
+            }
+          ],
+          "verificationStatuses": [
+            "passed"
+          ],
+          "usageCallCounts": {
+            "routing": 1,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "d45fc06a5eccde7cd5140dde9ee0d0dbcd4829d6f8c264eb906abec93e4dc80e"
+        },
+        {
+          "caseId": "research-playwright-context",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Memo answers context isolation with direct primary-source links, labeled inference and explicit uncertainties. Claims checked against the official isolation, authentication and BrowserContext API pages.",
+          "workerAttempts": [
+            {
+              "id": "e2e229db-6384-4f04-addf-d9ea68d48b80",
+              "modelId": "codex:gpt-5.6-sol",
+              "usage": {
+                "inputTokens": 174422,
+                "outputTokens": 1523,
+                "totalTokens": 175945,
+                "cachedInputTokens": 141952,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 181,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.2171208
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.2171208,
+          "actualBilledAPIUSD": 0.000692,
+          "combinedCostProxyUSD": 0.2178128,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.2178128,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-5.6-sol",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 17,
+              "afterUsedPercent": 17,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-5.6-sol",
+              "effort": "low",
+              "selectionSource": "jev",
+              "reason": "Standard research task \u00b7 Jev selected this model \u00b7 initial profile and preferences; collecting results for this type of work"
+            }
+          ],
+          "verificationStatuses": [
+            "unverified"
+          ],
+          "usageCallCounts": {
+            "routing": 2,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "d45fc06a5eccde7cd5140dde9ee0d0dbcd4829d6f8c264eb906abec93e4dc80e"
+        },
+        {
+          "caseId": "documents-checklist-pdf",
+          "status": "completed",
+          "independentlyAccepted": false,
+          "independentCriticalFailure": true,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 1,
+          "independentNotes": "One-page PDF opens and is legible, but assigns the internal workshop to Ana without source support or an inference label. Duplicate empty checkboxes and an unchecked completed outline also weaken presentation. Original brief provides no workshop owner.",
+          "workerAttempts": [
+            {
+              "id": "487ee94f-7df3-4a32-be15-71763453e2fc",
+              "modelId": "codex:gpt-5.6-luna",
+              "usage": {
+                "inputTokens": 260510,
+                "outputTokens": 2783,
+                "totalTokens": 263293,
+                "cachedInputTokens": 229376,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 270,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.01415392
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.01415392,
+          "actualBilledAPIUSD": 0.000127,
+          "combinedCostProxyUSD": 0.01428092,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.01428092,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 17,
+              "afterUsedPercent": 17,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "effort": "low",
+              "selectionSource": "rules",
+              "reason": "Your configured fallback \u00b7 Jev did not select an available model; trying this worker before using more resources."
+            }
+          ],
+          "verificationStatuses": [
+            "unverified"
+          ],
+          "usageCallCounts": {
+            "routing": 1,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "d45fc06a5eccde7cd5140dde9ee0d0dbcd4829d6f8c264eb906abec93e4dc80e"
+        },
+        {
+          "caseId": "writing-release",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Concise features and limitations sections preserve supplied budgets, experimental status, intended platform and lack of live or daily-use evidence. No invented outcome. Intended platform remains qualified although grouped with features.",
+          "workerAttempts": [
+            {
+              "id": "87288e01-49b0-4084-87da-9cc0e5b0f866",
+              "modelId": "codex:gpt-5.6-luna",
+              "usage": {
+                "inputTokens": 48171,
+                "outputTokens": 342,
+                "totalTokens": 48513,
+                "cachedInputTokens": 34048,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 53,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.00391596
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.00391596,
+          "actualBilledAPIUSD": 0.000105,
+          "combinedCostProxyUSD": 0.00402096,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.00402096,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 17,
+              "afterUsedPercent": 17,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-5.6-luna",
+              "effort": "low",
+              "selectionSource": "rules",
+              "reason": "Your configured fallback \u00b7 Jev did not select an available model; trying this worker before using more resources."
+            }
+          ],
+          "verificationStatuses": [
+            "passed"
+          ],
+          "usageCallCounts": {
+            "routing": 1,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "d45fc06a5eccde7cd5140dde9ee0d0dbcd4829d6f8c264eb906abec93e4dc80e"
+        }
+      ]
+    },
+    {
+      "mode": "strong-medium",
+      "testedCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+      "sourceDirty": false,
+      "acceptedCompletedTasks": 4,
+      "totalTasks": 4,
+      "workerAPIEquivalentUSD": 1.245438,
+      "actualBilledAPIUSD": 0.000519,
+      "unresolvedAPIRequests": 0,
+      "providerReservedAPIUSD": 0,
+      "combinedCostProxyUSD": 1.245957,
+      "combinedCostProxyUpperBoundUSD": 1.245957,
+      "combinedCostProxyPerAcceptedTaskUSD": 0.31148925,
+      "allCasesReceivedJevReview": true,
+      "cases": [
+        {
+          "caseId": "coding-chunks",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Original verification passed on independent rerun; source preserves array contents/order and rejects nonpositive sizes. Protected fixture unchanged.",
+          "workerAttempts": [
+            {
+              "id": "3166cb23-4e4a-4935-a06b-683e12b85295",
+              "modelId": "codex:gpt-6-astra",
+              "usage": {
+                "inputTokens": 41722,
+                "outputTokens": 595,
+                "totalTokens": 42317,
+                "cachedInputTokens": 26880,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 62,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.20505
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.20505,
+          "actualBilledAPIUSD": 6.9e-05,
+          "combinedCostProxyUSD": 0.205119,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.205119,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 18,
+              "afterUsedPercent": 18,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium",
+              "selectionSource": "manual",
+              "reason": "Your model selection; workspace, availability, and tool checks passed."
+            }
+          ],
+          "verificationStatuses": [
+            "passed"
+          ],
+          "usageCallCounts": {
+            "routing": 0,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "197e0e5affae084ccbd17845c152c845426a49e2157c91ca2d4e7307707091c9"
+        },
+        {
+          "caseId": "research-playwright-context",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Primary-source links support browser-side isolation, shared server-state caveat, separate user contexts and session-storage limitation. Inference and unverified environment/security claims are distinguished.",
+          "workerAttempts": [
+            {
+              "id": "d9f6de10-ff42-4a39-aded-d4af79feb239",
+              "modelId": "codex:gpt-6-astra",
+              "usage": {
+                "inputTokens": 80469,
+                "outputTokens": 1082,
+                "totalTokens": 81551,
+                "cachedInputTokens": 53248,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 13,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.379558
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.379558,
+          "actualBilledAPIUSD": 0.000293,
+          "combinedCostProxyUSD": 0.379851,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.379851,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 18,
+              "afterUsedPercent": 18,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium",
+              "selectionSource": "manual",
+              "reason": "Your model selection; workspace, availability, and tool checks passed."
+            }
+          ],
+          "verificationStatuses": [
+            "unverified"
+          ],
+          "usageCallCounts": {
+            "routing": 0,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "197e0e5affae084ccbd17845c152c845426a49e2157c91ca2d4e7307707091c9"
+        },
+        {
+          "caseId": "documents-checklist-pdf",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Rendered one-page PDF preserves owners, dates, target qualification, completion states and the $900 arithmetic. Internal workshop owner is explicitly unknown. Suggested review action is labeled as proposed. Legible without clipping.",
+          "workerAttempts": [
+            {
+              "id": "b47b6487-e528-4cf8-8b78-e8ca0ba7385d",
+              "modelId": "codex:gpt-6-astra",
+              "usage": {
+                "inputTokens": 123649,
+                "outputTokens": 1179,
+                "totalTokens": 124828,
+                "cachedInputTokens": 93568,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 12,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.453328
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.453328,
+          "actualBilledAPIUSD": 9e-05,
+          "combinedCostProxyUSD": 0.453418,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.453418,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 18,
+              "afterUsedPercent": 18,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium",
+              "selectionSource": "manual",
+              "reason": "Your model selection; workspace, availability, and tool checks passed."
+            }
+          ],
+          "verificationStatuses": [
+            "unverified"
+          ],
+          "usageCallCounts": {
+            "routing": 0,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "197e0e5affae084ccbd17845c152c845426a49e2157c91ca2d4e7307707091c9"
+        },
+        {
+          "caseId": "writing-release",
+          "status": "completed",
+          "independentlyAccepted": true,
+          "independentCriticalFailure": false,
+          "independentReviewSource": "review-overlay",
+          "independentCorrections": 0,
+          "independentNotes": "Concise release notes preserve the exact budgets, approval requirement, experimental classifier and limits of local test evidence; intended platform is not promoted to confirmed availability.",
+          "workerAttempts": [
+            {
+              "id": "4960f88d-0b09-4060-97c7-23d15144a704",
+              "modelId": "codex:gpt-6-astra",
+              "usage": {
+                "inputTokens": 45491,
+                "outputTokens": 328,
+                "totalTokens": 45819,
+                "cachedInputTokens": 29312,
+                "cacheWriteInputTokens": 0,
+                "reasoningOutputTokens": 25,
+                "complete": true
+              },
+              "apiEquivalentUSD": 0.207502
+            }
+          ],
+          "workerAPIEquivalentUSD": 0.207502,
+          "actualBilledAPIUSD": 6.7e-05,
+          "combinedCostProxyUSD": 0.207569,
+          "unresolvedAPIRequests": 0,
+          "providerReservedAPIUSD": 0,
+          "combinedCostProxyUpperBoundUSD": 0.207569,
+          "jevReviewObserved": true,
+          "reviewRecoveryReceipts": 0,
+          "subscriptionWindows": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "limitId": "codex",
+              "window": "primary",
+              "beforeUsedPercent": 18,
+              "afterUsedPercent": 18,
+              "changePercentagePoints": 0,
+              "status": "observed"
+            }
+          ],
+          "routes": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium",
+              "selectionSource": "manual",
+              "reason": "Your model selection; workspace, availability, and tool checks passed."
+            }
+          ],
+          "verificationStatuses": [
+            "passed"
+          ],
+          "usageCallCounts": {
+            "routing": 0,
+            "worker": 1,
+            "review": 1
+          },
+          "rawReceiptSHA256": "197e0e5affae084ccbd17845c152c845426a49e2157c91ca2d4e7307707091c9"
+        }
+      ]
+    }
+  ],
+  "independentReviews": {
+    "schemaVersion": 1,
+    "evaluator": {
+      "role": "Independent development reviewer separate from workers and Jev",
+      "blinded": false,
+      "offlineReviewCostIncluded": false,
+      "basis": "Frozen case rubrics, actual saved artifacts, independent code checks, primary-source comparison and rendered PDF inspection"
+    },
+    "modes": [
+      {
+        "mode": "jev",
+        "cases": [
+          {
+            "caseId": "coding-chunks",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Original verification passed on independent rerun; implementation preserves order, handles an empty array and does not mutate the input. Protected fixture is unchanged.",
+            "artifacts": [
+              {
+                "path": "solution.mjs",
+                "sha256": "5626f8914bbd19f87a5bfef47fd35a855049692e0dd4aa80776eca77efaa4a2c"
+              },
+              {
+                "path": "verify.mjs",
+                "sha256": "1c3932c3d4201665dfdeabd18263a89ea5170c446e55deae76fd5d022f46d4b7"
+              }
+            ]
+          },
+          {
+            "caseId": "research-playwright-context",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Memo answers context isolation with direct primary-source links, labeled inference and explicit uncertainties. Claims checked against the official isolation, authentication and BrowserContext API pages.",
+            "artifacts": [
+              {
+                "path": "report.md",
+                "sha256": "4302205ba691e06a4bb82ab0d03bc1d55aec1daa61b8ebbde1458b5bf9685ccb"
+              }
+            ]
+          },
+          {
+            "caseId": "documents-checklist-pdf",
+            "accepted": false,
+            "criticalFailure": true,
+            "corrections": 1,
+            "notes": "One-page PDF opens and is legible, but assigns the internal workshop to Ana without source support or an inference label. Duplicate empty checkboxes and an unchecked completed outline also weaken presentation. Original brief provides no workshop owner.",
+            "artifacts": [
+              {
+                "path": "brief.md",
+                "sha256": "d7c43b4897cbea4d4a516708dae371634cb97c41f4e957c2b9e2029b99b25e44"
+              },
+              {
+                "path": "checklist.pdf",
+                "sha256": "4878f35ef80fa81b627285cf5b904a05089d8344e12ea6a178055c2c0d97f73d"
+              }
+            ]
+          },
+          {
+            "caseId": "writing-release",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Concise features and limitations sections preserve supplied budgets, experimental status, intended platform and lack of live or daily-use evidence. No invented outcome. Intended platform remains qualified although grouped with features.",
+            "artifacts": [
+              {
+                "path": "brief.md",
+                "sha256": "c3fe004e60eb175b33c44d58e3adcf60b8958d6ed92305b5b74aa5010ce752e4"
+              },
+              {
+                "path": "draft.md",
+                "sha256": "907c13aca8a26bab0cf2493753482c770b71093812e333c850b9f6d2054134f8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "mode": "strong-medium",
+        "cases": [
+          {
+            "caseId": "coding-chunks",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Original verification passed on independent rerun; source preserves array contents/order and rejects nonpositive sizes. Protected fixture unchanged.",
+            "artifacts": [
+              {
+                "path": "solution.mjs",
+                "sha256": "10986c4117ee229c3dc2d5444790d8628bcd430f24c9d8dfd4b62f56c91d925a"
+              },
+              {
+                "path": "verify.mjs",
+                "sha256": "1c3932c3d4201665dfdeabd18263a89ea5170c446e55deae76fd5d022f46d4b7"
+              }
+            ]
+          },
+          {
+            "caseId": "research-playwright-context",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Primary-source links support browser-side isolation, shared server-state caveat, separate user contexts and session-storage limitation. Inference and unverified environment/security claims are distinguished.",
+            "artifacts": [
+              {
+                "path": "report.md",
+                "sha256": "a92a32e73312571e253beb12a2668d5026f7bba6ec8d4fa6152f8bc629a3a51a"
+              }
+            ]
+          },
+          {
+            "caseId": "documents-checklist-pdf",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Rendered one-page PDF preserves owners, dates, target qualification, completion states and the $900 arithmetic. Internal workshop owner is explicitly unknown. Suggested review action is labeled as proposed. Legible without clipping.",
+            "artifacts": [
+              {
+                "path": "brief.md",
+                "sha256": "d7c43b4897cbea4d4a516708dae371634cb97c41f4e957c2b9e2029b99b25e44"
+              },
+              {
+                "path": "checklist.pdf",
+                "sha256": "f48596b4b4492f7cf59666b943b14434a37122912e0df1145dae19274944e81f"
+              }
+            ]
+          },
+          {
+            "caseId": "writing-release",
+            "accepted": true,
+            "criticalFailure": false,
+            "corrections": 0,
+            "notes": "Concise release notes preserve the exact budgets, approval requirement, experimental classifier and limits of local test evidence; intended platform is not promoted to confirmed availability.",
+            "artifacts": [
+              {
+                "path": "brief.md",
+                "sha256": "c3fe004e60eb175b33c44d58e3adcf60b8958d6ed92305b5b74aa5010ce752e4"
+              },
+              {
+                "path": "draft.md",
+                "sha256": "abbc1a355ba154da1ed72a43f8e50bccec8163cda12f1656cef6b9db8330e08c"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "frozenConditions": {
+    "caseSetHash": "62060abeb319e0bc04baf57e40c1d1f6563279f083b54da59b156f544c2968d1",
+    "profileHash": "7629412915fb4fec67012ed91381301ba5564fad6d621fcedb26c63f3a9b6462",
+    "policyHash": "f8bba0607cc67447c7c2b67320ad51b4ef0cb51fbaaa25ff97c6832b29717f18",
+    "toolchainHash": "0452ff67d15a1017449b10437a41e04391037fcf78ba818eea5eb4177e658b09",
+    "coreSkillsHash": "2c563faf7f319bdf41d47edf3a21f9044f9c94d8a038dcecf44c209d040d4962",
+    "routingPolicy": "duke-routing-v11",
+    "reviewPolicy": "duke-review-v5",
+    "efficiencyPolicy": "duke-efficiency-v2"
+  },
+  "controlledProbe": {
+    "excludedFromNaturalComparison": true,
+    "initialRouteAndWorker": "Injected Luna Low with empty-array implementation; no initial worker inference",
+    "liveDiagnosis": {
+      "cause": "reasoning",
+      "selectedProbability": 0.98
+    },
+    "repair": "Luna Medium",
+    "originalTestPassedIndependently": true,
+    "finalJevReview": "unverified",
+    "workerStages": 2,
+    "realWorkerAttempts": 1,
+    "actualBilledAPIUSD": 0.000169,
+    "unresolvedAPIRequests": 0,
+    "receiptSHA256": "99fe37fabb5e61aaaf70fa6b6b7575e4a8f1091c11e8463a4d1869701d5868e0",
+    "resourceAccounting": {
+      "mode": "jev",
+      "testedCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+      "sourceDirty": false,
+      "totalTasks": 1,
+      "workerAPIEquivalentUSD": 0.00491932,
+      "actualBilledAPIUSD": 0.000169,
+      "unresolvedAPIRequests": 0,
+      "providerReservedAPIUSD": 0,
+      "combinedCostProxyUSD": 0.00508832,
+      "combinedCostProxyUpperBoundUSD": 0.00508832,
+      "allCasesReceivedJevReview": true
+    },
+    "workerAttempts": [
+      {
+        "id": "6d820c08-15aa-40a4-a6ea-60a013df62fa",
+        "modelId": "codex:gpt-5.6-luna",
+        "usage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0,
+          "complete": true
+        },
+        "apiEquivalentUSD": 0
+      },
+      {
+        "id": "10814f23-5cf1-4247-af00-9a5b0f7afada",
+        "modelId": "codex:gpt-5.6-luna",
+        "usage": {
+          "inputTokens": 75149,
+          "outputTokens": 445,
+          "totalTokens": 75594,
+          "cachedInputTokens": 59136,
+          "cacheWriteInputTokens": 0,
+          "reasoningOutputTokens": 126,
+          "complete": true
+        },
+        "apiEquivalentUSD": 0.00491932
+      }
+    ]
+  }
+}

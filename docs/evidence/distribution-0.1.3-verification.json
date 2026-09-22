@@ -1,0 +1,29 @@
+{
+  "version": "0.1.3",
+  "verifiedAt": "2026-09-21T15:03:43.740660+00:00",
+  "sourceCommit": "cde440cf2edf51fcc2885be887987962a34128d0",
+  "mainMergeCommit": "a984e7d7fbca36306222ad043498d36fcafb24ed",
+  "automatedTests": 187,
+  "standaloneChecks": 12,
+  "matchingPackagedSourceFiles": 945,
+  "githubCoreAndSecretChecks": "passed",
+  "developerIDSignature": "verified",
+  "notarization": "Accepted and stapled",
+  "mountedDMGSignatureAndGatekeeper": "passed",
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.3-mac-arm64.dmg",
+      "sha256": "f880e6f612b065e41fd9ea2d6e3556500cd92238ba503ceba0de4ba67ce184dd"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.3-mac-arm64.zip",
+      "sha256": "75fd5f4c25ee453dd8c9b0125299a494d512781bd7766cf4d9844159b13f21cb"
+    }
+  ],
+  "submissionId": "3664a651-0c3a-4298-ac3a-fd0cd87c8b65",
+  "limits": [
+    "No second physical Mac test",
+    "No new live provider validation of 0.1.3; live workflow evidence targets 0.1.2",
+    "No iOS implementation in this release"
+  ]
+}

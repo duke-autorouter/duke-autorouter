@@ -62,6 +62,34 @@ const interrupted = {
   error: 'The Mac app restarted. Review the checkpoint before continuing.',
 };
 core.store.save(interrupted);
+core.store.save({
+  ...TaskInput.parse({
+    workspaceId: 'sample',
+    prompt: 'Review the saved synthetic report.',
+  }),
+  id: 'sample-incomplete-review',
+  title: 'Saved report with incomplete checks',
+  status: 'completed' as const,
+  attempt: 2,
+  revision: 1,
+  createdAt: now(),
+  updatedAt: now(),
+  result: 'The synthetic report is saved, but one check could not finish.',
+  review: {
+    status: 'unverified' as const,
+    summary: 'One saved-output check could not be completed.',
+    checks: [
+      {
+        name: 'Saved file review',
+        status: 'unverified' as const,
+        detail: 'The synthetic evidence is intentionally incomplete.',
+      },
+    ],
+    limitations: ['Retry checks on the Mac or follow up with more context.'],
+    at: now(),
+    policy: 'synthetic-fixture',
+  },
+});
 core.store.update(task.id, { status: 'running' });
 void core.approvals.request(
   task.id,

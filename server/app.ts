@@ -348,6 +348,8 @@ export async function createApp(
         jevMode: z.enum(['off', 'observe', 'assist']),
         jevModel: z.string().min(1),
         jevFallbackModel: z.string().max(300).optional(),
+        maxRecovery: z.number().int().min(0).max(5).optional(),
+        recoveryEffortCeiling: z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra']).optional(),
         jevInputPrice: z.number().nonnegative(),
         jevValidated: z.boolean(),
       })

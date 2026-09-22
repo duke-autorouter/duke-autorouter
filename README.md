@@ -10,15 +10,42 @@ Claude subscriptions and optional OpenRouter models. Jev assesses the task,
 chooses an eligible model and supported reasoning effort, and reviews the result.
 
 DUKE aims to use only the model capability and reasoning effort a task needs.
-That applies to subscription capacity as well as API spending. Routing quality
-and savings have not yet been measured.
+That applies to subscription capacity as well as API spending. A small development comparison found substantially lower model-priced cost with
+automatic routing, alongside quality failures. Follow-up checks separate tool
+evidence problems from model effort and retain the cost of failed attempts. See
+[current development status](docs/CURRENT_STATUS.md) for the results, limitations,
+and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.2 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg).
+The current prerelease is **0.1.8 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.8 separates a targeted correction at unchanged effort from a higher-effort retry. Both use the existing recovery allowance. Jev must approve the correction using available facts and tools; missing essential context and uncertain judgments still pause. See the [correction validation](docs/CORRECTION_VALIDATION_20260921.md) for the successful checks, blocked attempts and detection limits.
+
+Version 0.1.7 gives focused response review the actual verifier receipts, fixing a false failure on correct coding work. Unavailable execution stays unverified. The [diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) records the live controls and remaining uncertainty.
+
+Version 0.1.6 checks specific claims and ownership relationships against source
+evidence. An uncertain passage can receive one focused follow-up review before
+DUKE decides whether a worker repair is justified. The [development checks](docs/FOCUSED_REVIEW_VALIDATION_20260921.md)
+include the original missed PDF error, correct examples and false alarms found
+during development. Some correct work still has incomplete checks.
+
+Version 0.1.5 adds bounded same-model effort recovery. Jev can diagnose a failed
+check and retry at the next supported effort within your limits. A controlled
+live probe repaired a failing implementation. A fresh four-task comparison found
+lower model-priced cost with three accepted automatic outputs versus four for
+Astra Medium. See the [recovery report](docs/AUTOMATIC_RECOVERY_VALIDATION_20260921.md).
+
+Version 0.1.4 preserves source revision cues and Word table structure in tool
+evidence. Explicit model choices now retain Jev content review. The repository
+also includes the cost-comparison harness and bounded development checks. See the
+[evidence audit](docs/SOURCE_FIDELITY_AUDIT.md).
+
+Version 0.1.3 adds worker inactivity protection and clearer recovery when reviewed
+files are missing. See the [reliability follow-up](docs/RELIABILITY_FOLLOWUP.md).
 
 Version 0.1.2 updates follow-up requirements, bounds stalled preparation, and adds
 **Retry checks** for saved results with incomplete verification. It also accepts
@@ -43,6 +70,10 @@ records the earlier browser-boundary and scoring fixes.
 - **Usage and task history.** See API spending, reported Codex and Claude
   subscription allowances, and task-level token usage. Saved conversations,
   files, checks, and checkpoints remain available after a restart.
+- **Optional iPhone companion foundation.** The source includes a native SwiftUI
+  client for paired, project-scoped task control over a private Tailscale
+  connection. The gateway is disabled by default and is not part of the 0.1.8
+  Mac download or an iOS release. See the [companion guide](docs/IOS_COMPANION.md).
 
 Version 0.1 runs one task at a time. Interrupted tasks require an explicit
 resume. Imported agent definitions provide instructions; automatic teams,
@@ -62,8 +93,10 @@ switching to another model. A close choice between suitable models does not
 automatically escalate to a more powerful one.
 
 After execution, DUKE checks files, test results, and retrieved sources where
-applicable. Jev reviews the available content. Failed checks can trigger another
-attempt with a suitable model; unfinished checks stay visible in the result.
+applicable. Jev checks specific claims against available sources and can make one focused
+follow-up review of uncertain passages. Jev can first authorize one targeted correction at unchanged model and effort. If it still fails, a separate reasoning judgment can authorize the next supported effort, within your retry count and effort ceiling. Missing context, tool
+failures and uncertain diagnoses pause the task. Unfinished checks stay visible
+in the result.
 Use **Retry checks** to review saved work without starting another worker.
 Follow-ups preserve previous results and keep relevant requirements; explicit
 changes can supersede an earlier output format.
@@ -99,9 +132,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.2 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.2/DUKE-Autorouter-0.1.2-mac-arm64.dmg)**
+**[Download DUKE 0.1.8 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.2)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.8)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -166,17 +199,24 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
-The release passes 182 automated tests and 12 standalone package checks. Another
-15 browser workflows exercise the app and files with synthetic workers. Live
-Codex and Claude checks cover coding, sourced research, writing, basic documents,
-fallback, and cancellation/resume. Nine live Jev diagnostic reviews passed their
-expected outcomes after a [scoring correction](docs/REVIEW_SCORING.md).
+The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
+
+
+The current source passes 233 automated tests. The 0.1.8 package passes 12
+standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
+synthetic workers; earlier live Codex and Claude checks cover coding, research,
+writing, basic documents, fallback, and cancellation/resume. These historical
+checks are not a fresh live test of every provider on every release. Nine Jev
+diagnostic reviews passed their expected outcomes after a
+[scoring correction](docs/REVIEW_SCORING.md).
 The [verification record](docs/VERIFICATION.md) and [tool audit](docs/TOOL_AUDIT.md)
 include the failures, fixes, sample outputs, and exact scope of those checks.
 
-Automatic reviews can remain incomplete when evidence or API capacity is missing.
+Automatic reviews can remain incomplete, and a confident individual judgment can
+miss a factual error. Independent development review remains necessary to measure
+quality; routine users are not asked to grade models.
 OpenRouter has no successful live worker result yet, and a second physical Mac
-has not been tested. Routing accuracy, resource savings, and multi-day reliability
+has not been tested. General routing accuracy, quality-preserving savings, and multi-day reliability
 have not been established. Intel Macs, Windows, and Linux are not release-tested.
 See the [0.1 release limits](docs/RELEASE_READINESS.md).
 

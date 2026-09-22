@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-20",
+  "scope": {
+    "split": "development",
+    "casesPerMode": 4,
+    "heldOutTouched": false,
+    "testedHarnessCommit": "5a2d6c96699103a68ab32a8d54e75d01b5a36b6e"
+  },
+  "pricing": {
+    "basis": "OpenAI Standard short-context API prices per 1M tokens on 2026-09-20",
+    "source": "https://developers.openai.com/api/docs/pricing/",
+    "workerCostBoundary": "Counterfactual API-equivalent estimate, not subscription billing",
+    "subscriptionBoundary": "Observed window changes only; no dollar or quota conversion"
+  },
+  "modes": [
+    {
+      "mode": "strong-medium",
+      "route": "codex:gpt-6-astra@medium",
+      "accepted": 4,
+      "criticalFailures": 0,
+      "workerAPIEquivalentUSD": 1.42109,
+      "actualMeteredAPISettledUSD": 0.000557,
+      "unresolvedAPIRequests": 1,
+      "providerReservedAPIUSD": 0.001453,
+      "combinedProxyLowerBoundUSD": 1.421647,
+      "combinedProxyUpperBoundUSD": 1.4231
+    },
+    {
+      "mode": "strong-max",
+      "route": "codex:gpt-6-astra@ultra",
+      "accepted": 4,
+      "criticalFailures": 0,
+      "workerAPIEquivalentUSD": 1.757092,
+      "actualMeteredAPISettledUSD": 0.000618,
+      "unresolvedAPIRequests": 0,
+      "combinedProxyUSD": 1.75771
+    },
+    {
+      "mode": "jev",
+      "route": "codex:gpt-5.6-luna@low for all four cases",
+      "accepted": 2,
+      "criticalFailures": 2,
+      "workerAPIEquivalentUSD": 0.03791312,
+      "actualMeteredAPISettledUSD": 0.001322,
+      "unresolvedAPIRequests": 0,
+      "combinedProxyUSD": 0.03923512
+    }
+  ],
+  "knownCorrectedAPISettledUSD": 0.002497,
+  "reviewSymmetry": {
+    "allCasesReceivedJevReview": true,
+    "failedReviewRecoveredWithoutWorkerRerun": true
+  },
+  "qualityConclusion": "Cost reduction mechanism observed; quality-preserving savings not demonstrated",
+  "adaptiveCostBoundary": "No quality-recovery retry occurred; Jev writing used three stages in its initial path and other cases used one, so full adaptive repair cost is unmeasured",
+  "nextInvestigation": [
+    "Inspect prompt, context and tool-receipt fidelity",
+    "Evaluate bounded same-model higher-effort repair on failed development work",
+    "Validate tuned policy on fresh cases before touching held-out cases"
+  ]
+}

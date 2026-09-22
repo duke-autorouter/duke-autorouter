@@ -1,0 +1,99 @@
+{
+  "release": "0.1.5",
+  "verifiedAt": "2026-09-21",
+  "packageSourceCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+  "liveEvaluationSourceCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+  "platform": "darwin-arm64",
+  "localSourceTests": {
+    "passed": 204,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "standaloneChecks": {
+    "adHocSignedDevelopmentPackagePassed": 12,
+    "developerIDSignedPackagePassed": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "sourceCommit": "9734cd0ed5e811590b2fdafedf952c505193eb60",
+    "matchedFiles": 946,
+    "mismatches": []
+  },
+  "notarization": {
+    "submissionId": "5166678d-f835-45e7-b9b5-9586906dbb14",
+    "status": "Accepted and stapled"
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG app and Applications shortcut",
+    "preserved upstream Claude signature"
+  ],
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.5-mac-arm64.dmg",
+      "sha256": "3ebd1a7c8219e1943fb55f0aa98a1a4f1aad2f0790650e91b0de50348b39e287"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.5-mac-arm64.zip",
+      "sha256": "6a174e2be8af69ff1e14c06e1a7d1d4da9d111efb8a94023aae843038270d5c8"
+    }
+  ],
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "1b8177fe49f2be5bacc75e89b5f88fa7454791283113ace16a453fe9171d179b",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "secrets": {
+    "knownCredentialsCompared": 8,
+    "scopes": [
+      {
+        "scope": "source-checkout",
+        "files": 1144,
+        "readErrors": 0
+      },
+      {
+        "scope": "notarized-app",
+        "files": 19753,
+        "readErrors": 0
+      },
+      {
+        "scope": "download-metadata",
+        "files": 2,
+        "readErrors": 0
+      }
+    ],
+    "matches": 0,
+    "limits": "Known-value comparison is not exhaustive; history and final documentation scans are recorded with release checks.",
+    "gitleaks": "8.30.1; full history, tracked files and commit metadata passed"
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.4",
+    "toVersion": "0.1.5",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskAndProjectContentHashesPreserved": true,
+    "existingSettingsPreferencesAndEnabledModelHashesPreserved": true,
+    "newDefaultSetting": {
+      "recoveryEffortCeiling": "medium"
+    },
+    "nativeWindowLoadedAndVisuallyChecked": true,
+    "activeTasksBeforeUpdate": 0
+  },
+  "liveEvaluation": {
+    "controlledRepairOriginalTestPassed": true,
+    "controlledRepairFinalReview": "unverified",
+    "naturalAutomaticAccepted": 3,
+    "naturalBaselineAccepted": 4,
+    "naturalTasksPerMode": 4,
+    "automaticNaturalRetries": 0
+  },
+  "limits": [
+    "No second physical Mac available for validation",
+    "No successful recorded OpenRouter live worker result",
+    "Natural error detection and general savings remain unproven"
+  ]
+}

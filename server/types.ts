@@ -73,6 +73,9 @@ export const TaskInput = z.object({
   expectedResult: z.string().max(4000).default(''),
   required: z.array(Cap).default(['files']),
   modelOverride: z.string().optional(),
+  effortOverride: z
+    .enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'])
+    .optional(),
   attachments: z.array(z.string()).max(20).default([]),
   evaluation: z.boolean().default(false),
   verification: z
@@ -352,6 +355,7 @@ export type Settings = {
   jevValidated: boolean;
   maxSteps: number;
   maxRecovery: number;
+  recoveryEffortCeiling: import('../shared/effort.js').Effort;
   workPreferences?: WorkPreferences;
 };
 export const defaults: Settings = {
@@ -366,6 +370,7 @@ export const defaults: Settings = {
   jevValidated: false,
   maxSteps: 24,
   maxRecovery: 2,
+  recoveryEffortCeiling: 'medium',
   workPreferences: {},
 };
 export type Health = {

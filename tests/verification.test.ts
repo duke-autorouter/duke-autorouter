@@ -56,14 +56,24 @@ async function fixture(kind: TaskKind = 'writing') {
     name: 'Synthetic',
     path: join(root, 'work'),
     providers: ['codex', 'claude', 'openrouter'],
-    instructions: [{ source: 'Private guide', content: 'PRIVATE-SETUP-MARKER', sha256: 'fixture' }],
+    instructions: [
+      {
+        source: 'Private guide',
+        content: 'PRIVATE-SETUP-MARKER',
+        sha256: 'fixture',
+      },
+    ],
   };
   await mkdir(workspace.path);
   const store = new Store(join(root, 'state', 'db'));
   store.put('workspace', workspace.id, workspace);
   const calls: any[] = [],
     runs: string[] = [];
-  let verdict = (_body: any): any => ({ brief: 'pass', support: 'pass', completion: 'pass' });
+  let verdict = (_body: any): any => ({
+    brief: 'pass',
+    support: 'pass',
+    completion: 'pass',
+  });
   const jev = new Jev(
     store,
     { get: async () => 'synthetic-only' } as any,
@@ -80,15 +90,45 @@ async function fixture(kind: TaskKind = 'writing') {
               probabilities: { '0': 1, '1': 0, '2': 0 },
             },
           }
-        : body.questions.model
-          ? { model: choice(Object.keys(body.questions.model.criteria), 'candidate_0') }
-          : Object.fromEntries(
-              Object.entries(verdict(body)).map(([id, v]) => [
-                id,
-                typeof v === 'string' ? choice(['pass', 'fail', 'unknown'], v) : v,
-              ]),
-            );
-      return Response.json({ model: 'synthetic-jev', answers, usage: { input_tokens: 10 } });
+        : body.questions.recovery
+          ? {
+              recovery: choice(Object.keys(body.questions.recovery.criteria), body.state.recoveryStage === 'correction' ? 'correction' : 'reasoning'),
+            }
+          : body.questions.model
+            ? {
+                model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
+              }
+            : Object.fromEntries(
+                Object.entries({
+                  ...Object.fromEntries(
+                    Object.keys(body.questions)
+                      .filter((id) => /^(claim|requirement)_/.test(id))
+                      .map((id) => [id, 'pass']),
+                  ),
+                  ...verdict(body),
+                }).map(([id, v]) => [
+                  id,
+                  typeof v === 'string'
+                    ? choice(
+                        Object.keys(
+                          body.questions[id]?.criteria ?? { pass: '', fail: '', unknown: '' },
+                        ),
+                        id.startsWith('claim_')
+                          ? v === 'pass'
+                            ? 'supported'
+                            : v === 'fail'
+                              ? 'contradicted'
+                              : v
+                          : v,
+                      )
+                    : v,
+                ]),
+              );
+      return Response.json({
+        model: 'synthetic-jev',
+        answers,
+        usage: { input_tokens: 10 },
+      });
     },
   );
   const worker: Worker = {
@@ -170,6 +210,21 @@ test('Jev gives content review a longer deadline than routing and preserves the 
   }
 });
 
+test('manual model overrides bypass Jev routing but receive the same assist-mode content review', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    const task = await f.run({ modelOverride: 'worker' });
+    assert.equal(task.status, 'completed');
+    assert.equal(task.route?.selectionSource, 'manual');
+    assert.equal(task.review?.status, 'passed');
+    assert.equal(f.calls.length, 1);
+    assert.ok(f.store.events(task.id).some((event) => event.kind === 'jev_review'));
+  } finally {
+    await f.close();
+  }
+});
+
 test('configured fallback permits an economical attempt without treating it as proven complex capability', () => {
   const w: Workspace = {
     id: 'w',
@@ -187,9 +242,20 @@ test('configured fallback permits an economical attempt without treating it as p
     preferred: true,
     discoveredAt: new Date().toISOString(),
   };
-  const unknown = model('unknown', { evaluated: false, catalog, maxDifficulty: undefined });
-  const routine = model('routine', { evaluated: false, catalog, maxDifficulty: 'routine' });
-  const task = { prompt: 'Implement a distributed system', required: ['files'] as ['files'] };
+  const unknown = model('unknown', {
+    evaluated: false,
+    catalog,
+    maxDifficulty: undefined,
+  });
+  const routine = model('routine', {
+    evaluated: false,
+    catalog,
+    maxDifficulty: 'routine',
+  });
+  const task = {
+    prompt: 'Implement a distributed system',
+    required: ['files'] as ['files'],
+  };
   const settings = { ...defaults, jevFallbackModel: 'routine' };
   assert.equal(route(task, w, [unknown, routine, strong], settings).modelId, 'routine');
   assert.equal(
@@ -212,7 +278,11 @@ test('catalog refresh replaces stale prices and context while preserving explici
   });
   try {
     const first = recordCatalog(store, 'openrouter', [raw('.000001', 32000)])[0];
-    store.put('model', first.id, { ...first, enabled: false, routingNotes: 'Keep this note' });
+    store.put('model', first.id, {
+      ...first,
+      enabled: false,
+      routingNotes: 'Keep this note',
+    });
     const fresh = recordCatalog(store, 'openrouter', [raw('.000010', 128000)])[0];
     assert.equal(fresh.inputPrice, 10);
     assert.equal(fresh.contextLimit, 128000);
@@ -273,7 +343,10 @@ test('small attachments are assessed on their contents and private setup stays o
 test('bounded context includes progress, marks truncation, and never reads imported instructions', async () => {
   const f = await fixture();
   try {
-    const task = await f.engine.create({ prompt: 'Continue the work', workspaceId: 'w' });
+    const task = await f.engine.create({
+      prompt: 'Continue the work',
+      workspaceId: 'w',
+    });
     const context = await routingContext(
       {
         ...task,
@@ -296,44 +369,40 @@ test('bounded context includes progress, marks truncation, and never reads impor
   }
 });
 
-test('failed content checks escalate capability, preserve the task, and record both model outcomes', async () => {
+test('a focused defect missed by broad checks retries the same model and retains all usage', async () => {
   const f = await fixture();
   try {
-    f.add(model('first', { maxDifficulty: 'routine' }), model('second', { provider: 'claude' }));
+    f.add(
+      model('first', { supportedEfforts: ['low', 'medium', 'high'] }),
+      model('premium', { provider: 'claude' }),
+    );
+    const efforts: string[] = [];
     f.engine.workers.codex = {
       run: async (c) => {
         f.runs.push(c.model.id);
+        efforts.push(c.model.effort!);
         c.emit('subscription_usage', {
           total: { inputTokens: 80, outputTokens: 20, totalTokens: 100 },
         });
-        await c.tool('write_file', { path: 'result.md', content: 'TODO' });
-        return 'BAD placeholder';
+        if (f.runs.length > 1) {
+          assert.match(c.prompt, /Recover from/);
+          assert.match(c.prompt, /Jev: claim_0/);
+        }
+        await c.tool('write_file', {
+          path: 'result.md',
+          content: f.runs.length === 1 ? 'TODO' : 'A complete introduction.',
+        });
+        return f.runs.length === 1 ? 'BAD placeholder' : 'Created the complete introduction.';
       },
     };
     f.engine.workers.claude = {
-      run: async (c) => {
-        f.runs.push(c.model.id);
-        c.emit('subscription_usage', {
-          modelUsage: {
-            second: {
-              inputTokens: 200,
-              outputTokens: 100,
-              cacheReadInputTokens: 0,
-              cacheCreationInputTokens: 0,
-            },
-          },
-        });
-        assert.match(c.prompt, /Recover from/);
-        assert.match(c.prompt, /Jev: brief/);
-        await c.tool('write_file', {
-          path: 'result.md',
-          content: 'The requested complete introduction.',
-        });
-        return 'Created the complete introduction.';
+      run: async () => {
+        throw new Error('Premium model must not run');
       },
     };
     f.verdict((body) => ({
-      brief: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
+      brief: 'pass',
+      claim_0: body.state.evidence.result.includes('BAD') ? 'fail' : 'pass',
       support: 'pass',
       completion: 'pass',
     }));
@@ -341,30 +410,31 @@ test('failed content checks escalate capability, preserve the task, and record b
     assert.equal(task.status, 'completed');
     assert.equal(task.review?.status, 'passed');
     assert.equal(task.attempt, 1);
-    assert.deepEqual(f.runs, ['first', 'second']);
-    assert.equal(task.usage?.reportedTokens, 460);
+    assert.deepEqual(f.runs, ['first', 'first']);
+    assert.deepEqual(efforts, ['low', 'low']);
+    assert.equal(task.usage?.reportedTokens, 250);
     assert.equal(task.usage?.complete, true);
-    assert.deepEqual(task.usage?.byRole, { routing: 40, worker: 400, review: 20 });
-    const efficiency = f.store.list<any>('routing_run');
-    assert.equal(efficiency.length, 1);
-    assert.equal(efficiency[0].modelId, 'first');
-    assert.equal(efficiency[0].recovered, true);
-    assert.equal(efficiency[0].usage.reportedTokens, 460);
-    assert.equal(efficiency[0].assessment.difficulty, 'routine');
-    assert.equal(efficiency[0].status, 'passed');
-    assert.equal(task.route?.assessment.difficulty, 'standard');
-    assert.equal(
-      f.store.list<Outcome>('routing_outcome').filter((o) => o.status === 'failed').length,
-      1,
+    assert.deepEqual(task.usage?.byRole, {
+      routing: 20,
+      worker: 200,
+      review: 30,
+    });
+    const runs = f.store.list<any>('routing_run');
+    assert.equal(runs.length, 1);
+    assert.equal(runs[0].recovered, true);
+    assert.equal(runs[0].status, 'passed');
+    assert.equal(task.route?.assessment.difficulty, 'routine');
+    assert.deepEqual(
+      f.store
+        .list<Outcome>('routing_outcome')
+        .map((o) => [o.effort, o.status])
+        .sort(),
+      [
+        ['low', 'failed'],
+        ['low', 'passed'],
+      ],
     );
-    assert.equal(
-      f.store.list<Outcome>('routing_outcome').filter((o) => o.status === 'passed').length,
-      1,
-    );
-    assert.match(
-      await readFile(join(f.workspace.path, 'result.md'), 'utf8'),
-      /complete introduction/,
-    );
+    assert.equal(f.calls.filter((c) => c.questions.recovery).length, 1);
   } finally {
     await f.close();
   }
@@ -374,12 +444,17 @@ test('failed checks without a suitable alternative retain the deliverable and ca
   const f = await fixture();
   try {
     f.add(model('only'));
-    f.verdict(() => ({ brief: 'fail', support: 'pass', completion: 'pass' }));
+    f.verdict(() => ({
+      brief: 'fail',
+      requirement_0: 'fail',
+      support: 'pass',
+      completion: 'pass',
+    }));
     const task = await f.run();
     assert.equal(task.status, 'blocked');
     assert.equal(task.review?.status, 'failed');
     assert.ok(task.result);
-    assert.equal(f.runs.length, 1);
+    assert.equal(f.runs.length, 2);
     assert.ok(!f.store.events(task.id).some((e) => e.kind === 'completed'));
   } finally {
     await f.close();
@@ -391,7 +466,7 @@ test('review gates use verdict probability and retain the full distribution sepa
     ['observed coding distribution', { pass: 0.8, fail: 0.18, unknown: 0.02 }, 0.7, 'passed'],
     ['observed document distribution', { pass: 0.83, fail: 0.13, unknown: 0.04 }, 0.75, 'passed'],
     ['below pass threshold', { pass: 0.799, fail: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
-    ['at fail threshold', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'failed'],
+    ['uncorroborated broad failure', { fail: 0.8, pass: 0.18, unknown: 0.02 }, 0.7, 'unverified'],
     ['below fail threshold', { fail: 0.799, pass: 0.15, unknown: 0.051 }, 0.95, 'unverified'],
     ['certain unknown', { unknown: 1, pass: 0, fail: 0 }, 1, 'unverified'],
   ] as const) {
@@ -489,7 +564,11 @@ test('review cancellation stops completion and never records a learned outcome',
 test('exhausted Jev budget uses the configured fallback and leaves review incomplete without paid calls', async () => {
   const f = await fixture();
   try {
-    f.store.put('settings', 'main', { ...defaults, dailyLimit: 0, jevFallbackModel: 'worker' });
+    f.store.put('settings', 'main', {
+      ...defaults,
+      dailyLimit: 0,
+      jevFallbackModel: 'worker',
+    });
     f.add(model('worker'));
     const task = await f.run();
     assert.equal(task.status, 'completed');
@@ -605,7 +684,12 @@ test('an independently rerun task check can fail and trigger recovery before sem
     let runs = 0;
     f.tools.shell = async () => {
       runs++;
-      return { status: 'exited', code: 1, stdout: 'Incorrect result', stderr: '' };
+      return {
+        status: 'exited',
+        code: 1,
+        stdout: 'Incorrect result',
+        stderr: '',
+      };
     };
     const task = await f.run({
       prompt: 'Fix the code',
@@ -614,7 +698,7 @@ test('an independently rerun task check can fail and trigger recovery before sem
     });
     assert.equal(task.status, 'blocked');
     assert.equal(task.review?.status, 'failed');
-    assert.equal(runs, 1);
+    assert.equal(runs, 2);
     assert.equal(f.calls.filter((c) => c.questions.brief).length, 0);
   } finally {
     await f.close();
@@ -823,7 +907,11 @@ test('observed outcomes are task-deduplicated, family/difficulty scoped, version
   try {
     const worker = model('worker', {
       evaluated: false,
-      catalog: { description: 'Provider profile', preferred: false, discoveredAt: '' },
+      catalog: {
+        description: 'Provider profile',
+        preferred: false,
+        discoveredAt: '',
+      },
     });
     f.add(worker);
     const row = (id: string, taskId: string, patch: Partial<Outcome> = {}): Outcome => ({
@@ -879,7 +967,10 @@ test('same-task continuation retains all token use and original routing attribut
     assert.equal(first.subscriptionUsage?.unobservedAttempts, 1);
     // Adding another model and a starting preference must not erase this task's costs.
     f.add(model('z-ui'));
-    f.store.put('settings', 'main', { ...f.store.settings(), workPreferences: { ui: 'z-ui' } });
+    f.store.put('settings', 'main', {
+      ...f.store.settings(),
+      workPreferences: { ui: 'z-ui' },
+    });
     f.engine.resume(first.id);
     await f.engine.execute(first.id);
     const resumed = f.store.task(first.id);
@@ -944,4 +1035,149 @@ test('engine persists per-attempt subscription windows and supplies early relate
   } finally {
     await f.close();
   }
+});
+
+test('context gaps and tool failures pause without spending another worker attempt or teaching a quality failure', async () => {
+  for (const cause of ['missing_context', 'tool_failure'] as const) {
+    const f = await fixture();
+    try {
+      f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
+      f.verdict(() => ({
+        brief: 'fail',
+        requirement_0: 'fail',
+        support: 'pass',
+        completion: 'pass',
+      }));
+      f.jev.recovery = async () => ({ cause, probability: 1 });
+      const task = await f.run();
+      assert.equal(task.status, 'blocked');
+      assert.equal(f.runs.length, 1);
+      assert.equal(task.review?.status, 'unverified');
+      assert.equal(f.store.list<Outcome>('routing_outcome')[0].status, 'unverified');
+      assert.equal(f.store.list<any>('routing_run')[0].status, 'unverified');
+      assert.ok(task.result);
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+test('quality recovery respects fixed effort, disabled retries, medium ceiling and changed model permissions', async () => {
+  for (const scenario of ['fixed', 'disabled', 'ceiling', 'availability'] as const) {
+    const f = await fixture();
+    try {
+      f.add(model('worker', { supportedEfforts: ['low', 'medium', 'high'] }));
+      f.verdict(() => ({
+        brief: 'fail',
+        requirement_0: 'fail',
+        support: 'pass',
+        completion: 'pass',
+      }));
+      if (scenario === 'disabled') f.store.put('settings', 'main', { ...defaults, maxRecovery: 0 });
+      f.jev.recovery = async (_task, _evidence, _signal, stage) => {
+        if (scenario === 'availability')
+          f.store.put('model', 'worker', {
+            ...f.store.get<Model>('model', 'worker'),
+            enabled: false,
+          });
+        return { cause: stage === 'correction' ? 'correction' : 'reasoning', probability: 1 };
+      };
+      const task = await f.run(
+        scenario === 'fixed' ? { modelOverride: 'worker', effortOverride: 'low' } : {},
+      );
+      assert.equal(task.status, 'blocked');
+      assert.equal(f.runs.length, scenario === 'ceiling' ? 3 : scenario === 'fixed' ? 2 : 1);
+      assert.ok(
+        !f.store.events(task.id).some((e) => e.kind === 'route' && e.data.effort === 'high'),
+      );
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+test('cancellation while diagnosing recovery rejects a late judgment and cannot start another worker', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
+    f.verdict(() => ({
+      brief: 'fail',
+      requirement_0: 'fail',
+      support: 'pass',
+      completion: 'pass',
+    }));
+    f.jev.recovery = async (task) => {
+      f.engine.cancel(task.id);
+      return { cause: 'reasoning', probability: 1 };
+    };
+    const task = await f.run();
+    assert.equal(task.status, 'cancelled');
+    assert.equal(f.runs.length, 1);
+    assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+  } finally {
+    await f.close();
+  }
+});
+
+
+test('a failed same-effort correction can escalate once, preserving requirements and counting every attempt', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker', { supportedEfforts: ['low', 'medium', 'high'] }));
+    const efforts: (string | undefined)[] = [];
+    const run = f.engine.workers.codex.run;
+    f.engine.workers.codex.run = async (c) => {
+      efforts.push(c.model.effort);
+      assert.equal(c.task.expectedResult, 'Preserve all original facts.');
+      if (efforts.length > 1) assert.match(c.prompt, /Do not invent missing facts/);
+      return run(c);
+    };
+    f.verdict(() => ({ brief: 'pass', claim_0: efforts.length < 3 ? 'fail' : 'pass', support: 'pass', completion: 'pass' }));
+    const task = await f.run({ expectedResult: 'Preserve all original facts.' });
+    assert.equal(task.status, 'completed');
+    assert.deepEqual(efforts, ['low', 'low', 'medium']);
+    assert.equal(task.attempt, 2);
+    const retries = f.store.events(task.id).filter((e) => e.kind === 'quality_retry');
+    assert.deepEqual(retries.map((e) => e.data.stage), ['correction', 'escalation']);
+    assert.equal(task.usage?.byRole.worker, 300);
+    assert.equal(f.calls.filter((c) => c.questions.recovery).length, 2);
+    assert.equal(f.store.list<any>('routing_run')[0].usage.reportedTokens, task.usage?.reportedTokens);
+  } finally { await f.close(); }
+});
+
+test('uncertain correction and cancellation pause without escalating or launching a new worker', async () => {
+  for (const cancel of [false, true]) {
+    const f = await fixture();
+    try {
+      f.add(model('worker', { supportedEfforts: ['low', 'medium'] }));
+      f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+      f.jev.recovery = async (task, _evidence, _signal, stage) => {
+        assert.equal(stage, 'correction');
+        if (cancel) f.engine.cancel(task.id);
+        return { cause: 'unknown', probability: 0.79 };
+      };
+      const task = await f.run();
+      assert.equal(task.status, cancel ? 'cancelled' : 'blocked');
+      assert.equal(f.runs.length, 1);
+      assert.ok(!f.store.events(task.id).some((e) => e.kind === 'quality_retry'));
+    } finally { await f.close(); }
+  }
+});
+
+test('one correction per unchanged task survives resume and keeps provider-default effort unchanged', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    const efforts: (string | undefined)[] = [];
+    const run = f.engine.workers.codex.run;
+    f.engine.workers.codex.run = async (c) => { efforts.push(c.model.effort); return run(c); };
+    f.verdict(() => ({ brief: 'pass', claim_0: 'fail', support: 'pass', completion: 'pass' }));
+    const task = await f.run();
+    assert.equal(task.status, 'blocked');
+    assert.deepEqual(efforts, [undefined, undefined]);
+    f.engine.resume(task.id);
+    await f.engine.execute(task.id);
+    assert.equal(f.store.events(task.id).filter((e) => e.kind === 'quality_retry' && e.data.stage === 'correction').length, 1);
+    assert.deepEqual(efforts, [undefined, undefined, undefined]);
+  } finally { await f.close(); }
 });

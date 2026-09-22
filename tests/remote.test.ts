@@ -149,6 +149,17 @@ test('production remote routes require HTTPS before pairing or authentication', 
         await secureOnly.inject({
           method: 'POST',
           url: '/remote/v1/pair',
+          headers: { 'x-forwarded-proto': 'https' },
+          payload: { code: challenge.code, deviceName: 'Missing identity' },
+        })
+      ).statusCode,
+      401,
+    );
+    assert.equal(
+      (
+        await secureOnly.inject({
+          method: 'POST',
+          url: '/remote/v1/pair',
           headers: {
             'x-forwarded-proto': 'https',
             'tailscale-user-login': 'owner@example.com',
@@ -179,6 +190,7 @@ test('production remote routes require HTTPS before pairing or authentication', 
       ).statusCode,
       401,
     );
+    assert.equal('tailscaleLogin' in response.json().device, false);
   } finally {
     await secureOnly.close();
     await f.close();
@@ -238,6 +250,18 @@ test('task commands are project-scoped and persisted idempotently', async () => 
       400,
     );
 
+    assert.equal(
+      (
+        await f.remote.inject({
+          method: 'POST',
+          url: '/remote/v1/tasks',
+          headers: { ...headers, 'idempotency-key': randomUUID() },
+          payload: { ...payload, effortOverride: 'ultra' },
+        })
+      ).statusCode,
+      400,
+    );
+
     const deniedProject = await f.remote.inject({
       method: 'POST',
       url: '/remote/v1/tasks',
@@ -264,6 +288,8 @@ test('task commands are project-scoped and persisted idempotently', async () => 
     });
     assert.equal(detail.statusCode, 200);
     assert.equal('route' in detail.json().task, false);
+    assert.equal('modelOverride' in detail.json().task, false);
+    assert.equal('effortOverride' in detail.json().task, false);
     assert.equal(
       detail.json().events.some((event: any) => event.kind === 'route'),
       false,
@@ -297,6 +323,8 @@ test('task commands are project-scoped and persisted idempotently', async () => 
     assert.equal((await followUp()).json().task.status, 'queued');
     assert.equal((await followUp()).json().task.status, 'queued');
     assert.equal(f.store.events(taskId).filter((event) => event.kind === 'resumed').length, 1);
+    assert.equal(f.store.task(taskId).revision, 1);
+    assert.match(f.store.task(taskId).prompt, /User follow-up: Add one plain closing sentence\./);
   } finally {
     await f.close();
   }
@@ -349,6 +377,116 @@ test('remote approvals retain stale-hash checks and duplicate decisions are safe
     await waiting;
     assert.equal((await decide()).statusCode, 200);
     assert.equal(f.store.approvals().find((item) => item.id === approval.id)!.status, 'approved');
+  } finally {
+    await f.close();
+  }
+});
+
+test('remote authorization rejects credentials, tasks, and approvals outside the paired project', async () => {
+  const f = await fixture();
+  try {
+    const { credential } = await pair(f);
+    assert.equal(
+      (
+        await f.remote.inject({
+          method: 'GET',
+          url: '/remote/v1/state',
+          headers: { authorization: 'Bearer unknown.invalid' },
+        })
+      ).statusCode,
+      401,
+    );
+
+    const privateTask = await f.engine.create({
+      workspaceId: 'w2',
+      prompt: 'Private approval.',
+    });
+    f.store.update(privateTask.id, { status: 'running' });
+    const controller = new AbortController();
+    const waiting = f.approvals.request(
+      privateTask.id,
+      'Private write',
+      { path: 'private.txt' },
+      controller.signal,
+    );
+    await new Promise((resolve) => setImmediate(resolve));
+    const approval = f.store.approvals().find((item) => item.taskId === privateTask.id)!;
+    const response = await f.remote.inject({
+      method: 'POST',
+      url: `/remote/v1/approvals/${approval.id}`,
+      headers: {
+        authorization: `Bearer ${credential}`,
+        'idempotency-key': randomUUID(),
+      },
+      payload: { hash: approval.hash, allow: true },
+    });
+    assert.equal(response.statusCode, 401);
+    assert.equal(f.store.approvals().find((item) => item.id === approval.id)!.status, 'pending');
+    controller.abort();
+    await assert.rejects(waiting);
+  } finally {
+    await f.close();
+  }
+});
+
+test('reconnected state preserves revisions, recovery attempts, and incomplete checks', async () => {
+  const f = await fixture();
+  try {
+    const { credential } = await pair(f);
+    const task = await f.engine.create({
+      workspaceId: 'w1',
+      prompt: 'Create a synthetic result.',
+    });
+    f.store.update(task.id, {
+      status: 'completed',
+      revision: 2,
+      attempt: 2,
+      result: 'Saved result',
+      review: {
+        status: 'unverified',
+        summary: 'One saved-output check could not finish.',
+        checks: [
+          {
+            name: 'Saved file review',
+            status: 'unverified',
+            detail: 'The current evidence was incomplete.',
+          },
+        ],
+        limitations: ['Retry checks on the Mac or follow up with more context.'],
+        at: new Date().toISOString(),
+        policy: 'test-policy',
+      },
+      route: {
+        kind: 'coding',
+        modelId: 'internal-model',
+        provider: 'codex',
+        model: 'Internal Model',
+        reason: 'Internal recovery route',
+        fallbacks: [],
+        effort: 'medium',
+        assessment: { kind: 'coding', difficulty: 'standard', source: 'rules' },
+        selectionSource: 'rules',
+      },
+      effortOverride: 'medium',
+    });
+
+    const readState = () =>
+      f.remote.inject({
+        method: 'GET',
+        url: '/remote/v1/state',
+        headers: { authorization: `Bearer ${credential}` },
+      });
+    const first = (await readState()).json();
+    const reconnected = (await readState()).json();
+    for (const state of [first, reconnected]) {
+      const visible = state.tasks.find((item: any) => item.id === task.id);
+      assert.equal(visible.revision, 2);
+      assert.equal(visible.attempt, 2);
+      assert.equal(visible.review.status, 'unverified');
+      assert.equal(visible.review.checks[0].status, 'unverified');
+      assert.equal('route' in visible, false);
+      assert.equal('effortOverride' in visible, false);
+    }
   } finally {
     await f.close();
   }

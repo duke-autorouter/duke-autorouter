@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "scope": "Four matched development cases; not a held-out release comparison.",
+  "sourceCommit": "270d1d0d4e04dcdfac1376894accc33d9dfa2e02",
+  "caseSetHash": "a557bf48ae3c004a47446cd9be4cf64159f2336c03a7b8cace5ee60ae2db5d64",
+  "profileHash": "f411dd364509a7c802f037a26e0e3ddc6ec94816cd6a2a0bf48d8302db59a190",
+  "modes": [
+    {
+      "mode": "strong",
+      "requestedConfiguration": {
+        "modelId": "codex:gpt-6-astra",
+        "effort": "medium",
+        "fallbackModelId": "codex:gpt-5.6-luna",
+        "fallbackEffort": "low"
+      },
+      "accepted": 4,
+      "byKind": {
+        "coding": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "research": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "writing": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "documents": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        }
+      },
+      "criticalFailures": 0,
+      "matchesObservedBaselineQuality": true,
+      "resources": {
+        "tokensByProvider": {
+          "codex": 372968
+        },
+        "tokensByRole": {
+          "routing": 0,
+          "worker": 372968,
+          "review": 0
+        },
+        "workerAttempts": 4,
+        "retries": 0,
+        "stages": 4,
+        "subscriptionAllowance": {
+          "subscriptionAttempts": 4,
+          "unobservedAttempts": 0,
+          "missingAllowanceReceipts": 0,
+          "windows": [
+            {
+              "provider": "codex",
+              "limitId": "codex",
+              "window": "primary",
+              "durationMins": 10080,
+              "resetsAt": 1790528759,
+              "samples": 4,
+              "unobservedSamples": 0,
+              "overlappingIntervals": false,
+              "observedChangePercentagePoints": 0
+            }
+          ],
+          "note": "Account-window changes can include other applications. Zero can reflect rounding or delayed updates. Unknown is not zero. Different windows, providers and reset periods are separate; no task-attributed quota saving is claimed."
+        }
+      },
+      "reportedTokens": 372968,
+      "incompleteTokenReports": 0,
+      "observedTokenDifferenceVsStrong": 0,
+      "totalLatencyMs": 156645,
+      "settledAPIUSD": 0,
+      "unresolvedReservations": 0
+    },
+    {
+      "mode": "rules",
+      "requestedConfiguration": {
+        "fallbackModelId": "codex:gpt-5.6-luna",
+        "fallbackEffort": "low"
+      },
+      "accepted": 3,
+      "byKind": {
+        "coding": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "research": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "writing": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "documents": {
+          "accepted": 0,
+          "baselineAccepted": 1
+        }
+      },
+      "criticalFailures": 1,
+      "matchesObservedBaselineQuality": false,
+      "resources": {
+        "tokensByProvider": {
+          "codex": 373466
+        },
+        "tokensByRole": {
+          "routing": 0,
+          "worker": 373466,
+          "review": 0
+        },
+        "workerAttempts": 4,
+        "retries": 0,
+        "stages": 4,
+        "subscriptionAllowance": {
+          "subscriptionAttempts": 4,
+          "unobservedAttempts": 0,
+          "missingAllowanceReceipts": 0,
+          "windows": [
+            {
+              "provider": "codex",
+              "limitId": "codex",
+              "window": "primary",
+              "durationMins": 10080,
+              "resetsAt": 1790528759,
+              "samples": 4,
+              "unobservedSamples": 0,
+              "overlappingIntervals": false,
+              "observedChangePercentagePoints": 0
+            }
+          ],
+          "note": "Account-window changes can include other applications. Zero can reflect rounding or delayed updates. Unknown is not zero. Different windows, providers and reset periods are separate; no task-attributed quota saving is claimed."
+        }
+      },
+      "reportedTokens": 373466,
+      "incompleteTokenReports": 0,
+      "observedTokenDifferenceVsStrong": null,
+      "totalLatencyMs": 167651,
+      "settledAPIUSD": 0,
+      "unresolvedReservations": 0
+    },
+    {
+      "mode": "jev",
+      "requestedConfiguration": {
+        "fallbackModelId": "codex:gpt-5.6-luna",
+        "fallbackEffort": "low"
+      },
+      "accepted": 3,
+      "byKind": {
+        "coding": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "research": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        },
+        "writing": {
+          "accepted": 0,
+          "baselineAccepted": 1
+        },
+        "documents": {
+          "accepted": 1,
+          "baselineAccepted": 1
+        }
+      },
+      "criticalFailures": 1,
+      "matchesObservedBaselineQuality": false,
+      "resources": {
+        "tokensByProvider": {
+          "jev": 42683,
+          "codex": 494240
+        },
+        "tokensByRole": {
+          "routing": 25763,
+          "worker": 494240,
+          "review": 16920
+        },
+        "workerAttempts": 4,
+        "retries": 0,
+        "stages": 4,
+        "subscriptionAllowance": {
+          "subscriptionAttempts": 4,
+          "unobservedAttempts": 0,
+          "missingAllowanceReceipts": 0,
+          "windows": [
+            {
+              "provider": "codex",
+              "limitId": "codex",
+              "window": "primary",
+              "durationMins": 10080,
+              "resetsAt": 1790528759,
+              "samples": 4,
+              "unobservedSamples": 0,
+              "overlappingIntervals": false,
+              "observedChangePercentagePoints": 0
+            }
+          ],
+          "note": "Account-window changes can include other applications. Zero can reflect rounding or delayed updates. Unknown is not zero. Different windows, providers and reset periods are separate; no task-attributed quota saving is claimed."
+        }
+      },
+      "reportedTokens": 536923,
+      "incompleteTokenReports": 0,
+      "observedTokenDifferenceVsStrong": null,
+      "totalLatencyMs": 152746,
+      "settledAPIUSD": 0.0017339999999999999,
+      "unresolvedReservations": 0
+    }
+  ],
+  "conclusionBoundary": "Differences describe these four development cases only. They do not establish general savings, account-attributed quota savings, calibrated routing quality or the held-out release threshold."
+}

@@ -36,6 +36,8 @@ export type RoutingContext = {
   incomplete: boolean;
 };
 export type ReviewEvidence = {
+  // Local-only full allowed excerpts for bounded review resolution. Never spread into API state.
+  resolutionSources?: { path: string; text: string; incomplete?: boolean }[];
   result: string;
   files: FileEvidence[];
   inputs: { path: string; text: string }[];
@@ -96,6 +98,17 @@ export async function routingContext(
         (task.checkpoint.summary.length > 1500 || task.checkpoint.remaining.length > 2500)),
   };
 }
+
+export const wordReviewText = (s: string) =>
+  xmlText(
+    s
+      .replace(/<w:tbl\b[^>]*>/g, '\n[table]\n')
+      .replace(/<\/w:tbl>/g, '\n[/table]\n')
+      .replace(/<w:tr\b[^>]*>/g, '\n[row] ')
+      .replace(/<\/w:tr>/g, ' [/row]\n')
+      .replace(/<w:tc\b[^>]*>/g, ' [cell] ')
+      .replace(/<\/w:tc>/g, ' [/cell] '),
+  );
 
 const xmlText = (s: string) =>
   s
@@ -227,9 +240,9 @@ export async function inspectFile(
       const main = files.get('word/document.xml');
       if (!main || !/<w:document\b/.test(main) || !/<\/w:document>/.test(main))
         throw new Error('Missing Word document body');
-      result.text = xmlText(main);
+      result.text = wordReviewText(main);
       result.detail =
-        'Main Word document text inspected. Comments, tracked changes, embedded images and rendered layout are not assessed.';
+        'Main Word document text and table row/cell boundaries inspected. Comments, tracked changes, embedded images and rendered layout are not assessed.';
     } else {
       if (!files.has('xl/workbook.xml')) throw new Error('Missing Excel workbook');
       const sheets = [...files].filter(([name]) => name.startsWith('xl/worksheets/'));

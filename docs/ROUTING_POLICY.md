@@ -1,7 +1,7 @@
 # Selected models, efficiency and automatic checks
 
-Updated September 20, 2026. Policy identifiers: `duke-routing-v9`, `duke-efficiency-v2` and
-`duke-review-v3`. This document describes implemented behavior, not measured
+Updated September 21, 2026. Policy identifiers: `duke-routing-v11`, `duke-efficiency-v2` and
+`duke-review-v6`. This document describes implemented behavior, not measured
 live-model accuracy. The [verification record](VERIFICATION.md) covers live
 acceptance. Comparative routing and resource claims need separate benchmarks.
 
@@ -23,9 +23,11 @@ flowchart TD
   Review --> Result{Check result}
   Result -->|Passed| Save[Return work and record checked outcome]
   Result -->|Incomplete| Unknown[Return work with checks incomplete]
-  Result -->|Failed| Retry[Exclude failed worker, raise difficulty floor]
-  Retry -->|Within recovery limit| Assess
-  Retry -->|No suitable alternative or limit reached| Block[Preserve work and explain the issue]
+  Result -->|Failed| Diagnose[Jev diagnoses the failure]
+  Diagnose -->|Reasoning error, probability at least 0.9| Retry[Same model, next supported effort]
+  Retry -->|Within retry and effort limits, hard gates rechecked| Work
+  Diagnose -->|Missing context, tool problem or uncertainty| Block[Preserve work and explain the issue]
+  Retry -->|Limit reached| Block
   Save --> History[Scoped quality and whole-task token history]
   History --> Candidates
 ```
@@ -35,16 +37,18 @@ flowchart TD
 Jev classifies coding, research, writing or documents, identifies the specific work type (for example UI, debugging or editing), and scores routine,
 standard or complex reasoning. The normal path uses two sequential requests:
 assessment, then model choice. A third request reviews completed work. Independent
-review questions are batched together. Diagnostic Off/Shadow and explicit manual
-worker selections do not perform an automatic Jev content review.
+review questions are batched together. Diagnostic Off/Shadow modes do not perform
+automatic content review. An explicit worker selection bypasses routing but still
+receives content review when Jev is in assist mode.
 
 Routing includes up to 6,000 prompt characters, 1,000 expected-result characters,
 selected attachment excerpts (2,000 each / 8,000 total), root-level project
 structure counts, and checkpoint progress. An attachment alone no longer forces
 complexity. Truncation and unsupported binary input retain a conservative
 difficulty estimate. An uncertain or unavailable assessment uses the configured
-fallback; an unknown difficulty is recorded without promoting the worker. A quality retry
-raises the previous difficulty requirement by one level, capped at complex.
+fallback; an unknown difficulty is recorded without promoting the worker. A quality retry preserves the task assessment and advances one supported effort
+step on the same model after a probability-gated diagnosis. It does not raise the
+difficulty floor or switch models. See [the recovery decision](adr/0017-bounded-same-model-recovery.md).
 
 Assessment uses a `0.8` distribution-confidence threshold. Review instead requires
 at least `0.8` probability on its selected pass or fail answer. These are different
@@ -164,6 +168,10 @@ success. Deterministic failures are handled before asking Jev to judge content.
 | Writing | Jev checks the requested brief, factual support and completeness against bounded task inputs and outputs. |
 | Documents | Required files, core Office XML/text or PDF page structure; Jev checks readable content against the brief. Generated PDF text is used only while its bytes match the generation receipt. |
 
+Word text preserves table, row and cell boundaries. Public web text preserves
+semantic deletion and insertion markers; visual styling supplied only through CSS
+is not recovered. These cues are source evidence, not trusted instructions.
+
 Office ZIP inspection bounds compressed/expanded sizes, validates inspected XML
 checksums, and never extracts files or executes macros. Binary formats, oversized
 inputs and insufficient excerpts remain unverified. File hashes are rechecked
@@ -176,7 +184,14 @@ in the receipt. A Jev content judgment can also be wrong; it is not the release
 benchmark's final judge.
 
 Failed checks use the existing recovery limit (two retries by default) and preserve
-files, checkpoint and external-action ledger. Permission failures and uncertain
+files, checkpoint and external-action ledger. Jev first decides whether available
+facts and tools support one targeted correction at unchanged model and effort,
+using a 0.80 selected-probability gate. That correction consumes one retry and is
+limited to one per unchanged task input and revision, including resumes. If it
+still fails, a separate reasoning judgment at 0.90 can authorize the next supported
+effort within the user's ceiling and remaining allowance. Missing essential
+context, tool problems and uncertain judgments pause. These policy thresholds
+are not calibrated repair-success probabilities. See [decision 0020](adr/0020-bounded-correction-before-effort-escalation.md). Permission failures and uncertain
 external actions remain blocked; they cannot trigger an authority-bypassing retry.
 An unavailable, cancelled, malformed, uncertain or unaffordable review does
 not count as a quality failure. Incomplete checks never count as positive evidence.
@@ -348,3 +363,11 @@ does not change the token denominator or retroactively discard failed attempts.
 The usage page separates eligible history, complete token coverage and recovered
 successes. These counts describe retained compatible evidence, not all historical
 tasks and not measured routing superiority.
+
+## Focused review in 0.1.6
+
+Content checks now include literal requirements and source-linked output passages,
+with ownership judged separately. One bounded follow-up can expand the evidence
+for uncertain passages. Broad concerns need a specific failed check before
+recovery; missing evidence remains neutral. The [review decision](adr/0018-focused-review-and-evidence-resolution.md)
+and [development results](FOCUSED_REVIEW_VALIDATION_20260921.md) record limits and false alarms.

@@ -61,7 +61,7 @@ its saved project scope.
 
 | Method and path | Purpose |
 | --- | --- |
-| GET `/remote/v1/state` | Scoped projects, task summaries, pending approvals and artifacts |
+| GET `/remote/v1/state` | Scoped projects, task summaries, pending approvals and artifacts; revisions, attempts and incomplete checks remain visible |
 | GET `/remote/v1/tasks/:id` | One scoped task, user-facing persisted history and artifacts; routing and model events are omitted |
 | POST `/remote/v1/tasks` | Start work without a model or effort override |
 | POST `/remote/v1/tasks/:id/follow-ups` | Continue stopped work with a user follow-up |
@@ -73,6 +73,14 @@ Every remote mutation requires a UUID `Idempotency-Key`. The Mac stores the
 request fingerprint and result. Identical retries return the saved result;
 conflicting reuse is rejected. A command left pending by a process interruption
 is not executed again automatically.
+
+Remote task creation rejects both model and effort overrides. Responses also
+remove route, model-override and effort-override fields. Recovery remains owned
+by the Mac: the 0.80 chosen-option gate may authorize one bounded correction at
+the same model and effort before the separate 0.90 effort-escalation judgment,
+and both remain inside the shared retry cap. The phone can see the resulting
+attempt count and verification outcome but cannot promote work to another model
+or effort.
 
 `server/types.ts` defines task, route, model, workspace, checkpoint, approval, and
 worker contracts. `server/tools.ts` defines the shared tool schemas. There are no
@@ -130,6 +138,12 @@ unconfigured model. Routes record optional `effort`; omission means provider
 default. Model profiles expose advertised `supportedEfforts` and per-effort
 `effortProfiles` evidence. Provider catalog refresh owns supported levels.
 
+Task input may include `modelOverride` and `effortOverride`. A fixed effort requires
+an explicit model, and the chosen level must be advertised by that model. Invalid
+or unavailable combinations block; they do not select another model silently.
+An explicit model bypasses Jev routing, while assist-mode content review remains
+enabled. The development harness uses this path for comparable fixed baselines.
+
 ## Shared worker tools
 
 These are model-facing tool calls through the adapters, not unauthenticated HTTP
@@ -171,3 +185,15 @@ OCR is not bundled.
 
 Execution evidence includes `duke-tools-v2` and the hashes of packaged skills.
 Changes to these invalidate incompatible learning observations.
+
+## Recovery settings
+
+`PUT /api/settings` accepts `maxRecovery` (integer 0 through 5) and
+`recoveryEffortCeiling` (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, or `ultra`).
+Defaults are two retries and Medium. Zero disables worker recovery. The engine
+requires the next effort to be advertised by that same model and no higher than
+the ceiling. A fixed task effort override is never increased automatically.
+
+Review-only retries can include one bounded Jev evidence-resolution request for
+uncertain passages. Both calls are recorded as review usage. They do not invoke
+a worker or change the model/effort override. Coverage gaps remain unverified.
