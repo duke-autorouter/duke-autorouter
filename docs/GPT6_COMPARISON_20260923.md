@@ -1,6 +1,8 @@
 # GPT-6 routing and recovery development check
 
-On two fully specified fictional tasks, DUKE's automatic mode had a combined model-priced worker cost plus actual Jev spending of $0.006059, versus $0.444753 for fixed Astra Medium: 98.6% lower in this sample. Both automatic tasks ran on Luna Low through the configured economical fallback after Jev was uncertain about difficulty. This demonstrates the cost difference of the chosen models; it does not isolate the value of Jev's final model selection.
+This two-task development sample does not establish an advantage for Jev routing over fixed Luna. Automatic mode used the Luna Low fallback on both tasks and cost $0.006059, with one of two outputs independently accepted. Fixed Luna Low cost $0.006105 and both outputs were accepted. Fixed Astra Medium cost $0.444753 and both were accepted. These totals combine model-priced worker usage with actual Jev spending; they are not subscription charges.
+
+Automatic mode cost 98.6% less than fixed Astra in this sample, but acceptance differed and neither automatic run reached Jev's final model-selection step. That percentage describes this model-cost comparison only. It does not establish matched-quality savings, Jev's selection benefit, or general routing efficiency.
 
 ## Independent output acceptance and review
 

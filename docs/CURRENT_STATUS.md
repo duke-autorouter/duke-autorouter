@@ -2,13 +2,15 @@
 
 Updated September 23, 2026.
 
-The desktop maintenance release is **0.1.10**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 248 current-source local tests passed.
+The desktop maintenance release is **0.1.11**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 255 current-source local tests passed.
 
 The iOS gateway foundation is merged and packaged, disabled by default. Physical iPhone checks and iOS distribution remain unfinished. The bounded factory trial is paused after three assignments: historical evidence replay merged in PR12; PR13 was closed without merging its runtime changes; [ADR0022](adr/0022-defer-requirement-coverage-metadata.md) preserves the verifier trust boundary and revisit criteria.
 
 The [new-model integration checks](MODEL_VALIDATION_20260923.md) completed successfully for GPT-6 Luna, GPT-6 Sol and Opus 5.5 at Low effort. Each produced independently accepted output with unchanged inputs and verifier. The [two-task comparison and controlled recovery probe](GPT6_COMPARISON_20260923.md) are complete: automatic mode used the Luna fallback, a controlled same-effort repair passed its unchanged verifier, and review incompleteness remains.
 
 The 0.1.10 maintenance update keeps ordinal difficulty uncertainty in Jev selection and separates semicolon-delimited review requirements. Fresh Jev-only probes selected Luna Low for two briefs and correctly distinguished supported, contradicted, invented-commitment and missing-evidence examples. These are narrow development checks, not worker success or calibrated accuracy evidence. See [the judgment record](JUDGMENT_VALIDATION_20260923.md).
+
+The 0.1.11 update protects quoted and dependent requirements, checks up to 24 requirements in batches of eight, and supplies the full difficulty distribution to Jev selection. Three fresh dependent-instruction controls matched their expected outcomes. The conservative difficulty threshold remains uncalibrated, and the iOS proxy boundary remains open. See the [maintenance record](OPUS_FOLLOWUP_20260923.md).
 
 ## Historical development results
 

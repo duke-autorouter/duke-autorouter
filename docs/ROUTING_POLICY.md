@@ -372,3 +372,11 @@ with ownership judged separately. One bounded follow-up can expand the evidence
 for uncertain passages. Broad concerns need a specific failed check before
 recovery; missing evidence remains neutral. The [review decision](adr/0018-focused-review-and-evidence-resolution.md)
 and [development results](FOCUSED_REVIEW_VALIDATION_20260921.md) record limits and false alarms.
+
+
+In 0.1.11, model selection also receives the full difficulty distribution. This
+does not relax explicit model difficulty ceilings. A complex tail can still
+produce a premium-only shortlist, so calibration remains open. Review uses one
+literal scan of the original request and batches up to 24 requirements in groups
+of eight. Overflow, truncated context, missing answers and failed batches remain
+unverified. See [ADR 0024](adr/0024-context-preserving-requirement-batches.md).

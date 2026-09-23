@@ -1204,7 +1204,7 @@ test('semicolon requirement overflow remains unverified even when all inspected 
   const f = await fixture();
   try {
     f.add(model('worker'));
-    const task = await f.run({ expectedResult: Array.from({ length: 9 }, (_, i) => `Constraint ${i}`).join('; ') });
+    const task = await f.run({ expectedResult: Array.from({ length: 25 }, (_, i) => `Constraint ${i}`).join('; ') });
     assert.equal(task.review?.status, 'unverified');
     assert.equal(task.review?.checks.find(c => c.name === 'Focused review coverage')?.status, 'unverified');
   } finally { await f.close(); }
