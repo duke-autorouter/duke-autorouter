@@ -210,7 +210,8 @@ The [September 23 two-task check](docs/GPT6_COMPARISON_20260923.md) compares aut
 The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
 
 
-The current source passes 255 automated tests. The 0.1.11 package passes 12
+The current source passes 256 automated tests. The unreleased parser correction
+preserves numbered requirements and literal ownership labels; see [ADR0025](docs/adr/0025-conservative-literal-review-extraction.md). The 0.1.11 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical
