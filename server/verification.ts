@@ -8,6 +8,7 @@ import { scoped } from './paths.js';
 import { inspectFile, type ReviewEvidence, type RoutingContext } from './task-evidence.js';
 import { REVIEW_POLICY } from './outcomes.js';
 import { currentEvents, taskInputKey } from './task-revisions.js';
+import { countWords, statedWordRange } from './word-count.js';
 import { Blocked, now, type Task, type Workspace, type TaskReview, type Check } from './types.js';
 
 function urlKey(raw: string) {
@@ -247,6 +248,27 @@ export async function verifyTask(
     }
   }
   receipt.complete = paths.length <= 20 && receipt.files.length === paths.length;
+  // A word limit is enforceable only when the user's own task fields give one
+  // exact range and there is one complete, inspectable text deliverable.
+  const textPaths = paths.filter((p) => /\.(?:md|markdown|txt)$/i.test(p));
+  const promptRange = statedWordRange(task.prompt, textPaths[0] ?? '');
+  const expectedRange = statedWordRange(task.expectedResult, textPaths[0] ?? '', true);
+  const range = task.continuation ? undefined : (
+    promptRange && expectedRange && (promptRange.min !== expectedRange.min || promptRange.max !== expectedRange.max)
+      ? undefined
+      : promptRange ?? expectedRange
+  );
+  if (range && paths.length === 1 && textPaths.length === 1 && !task.continuation?.uncertain) {
+    const file = evidence.files.find((f) => f.path === range.path);
+    if (file && !file.incomplete && typeof file.text === 'string') {
+      const words = countWords(file.text);
+      checks.push({
+        name: 'Word count',
+        status: words >= range.min && words <= range.max ? 'passed' : 'failed',
+        detail: `${range.path}: ${words} words; required ${range.min}–${range.max}. Markdown syntax is excluded.`,
+      });
+    }
+  }
   signal.throwIfAborted();
   store.put('review_evidence', task.id, receipt);
   const previousTest = stageEvents.findLast(
