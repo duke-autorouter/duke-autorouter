@@ -303,7 +303,87 @@
               "detail": "response: Implemented `mergeReservations` in `solution.mjs`. It validates endpoints, sorts and merges overlapping intervals without mutating the input, and keeps touching intervals separate. `node --test verify.mjs` passed: 3 tests, 0 failures. Assessment: not_factual; probability 0.650; distribution confidence 0.560. This is an automated judgment, not a guaranteed success rate."
             }
           ],
-          "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence"
+          "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
+          "assessment": {
+            "kind": "coding",
+            "difficulty": "standard",
+            "source": "jev",
+            "confidence": 1,
+            "score": 0.71,
+            "workType": "coding",
+            "workTypeSource": "jev",
+            "briefSize": "short"
+          },
+          "eligibleConfigurations": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "ultra"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "ultra"
+            }
+          ]
         },
         {
           "caseId": "documents-one-pager",
@@ -610,7 +690,87 @@
           ],
           "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
           "createArtifactContentMatchesMarkdown": true,
-          "layoutVerification": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified."
+          "layoutVerification": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified.",
+          "assessment": {
+            "kind": "documents",
+            "difficulty": "standard",
+            "source": "jev",
+            "confidence": 0.99,
+            "score": 0.7,
+            "workType": "documents",
+            "workTypeSource": "jev",
+            "briefSize": "short"
+          },
+          "eligibleConfigurations": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "ultra"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "ultra"
+            }
+          ]
         },
         {
           "caseId": "research-brief",
@@ -945,7 +1105,87 @@
               "detail": "Some passages or source context exceed the focused-review limits. Unchecked content is not a verified success."
             }
           ],
-          "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence"
+          "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
+          "assessment": {
+            "kind": "writing",
+            "difficulty": "complex",
+            "source": "jev",
+            "confidence": 0.94,
+            "score": 1.22,
+            "workType": "writing",
+            "workTypeSource": "jev",
+            "briefSize": "short"
+          },
+          "eligibleConfigurations": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "ultra"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "ultra"
+            }
+          ]
         },
         {
           "caseId": "writing-status",
@@ -1161,7 +1401,87 @@
             }
           ],
           "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
-          "wordCount": 134
+          "wordCount": 134,
+          "assessment": {
+            "kind": "writing",
+            "difficulty": "standard",
+            "source": "jev",
+            "confidence": 1,
+            "score": 0.51,
+            "workType": "writing",
+            "workTypeSource": "jev",
+            "briefSize": "short"
+          },
+          "eligibleConfigurations": [
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-astra",
+              "effort": "ultra"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-luna",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "low"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "high"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "xhigh"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "max"
+            },
+            {
+              "modelId": "codex:gpt-6-sol",
+              "effort": "ultra"
+            }
+          ]
         }
       ],
       "totalProxyUSD": 0.2614124,
