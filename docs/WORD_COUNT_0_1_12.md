@@ -14,6 +14,6 @@ Detection and recovery handoff worked. The repair itself failed. This is one con
 
 ## Release scope
 
-All 261 Mac tests pass, including the real verifier's length failure and conservative exclusions. TypeScript and the production package build pass. The review policy advances tov 12; routing, confidence thresholds, economical fallback, user ceilings and recovery limits are unchanged. No new setting or manual model-rating step is introduced.
+All 261 Mac tests pass, including the real verifier's length failure and conservative exclusions. TypeScript and the production package build pass. The review policy advances to v12; routing, confidence thresholds, economical fallback, user ceilings and recovery limits are unchanged. No new setting or manual model-rating step is introduced.
 
 Signing, notarization, bundle checks and installation evidence are recorded separately in the distribution receipt. Broad semantic review remains imperfect, and this release does not claim guaranteed repair or general efficiency savings. Second-Mac and physical iPhone checks remain outstanding.
