@@ -34,13 +34,15 @@ if (!has("--run")) {
   );
   process.exit(0);
 }
-const wordRecovery = has("--word-count-recovery");
+const measurementRecovery = has("--measurement-recovery");
+const wordRecovery = has("--word-count-recovery") || measurementRecovery;
 const factory = has("--factory-cycle-1");
 const cycle3 = has("--factory-cycle-3");
 if (wordRecovery && (factory || cycle3)) throw Error("Select one cohort");
 if (factory && cycle3) throw Error("Select one factory cohort");
 const wordCases = [{id:"word-count-recovery",kind:"writing",required:["files"] as const,prompt:"Read brief.md and write status.md. Write 90–110 words. Do not modify brief.md.",files:{"brief.md":"Fictional Hazel workshop. The checklist draft is complete. Tess owns the equipment review, due October 2; it is pending. The safety walkthrough has no owner or date. Nothing has been installed. Write a concise internal status update with completed work, pending work and the open installation decision. Do not invent an approval, cost, owner or result."},expectedFiles:["status.md"],command:"",rubric:["90–110 words", "Checklist drafted; Tess equipment review pending October 2", "Walkthrough unassigned and undated; installation undecided", "No invented facts"]}];
-const cases = wordRecovery ? wordCases : cycle3 ? cycle3Cases : factory ? factoryCases : originalCases;
+const measurementCases = [{id:"measurement-recovery",kind:"writing",required:["files"] as const,prompt:"Read brief.md and write status.md. Write 85–105 words. Do not modify brief.md.",files:{"brief.md":"Fictional Linden repair cafe. The visitor checklist draft is complete. Ada owns the tool inventory, due October 8; it is pending. The volunteer briefing has no owner or date. No cafe session has started. Write a concise internal status update covering completed work, pending work and the open opening decision. Do not invent an approval, price, owner, date or result."},expectedFiles:["status.md"],command:"",rubric:["85–105 words", "Visitor checklist drafted; Ada inventory pending October 8", "Volunteer briefing unassigned and undated; opening undecided", "No invented facts"]}];
+const cases = measurementRecovery ? measurementCases : wordRecovery ? wordCases : cycle3 ? cycle3Cases : factory ? factoryCases : originalCases;
 const check = wordRecovery ? async () => ({ scope: "Controlled short draft; independent inspection required" }) : cycle3 ? cycle3Check : factory ? factoryCheck : originalCheck;
 const mode = arg("--mode");
 if ((factory || cycle3) && mode === "probe") throw Error("No injected failures in factory comparison");
@@ -66,7 +68,7 @@ const disposableAuth = join(stateDir, "codex", "auth.json");
 const receipt: any = {
   schemaVersion: 1,
   mode,
-  cohort: wordRecovery ? "controlled-word-count-recovery" : cycle3 ? "factory-cycle-3-development" : factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
+  cohort: measurementRecovery ? "controlled-worker-measurement" : wordRecovery ? "controlled-word-count-recovery" : cycle3 ? "factory-cycle-3-development" : factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
   startedAt: new Date().toISOString(),
   fixtureHash: sha(JSON.stringify(cases)),
   sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
@@ -183,7 +185,7 @@ try {
         });
         await context.tool("write_file", {
           path: wordRecovery ? "status.md" : "solution.mjs",
-          content: wordRecovery ? "The checklist draft is complete. Tess has an equipment review pending. Installation is undecided." :
+          content: measurementRecovery ? "The visitor checklist draft is complete. Opening is undecided." : wordRecovery ? "The checklist draft is complete. Tess has an equipment review pending. Installation is undecided." :
             "export function summarize(){return {totals:{},grandTotal:0}}\n",
         });
         return wordRecovery ? "Saved status.md." : "Saved solution.mjs.";

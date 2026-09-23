@@ -240,13 +240,17 @@ export class ToolService {
         const p = await path();
         if (!/\.(?:txt|md|markdown)$/i.test(p))
           throw new Blocked('Word measurement supports saved .txt, .md and .markdown files only.');
-        const file = await fileContent(workspace, args.path, signal);
-        if (file.truncated || !countableText(file.content))
+        const metadata = await stat(p);
+        if (!metadata.isFile() || metadata.size > 2_000_000)
+          throw new Blocked('Word measurement requires a complete file under 2 MB.');
+        const bytes = await readFile(p, { signal });
+        const content = decodeText(bytes);
+        if (content.length > 200000 || !countableText(content))
           throw new Blocked('Word measurement unavailable for partial text, HTML or entities.');
         result = {
           path: args.path,
-          words: countWords(file.content),
-          sha256: createHash('sha256').update(file.content).digest('hex'),
+          words: countWords(content),
+          sha256: createHash('sha256').update(bytes).digest('hex'),
           convention: 'Markdown syntax excluded; Unicode letters and numbers, with internal apostrophes and hyphens, count as words.',
         };
         break;

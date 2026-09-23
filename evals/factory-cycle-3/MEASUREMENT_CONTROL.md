@@ -1,0 +1,5 @@
+# Fresh worker measurement control
+
+Freeze before calls. This separate Linden cafe case uses a planted short file and a forced Luna Low initial route, then the real recovery judgment and worker. It is not a replacement for the failed Hazel repair. Run once using `--measurement-recovery --mode probe`, a new isolated state/output and the existing shared $1 gate with a $0.03 reservation. Check weekly usage first and preserve at least 50% remaining. No selective rerun, extra model or effort override beyond the declared initial Luna Low control.
+
+The task requests 85–105 words and supplies all fictional facts. Record whether the real worker calls count_words on the saved output, whether it revises after measurement, final measured length, independent factual acceptance, automatic review, retries and costs. Count measurement and semantic acceptance separately. The tool does not certify task success. Compare the tool's file hash/count with final verifier evidence. Preserve original brief hash. A successful run demonstrates this controlled path only; it does not prove general recovery reliability or cost savings.

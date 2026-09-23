@@ -109,6 +109,11 @@ test('count_words measures only complete supported saved files under files capab
     assert.equal(counted.words, countWords(body));
     assert.equal(counted.sha256, createHash('sha256').update(body).digest('hex'));
     assert.match(counted.convention, /Markdown/);
+    const bomBody = Buffer.from('\ufeff' + body);
+    await writeFile(join(f.path, 'bom.md'), bomBody);
+    const bomCounted = await f.call('count_words', { path: 'bom.md' });
+    assert.equal(bomCounted.words, counted.words);
+    assert.equal(bomCounted.sha256, createHash('sha256').update(bomBody).digest('hex'));
     assert.equal(definitions(['files']).some((d) => d.name === 'count_words'), true);
     assert.equal(definitions([]).some((d) => d.name === 'count_words'), false);
     await assert.rejects(f.call('count_words', { path: '../outside.md' }), /outside/);
