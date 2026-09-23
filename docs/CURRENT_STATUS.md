@@ -136,3 +136,7 @@ and experimental findings explicitly distinguished. A release claim requires a
 matching packaged artifact and verification record.
 
 Latest completed evaluation: [frozen 0.1.6 validation](FROZEN_VALIDATION_20260921.md).
+
+## Unreleased parser correction
+
+A narrow follow-up preserves numeric list markers and conservatively extracts literal ownership pairs. Review policy is v11 and focused review v10; routing policy and thresholds are unchanged. See [ADR0025](adr/0025-conservative-literal-review-extraction.md). This is source development, not a new desktop release or proof of improved live judgment. Installed and public downloads remain 0.1.11.

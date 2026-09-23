@@ -257,6 +257,27 @@ test('ownership extraction separates a person-to-item assertion from role and st
   );
   assert.equal(ownershipClaim('- [ ] Readiness review — TBD; unresolved'), undefined);
   assert.equal(ownershipClaim('Proposal: review meeting owner: Sam.'), undefined);
+  assert.deepEqual(ownershipClaim('- Staff walkthrough: Pending; owner: Lea.'),
+    { item: 'Staff walkthrough', person: 'Lea' });
+  assert.deepEqual(ownershipClaim('- **Staff walkthrough: Pending; owner: Lea.**'),
+    { item: 'Staff walkthrough', person: 'Lea' });
+  assert.deepEqual(ownershipClaim('- **Staff walkthrough:** Pending; owner: Lea.'),
+    { item: 'Staff walkthrough', person: 'Lea' });
+  assert.deepEqual(ownershipClaim('- **Inventory audit:** Pending; owner: Noor.'),
+    { item: 'Inventory audit', person: 'Noor' });
+  assert.deepEqual(ownershipClaim('- Staff walkthrough — Owner: Lea. Complete the walkthrough before trial.'),
+    { item: 'Staff walkthrough', person: 'Lea' });
+  assert.equal(ownershipClaim('- Staff walkthrough; Venue booking owner: Lea.'), undefined);
+  assert.equal(ownershipClaim('- Staff walkthrough — Owner: unknown.'), undefined);
+  assert.equal(ownershipClaim('- Staff walkthrough — Owner: Lea or Mira.'), undefined);
+  assert.equal(ownershipClaim('- Staff walkthrough — Owner: Lea; owner: Mira.'), undefined);
+  assert.equal(ownershipClaim('- Staff walkthrough — Lea; Venue booking — Mira.'), undefined);
+  assert.equal(ownershipClaim('- Inventory audit; payment review owner: Noor.'), undefined);
+  assert.equal(ownershipClaim('- Inventory audit — owner: Noor and Eli.'), undefined);
+  for (const person of ['Not Noor', 'No Assigned Owner', 'Noor And Eli', 'Dr. Noor'])
+    assert.equal(ownershipClaim(`Inventory audit — Owner: ${person}.`), undefined);
+  assert.deepEqual(ownershipClaim('Inventory audit — Owner: Noor Ali.'),
+    { item: 'Inventory audit', person: 'Noor Ali' });
 });
 test('an unresolved checklist action without an assigned owner is not an unsupported-fact failure', async (t) => {
   const f = await fixture(t, () => ({ claim_0: claim('unsupported') }));
