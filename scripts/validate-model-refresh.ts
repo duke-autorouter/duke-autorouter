@@ -5,6 +5,7 @@ import {
   readFile,
   writeFile,
   readdir,
+  unlink,
 } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
@@ -195,4 +196,5 @@ try {
   clearInterval(monitor);
   await save();
   await app.close();
+  await unlink(join(stateDir, "codex/auth.json")).catch(() => {});
 }
