@@ -1,0 +1,35 @@
+{
+  "case": "coding-intervals",
+  "fixtures": {
+    "brief.md": "Fictional Eastbank room reservations. Export mergeReservations(rows) from solution.mjs. Each row is {start:integer,end:integer}, a half-open time interval [start,end). Return a new array of merged intervals sorted by start, without mutating rows or row objects. Merge intervals only when they overlap (next.start < current.end); touching boundaries must remain separate. An unsorted chain of overlaps must merge fully. Reject any row whose endpoints are nonintegers or whose start is greater than or equal to end with RangeError. Empty input returns []. No date conversion, packages, or network needed.",
+    "verify.mjs": "import { test } from 'node:test';\nimport assert from 'node:assert/strict';\nimport { mergeReservations } from './solution.mjs';\ntest('unsorted overlapping chain and no mutation',()=>{ const rows=[{start:8,end:12},{start:1,end:4},{start:3,end:9},{start:20,end:21}]; const before=structuredClone(rows); assert.deepEqual(mergeReservations(rows),[{start:1,end:12},{start:20,end:21}]); assert.deepEqual(rows,before); });\ntest('touching stays separate',()=>{ assert.deepEqual(mergeReservations([{start:4,end:7},{start:1,end:4},{start:7,end:9}]),[{start:1,end:4},{start:4,end:7},{start:7,end:9}]); });\ntest('empty and invalid',()=>{ assert.deepEqual(mergeReservations([]),[]); for(const row of [{start:2,end:2},{start:3,end:2},{start:0.5,end:2},{start:1,end:Infinity}]) assert.throws(()=>mergeReservations([row]),RangeError); });"
+  },
+  "rubric": [
+    "Frozen verifier passes inside isolated worker",
+    "Intervals sorted and overlap chains merged, while touching boundaries remain separate",
+    "Invalid endpoints throw RangeError",
+    "Fixture files unchanged and input not mutated",
+    "No dependencies or external calls"
+  ],
+  "candidates": [
+    {
+      "label": "4d9cafc0",
+      "artifacts": {
+        "solution.mjs": "/** Merge overlapping half-open reservations without modifying the input. */\nexport function mergeReservations(rows) {\n  const sorted = Array.from(rows, (row) => {\n    const start = row?.start;\n    const end = row?.end;\n    if (!Number.isInteger(start) || !Number.isInteger(end) || start >= end) {\n      throw new RangeError('Reservation endpoints must be integers with start < end');\n    }\n    return { start, end };\n  });\n  sorted.sort((a, b) => a.start - b.start);\n\n  const merged = [];\n  for (const next of sorted) {\n    const current = merged[merged.length - 1];\n    if (current && next.start < current.end) {\n      current.end = Math.max(current.end, next.end);\n    } else {\n      merged.push(next);\n    }\n  }\n  return merged;\n}\n"
+      }
+    },
+    {
+      "label": "6929b8f7",
+      "artifacts": {
+        "solution.mjs": "export function mergeReservations(rows) {\n  const intervals = rows.map(({ start, end }) => {\n    if (!Number.isInteger(start) || !Number.isInteger(end) || start >= end) {\n      throw new RangeError('Reservation endpoints must be integers with start < end');\n    }\n    return { start, end };\n  });\n\n  intervals.sort((a, b) => a.start - b.start);\n\n  const merged = [];\n  for (const interval of intervals) {\n    const current = merged[merged.length - 1];\n    if (current && interval.start < current.end) {\n      if (interval.end > current.end) current.end = interval.end;\n    } else {\n      merged.push({ start: interval.start, end: interval.end });\n    }\n  }\n  return merged;\n}\n"
+      }
+    },
+    {
+      "label": "55e64b40",
+      "artifacts": {
+        "solution.mjs": "export function mergeReservations(rows) {\n  const sorted = rows.map((row) => {\n    if (!row || !Number.isInteger(row.start) || !Number.isInteger(row.end) || row.start >= row.end) {\n      throw new RangeError('Invalid interval endpoints');\n    }\n    return { start: row.start, end: row.end };\n  }).sort((a, b) => a.start - b.start);\n\n  const merged = [];\n  for (const interval of sorted) {\n    const current = merged[merged.length - 1];\n    if (current && interval.start < current.end) {\n      current.end = Math.max(current.end, interval.end);\n    } else {\n      merged.push(interval);\n    }\n  }\n  return merged;\n}\n"
+      }
+    }
+  ],
+  "prompt": "Read brief.md, implement solution.mjs, then run node --test verify.mjs. Do not edit brief.md or verify.mjs. No packages or network are needed."
+}
