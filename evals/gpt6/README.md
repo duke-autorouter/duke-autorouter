@@ -24,3 +24,11 @@ node --import tsx scripts/evals/run-gpt6.ts --run --mode probe --state-dir /priv
 ```
 
 Use the parent's shared live budget gate around those commands. A `--run` flag, fresh directories, current auth source, and explicit Jev price are required. For each result, compare fixture hashes, verifier/review outcomes, attempts, routed model/effort, token counts, settled spend, unresolved reservations, and elapsed time. Report accepted-result counts alongside total and per-accepted-result costs; retain unsuccessful cases and do not claim equal quality when acceptance differs. Unreconciled spending prevents an exact cost comparison. All four runs are sequential; the separate probe does not enter the two-task efficiency comparison.
+
+## Pricing a completed run
+
+```sh
+python3 scripts/evals/summarize-gpt6.py --results-root /path/to/all-mode-results --prices docs/evidence/model-prices-20260923.json --out /path/to/priced-results.json
+```
+
+The summarizer requires final complete worker usage and refuses to price an attempt whose aggregate input exceeds 272K without further per-request inspection. It uses API-equivalent prices, keeps Jev's actual API spending separate, and excludes the probe from natural mode totals. See the [recorded development results](../../docs/GPT6_COMPARISON_20260923.md).

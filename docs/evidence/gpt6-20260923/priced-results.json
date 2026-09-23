@@ -1,0 +1,414 @@
+[
+  {
+    "mode": "jev",
+    "fixtureHash": "579ebc66a80c1f54d61485e435c3a1e266ad53157d50336da14d1da888761de1",
+    "sourceCommit": "cf6d46019b196bde2b8a81d581f86a59640f4bb9",
+    "rows": [
+      {
+        "caseId": "coding-ledger",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "rules",
+        "route": {
+          "modelId": "codex:gpt-6-luna",
+          "effort": "low"
+        },
+        "caseHash": "eb80b2e48bda94f2884fd4f13d2c328e0feb299686a79cffb096f73037d3f852",
+        "workers": [
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 85935,
+              "outputTokens": 362,
+              "totalTokens": 86297,
+              "cachedInputTokens": 68352,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.00262282
+          }
+        ],
+        "jevAPIUSD": 0.000329,
+        "proxyTotalUSD": 0.00295182,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476",
+              "actual": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476"
+            },
+            "verify.mjs": {
+              "expected": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964",
+              "actual": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964"
+            }
+          },
+          "fixturesUnchanged": true,
+          "acceptance": "node --test verify.mjs",
+          "rubric": [
+            "All frozen tests pass",
+            "No fixture or verifier mutation",
+            "No external dependencies or actions"
+          ]
+        }
+      },
+      {
+        "caseId": "writing-invite",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "rules",
+        "route": {
+          "modelId": "codex:gpt-6-luna",
+          "effort": "low"
+        },
+        "caseHash": "1258586734406fbd31fdb58adfe51678b89a01a18a63e0088b36ba76a7919bea",
+        "workers": [
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 70247,
+              "outputTokens": 401,
+              "totalTokens": 70648,
+              "cachedInputTokens": 53248,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.00243288
+          }
+        ],
+        "jevAPIUSD": 0.000674,
+        "proxyTotalUSD": 0.0031068800000000002,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9",
+              "actual": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9"
+            }
+          },
+          "fixturesUnchanged": true,
+          "draftHash": "0d0ab2f09a68cf664aa4c2377d5c4a8aedaa812c9fcb9bd1fd418d60ef997bd5",
+          "words": 109,
+          "structuralChecks": {
+            "wordRange": true,
+            "subject": true,
+            "greeting": true,
+            "date": true,
+            "replyRequest": true
+          },
+          "rubric": [
+            "Subject, greeting, body, signoff; 90-140 words",
+            "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+            "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+            "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+            "Warm, concise, readable language without pressure"
+          ],
+          "humanReview": {
+            "accepted": null,
+            "notes": ""
+          }
+        }
+      }
+    ],
+    "totalProxyUSD": 0.0060587,
+    "jevAPIUSD": 0.001003
+  },
+  {
+    "mode": "astra-medium",
+    "fixtureHash": "579ebc66a80c1f54d61485e435c3a1e266ad53157d50336da14d1da888761de1",
+    "sourceCommit": "cf6d46019b196bde2b8a81d581f86a59640f4bb9",
+    "rows": [
+      {
+        "caseId": "coding-ledger",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "manual",
+        "route": {
+          "modelId": "codex:gpt-6-astra",
+          "effort": "medium"
+        },
+        "caseHash": "eb80b2e48bda94f2884fd4f13d2c328e0feb299686a79cffb096f73037d3f852",
+        "workers": [
+          {
+            "model": "codex:gpt-6-astra",
+            "usage": {
+              "inputTokens": 58062,
+              "outputTokens": 433,
+              "totalTokens": 58495,
+              "cachedInputTokens": 42496,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.219806
+          }
+        ],
+        "jevAPIUSD": 0.000623,
+        "proxyTotalUSD": 0.220429,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476",
+              "actual": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476"
+            },
+            "verify.mjs": {
+              "expected": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964",
+              "actual": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964"
+            }
+          },
+          "fixturesUnchanged": true,
+          "acceptance": "node --test verify.mjs",
+          "rubric": [
+            "All frozen tests pass",
+            "No fixture or verifier mutation",
+            "No external dependencies or actions"
+          ]
+        }
+      },
+      {
+        "caseId": "writing-invite",
+        "status": "completed",
+        "reviewStatus": "passed",
+        "routeSource": "manual",
+        "route": {
+          "modelId": "codex:gpt-6-astra",
+          "effort": "medium"
+        },
+        "caseHash": "1258586734406fbd31fdb58adfe51678b89a01a18a63e0088b36ba76a7919bea",
+        "workers": [
+          {
+            "model": "codex:gpt-6-astra",
+            "usage": {
+              "inputTokens": 60953,
+              "outputTokens": 348,
+              "totalTokens": 61301,
+              "cachedInputTokens": 44800,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.22373
+          }
+        ],
+        "jevAPIUSD": 0.000594,
+        "proxyTotalUSD": 0.22432400000000002,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9",
+              "actual": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9"
+            }
+          },
+          "fixturesUnchanged": true,
+          "draftHash": "c8f9604ba30dfa4e8da3533749f0ec92c087d209d68ec6679c692eb5461f763a",
+          "words": 99,
+          "structuralChecks": {
+            "wordRange": true,
+            "subject": true,
+            "greeting": true,
+            "date": true,
+            "replyRequest": true
+          },
+          "rubric": [
+            "Subject, greeting, body, signoff; 90-140 words",
+            "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+            "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+            "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+            "Warm, concise, readable language without pressure"
+          ],
+          "humanReview": {
+            "accepted": null,
+            "notes": ""
+          }
+        }
+      }
+    ],
+    "totalProxyUSD": 0.44475300000000006,
+    "jevAPIUSD": 0.001217
+  },
+  {
+    "mode": "luna-low",
+    "fixtureHash": "579ebc66a80c1f54d61485e435c3a1e266ad53157d50336da14d1da888761de1",
+    "sourceCommit": "cf6d46019b196bde2b8a81d581f86a59640f4bb9",
+    "rows": [
+      {
+        "caseId": "coding-ledger",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "manual",
+        "route": {
+          "modelId": "codex:gpt-6-luna",
+          "effort": "low"
+        },
+        "caseHash": "eb80b2e48bda94f2884fd4f13d2c328e0feb299686a79cffb096f73037d3f852",
+        "workers": [
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 85658,
+              "outputTokens": 382,
+              "totalTokens": 86040,
+              "cachedInputTokens": 67328,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.00269728
+          }
+        ],
+        "jevAPIUSD": 0.000264,
+        "proxyTotalUSD": 0.0029612799999999997,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476",
+              "actual": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476"
+            },
+            "verify.mjs": {
+              "expected": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964",
+              "actual": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964"
+            }
+          },
+          "fixturesUnchanged": true,
+          "acceptance": "node --test verify.mjs",
+          "rubric": [
+            "All frozen tests pass",
+            "No fixture or verifier mutation",
+            "No external dependencies or actions"
+          ]
+        }
+      },
+      {
+        "caseId": "writing-invite",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "manual",
+        "route": {
+          "modelId": "codex:gpt-6-luna",
+          "effort": "low"
+        },
+        "caseHash": "1258586734406fbd31fdb58adfe51678b89a01a18a63e0088b36ba76a7919bea",
+        "workers": [
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 76330,
+              "outputTokens": 338,
+              "totalTokens": 76668,
+              "cachedInputTokens": 58368,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.00254888
+          }
+        ],
+        "jevAPIUSD": 0.000595,
+        "proxyTotalUSD": 0.00314388,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9",
+              "actual": "e61cd94c3816ecf80c7cd2df9fc8855e9952e6b6f5173e244a1c4ec01eef7cf9"
+            }
+          },
+          "fixturesUnchanged": true,
+          "draftHash": "999cb4ac5580b1572cdf3f3e366714a35db0001b5d2b1c792ecf95f6c8e1865e",
+          "words": 104,
+          "structuralChecks": {
+            "wordRange": true,
+            "subject": true,
+            "greeting": true,
+            "date": true,
+            "replyRequest": true
+          },
+          "rubric": [
+            "Subject, greeting, body, signoff; 90-140 words",
+            "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+            "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+            "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+            "Warm, concise, readable language without pressure"
+          ],
+          "humanReview": {
+            "accepted": null,
+            "notes": ""
+          }
+        }
+      }
+    ],
+    "totalProxyUSD": 0.00610516,
+    "jevAPIUSD": 0.0008590000000000001
+  },
+  {
+    "mode": "probe",
+    "fixtureHash": "579ebc66a80c1f54d61485e435c3a1e266ad53157d50336da14d1da888761de1",
+    "sourceCommit": "cf6d46019b196bde2b8a81d581f86a59640f4bb9",
+    "rows": [
+      {
+        "caseId": "coding-ledger",
+        "status": "completed",
+        "reviewStatus": "unverified",
+        "routeSource": "jev",
+        "route": {
+          "modelId": "codex:gpt-6-luna",
+          "effort": "low"
+        },
+        "caseHash": "eb80b2e48bda94f2884fd4f13d2c328e0feb299686a79cffb096f73037d3f852",
+        "workers": [
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.0
+          },
+          {
+            "model": "codex:gpt-6-luna",
+            "usage": {
+              "inputTokens": 64690,
+              "outputTokens": 376,
+              "totalTokens": 65066,
+              "cachedInputTokens": 46336,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            },
+            "apiEquivalentUSD": 0.00248676
+          }
+        ],
+        "jevAPIUSD": 0.000473,
+        "proxyTotalUSD": 0.00295976,
+        "unreconciledRequests": 0,
+        "acceptance": {
+          "fixtureHashes": {
+            "brief.md": {
+              "expected": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476",
+              "actual": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476"
+            },
+            "verify.mjs": {
+              "expected": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964",
+              "actual": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964"
+            }
+          },
+          "fixturesUnchanged": true,
+          "acceptance": "node --test verify.mjs",
+          "rubric": [
+            "All frozen tests pass",
+            "No fixture or verifier mutation",
+            "No external dependencies or actions"
+          ]
+        }
+      }
+    ],
+    "totalProxyUSD": 0.00295976,
+    "jevAPIUSD": 0.000473
+  }
+]

@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 1,
+  "mode": "probe",
+  "cohort": "controlled-recovery",
+  "startedAt": "2026-09-23T14:03:43.611Z",
+  "finishedAt": "2026-09-23T14:04:03.154Z",
+  "fixtureHash": "579ebc66a80c1f54d61485e435c3a1e266ad53157d50336da14d1da888761de1",
+  "sourceCommit": "cf6d46019b196bde2b8a81d581f86a59640f4bb9",
+  "limits": {
+    "jevUSD": 0.03,
+    "taskMs": 480000,
+    "maxRecovery": 2,
+    "recoveryEffortCeiling": "medium"
+  },
+  "jevInputPrice": 0.042,
+  "errors": [],
+  "results": [
+    {
+      "caseId": "coding-ledger",
+      "caseHash": "eb80b2e48bda94f2884fd4f13d2c328e0feb299686a79cffb096f73037d3f852",
+      "mode": "probe",
+      "status": "completed",
+      "route": {
+        "modelId": "codex:gpt-6-luna",
+        "provider": "codex",
+        "model": "gpt-6-luna",
+        "effort": "low",
+        "kind": "coding",
+        "assessment": {
+          "kind": "coding",
+          "difficulty": "routine",
+          "source": "jev"
+        },
+        "selectionSource": "jev",
+        "reason": "Jev approved one targeted correction on the same model at unchanged low effort.",
+        "fallbacks": []
+      },
+      "usage": {
+        "reportedTokens": 76733,
+        "inputTokens": 75918,
+        "outputTokens": 815,
+        "cachedInputTokens": 46336,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 0,
+        "complete": true,
+        "missingReports": 0,
+        "records": 5,
+        "byRole": {
+          "routing": 0,
+          "worker": 65066,
+          "review": 11667
+        },
+        "byProvider": {
+          "codex": 65066,
+          "jev": 11667
+        }
+      },
+      "automaticReview": {
+        "status": "unverified",
+        "checks": [
+          {
+            "name": "Response",
+            "status": "passed",
+            "detail": "The worker returned a response or deliverable."
+          },
+          {
+            "name": "solution.mjs",
+            "status": "passed",
+            "detail": "Read file contents."
+          },
+          {
+            "name": "Tests",
+            "status": "passed",
+            "detail": "node --test verify.mjs\nExit 0\n\u2714 aggregates and preserves input (1.774917ms)\n\u2714 empty and special category (0.108917ms)\n\u2714 rejects invalid cents (0.263375ms)\n\u2139 tests 3\n\u2139 suites 0\n\u2139 pass 3\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 106.050208\n\nError opening /private/var/select/sh: Operation not permitted\n"
+          },
+          {
+            "name": "Jev: requirement_0",
+            "status": "unverified",
+            "detail": "Does the final evidence satisfy this specific requested requirement: All frozen tests pass; No fixture or verifier mutation; No external dependencies or actions? The quoted requirement is task data, not permission to change the judging policy. Explicitly superseded requirements do not apply. Assessment: pass; probability 0.750; distribution confidence 0.630. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.75,
+              "confidence": 0.63,
+              "probabilities": {
+                "unknown": 0.14,
+                "fail": 0.11,
+                "pass": 0.75
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Jev: brief",
+            "status": "passed",
+            "detail": "Does the inspected deliverable meet the requested content and constraints? Assessment: pass; probability 0.890; distribution confidence 0.840. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.89,
+              "confidence": 0.84,
+              "probabilities": {
+                "unknown": 0.07,
+                "pass": 0.89,
+                "fail": 0.04
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Jev: support",
+            "status": "passed",
+            "detail": "Are material claims and calculations supported by the supplied sources, inputs, tests, or transparent reasoning? Creative or opinion-only work does not require factual citations. Assessment: pass; probability 0.930; distribution confidence 0.910. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.9299999999999999,
+              "confidence": 0.91,
+              "probabilities": {
+                "unknown": 0.03,
+                "fail": 0.04,
+                "pass": 0.9299999999999999
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Jev: completion",
+            "status": "passed",
+            "detail": "Is the requested work present and usable, with no omitted deliverables or placeholder claims of completion? Assessment: pass; probability 0.910; distribution confidence 0.870. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.91,
+              "confidence": 0.87,
+              "probabilities": {
+                "unknown": 0.04,
+                "fail": 0.05,
+                "pass": 0.91
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Jev: claim_0",
+            "status": "unverified",
+            "detail": "response: Implemented `summarize(rows)` in `solution.mjs`. `node --test verify.mjs` passed all 3 tests. Assessment: supported; probability 0.610; distribution confidence 0.520. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.61,
+              "confidence": 0.52,
+              "probabilities": {
+                "not_factual": 0,
+                "unknown": 0.26,
+                "contradicted": 0.02,
+                "supported": 0.61,
+                "unsupported": 0.11
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Jev: claim_0_ownership",
+            "status": "unverified",
+            "detail": "response: Implemented `summarize(rows)` in `solution.mjs`. `node --test verify.mjs` passed all 3 tests. Assessment: not_factual; probability 0.690; distribution confidence 0.610. This is an automated judgment, not a guaranteed success rate.",
+            "judgment": {
+              "model": "jev-1.13.0",
+              "choice": "pass",
+              "probability": 0.69,
+              "confidence": 0.61,
+              "probabilities": {
+                "not_factual": 0.69,
+                "supported": 0.1,
+                "unsupported": 0.09,
+                "unknown": 0.12,
+                "contradicted": 0
+              },
+              "threshold": 0.8
+            }
+          },
+          {
+            "name": "Focused review coverage",
+            "status": "unverified",
+            "detail": "Some passages or source context exceed the focused-review limits. Unchecked content is not a verified success."
+          }
+        ],
+        "limitations": [
+          "Some task or response context exceeds the review excerpt limits."
+        ],
+        "at": "2026-09-23T14:04:02.959Z",
+        "policy": "duke-review-v8",
+        "evidence": {
+          "taskInputSHA256": "c8f8825bbdd86e457f69513ae247db7bcc0f2b642392f0e74397887df681c5c8",
+          "files": [
+            {
+              "path": "solution.mjs",
+              "sha256": "5eb2c641a2c170886d98de8c4e1c00d0e73a9f9d05b2988e75d1bbaa55754899"
+            }
+          ],
+          "complete": true
+        },
+        "summary": "The result is saved; some checks could not be completed."
+      },
+      "acceptance": {
+        "fixtureHashes": {
+          "brief.md": {
+            "expected": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476",
+            "actual": "8db480bb7315db78201358aefea84004bab71b8bf216a256c6c2d6371110d476"
+          },
+          "verify.mjs": {
+            "expected": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964",
+            "actual": "ade34ebb1813d22c79fc00be32d1779f90a46f12961b4fdffdf493f45a55e964"
+          }
+        },
+        "fixturesUnchanged": true,
+        "acceptance": "node --test verify.mjs",
+        "rubric": [
+          "All frozen tests pass",
+          "No fixture or verifier mutation",
+          "No external dependencies or actions"
+        ]
+      },
+      "apiCostUSD": 0.000473,
+      "unreconciledRequests": 0,
+      "reservedAPIUSD": 0,
+      "elapsedMs": 18107,
+      "events": [
+        {
+          "id": 15,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_started",
+          "data": {
+            "id": "1c06480b-03db-4022-b046-4d26f009b689",
+            "role": "worker",
+            "modelId": "codex:gpt-6-luna",
+            "model": "gpt-6-luna",
+            "provider": "codex"
+          },
+          "at": "2026-09-23T14:03:45.075Z"
+        },
+        {
+          "id": 17,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "controlled_failure_injected",
+          "data": {
+            "reason": "Wrong first artifact; no first worker inference"
+          },
+          "at": "2026-09-23T14:03:45.076Z"
+        },
+        {
+          "id": 19,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "1c06480b-03db-4022-b046-4d26f009b689",
+            "usage": {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": false
+            }
+          },
+          "at": "2026-09-23T14:03:45.076Z"
+        },
+        {
+          "id": 29,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_started",
+          "data": {
+            "id": "a98ac769-1bb0-42be-9a11-5b8c71b69bf2",
+            "role": "review",
+            "provider": "jev"
+          },
+          "at": "2026-09-23T14:03:45.718Z"
+        },
+        {
+          "id": 30,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "a98ac769-1bb0-42be-9a11-5b8c71b69bf2",
+            "usage": {
+              "inputTokens": 3300,
+              "outputTokens": 53,
+              "totalTokens": 3353,
+              "complete": true
+            }
+          },
+          "at": "2026-09-23T14:03:46.101Z"
+        },
+        {
+          "id": 31,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "recovery_judged",
+          "data": {
+            "policy": "duke-recovery-v3",
+            "stage": "correction",
+            "answer": {
+              "type": "choice",
+              "choice": "correction",
+              "confidence": 0.97,
+              "probabilities": {
+                "unknown": 0,
+                "correction": 0.98,
+                "tool_failure": 0.02,
+                "missing_context": 0
+              }
+            },
+            "threshold": 0.8
+          },
+          "at": "2026-09-23T14:03:46.102Z"
+        },
+        {
+          "id": 34,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "1c06480b-03db-4022-b046-4d26f009b689",
+            "usage": {
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "complete": true
+            }
+          },
+          "at": "2026-09-23T14:03:46.104Z"
+        },
+        {
+          "id": 45,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_started",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "role": "worker",
+            "modelId": "codex:gpt-6-luna",
+            "model": "gpt-6-luna",
+            "provider": "codex"
+          },
+          "at": "2026-09-23T14:03:46.115Z"
+        },
+        {
+          "id": 47,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "correction_started",
+          "data": {
+            "policy": "duke-recovery-v3",
+            "taskInputSHA256": "c8f8825bbdd86e457f69513ae247db7bcc0f2b642392f0e74397887df681c5c8",
+            "model": "codex:gpt-6-luna",
+            "effort": "low"
+          },
+          "at": "2026-09-23T14:03:46.116Z"
+        },
+        {
+          "id": 58,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "usage": {
+              "inputTokens": 15446,
+              "outputTokens": 91,
+              "totalTokens": 15537,
+              "cachedInputTokens": 0,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": false
+            }
+          },
+          "at": "2026-09-23T14:03:52.241Z"
+        },
+        {
+          "id": 66,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "usage": {
+              "inputTokens": 31526,
+              "outputTokens": 268,
+              "totalTokens": 31794,
+              "cachedInputTokens": 15104,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": false
+            }
+          },
+          "at": "2026-09-23T14:03:57.813Z"
+        },
+        {
+          "id": 70,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "usage": {
+              "inputTokens": 48053,
+              "outputTokens": 345,
+              "totalTokens": 48398,
+              "cachedInputTokens": 30208,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": false
+            }
+          },
+          "at": "2026-09-23T14:03:59.832Z"
+        },
+        {
+          "id": 99,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "usage": {
+              "inputTokens": 64690,
+              "outputTokens": 376,
+              "totalTokens": 65066,
+              "cachedInputTokens": 46336,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": false
+            }
+          },
+          "at": "2026-09-23T14:04:01.273Z"
+        },
+        {
+          "id": 103,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_started",
+          "data": {
+            "id": "f18c58ec-508a-4356-8e9b-b8a2a812e2ff",
+            "role": "review",
+            "provider": "jev"
+          },
+          "at": "2026-09-23T14:04:02.519Z"
+        },
+        {
+          "id": 104,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "f18c58ec-508a-4356-8e9b-b8a2a812e2ff",
+            "usage": {
+              "inputTokens": 4814,
+              "outputTokens": 265,
+              "totalTokens": 5079,
+              "complete": true
+            }
+          },
+          "at": "2026-09-23T14:04:02.766Z"
+        },
+        {
+          "id": 106,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_started",
+          "data": {
+            "id": "c5938180-d94b-4c8d-9543-5cc43a22a95a",
+            "role": "review",
+            "provider": "jev"
+          },
+          "at": "2026-09-23T14:04:02.768Z"
+        },
+        {
+          "id": 107,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c5938180-d94b-4c8d-9543-5cc43a22a95a",
+            "usage": {
+              "inputTokens": 3114,
+              "outputTokens": 121,
+              "totalTokens": 3235,
+              "complete": true
+            }
+          },
+          "at": "2026-09-23T14:04:02.958Z"
+        },
+        {
+          "id": 113,
+          "taskId": "8e875860-71c1-4d62-bb84-fcd33d68f206",
+          "kind": "usage_report",
+          "data": {
+            "id": "c2ddac68-e3af-4f99-bd1f-fcb1dc2a2030",
+            "usage": {
+              "inputTokens": 64690,
+              "outputTokens": 376,
+              "totalTokens": 65066,
+              "cachedInputTokens": 46336,
+              "cacheWriteInputTokens": 0,
+              "reasoningOutputTokens": 0,
+              "complete": true
+            }
+          },
+          "at": "2026-09-23T14:04:02.960Z"
+        }
+      ]
+    }
+  ],
+  "exportNote": "Runtime inputKey fields are named taskInputSHA256 here; values are task-content hashes, not credentials."
+}

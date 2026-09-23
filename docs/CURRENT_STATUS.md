@@ -2,11 +2,11 @@
 
 Updated September 23, 2026.
 
-The desktop maintenance release is **0.1.9**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 237 local tests passed.
+The desktop maintenance release is **0.1.9**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 238 current-source local tests passed.
 
 The iOS gateway foundation is merged and packaged, disabled by default. Physical iPhone checks and iOS distribution remain unfinished. The bounded factory trial is paused after three assignments: historical evidence replay merged in PR12; PR13 was closed without merging its runtime changes; [ADR0022](adr/0022-defer-requirement-coverage-metadata.md) preserves the verifier trust boundary and revisit criteria.
 
-The [new-model integration checks](MODEL_VALIDATION_20260923.md) completed successfully for GPT-6 Luna, GPT-6 Sol and Opus 5.5 at Low effort. Each produced independently accepted output with unchanged inputs and verifier. Automatic routing and recovery are separate checks.
+The [new-model integration checks](MODEL_VALIDATION_20260923.md) completed successfully for GPT-6 Luna, GPT-6 Sol and Opus 5.5 at Low effort. Each produced independently accepted output with unchanged inputs and verifier. The [two-task comparison and controlled recovery probe](GPT6_COMPARISON_20260923.md) are complete: automatic mode used the Luna fallback, a controlled same-effort repair passed its unchanged verifier, and review incompleteness remains.
 
 ## Historical development results
 
