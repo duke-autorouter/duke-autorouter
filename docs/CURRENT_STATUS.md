@@ -1,10 +1,12 @@
 # Current development status
 
-Updated September 21, 2026.
+Updated September 23, 2026.
 
-The desktop maintenance release is **0.1.8**. Its release assets and verification
-record are published with the matching GitHub release. The benchmark harness is now included in the public source. iOS remains separate
-development work.
+The desktop maintenance release is **0.1.9**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 237 local tests passed.
+
+The iOS gateway foundation is merged and packaged, disabled by default. Physical iPhone checks and iOS distribution remain unfinished. The bounded factory trial is paused after three assignments: historical evidence replay merged in PR12; PR13 remains an unmerged draft. Its proposed requirement coverage does not certify task success.
+
+## Historical development results
 
 ## Same-effort correction
 

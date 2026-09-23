@@ -38,7 +38,7 @@ Codex uses `account/read` and `account/rateLimits/read` through the pinned offic
 app-server. Its keyed buckets take precedence over the legacy mirrored bucket.
 Existing task-time Codex quota updates also refresh the display.
 
-Claude Agent SDK 0.3.275 exposes
+Claude Agent SDK 0.3.280 exposes
 `usage_EXPERIMENTAL_MAY_CHANGE_DO_NOT_RELY_ON_THIS_API_YET({ skipBehaviors: true })`.
 The pinned SDK declares this method unstable. DUKE isolates the call and retains
 only plan windows from the response, with bounded timeouts and an unavailable

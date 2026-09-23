@@ -17,7 +17,19 @@ export function preserveModelOverrides(model: Model, previous?: Model): Model {
 
 export function recordCatalog(store: Store, provider: Provider, list: any[]) {
   const results: Model[] = [];
-  for (const raw of list) {
+  // SDK aliases can move between releases. Also expose provider-resolved IDs
+  // so users can select a version without inheriting an older alias's evidence.
+  const entries = [...list];
+  if (provider === 'claude') {
+    const seen = new Set(list.map((raw) => raw.value));
+    for (const raw of list) {
+      const resolved = raw.resolvedModel;
+      if (typeof resolved !== 'string' || !resolved.startsWith('claude-') || seen.has(resolved)) continue;
+      seen.add(resolved);
+      entries.push({ ...raw, value: resolved, displayName: String(raw.description ?? resolved).split(' · ')[0], isDefault: false, is_default: false });
+    }
+  }
+  for (const raw of entries) {
     const model = provider === 'codex' ? raw.model : provider === 'claude' ? raw.value : raw.id;
     if (!model) continue;
     // API models without tools cannot complete DUKE's shared-tool tasks.

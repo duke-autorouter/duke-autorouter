@@ -69,7 +69,7 @@ credentials and processes. Native environment access is disabled, the runtime
 cwd is isolated, native shell features are disabled, native approval requests
 are rejected, and only broker tools have workspace write authority.
 
-Claude uses Agent SDK 0.3.275 and an in-process MCP server. Built-in tools are
+Claude uses Agent SDK 0.3.280 and an in-process MCP server. Built-in tools are
 disabled, settings sources are empty, and pre-tool hooks enforce the exact
 task-scoped tool set. Only first-party subscription authentication is accepted.
 Authentication and execution availability are checked separately.
