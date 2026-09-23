@@ -32,3 +32,17 @@ export const probes = [
     prompt:'Copy the fourteen fields exactly from the reference into card.txt, one field per line. Do not add facts.',
     expectedResult:numbered,text:card.replace('Retention code: R7','Retention code: R9') },
 ] as const;
+
+// Second, separately frozen diagnostic: scope ambiguity in the first pair is
+// a hypothesis, not an established judge defect. Original results stay intact.
+const scopedSource = 'For the fictional Dune materials library, Remy owns the catalog audit. The audit is pending. Aya owns shelf-label design. Label design is pending.';
+export const scopeProbes = [
+  { id:'single-item-supported', expected:'passed', source:scopedSource,
+    prompt:'Write exactly one handoff line about the catalog audit only, naming its owner and status. Do not include shelf-label design or other work. The one line is the entire requested deliverable.',
+    expectedResult:'One line identifying Remy as catalog audit owner and the audit as pending',
+    text:'Catalog audit — Owner: Remy. Status: pending.' },
+  { id:'single-item-wrong-owner', expected:'failed', source:scopedSource,
+    prompt:'Write exactly one handoff line about the catalog audit only, naming its owner and status. Do not include shelf-label design or other work. The one line is the entire requested deliverable.',
+    expectedResult:'One line identifying the catalog audit owner and status accurately',
+    text:'Catalog audit — Owner: Aya. Status: pending.' },
+] as const;
