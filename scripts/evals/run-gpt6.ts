@@ -34,15 +34,19 @@ if (!has("--run")) {
   );
   process.exit(0);
 }
+const wordRecovery = has("--word-count-recovery");
 const factory = has("--factory-cycle-1");
 const cycle3 = has("--factory-cycle-3");
+if (wordRecovery && (factory || cycle3)) throw Error("Select one cohort");
 if (factory && cycle3) throw Error("Select one factory cohort");
-const cases = cycle3 ? cycle3Cases : factory ? factoryCases : originalCases;
-const check = cycle3 ? cycle3Check : factory ? factoryCheck : originalCheck;
+const wordCases = [{id:"word-count-recovery",kind:"writing",required:["files"] as const,prompt:"Read brief.md and write status.md. Write 90–110 words. Do not modify brief.md.",files:{"brief.md":"Fictional Hazel workshop. The checklist draft is complete. Tess owns the equipment review, due October 2; it is pending. The safety walkthrough has no owner or date. Nothing has been installed. Write a concise internal status update with completed work, pending work and the open installation decision. Do not invent an approval, cost, owner or result."},expectedFiles:["status.md"],command:"",rubric:["90–110 words", "Checklist drafted; Tess equipment review pending October 2", "Walkthrough unassigned and undated; installation undecided", "No invented facts"]}];
+const cases = wordRecovery ? wordCases : cycle3 ? cycle3Cases : factory ? factoryCases : originalCases;
+const check = wordRecovery ? async () => ({ scope: "Controlled short draft; independent inspection required" }) : cycle3 ? cycle3Check : factory ? factoryCheck : originalCheck;
 const mode = arg("--mode");
 if ((factory || cycle3) && mode === "probe") throw Error("No injected failures in factory comparison");
-if ((factory || cycle3) && execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim())
+if ((factory || cycle3 || wordRecovery) && execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim())
   throw Error("Freeze the factory fixtures and harness in a clean commit before live execution");
+if (wordRecovery && mode !== "probe") throw Error("Word recovery requires probe mode");
 if (!["jev", "astra-medium", "luna-low", "probe"].includes(mode))
   throw Error("Invalid mode");
 const stateDir = resolve(arg("--state-dir")),
@@ -62,7 +66,7 @@ const disposableAuth = join(stateDir, "codex", "auth.json");
 const receipt: any = {
   schemaVersion: 1,
   mode,
-  cohort: cycle3 ? "factory-cycle-3-development" : factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
+  cohort: wordRecovery ? "controlled-word-count-recovery" : cycle3 ? "factory-cycle-3-development" : factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
   startedAt: new Date().toISOString(),
   fixtureHash: sha(JSON.stringify(cases)),
   sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
@@ -157,7 +161,7 @@ try {
         ? decide(task, models, signal, context)
         : {
             assessment: {
-              kind: "coding",
+              kind: wordRecovery ? "writing" : "coding",
               difficulty: "routine",
               source: "jev",
             },
@@ -178,11 +182,11 @@ try {
           total: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
         });
         await context.tool("write_file", {
-          path: "solution.mjs",
-          content:
+          path: wordRecovery ? "status.md" : "solution.mjs",
+          content: wordRecovery ? "The checklist draft is complete. Tess has an equipment review pending. Installation is undecided." :
             "export function summarize(){return {totals:{},grandTotal:0}}\n",
         });
-        return "Saved solution.mjs.";
+        return wordRecovery ? "Saved status.md." : "Saved solution.mjs.";
       },
     };
   }

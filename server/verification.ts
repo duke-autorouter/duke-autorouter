@@ -260,7 +260,7 @@ export async function verifyTask(
   );
   if (range && paths.length === 1 && textPaths.length === 1 && !task.continuation?.uncertain) {
     const file = evidence.files.find((f) => f.path === range.path);
-    if (file && !file.incomplete && typeof file.text === 'string') {
+    if (file && !file.incomplete && typeof file.text === 'string' && !/<\/?[a-z][^>]*>|&(?:#\d+|#x[0-9a-f]+|[a-z]+);/i.test(file.text)) {
       const words = countWords(file.text);
       checks.push({
         name: 'Word count',
