@@ -36,8 +36,9 @@ try {
       ['gpt-6-sol', 'General purpose model for coding and writing'],
       ['gpt-6-astra', 'Strong model for demanding reasoning'],
     ].map(([name, description]) => ModelInput.parse({ id: `codex:${name}`, provider: 'codex',
-      model: name, label: name, enabled: true, evaluated: false, quality: {},
-      capabilities: ['files'], efforts: ['low', 'medium'], routingNotes: description }));
+      model: name, label: name, enabled: true, evaluated: false, quality: { coding: 0, research: 0, writing: 0 },
+      catalog: { description, discoveredAt: new Date().toISOString() },
+      capabilities: ['files'], supportedEfforts: ['low', 'medium'], routingNotes: description }));
     for (const model of models) store.put('model', model.id, model);
     for (const [id, brief] of [
       ['route-copy', 'Rewrite these three labels in sentence case, retaining the order: ACCOUNT SETTINGS, TEAM MEMBERS, SAVE CHANGES. Return only the three revised labels.'],
