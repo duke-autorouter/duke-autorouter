@@ -12,6 +12,8 @@ The 0.1.10 maintenance update keeps ordinal difficulty uncertainty in Jev select
 
 The 0.1.11 update protects quoted and dependent requirements, checks up to 24 requirements in batches of eight, and supplies the full difficulty distribution to Jev selection. Three fresh dependent-instruction controls matched their expected outcomes. The conservative difficulty threshold remains uncalibrated, and the iOS proxy boundary remains open. See the [maintenance record](OPUS_FOLLOWUP_20260923.md).
 
+The [first fresh factory cycle](FACTORY_CYCLE_1_20260923.md) ran twelve tasks with blinded Opus content review. Automatic routing selected Sol and matched Astra's 4/4 content acceptance at about 77% lower API-equivalent cost; Luna met 3/4 content rubrics at a much lower cost. Full Word layout remains unverified, and DUKE itself passed none of the twelve reviews. The cycle exposed numbered-requirement and ownership-extraction defects. This is a small development sample, not general efficiency or end-to-end success evidence. The original scheduled pilot remains paused.
+
 ## Historical development results
 
 ## Same-effort correction

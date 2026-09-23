@@ -14,8 +14,10 @@ import { createApp } from "../../server/app.js";
 import { CodexWorker } from "../../server/adapters/codex.js";
 import { recordCatalog } from "../../server/model-profiles.js";
 import { summarizeSpending } from "../../server/spending.js";
-import { cases } from "../../evals/gpt6/fixtures.js";
-import { check, sha } from "../../evals/gpt6/check.js";
+import { cases as originalCases } from "../../evals/gpt6/fixtures.js";
+import { cases as factoryCases } from "../../evals/factory-cycle-1/fixtures.js";
+import { check as originalCheck, sha } from "../../evals/gpt6/check.js";
+import { check as factoryCheck } from "../../evals/factory-cycle-1/check.js";
 import type { Model } from "../../server/types.js";
 const argv = process.argv.slice(2);
 const has = (key: string) => argv.includes(key);
@@ -30,7 +32,13 @@ if (!has("--run")) {
   );
   process.exit(0);
 }
+const factory = has("--factory-cycle-1");
+const cases = factory ? factoryCases : originalCases;
+const check = factory ? factoryCheck : originalCheck;
 const mode = arg("--mode");
+if (factory && mode === "probe") throw Error("No injected failures in factory comparison");
+if (factory && execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim())
+  throw Error("Freeze the factory fixtures and harness in a clean commit before live execution");
 if (!["jev", "astra-medium", "luna-low", "probe"].includes(mode))
   throw Error("Invalid mode");
 const stateDir = resolve(arg("--state-dir")),
@@ -50,7 +58,7 @@ const disposableAuth = join(stateDir, "codex", "auth.json");
 const receipt: any = {
   schemaVersion: 1,
   mode,
-  cohort: mode === "probe" ? "controlled-recovery" : "natural-efficiency",
+  cohort: factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
   startedAt: new Date().toISOString(),
   fixtureHash: sha(JSON.stringify(cases)),
   sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
@@ -195,7 +203,9 @@ try {
     if (!response.ok) throw Error(JSON.stringify(data));
     return data;
   };
-  for (const c of mode === "probe" ? cases.slice(0, 1) : cases) {
+  const selectedCases = has("--case") ? cases.filter(c => c.id === arg("--case")) : cases;
+  if (!selectedCases.length) throw Error("Unknown case");
+  for (const c of mode === "probe" ? selectedCases.slice(0, 1) : selectedCases) {
     const dir = join(out, c.id);
     await mkdir(dir);
     for (const [name, content] of Object.entries(c.files))

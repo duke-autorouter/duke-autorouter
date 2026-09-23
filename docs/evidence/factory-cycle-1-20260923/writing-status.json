@@ -1,0 +1,36 @@
+{
+  "case": "writing-status",
+  "prompt": "Read brief.md and write a 100\u2013150 word internal status email in draft.md. Do not edit brief.md or send it.",
+  "fixtures": {
+    "brief.md": "Fictional North Quay accessibility review, September 23, 2026. A first draft of the visitor guide is complete. Maya's wording review is unfinished. A screen-reader check is scheduled for September 29; it has not happened. Public release date is undecided. Reply to a colleague asking whether it is ready to publish. Include subject, greeting, body, signoff. Answer directly that it is not ready, state completed and pending work, and ask for critical wording concerns by September 27. Include exact quoted label \u201cStep-free entrance\u201d because it is under review. Do not imply the entrance is verified. Do not say \u201capproved,\u201d \u201ctested,\u201d or \u201claunch confirmed\u201d in your own voice; quoting them to reject a claim is allowed. Invent no release date, access finding, or other owner."
+  },
+  "rubric": [
+    "100\u2013150 words and email structure",
+    "Direct readiness answer; draft complete but review pending",
+    "September 29 check scheduled, not completed",
+    "Exact quoted label without an access finding",
+    "Concern request by September 27",
+    "Dependent prohibitions respected; no invented date, finding, or owner",
+    "Warm, concise prose"
+  ],
+  "candidates": [
+    {
+      "label": "d41f52a9",
+      "artifacts": {
+        "draft.md": "Subject: North Quay visitor guide \u2014 not ready to publish\n\nHi,\n\nIt\u2019s not ready to publish yet. The first draft of the visitor guide is complete, but Maya\u2019s wording review is still in progress. The label \u201cStep-free entrance\u201d remains under review; its inclusion should not be taken as confirmation of an access finding.\n\nA screen-reader check is scheduled for September 29 and has not happened yet. The public release date is undecided. Please send any critical wording concerns by September 27 so they can be considered in the review.\n\nBest,\n"
+      }
+    },
+    {
+      "label": "9b489aa4",
+      "artifacts": {
+        "draft.md": "Subject: North Quay visitor guide \u2014 publication status\n\nHi,\n\nThe North Quay visitor guide is not ready to publish yet. The first draft is complete, but Maya\u2019s wording review is still in progress, and the screen-reader check is scheduled for September 29. That check has not happened, so we should not treat the guide as ready for public use.\n\nThe label \u201cStep-free entrance\u201d is among the wording under review. Please do not take its appearance in the draft as confirmation of an access finding. If you spot any critical wording concerns, could you send them to me by September 27? That will give us a chance to address them as the review continues.\n\nWe have not set a public release date. I\u2019ll share an update once the outstanding work is complete.\n\nThanks,\n[Your name]\n"
+      }
+    },
+    {
+      "label": "0bee6b3e",
+      "artifacts": {
+        "draft.md": "Subject: North Quay visitor guide \u2014 not ready to publish\n\nHi,\n\nThe North Quay visitor guide is not ready to publish yet. The first draft is complete, but Maya\u2019s wording review remains unfinished. The screen-reader check is scheduled for September 29 and has not yet taken place.\n\nThe label \u201cStep-free entrance\u201d is still under review; its inclusion in the draft should not be read as confirmation of entrance accessibility. The public release date remains undecided.\n\nPlease send any critical wording concerns by September 27, especially language that could give visitors an unsupported impression of access. Thanks for helping us keep the guide clear and accurate while the review and screen-reader check are pending.\n\nBest,\n[Your name]\n"
+      }
+    }
+  ]
+}

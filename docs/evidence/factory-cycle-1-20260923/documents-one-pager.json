@@ -1,0 +1,37 @@
+{
+  "case": "documents-one-pager",
+  "prompt": "Read brief.md. Create an actual Word document handoff.docx with DUKE create_artifact, format docx. Also save handoff.md with the exact text supplied to create_artifact for review. Do not edit brief.md, send, or publish. No shell or packages are needed.",
+  "fixtures": {
+    "brief.md": "Fictional Alder Library handoff, September 23, 2026. Create a one-page handoff titled \u201cAlder Library kiosk trial\u201d. In-library kiosk trial is planned for October 6, 2026. Quick-start guide is drafted; staff walkthrough and privacy review are pending. No patron trial has occurred. Lea owns staff walkthrough. Privacy review has no assigned owner. Sections: Current status, Before trial, Open decisions. Under Before trial, list walkthrough and privacy review separately with exact owner status. Under Open decisions, ask whether to proceed October 6 after both checks; do not decide. End with \u201cPrepared from the September 23 fictional brief.\u201d No approval, results, or confirmed launch claims. The Word file must contain substantive handoff text, not a placeholder."
+  },
+  "rubric": [
+    "Valid nonempty DOCX from DUKE create_artifact and matching review text",
+    "Exact title, three sections, and ending sentence",
+    "October 6 planned and patron trial not completed",
+    "Lea walkthrough distinct from unassigned privacy review",
+    "Decision stays open until checks; no invented approval or result"
+  ],
+  "candidates": [
+    {
+      "label": "192bae96",
+      "artifacts": {
+        "handoff.docx": "Alder Library kiosk trial\nCurrent status\nThe in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\nBefore trial\n- Staff walkthrough \u2014 Owner: Lea. Complete the walkthrough before the planned trial.\n- Privacy review \u2014 Owner: unassigned. Complete the review before the planned trial.\nOpen decisions\nShould the in-library kiosk trial proceed on October 6, 2026, after both the staff walkthrough and privacy review are completed? The decision remains open pending both checks.\nPrepared from the September 23 fictional brief.",
+        "handoff.md": "# Alder Library kiosk trial\n\n## Current status\n\nThe in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\n\n## Before trial\n\n- **Staff walkthrough \u2014 Owner: Lea.** Complete the walkthrough before the planned trial.\n- **Privacy review \u2014 Owner: unassigned.** Complete the review before the planned trial.\n\n## Open decisions\n\nShould the in-library kiosk trial proceed on October 6, 2026, after both the staff walkthrough and privacy review are completed? The decision remains open pending both checks.\n\nPrepared from the September 23 fictional brief."
+      }
+    },
+    {
+      "label": "7c46a229",
+      "artifacts": {
+        "handoff.docx": "Alder Library kiosk trial\nCurrent status\nAs of September 23, 2026, the in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\nBefore trial\n- Staff walkthrough: Pending. Owner: Lea.\n- Privacy review: Pending. Owner: No assigned owner.\nOpen decisions\nAfter both the staff walkthrough and privacy review are complete, should the in-library kiosk trial proceed on October 6, 2026? The decision remains open until both checks are complete.\nPrepared from the September 23 fictional brief.",
+        "handoff.md": "# Alder Library kiosk trial\n\n## Current status\n\nAs of September 23, 2026, the in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\n\n## Before trial\n\n- Staff walkthrough: Pending. Owner: Lea.\n- Privacy review: Pending. Owner: No assigned owner.\n\n## Open decisions\n\nAfter both the staff walkthrough and privacy review are complete, should the in-library kiosk trial proceed on October 6, 2026? The decision remains open until both checks are complete.\n\nPrepared from the September 23 fictional brief.\n"
+      }
+    },
+    {
+      "label": "9cf6a42f",
+      "artifacts": {
+        "handoff.docx": "Alder Library kiosk trial\nHandoff date: September 23, 2026\nCurrent status\nThe in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\nBefore trial\n- Staff walkthrough: Pending; owner: Lea.\n- Privacy review: Pending; owner: unassigned.\nOpen decisions\nShould the team proceed on October 6, 2026, after both the staff walkthrough and privacy review are complete? The decision remains open until both checks are complete.\nPrepared from the September 23 fictional brief.",
+        "handoff.md": "# Alder Library kiosk trial\n\n**Handoff date:** September 23, 2026\n\n## Current status\nThe in-library kiosk trial is planned for October 6, 2026. The quick-start guide is drafted. The staff walkthrough and privacy review are pending. No patron trial has occurred.\n\n## Before trial\n- **Staff walkthrough:** Pending; owner: Lea.\n- **Privacy review:** Pending; owner: unassigned.\n\n## Open decisions\nShould the team proceed on October 6, 2026, after both the staff walkthrough and privacy review are complete? The decision remains open until both checks are complete.\n\nPrepared from the September 23 fictional brief."
+      }
+    }
+  ]
+}
