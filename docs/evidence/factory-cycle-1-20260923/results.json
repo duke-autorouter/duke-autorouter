@@ -690,7 +690,7 @@
           ],
           "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
           "createArtifactContentMatchesMarkdown": true,
-          "layoutVerification": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified.",
+          "layoutVerification": "Expected content visible in first-page previews; full pagination not established by thumbnails.",
           "assessment": {
             "kind": "documents",
             "difficulty": "standard",
@@ -770,7 +770,13 @@
               "modelId": "codex:gpt-6-sol",
               "effort": "ultra"
             }
-          ]
+          ],
+          "layoutAssessmentCorrection": {
+            "date": "2026-09-23",
+            "previousAssessment": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified.",
+            "correction": "Prior crop finding withdrawn after byte/pixel comparison and visual reinspection. Saved first-page previews show all expected content. Complete pagination remains outside thumbnail coverage.",
+            "evidence": "../factory-cycle-2-20260923/preview-verification.json"
+          }
         },
         {
           "caseId": "research-brief",
@@ -1949,7 +1955,13 @@
           ],
           "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
           "createArtifactContentMatchesMarkdown": true,
-          "layoutVerification": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified."
+          "layoutVerification": "Expected content visible in first-page previews; full pagination not established by thumbnails.",
+          "layoutAssessmentCorrection": {
+            "date": "2026-09-23",
+            "previousAssessment": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified.",
+            "correction": "Prior crop finding withdrawn after byte/pixel comparison and visual reinspection. Saved first-page previews show all expected content. Complete pagination remains outside thumbnail coverage.",
+            "evidence": "../factory-cycle-2-20260923/preview-verification.json"
+          }
         },
         {
           "caseId": "research-brief",
@@ -3018,7 +3030,13 @@
           ],
           "artifactAcceptanceScope": "Content and frozen code tests; document pagination/layout remains limited to native thumbnail evidence",
           "createArtifactContentMatchesMarkdown": true,
-          "layoutVerification": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified."
+          "layoutVerification": "Expected content visible in first-page previews; full pagination not established by thumbnails.",
+          "layoutAssessmentCorrection": {
+            "date": "2026-09-23",
+            "previousAssessment": "Luna thumbnail is readable; automatic/Astra previews were inconsistent or cropped. Complete pagination is unverified.",
+            "correction": "Prior crop finding withdrawn after byte/pixel comparison and visual reinspection. Saved first-page previews show all expected content. Complete pagination remains outside thumbnail coverage.",
+            "evidence": "../factory-cycle-2-20260923/preview-verification.json"
+          }
         },
         {
           "caseId": "research-brief",
