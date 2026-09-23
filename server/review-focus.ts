@@ -1,16 +1,22 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v8';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v9';
 
-// Split rubric clauses only at top-level semicolons. Quoted examples, code,
-// and bracketed expressions keep their punctuation. The caller must retain
-// the complete request as context when judging each returned clause.
+// Scan the literal request once, before splitting it into requirements. Keep
+// punctuation within quoted examples, code, brackets, abbreviations and list
+// items. The full request remains the context for every resulting clause.
 export function reviewRequirementClauses(text: string): string[] {
   const clauses: string[] = [];
   let start = 0;
   let quote = '';
   const closers: string[] = [];
   const pairs: Record<string, string> = { '(': ')', '[': ']', '{': '}' };
+  const quoteEnd: Record<string, string> = { '“': '”', '‘': '’', '"': '"', "'": "'", '`': '`' };
+  const add = (end: number) => {
+    const clause = text.slice(start, end).trim();
+    if (clause) clauses.push(clause);
+    start = end + 1;
+  };
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     if (quote) {
@@ -18,18 +24,30 @@ export function reviewRequirementClauses(text: string): string[] {
       else if (char === quote) quote = '';
       continue;
     }
-    if (char === "'" && /[\p{L}\p{N}]/u.test(text[i - 1] ?? '') && /[\p{L}\p{N}]/u.test(text[i + 1] ?? ''))
+    if ((char === "'" || char === '’') && /[\p{L}\p{N}]/u.test(text[i - 1] ?? '') && /[\p{L}\p{N}]/u.test(text[i + 1] ?? ''))
       continue;
-    if (char === '"' || char === "'" || char === '`') {
-      quote = char;
+    if (quoteEnd[char]) {
+      quote = quoteEnd[char];
       continue;
     }
     if (pairs[char]) closers.push(pairs[char]);
     else if (char === closers.at(-1)) closers.pop();
-    else if (char === ';' && !closers.length) {
-      const clause = text.slice(start, i).trim();
-      if (clause) clauses.push(clause);
-      start = i + 1;
+    else if (!closers.length) {
+      const current = text.slice(start, i).trim();
+      const rest = text.slice(i + 1);
+      if (char === ';') {
+        // Bare noun fragments after a shared prohibition retain that scope.
+        const dependent = /\b(?:do\s+not|don't)\b/i.test(current) &&
+          /^\s*(?:[a-z][\w-]*(?:\s+(?:[a-z][\w-]*|or|and))*\s*(?:;|\.|$))/i.test(rest) &&
+          !/^\s*(?:and\s+)?(?:do|must|should|keep|ensure|include|provide|write|create)\b/i.test(rest);
+        if (!dependent) add(i);
+      } else if (char === '\n') add(i);
+      else if (/[.!?]/.test(char) && /\s/.test(rest[0] ?? '') && /^\s+[A-Z]/.test(rest)) {
+        const token = current.match(/(?:^|\s)([\p{L}]+)$/u)?.[1]?.toLowerCase();
+        const abbreviation = (!!token && /^(?:mr|mrs|ms|dr|prof|sr|jr|vs|etc|e|g|i|a|u|s)$/.test(token)) || /\b(?:e\.g|i\.e)$/i.test(current);
+        const initials = /(?:\b[A-Z]\.){2,}$/.test(current + char);
+        if (!abbreviation && !initials) add(i + 1);
+      }
     }
   }
   const last = text.slice(start).trim();

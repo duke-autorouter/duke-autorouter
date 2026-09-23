@@ -179,6 +179,40 @@ test('literal requirements are checked separately and findings cannot waive them
   assert.match(f.calls[0].questions.requirement_1.instructions, /Label proposals/);
 });
 
+test('later literal requirements receive bounded batches and preserve a failure', async (t) => {
+  const f = await fixture(t, () => ({ requirement_10: answer('fail') }));
+  f.task.expectedResult = Array.from({ length: 18 }, (_, i) => `Keep item ${i} present.`).join(' ');
+  const checks = await f.jev.review(f.task, evidence(), new AbortController().signal);
+  assert.equal(f.calls.length, 3);
+  assert.equal(Object.keys(f.calls[0].questions).filter((id) => id.startsWith('requirement_')).length, 8);
+  assert.deepEqual(Object.keys(f.calls[1].questions), Array.from({ length: 8 }, (_, i) => `requirement_${i + 8}`));
+  assert.deepEqual(Object.keys(f.calls[2].questions), ['requirement_16', 'requirement_17']);
+  assert.equal(checks.find((c) => c.name === 'Jev: requirement_10')?.status, 'failed');
+  assert.equal(checks.find((c) => c.name === 'Focused review coverage'), undefined);
+});
+
+test('unreviewed requirements past the cap remain explicitly unverified', async (t) => {
+  const f = await fixture(t, () => ({}));
+  f.task.expectedResult = Array.from({ length: 26 }, (_, i) => `Keep item ${i} present.`).join(' ');
+  const checks = await f.jev.review(f.task, evidence(), new AbortController().signal);
+  assert.equal(f.calls.length, 3);
+  assert.equal(checks.filter((c) => c.name.startsWith('Jev: requirement_')).length, 24);
+  assert.equal(checks.find((c) => c.name === 'Focused review coverage')?.status, 'unverified');
+});
+
+test('a failed later batch retains earlier checks and marks remaining work unverified', async (t) => {
+  const f = await fixture(t, (_body, count) => {
+    if (count === 2) throw new Error('synthetic batch outage');
+    return { requirement_1: answer('fail') };
+  });
+  f.task.expectedResult = Array.from({ length: 19 }, (_, i) => `Keep item ${i} present.`).join(' ');
+  const checks = await f.jev.review(f.task, evidence(), new AbortController().signal);
+  assert.equal(f.calls.length, 2);
+  assert.equal(checks.find((c) => c.name === 'Jev: requirement_1')?.status, 'failed');
+  assert.equal(checks.find((c) => c.name === 'Jev: requirement_18')?.status, 'unverified');
+  assert.equal(checks.find((c) => c.name === 'Focused review coverage')?.status, 'unverified');
+});
+
 test('supported passages and literal requirements pass without an unnecessary second request', async (t) => {
   const f = await fixture(t, () => ({}));
   const checks = await f.jev.review(

@@ -19,10 +19,15 @@ const store = new Store(join(out, 'private.sqlite'));
 store.put('settings', 'main', { ...store.settings(), dailyLimit: 0.01, monthlyLimit: 0.01,
   jevMode: 'assist', jevValidated: true, jevInputPrice: 0.042, maxRecovery: 0 });
 const jev = new Jev(store, new Secrets());
-const source = 'The fictional Cedar club meets on November 12. Nia coordinates invitations. The room has not been confirmed. No one has committed to another update.';
-const prompt = 'Write a two-sentence update for the fictional Cedar club using only the supplied facts. State the meeting date and that the room is unconfirmed. Do not invent facts or commitments.';
-const expectedResult = 'State November 12; say the room is unconfirmed; do not invent commitments';
-const cases = [
+const dependent = process.argv.includes('--dependent-only');
+const source = dependent ? 'The fictional Delta club meets on December 3. No follow-up update has been promised.' : 'The fictional Cedar club meets on November 12. Nia coordinates invitations. The room has not been confirmed. No one has committed to another update.';
+const prompt = dependent ? 'Write a one-sentence announcement of the fictional Delta club meeting using the supplied facts. Do not add a greeting; a signoff; or a promise of a future update.' : 'Write a two-sentence update for the fictional Cedar club using only the supplied facts. State the meeting date and that the room is unconfirmed. Do not invent facts or commitments.';
+const expectedResult = dependent ? 'State the Delta club meeting date. Do not add a greeting; a signoff; or a promise of a future update.' : 'State November 12; say the room is unconfirmed; do not invent commitments';
+const cases = dependent ? [
+  { id: 'dependent-supported', expected: 'passed', text: 'The Delta club meets on December 3.', missing: false },
+  { id: 'dependent-promise', expected: 'failed', text: 'The Delta club meets on December 3, and we will send another update tomorrow.', missing: false },
+  { id: 'dependent-greeting', expected: 'failed', text: 'Hello everyone, the Delta club meets on December 3.', missing: false },
+] : [
   { id: 'supported', expected: 'passed', text: 'The Cedar club meets on November 12. The room is not yet confirmed.' },
   { id: 'contradicted-date', expected: 'failed', text: 'The Cedar club meets on November 19. The room is not yet confirmed.' },
   { id: 'invented-commitment', expected: 'failed', text: 'The Cedar club meets on November 12. The room is unconfirmed, and Nia will send everyone an update tomorrow.' },

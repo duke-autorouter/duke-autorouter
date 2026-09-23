@@ -767,3 +767,38 @@ for (const [probabilities, expected] of [
     }
   });
 }
+
+for (const probabilities of [
+  { '0': 0.78, '1': 0, '2': 0.22 },
+  { '0': 0.1, '1': 0.7, '2': 0.2 },
+]) {
+  test(`complex tail ${JSON.stringify(probabilities)} preserves declared limits and includes undeclared economical profiles`, async () => {
+    const f = await fixture();
+    try {
+      f.add(
+        model('declared-standard', 'standard'),
+        model('economical', 'complex', { evaluated: false, maxDifficulty: undefined,
+          model: 'gpt-6-luna', catalog: { description: 'Small economical model', preferred: false, discoveredAt: new Date().toISOString() } }),
+        model('premium', 'complex', { model: 'gpt-6-astra' }),
+      );
+      f.answer((body) => {
+        if (body.questions.difficulty) return { ...assessment(0), difficulty: {
+          type: 'score', score: probabilities['1'] + 2 * probabilities['2'],
+          probabilities, confidence: 0.2,
+        } };
+        assert.equal(body.state.assessment.difficulty, 'complex');
+        assert.deepEqual(body.state.difficultyEvidence.probabilities, {
+          routine: probabilities['0'], standard: probabilities['1'], complex: probabilities['2'],
+        });
+        const entries = Object.entries(body.questions.model.criteria) as [string, any][];
+        assert.ok(!entries.some(([, value]) => value.model === 'declared-standard'));
+        const cheap = entries.find(([, value]) => value.model === 'gpt-6-luna');
+        assert.ok(cheap, 'An unevaluated economy profile is not a user-declared standard ceiling');
+        return { model: choice(entries.map(([key]) => key), cheap[0]) };
+      });
+      const task = await f.run();
+      assert.equal(task.route?.selectionSource, 'jev');
+      assert.deepEqual(f.runs, ['economical']);
+    } finally { await f.close(); }
+  });
+}

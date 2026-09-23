@@ -28,3 +28,22 @@ test('does not fabricate requirements from empty or unmatched punctuation', () =
   assert.deepEqual(reviewRequirementClauses('  ; ; first ; ; second ; '), ['first', 'second']);
   assert.deepEqual(reviewRequirementClauses('Example `a; b; then continue'), ['Example `a; b; then continue']);
 });
+
+test('preserves dependent negation and protected punctuation before sentence splitting', () => {
+  assert.deepEqual(
+    reviewRequirementClauses('Do not add comments; logging; or new dependencies. Include “ready; set”, ‘go. now’, and `x; y`. Dr. Lee approves the draft.'),
+    ['Do not add comments; logging; or new dependencies.', 'Include “ready; set”, ‘go. now’, and `x; y`.', 'Dr. Lee approves the draft.'],
+  );
+  assert.deepEqual(
+    reviewRequirementClauses('If approved, include (alpha; beta). Keep U.S. dates. Do not publish.'),
+    ['If approved, include (alpha; beta).', 'Keep U.S. dates.', 'Do not publish.'],
+  );
+  assert.deepEqual(
+    reviewRequirementClauses("Don't add comments; logging; or new dependencies. If this is a dry run, do not add comments; logging; or new dependencies. Use e.g. Lodash only if already installed."),
+    ["Don't add comments; logging; or new dependencies.", 'If this is a dry run, do not add comments; logging; or new dependencies.', 'Use e.g. Lodash only if already installed.'],
+  );
+  assert.deepEqual(
+    reviewRequirementClauses('Keep `first line;\nsecond line. still code`; then check "sentence. inside quote". Finish.'),
+    ['Keep `first line;\nsecond line. still code`', 'then check "sentence. inside quote".', 'Finish.'],
+  );
+});

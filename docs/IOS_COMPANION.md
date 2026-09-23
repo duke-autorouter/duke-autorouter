@@ -58,6 +58,13 @@ default and binds each new phone credential to that login. A future non-Tailscal
 private transport requires the explicit `DUKE_REMOTE_REQUIRE_TAILSCALE=0`
 override. No router port, public listener or hosted relay is required.
 
+The login header is trusted proxy metadata, not independently authenticated by
+the gateway. A local process that already has a valid paired device credential
+can spoof that header on the loopback listener. The 32-byte credential remains
+required; the header binding does not protect a stolen credential from another
+local account or process. Strengthening the proxy boundary remains a prerequisite
+for broader remote deployment.
+
 ## Not yet established
 
 - physical iPhone behavior;
