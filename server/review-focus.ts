@@ -1,6 +1,41 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v7';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v8';
+
+// Split rubric clauses only at top-level semicolons. Quoted examples, code,
+// and bracketed expressions keep their punctuation. The caller must retain
+// the complete request as context when judging each returned clause.
+export function reviewRequirementClauses(text: string): string[] {
+  const clauses: string[] = [];
+  let start = 0;
+  let quote = '';
+  const closers: string[] = [];
+  const pairs: Record<string, string> = { '(': ')', '[': ']', '{': '}' };
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (quote) {
+      if (char === '\\') i++;
+      else if (char === quote) quote = '';
+      continue;
+    }
+    if (char === "'" && /[\p{L}\p{N}]/u.test(text[i - 1] ?? '') && /[\p{L}\p{N}]/u.test(text[i + 1] ?? ''))
+      continue;
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+      continue;
+    }
+    if (pairs[char]) closers.push(pairs[char]);
+    else if (char === closers.at(-1)) closers.pop();
+    else if (char === ';' && !closers.length) {
+      const clause = text.slice(start, i).trim();
+      if (clause) clauses.push(clause);
+      start = i + 1;
+    }
+  }
+  const last = text.slice(start).trim();
+  if (last) clauses.push(last);
+  return clauses;
+}
 export type ReviewPassage = { id: string; path: string; text: string; facet?: 'ownership' };
 export type ReviewSource = { path: string; text: string; incomplete?: boolean };
 export type FocusedReview = {

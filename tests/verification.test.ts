@@ -1181,3 +1181,31 @@ test('one correction per unchanged task survives resume and keeps provider-defau
     assert.deepEqual(efforts, [undefined, undefined, undefined]);
   } finally { await f.close(); }
 });
+
+
+test('semicolon requirements get separate verdicts without waiving an unmet clause', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    f.verdict((body) => {
+      assert.ok(body.questions.requirement_0);
+      assert.ok(body.questions.requirement_1);
+      assert.match(body.questions.requirement_1.instructions, /full expectedResult/);
+      return { brief: 'pass', support: 'pass', completion: 'pass', requirement_1: 'fail' };
+    });
+    const task = await f.run({ expectedResult: 'Write an introduction; do not invent commitments', maxRecovery: 0 });
+    assert.equal(task.review?.checks.find(c => c.name === 'Jev: requirement_0')?.status, 'passed');
+    assert.equal(task.review?.checks.find(c => c.name === 'Jev: requirement_1')?.status, 'failed');
+    assert.equal(task.review?.status, 'failed');
+  } finally { await f.close(); }
+});
+
+test('semicolon requirement overflow remains unverified even when all inspected clauses pass', async () => {
+  const f = await fixture();
+  try {
+    f.add(model('worker'));
+    const task = await f.run({ expectedResult: Array.from({ length: 9 }, (_, i) => `Constraint ${i}`).join('; ') });
+    assert.equal(task.review?.status, 'unverified');
+    assert.equal(task.review?.checks.find(c => c.name === 'Focused review coverage')?.status, 'unverified');
+  } finally { await f.close(); }
+});

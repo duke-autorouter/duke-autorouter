@@ -1,15 +1,15 @@
 # Version 0.1 release record
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
-The current maintenance release is 0.1.9. This page separates current checks from
+The current maintenance release is 0.1.10. This page separates current checks from
 historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 238 automated tests, TypeScript, the production
+- The integrated source passes 248 automated tests, TypeScript, the production
   build. The existing evaluation corpus was not rerun against live models. GitHub also scans source history for
   secrets on each push.
-- The 0.1.9 package passes 12 standalone checks with isolated state and no
+- The 0.1.10 package passes 12 standalone checks with isolated state and no
   developer PATH. These cover bundled workers and browser startup, native
   document tools, project setup, imports, persistence and restart. They do not
   call provider models.
@@ -17,7 +17,7 @@ historical live coverage and the gaps that remain.
   two projects, existing settings, preferences and selected models by hash comparison.
   The native window loaded the saved work and passed visual inspection.
 - The packaged application files match the generated build output. The
-  [distribution receipt](evidence/distribution-0.1.9-verification.json) records the
+  [distribution receipt](evidence/distribution-0.1.10-verification.json) records the
   signing, notarization, checksums and final package audit.
 - [The evidence audit](SOURCE_FIDELITY_AUDIT.md) records repaired web revision
   markers and Word table structure. The [diagnostic protocol](FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)

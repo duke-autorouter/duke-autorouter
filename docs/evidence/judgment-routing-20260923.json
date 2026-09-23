@@ -1,0 +1,320 @@
+{
+  "scope": "Fresh invented Jev-only routing probes; no worker execution or suitability proof",
+  "results": [
+    {
+      "id": "route-copy",
+      "brief": "Rewrite these three labels in sentence case, retaining the order: ACCOUNT SETTINGS, TEAM MEMBERS, SAVE CHANGES. Return only the three revised labels.",
+      "decision": {
+        "assessment": {
+          "kind": "writing",
+          "difficulty": "routine",
+          "source": "jev",
+          "confidence": 1,
+          "score": 0,
+          "workType": "editing",
+          "workTypeSource": "jev",
+          "briefSize": "short"
+        },
+        "modelId": "codex:gpt-6-luna",
+        "effort": "low",
+        "confidence": 0.97
+      },
+      "observations": [
+        {
+          "kind": "jev_assessment",
+          "data": {
+            "assessment": {
+              "kind": "writing",
+              "difficulty": "routine",
+              "source": "jev",
+              "confidence": 1,
+              "score": 0,
+              "workType": "editing",
+              "workTypeSource": "jev",
+              "briefSize": "short"
+            },
+            "answers": {
+              "work_type": {
+                "type": "choice",
+                "choice": "editing",
+                "confidence": 0.81,
+                "probabilities": {
+                  "general": 0,
+                  "documents": 0,
+                  "writing": 0,
+                  "coding": 0,
+                  "debugging": 0,
+                  "repetitive": 0.16,
+                  "ui": 0,
+                  "research": 0,
+                  "editing": 0.84
+                }
+              },
+              "kind": {
+                "type": "choice",
+                "choice": "writing",
+                "confidence": 1,
+                "probabilities": {
+                  "research": 0,
+                  "writing": 1,
+                  "coding": 0,
+                  "documents": 0
+                }
+              },
+              "difficulty": {
+                "type": "score",
+                "score": 0,
+                "confidence": 1,
+                "legend": {
+                  "0": "Routine: a short, clearly specified transformation or isolated edit using a known method; little inference or coordination is needed.",
+                  "1": "Standard: several related reasoning or implementation steps with clear scope and verifiable outcomes; requires analysis, debugging, or synthesis.",
+                  "2": "Complex: interacting components, uncertain requirements, deep reasoning, difficult diagnosis, or substantial verification across a system; errors are difficult to detect."
+                },
+                "probabilities": {
+                  "0": 1,
+                  "1": 0,
+                  "2": 0
+                }
+              }
+            },
+            "model": "jev-1.13.0",
+            "mode": "assist",
+            "contextIncomplete": false,
+            "note": "Difficulty uses a conservative cumulative probability bound; task-type probability gates selection. Neither establishes observed task success."
+          }
+        },
+        {
+          "kind": "jev_selection",
+          "data": {
+            "assessment": {
+              "kind": "writing",
+              "difficulty": "routine",
+              "source": "jev",
+              "confidence": 1,
+              "score": 0,
+              "workType": "editing",
+              "workTypeSource": "jev",
+              "briefSize": "short"
+            },
+            "modelId": "codex:gpt-6-luna",
+            "effort": "low",
+            "candidateConfigurations": [
+              {
+                "modelId": "codex:gpt-6-astra",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-astra",
+                "effort": "medium"
+              },
+              {
+                "modelId": "codex:gpt-6-luna",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-luna",
+                "effort": "medium"
+              },
+              {
+                "modelId": "codex:gpt-6-sol",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-sol",
+                "effort": "medium"
+              }
+            ],
+            "confidence": 0.97,
+            "candidateIds": [
+              "codex:gpt-6-astra",
+              "codex:gpt-6-astra",
+              "codex:gpt-6-luna",
+              "codex:gpt-6-luna",
+              "codex:gpt-6-sol",
+              "codex:gpt-6-sol"
+            ],
+            "answer": {
+              "type": "choice",
+              "choice": "candidate_2",
+              "confidence": 0.97,
+              "probabilities": {
+                "candidate_0": 0,
+                "candidate_3": 0,
+                "candidate_2": 0.98,
+                "candidate_4": 0,
+                "candidate_1": 0,
+                "use_rules": 0.02,
+                "candidate_5": 0
+              }
+            },
+            "model": "jev-1.13.0",
+            "mode": "assist",
+            "forExecution": true
+          }
+        }
+      ],
+      "apiCostUSD": 0.000146,
+      "reconciledRequests": 0,
+      "unreconciledRequests": 0,
+      "reservedAPIUSD": 0
+    },
+    {
+      "id": "route-code",
+      "brief": "Implement a pure JavaScript function that groups an array of strings by their first character. Return a Map, skip empty strings, preserve input order within groups, and include tests for an empty array and repeated first characters.",
+      "decision": {
+        "assessment": {
+          "kind": "coding",
+          "difficulty": "standard",
+          "source": "jev",
+          "confidence": 1,
+          "score": 0.44,
+          "workType": "coding",
+          "workTypeSource": "jev",
+          "briefSize": "short"
+        },
+        "modelId": "codex:gpt-6-luna",
+        "effort": "low",
+        "confidence": 0.8
+      },
+      "observations": [
+        {
+          "kind": "jev_assessment",
+          "data": {
+            "assessment": {
+              "kind": "coding",
+              "difficulty": "standard",
+              "source": "jev",
+              "confidence": 1,
+              "score": 0.44,
+              "workType": "coding",
+              "workTypeSource": "jev",
+              "briefSize": "short"
+            },
+            "answers": {
+              "work_type": {
+                "type": "choice",
+                "choice": "coding",
+                "confidence": 1,
+                "probabilities": {
+                  "documents": 0,
+                  "coding": 1,
+                  "debugging": 0,
+                  "editing": 0,
+                  "research": 0,
+                  "repetitive": 0,
+                  "ui": 0,
+                  "writing": 0,
+                  "general": 0
+                }
+              },
+              "kind": {
+                "type": "choice",
+                "choice": "coding",
+                "confidence": 1,
+                "probabilities": {
+                  "documents": 0,
+                  "coding": 1,
+                  "writing": 0,
+                  "research": 0
+                }
+              },
+              "difficulty": {
+                "type": "score",
+                "score": 0.44,
+                "confidence": 0.34,
+                "legend": {
+                  "0": "Routine: a short, clearly specified transformation or isolated edit using a known method; little inference or coordination is needed.",
+                  "1": "Standard: several related reasoning or implementation steps with clear scope and verifiable outcomes; requires analysis, debugging, or synthesis.",
+                  "2": "Complex: interacting components, uncertain requirements, deep reasoning, difficult diagnosis, or substantial verification across a system; errors are difficult to detect."
+                },
+                "probabilities": {
+                  "0": 0.56,
+                  "1": 0.44,
+                  "2": 0
+                }
+              }
+            },
+            "model": "jev-1.13.0",
+            "mode": "assist",
+            "contextIncomplete": false,
+            "note": "Difficulty uses a conservative cumulative probability bound; task-type probability gates selection. Neither establishes observed task success."
+          }
+        },
+        {
+          "kind": "jev_selection",
+          "data": {
+            "assessment": {
+              "kind": "coding",
+              "difficulty": "standard",
+              "source": "jev",
+              "confidence": 1,
+              "score": 0.44,
+              "workType": "coding",
+              "workTypeSource": "jev",
+              "briefSize": "short"
+            },
+            "modelId": "codex:gpt-6-luna",
+            "effort": "low",
+            "candidateConfigurations": [
+              {
+                "modelId": "codex:gpt-6-astra",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-astra",
+                "effort": "medium"
+              },
+              {
+                "modelId": "codex:gpt-6-luna",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-luna",
+                "effort": "medium"
+              },
+              {
+                "modelId": "codex:gpt-6-sol",
+                "effort": "low"
+              },
+              {
+                "modelId": "codex:gpt-6-sol",
+                "effort": "medium"
+              }
+            ],
+            "confidence": 0.8,
+            "candidateIds": [
+              "codex:gpt-6-astra",
+              "codex:gpt-6-astra",
+              "codex:gpt-6-luna",
+              "codex:gpt-6-luna",
+              "codex:gpt-6-sol",
+              "codex:gpt-6-sol"
+            ],
+            "answer": {
+              "type": "choice",
+              "choice": "candidate_2",
+              "confidence": 0.8,
+              "probabilities": {
+                "candidate_0": 0.01,
+                "candidate_3": 0.01,
+                "candidate_1": 0,
+                "candidate_4": 0.12,
+                "candidate_2": 0.84,
+                "use_rules": 0.01,
+                "candidate_5": 0.01
+              }
+            },
+            "model": "jev-1.13.0",
+            "mode": "assist",
+            "forExecution": true
+          }
+        }
+      ],
+      "apiCostUSD": 0.000146,
+      "reconciledRequests": 0,
+      "unreconciledRequests": 0,
+      "reservedAPIUSD": 0
+    }
+  ],
+  "sourceCommit": "3bb9441"
+}
