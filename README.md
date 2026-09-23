@@ -203,6 +203,8 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 
 ## Verification and development
 
+The [September 23 two-task check](docs/GPT6_COMPARISON_20260923.md) compares automatic routing with fixed GPT-6 Astra and Luna. It records model-priced costs alongside independent output acceptance, a successful same-effort correction, and remaining review uncertainty.
+
 The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
 
 
