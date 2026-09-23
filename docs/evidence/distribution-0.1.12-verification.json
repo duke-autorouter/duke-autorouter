@@ -2,7 +2,7 @@
   "release": "0.1.12",
   "verifiedAt": "2026-09-23",
   "platform": "darwin-arm64",
-  "packageSourceCommit": "4de7578",
+  "packageSourceCommit": "ab639d7f95eeb7fa1f0233545d51071471f890ea",
   "sourceTests": {
     "passed": 261,
     "failed": 0,
@@ -27,7 +27,7 @@
     ]
   },
   "notarization": {
-    "submissionId": "f8a2c286-b60d-4b1d-88b6-70b191fc6bd1",
+    "submissionId": "f67034ce-29a3-4e6f-a972-5853dbb9606c",
     "status": "Accepted and stapled"
   },
   "preservedRuntime": {
@@ -62,11 +62,11 @@
   "assets": [
     {
       "path": "DUKE-Autorouter-0.1.12-mac-arm64.dmg",
-      "sha256": "dbeb3244d1a6416b40947a91823531f4e6962952b971c057c0575d5634e8b951"
+      "sha256": "d7ba38c4c5a418e242da157019104a762337dceb6a078dacc9c5a0257720f86e"
     },
     {
       "path": "DUKE-Autorouter-0.1.12-mac-arm64.zip",
-      "sha256": "cf078d10315f1a079446b073a8c3c61514a1bb216ecaf9d4ffebfa71c492949a"
+      "sha256": "e3c091d01de62a1851c98904ad2bc6afd4ca08eea5ba902ee3a1595e5a68354d"
     }
   ],
   "limits": [
