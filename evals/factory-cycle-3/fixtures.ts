@@ -8,8 +8,8 @@ export const cases = [
       "verify.mjs": `import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { countTags } from './solution.mjs';
-test('counts without changing input', () => { const tags=['blue','red','blue','Blue']; const before=[...tags]; const result=countTags(tags); assert.deepEqual({...result},{blue:2,red:1,Blue:1}); assert.deepEqual(tags,before); });
-test('empty and special keys', () => { assert.deepEqual({...countTags([])},{}); const result=countTags(['__proto__','constructor','__proto__']); assert.equal(Object.hasOwn(result,'__proto__'),true); assert.equal(result.__proto__,2); assert.equal(result.constructor,1); });
+test('counts without changing input', () => { const tags=['blue','red','blue','Blue']; const before=[...tags]; const result=countTags(tags); assert.equal(Object.getPrototypeOf(result),Object.prototype); assert.notEqual(result,tags); assert.deepEqual({...result},{blue:2,red:1,Blue:1}); assert.deepEqual(tags,before); });
+test('empty and special keys', () => { const empty=countTags([]); assert.equal(Object.getPrototypeOf(empty),Object.prototype); assert.deepEqual(empty,{}); const result=countTags(['__proto__','constructor','__proto__']); assert.equal(Object.hasOwn(result,'__proto__'),true); assert.equal(result.__proto__,2); assert.equal(result.constructor,1); });
 test('rejects nonstrings', () => { for (const value of [null,5,{},false]) assert.throws(()=>countTags(['ok',value]),TypeError); });
 `,
     },

@@ -10,7 +10,7 @@ The coding case has a fixed `node --test verify.mjs` verifier supplied before th
 
 Every receipt includes corpus and case hashes, fixture hashes before/after, route/effort, attempts/events, DUKE review, usage, spending, and terminal status. Compare source commit and hashes before interpreting results. Count natural recovery only from actual recovery events. If no recovery occurs, report none observed; do not claim the recovery mechanism was validated. Account usage movement is not attributable task cost. Keep unresolved reservations and missing usage unknown. This tiny cohort supports diagnosis, not general model quality claims or threshold tuning.
 
-Predeclared SHA-256 of `JSON.stringify(cases)`: `4c37cbfc95c1677735795ce07d06db0cfbf9828e484c470494f0ef6741f74d42`. Individual case hashes are `4caa5bc2891d99bb615c6c00aced0c25b1121572aced4dfeb3d2c1586325408e` (coding) and `873fe8d44c8da54e24109c4a25536dd734ba8ee14bf5db948bb9ae647cef2827` (status). The receipt also records SHA-256 for every input file; all must match the frozen fixture bytes afterward.
+Predeclared SHA-256 of `JSON.stringify(cases)`: `9776d9ec9c7fc33b46ce586f6c2892d1f022f060fc00bea54891ae10215c044d`. Individual case hashes are `444641741495760676917a2af142e1f0b1402954057794682d586e48b21698ae` (coding) and `873fe8d44c8da54e24109c4a25536dd734ba8ee14bf5db948bb9ae647cef2827` (status). The receipt also records SHA-256 for every input file; all must match the frozen fixture bytes afterward.
 
 ## Gated run template
 
