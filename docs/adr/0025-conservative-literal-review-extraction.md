@@ -17,4 +17,4 @@ Advance review policy v10 to v11 and focused-review policy v9 to v10 so earlier 
 
 ## Evidence and limits
 
-Local regression tests cover the observed formats and fresh names, multiline numbering, version numbers, code/quotes, negation, multiple owners, unknown owners, and cross-item ambiguity. The frozen factory comparison remains pre-fix evidence and is not rerun selectively. Correct literal extraction does not establish improved live judgment accuracy; that needs fresh validation. Native preview reliability is a separate open issue.
+Local regression tests cover the observed formats and fresh names, multiline numbering, version numbers, code/quotes, negation, multiple owners, unknown owners, and cross-item ambiguity. The frozen factory comparison remains pre-fix evidence and is not rerun selectively. Correct literal extraction does not establish broad live judgment accuracy. The [fresh cycle 2 diagnostics](../FACTORY_CYCLE_2_20260923.md) preserve synthetic-evidence uncertainty alongside six matching real-file verifier controls. The earlier first-page crop finding was withdrawn after reinspection; complete pagination remains outside thumbnail coverage.

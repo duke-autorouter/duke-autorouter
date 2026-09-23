@@ -16,6 +16,8 @@ The [first fresh factory cycle](FACTORY_CYCLE_1_20260923.md) ran twelve tasks wi
 
 The [second factory cycle](FACTORY_CYCLE_2_20260923.md) validates numbered-field and ownership checks on fresh inputs. In nine synthetic-evidence probes, three correct outputs stayed unverified solely on completion. A separate six-case check through the real file verifier matched all six expected outcomes: both correct files passed and all four negative controls failed. This did not reproduce the synthetic completion uncertainty; it is not broad calibration or generation-success evidence. The earlier cropped-preview finding is withdrawn: saved first-page images contain the expected content and an original Astra PNG is byte-identical to a new render. No renderer or threshold change was made. Full-document pagination remains outside thumbnail coverage.
 
+The [third factory cycle](FACTORY_CYCLE_3_20260923.md) ran two fresh worker tasks. Jev selected Sol Low for code and Luna Low for a status file. The code met its brief; the status file preserved facts but missed the requested word range. Both reviews remained unverified, with no recovery attempt. This identifies deterministic length checking as the next narrow improvement; no threshold or runtime changes were made. The PR19 parser correction is ready for maintenance packaging, but is still absent from the installed/public 0.1.11 app.
+
 ## Historical development results
 
 ## Same-effort correction

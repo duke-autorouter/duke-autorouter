@@ -16,8 +16,10 @@ import { recordCatalog } from "../../server/model-profiles.js";
 import { summarizeSpending } from "../../server/spending.js";
 import { cases as originalCases } from "../../evals/gpt6/fixtures.js";
 import { cases as factoryCases } from "../../evals/factory-cycle-1/fixtures.js";
+import { cases as cycle3Cases } from "../../evals/factory-cycle-3/fixtures.js";
 import { check as originalCheck, sha } from "../../evals/gpt6/check.js";
 import { check as factoryCheck } from "../../evals/factory-cycle-1/check.js";
+import { check as cycle3Check } from "../../evals/factory-cycle-3/check.js";
 import type { Model } from "../../server/types.js";
 const argv = process.argv.slice(2);
 const has = (key: string) => argv.includes(key);
@@ -33,11 +35,13 @@ if (!has("--run")) {
   process.exit(0);
 }
 const factory = has("--factory-cycle-1");
-const cases = factory ? factoryCases : originalCases;
-const check = factory ? factoryCheck : originalCheck;
+const cycle3 = has("--factory-cycle-3");
+if (factory && cycle3) throw Error("Select one factory cohort");
+const cases = cycle3 ? cycle3Cases : factory ? factoryCases : originalCases;
+const check = cycle3 ? cycle3Check : factory ? factoryCheck : originalCheck;
 const mode = arg("--mode");
-if (factory && mode === "probe") throw Error("No injected failures in factory comparison");
-if (factory && execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim())
+if ((factory || cycle3) && mode === "probe") throw Error("No injected failures in factory comparison");
+if ((factory || cycle3) && execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim())
   throw Error("Freeze the factory fixtures and harness in a clean commit before live execution");
 if (!["jev", "astra-medium", "luna-low", "probe"].includes(mode))
   throw Error("Invalid mode");
@@ -58,7 +62,7 @@ const disposableAuth = join(stateDir, "codex", "auth.json");
 const receipt: any = {
   schemaVersion: 1,
   mode,
-  cohort: factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
+  cohort: cycle3 ? "factory-cycle-3-development" : factory ? "factory-cycle-1-development" : mode === "probe" ? "controlled-recovery" : "natural-efficiency",
   startedAt: new Date().toISOString(),
   fixtureHash: sha(JSON.stringify(cases)),
   sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
