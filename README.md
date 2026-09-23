@@ -23,6 +23,8 @@ macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com
 This repository contains the source, tests, design decisions, and verification
 records.
 
+[Subsequent live checks](docs/MODEL_VALIDATION_20260923.md) completed a small fictional task successfully on GPT-6 Luna, GPT-6 Sol and Opus 5.5 at Low effort. These integration checks do not establish broad quality or comparative savings.
+
 Version 0.1.9 updates model discovery for GPT-6 Sol, GPT-6 Luna and Opus 5.5. Refresh models in Connections & setup, then choose which to include. Existing choices stay selected; new models start with separate, unevaluated profiles. See the [model refresh record](docs/MODEL_REFRESH_20260923.md).
 
 Version 0.1.8 separates a targeted correction at unchanged effort from a higher-effort retry. Both use the existing recovery allowance. Jev must approve the correction using available facts and tools; missing essential context and uncertain judgments still pause. See the [correction validation](docs/CORRECTION_VALIDATION_20260921.md) for the successful checks, blocked attempts and detection limits.
