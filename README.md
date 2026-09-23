@@ -19,7 +19,7 @@ and work not yet included in the downloadable release.
 ## Version 0.1
 
 The current prerelease is **0.1.8 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg).
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.9/DUKE-Autorouter-0.1.9-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
 
@@ -132,9 +132,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.8 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.8/DUKE-Autorouter-0.1.8-mac-arm64.dmg)**
+**[Download DUKE 0.1.8 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.9/DUKE-Autorouter-0.1.9-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.8)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.9)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 

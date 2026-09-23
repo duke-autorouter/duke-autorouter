@@ -109,3 +109,25 @@ test('feedback is one rating per task, informs future routing, and leaves measur
     await rm(root, { recursive: true, force: true });
   }
 });
+
+
+test('Claude resolved model choices have independent evidence and retain selected effort metadata', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'duke-resolved-model-'));
+  const worker: Worker = { run: async () => 'fixture' };
+  const r = await createApp({ stateDir: root, serveUI: false, workers: { codex: worker, claude: worker, openrouter: worker } });
+  try {
+    const old = recordCatalog(r.store, 'claude', [{ value: 'opus', displayName: 'Opus', description: 'Opus 5' }])[0];
+    r.store.put('model', old.id, { ...old, enabled: true, evaluated: true, evidence: 'old model evidence' });
+    const raw = { value: 'opus', resolvedModel: 'claude-opus-5-5', displayName: 'Opus', description: 'Opus 5.5 · Complex tasks', supportsEffort: true, supportedEffortLevels: ['low', 'medium', 'high', 'xhigh', 'max'] };
+    const rows = recordCatalog(r.store, 'claude', [raw, { ...raw, value: 'default' }]);
+    const pinned = rows.filter(m => m.id === 'claude:claude-opus-5-5');
+    assert.equal(pinned.length, 1);
+    assert.equal(pinned[0].label, 'Opus 5.5');
+    assert.equal(pinned[0].enabled, false);
+    assert.equal(pinned[0].evaluated, false);
+    assert.equal(pinned[0].evidence, '');
+    assert.deepEqual(pinned[0].supportedEfforts, raw.supportedEffortLevels);
+    r.store.put('model', pinned[0].id, { ...pinned[0], enabled: true });
+    assert.equal(recordCatalog(r.store, 'claude', [raw]).find(m => m.id === pinned[0].id)?.enabled, true);
+  } finally { await r.app.close(); await rm(root, { recursive: true, force: true }); }
+});

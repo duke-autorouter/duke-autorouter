@@ -92,7 +92,7 @@ export class ClaudeWorker implements Worker {
         connection,
         models,
         quota: { state: 'unknown' },
-        version: 'SDK 0.3.275',
+        version: 'SDK 0.3.280',
       };
     } catch (e) {
       signal?.throwIfAborted();
