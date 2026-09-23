@@ -1,6 +1,6 @@
 # Verification
 
-Current 0.1.9 checks: 237 automated tests and 12 standalone checks passed. See the [model refresh](MODEL_REFRESH_20260923.md) and [distribution receipt](evidence/distribution-0.1.9-verification.json). No new inference task was submitted for this update. The dated results below retain their original scope.
+Current 0.1.10 checks: 248 automated tests and 12 standalone checks before and after Developer ID signing passed. Six fresh Jev-only probes exercised routing and review boundaries, with no worker execution. See the [judgment record](JUDGMENT_VALIDATION_20260923.md) and [distribution receipt](evidence/distribution-0.1.10-verification.json). The dated results below retain their original scope.
 
 ## Historical 0.1.2 verification
 

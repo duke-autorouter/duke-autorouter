@@ -45,16 +45,17 @@ Routing includes up to 6,000 prompt characters, 1,000 expected-result characters
 selected attachment excerpts (2,000 each / 8,000 total), root-level project
 structure counts, and checkpoint progress. An attachment alone no longer forces
 complexity. Truncation and unsupported binary input retain a conservative
-difficulty estimate. An uncertain or unavailable assessment uses the configured
-fallback; an unknown difficulty is recorded without promoting the worker. A quality retry preserves the task assessment and advances one supported effort
+difficulty estimate. An uncertain task type or unavailable assessment uses the configured
+fallback; difficulty uncertainty alone does not bypass Jev selection. A quality retry preserves the task assessment and advances one supported effort
 step on the same model after a probability-gated diagnosis. It does not raise the
 difficulty floor or switch models. See [the recovery decision](adr/0017-bounded-same-model-recovery.md).
 
-Assessment uses a `0.8` distribution-confidence threshold. Review instead requires
-at least `0.8` probability on its selected pass or fail answer. These are different
-measures: a live review returned pass probability `0.80` with confidence `0.70`.
-The former review policy rejected that answer by testing confidence. The
-[scoring investigation](REVIEW_SCORING.md) records the correction and checks.
+Task-type assessment requires at least `0.8` probability on the selected type.
+Difficulty uses a conservative cumulative `0.8` bound over routine, standard and
+complex, accounting for displayed probability rounding. A split between adjacent
+levels can therefore continue to model selection at the more demanding level.
+Missing context still forces complex. Review requires at least `0.8` probability
+on the selected pass or fail answer. See [ADR 0023](adr/0023-ordinal-difficulty-and-review-clauses.md).
 Neither measure establishes an 80% real-world success rate for DUKE. Model choice has no separate
 confidence floor: a close choice among already-qualified models does not justify
 a more powerful fallback. DUKE records the confidence and follows a valid choice.

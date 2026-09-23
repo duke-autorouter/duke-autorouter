@@ -1,0 +1,77 @@
+{
+  "release": "0.1.10",
+  "verifiedAt": "2026-09-23",
+  "platform": "darwin-arm64",
+  "packageSourceCommit": "813628d9534609492b90438277d28db26a1a940d",
+  "sourceTests": {
+    "passed": 248,
+    "failed": 0,
+    "skipped": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "dependencyAudit": "zero shipping vulnerabilities",
+  "standaloneChecks": {
+    "adHoc": 12,
+    "developerID": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 945,
+    "mismatches": [],
+    "scope": [
+      "compiled server",
+      "compiled shared",
+      "dist",
+      "skills"
+    ]
+  },
+  "notarization": {
+    "submissionId": "81a8a55a-afef-48c2-bed0-425dd4d56246",
+    "status": "Accepted and stapled"
+  },
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "387a5c5dcdbb815085edf0baf79591f9d8894efe922bceaf3d75b1b08055229d",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG and Applications shortcut"
+  ],
+  "secrets": {
+    "repository": "Pinned scanner passed full history and tracked files",
+    "packagePEMScan": {
+      "files": 14910,
+      "completePrivateKeyPEMMatches": [],
+      "limits": "Complete PEM blocks only; not exhaustive credential detection"
+    }
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.9",
+    "toVersion": "0.1.10",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskWorkspaceSettingsHashesPreserved": true,
+    "nativeWindowChecked": true
+  },
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.10-mac-arm64.dmg",
+      "sha256": "d8cb67e65232b78a1b2c91229b27bd8cd6f93607ae7750843d7f65efb7a85350"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.10-mac-arm64.zip",
+      "sha256": "1c0364aeb9c2e1d09f30cc8d58bb9af31c564b9d519b4e564fe72e2f63dacd95"
+    }
+  ],
+  "limits": [
+    "One Mac only; second-Mac install unverified",
+    "Six Jev-only development probes are not general quality or efficiency proof",
+    "No new worker inference for this maintenance release",
+    "Physical iPhone validation and iOS distribution remain separate"
+  ]
+}
