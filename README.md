@@ -18,14 +18,14 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.10 for Apple Silicon Macs running
-macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.10/DUKE-Autorouter-0.1.10-mac-arm64.dmg).
+The current prerelease is **0.1.11 for Apple Silicon Macs running
+macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.11/DUKE-Autorouter-0.1.11-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
 
 [Subsequent live checks](docs/MODEL_VALIDATION_20260923.md) completed a small fictional task successfully on GPT-6 Luna, GPT-6 Sol and Opus 5.5 at Low effort. These integration checks do not establish broad quality or comparative savings.
 
-Version 0.1.10 keeps Jev selecting models when difficulty falls between neighboring levels and separates semicolon-delimited review requirements. [Fresh development checks](docs/JUDGMENT_VALIDATION_20260923.md) retain the results and limits.
+Version 0.1.11 protects quoted text and dependent instructions during review, checks requirements in bounded batches, and gives Jev the full difficulty distribution when comparing eligible models. [The maintenance record](docs/OPUS_FOLLOWUP_20260923.md) includes the checks and remaining limits.
 
 Version 0.1.9 updated model discovery for GPT-6 Sol, GPT-6 Luna and Opus 5.5. Refresh models in Connections & setup, then choose which to include. Existing choices stay selected; new models start with separate, unevaluated profiles. See the [model refresh record](docs/MODEL_REFRESH_20260923.md).
 
@@ -138,9 +138,9 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.10 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.10/DUKE-Autorouter-0.1.10-mac-arm64.dmg)**
+**[Download DUKE 0.1.11 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.11/DUKE-Autorouter-0.1.11-mac-arm64.dmg)**
 
-The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.10)
+The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.11)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
 The app is Developer ID-signed and Apple-notarized.
 
@@ -210,7 +210,7 @@ The [September 23 two-task check](docs/GPT6_COMPARISON_20260923.md) compares aut
 The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
 
 
-The current source passes 248 automated tests. The 0.1.10 package passes 12
+The current source passes 255 automated tests. The 0.1.11 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical
