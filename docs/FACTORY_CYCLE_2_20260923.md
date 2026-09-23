@@ -22,7 +22,26 @@ The first two prompts could be read as requesting a broader handoff than the one
 
 Across both cohorts, six of nine overall outcomes matched their declared expectation, with three correct outputs still unverified rather than failed. This is a diagnostic count, not a population accuracy rate. All three incorrect-owner/assignment cases failed, both numbered-field cases behaved as expected, and missing evidence stayed neutral. There were no generation workers, automatic repairs, efficiency comparisons, or threshold adjustments. These fixtures simulate inspected evidence; they do not establish end-to-end task completion.
 
-Actual Jev spending was **$0.003171**: $0.002923 for the first seven and $0.000248 for the scope pair. Every request settled; this uses the existing shared $1 authorization. [Initial receipt](evidence/factory-cycle-2-20260923/initial-review.json), [scope controls](evidence/factory-cycle-2-20260923/scope-controls.json), and [frozen protocol](../evals/factory-cycle-2/README.md).
+Actual Jev spending for these two cohorts was **$0.003171**: $0.002923 for the first seven and $0.000248 for the scope pair. Every request settled; this uses the existing shared $1 authorization. [Initial receipt](evidence/factory-cycle-2-20260923/initial-review.json), [scope controls](evidence/factory-cycle-2-20260923/scope-controls.json), and [frozen protocol](../evals/factory-cycle-2/README.md).
+
+## Real file-verifier controls
+
+A final six-case diagnostic was frozen at `e0f79b5` before calls. It used actual saved text files, a real `read_file` source receipt, and DUKE's `verifyTask` inspection. Files were fixture-authored; no generation or recovery worker ran.
+
+| File/control | Expected | Observed |
+| --- | --- | --- |
+| Correct owner and status; short final response | Passed | Passed |
+| Same correct file; descriptive final response | Passed | Passed |
+| Missing file | Failed | Failed before Jev |
+| Placeholder content | Failed | Failed |
+| Wrong owner | Failed | Failed |
+| Missing required status | Failed | Failed |
+
+All six matched their predeclared overall outcomes. Both correct files passed completion at P(pass) 0.99. Negative controls remained rejected without changing the 0.8 threshold. The missing-status case also left its correct-owner requirement uncertain while its dedicated ownership check passed; individual judgments are not perfectly isolated from other defects. The [full receipt](evidence/factory-cycle-2-20260923/real-verifier.json) preserves every check, including uncertainty.
+
+The completion uncertainty from the synthetic-evidence cohorts did not reproduce through the actual file verifier in this sample. This supports retaining the gate and using real verifier evidence in future evaluations. It does not isolate the cause: evidence shape, new facts and wording changed between cohorts, and these are single observations rather than a repeated controlled calibration study. The earlier three uncertain outputs remain recorded.
+
+This cohort cost **$0.000691**, making cycle 2's total actual Jev spending **$0.003862**, with no unresolved requests. Weekly account usage moved from 40% to 41% used during the cycle; that account-wide movement cannot be attributed solely to this work.
 
 ## Preview finding withdrawn
 
@@ -34,6 +53,6 @@ This clears the asserted first-page crop defect. Quick Look thumbnails still do 
 
 ## What remains
 
-The overall completion gate can remain uncertain even when specific content checks pass. The next useful study should vary verified deliverable evidence and completion wording on a predeclared, balanced set containing real omissions and placeholders as well as concise correct work. It should distinguish a broad-judge calibration problem from incomplete synthetic evidence. Removing that gate or lowering its threshold because these examples stayed unverified would not establish a reliable fix.
+The next worker evaluation should pass artifacts through the real verifier and include fresh negative controls. Broader completion calibration and recovery success remain open; this small file-verifier sample does not settle those questions. There is no evidence here supporting a renderer patch or a lower review threshold.
 
 The source correction from PR19 remains unreleased. Installed and downloadable DUKE stay at 0.1.11. The scheduled factory pilot remains paused; this cycle adds validation and corrects the record, without expanding remote access or publishing a release.
