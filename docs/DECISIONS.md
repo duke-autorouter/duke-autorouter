@@ -8,6 +8,7 @@ decision was documented when first made.
 
 | Decision | Status | Reason and consequence |
 | --- | --- | --- |
+| [Defer requirement coverage metadata](adr/0022-defer-requirement-coverage-metadata.md) | Deferred; PR13 closed without runtime changes | Advisory mappings add lifecycle complexity without securing verifier dependencies or certifying requirements. Preserve the design and revisit criteria. |
 | [Own the task and use a shared tool layer](adr/0001-shared-task-harness.md) | Implemented; installed checks passed | Consistent permissions, recovery and receipts across workers. DUKE must also supply the tools and workflow quality its users expect. |
 | [Route over a chosen roster, model and effort](adr/0002-efficient-routing.md) | Implemented | Bound the choice to the user's models and use only the model capability and effort the task needs. A fallback is economical and explicit. |
 | [Keep verification evidence separate from model confidence](adr/0003-verification-and-learning.md) | Implemented; repaired coverage checked | A confident answer, valid file or successful command cannot establish every aspect of task quality. Unknowns remain visible and do not count as success evidence. |
