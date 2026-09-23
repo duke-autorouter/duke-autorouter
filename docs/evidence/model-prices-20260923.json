@@ -1,0 +1,31 @@
+{
+  "asOf": "2026-09-23",
+  "unit": "USD per million tokens",
+  "rates": {
+    "codex:gpt-6-luna": {
+      "input": 0.1,
+      "cachedInput": 0.01,
+      "cacheWrite": 0.125,
+      "output": 0.5
+    },
+    "codex:gpt-6-sol": {
+      "input": 2,
+      "cachedInput": 0.2,
+      "cacheWrite": 2.5,
+      "output": 10
+    },
+    "codex:gpt-6-astra": {
+      "input": 10,
+      "cachedInput": 1,
+      "cacheWrite": 12.5,
+      "output": 50
+    }
+  },
+  "sources": [
+    "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    "https://developers.openai.com/api/docs/models/gpt-6-sol",
+    "https://developers.openai.com/api/docs/models/gpt-6-astra"
+  ],
+  "basis": "Standard API equivalents for subscription worker tokens; not subscription charges or measured allowance savings",
+  "longContextRule": "Above 272K input tokens per request, 2x input/cache and 1.5x output. Do not apply based on aggregate multi-request totals."
+}
