@@ -47,3 +47,12 @@ test('preserves dependent negation and protected punctuation before sentence spl
     ['Keep `first line;\nsecond line. still code`', 'then check "sentence. inside quote".', 'Finish.'],
   );
 });
+
+
+test('smart apostrophes and alternate prohibitions retain shared list scope', () => {
+  for (const text of [
+    'Don’t add comments; logging; or new dependencies.',
+    'You must not add comments; logging; or new dependencies.',
+    'Never add comments; logging; or new dependencies.',
+  ]) assert.deepEqual(reviewRequirementClauses(text), [text]);
+});

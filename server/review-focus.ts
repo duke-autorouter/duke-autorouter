@@ -37,7 +37,7 @@ export function reviewRequirementClauses(text: string): string[] {
       const rest = text.slice(i + 1);
       if (char === ';') {
         // Bare noun fragments after a shared prohibition retain that scope.
-        const dependent = /\b(?:do\s+not|don't)\b/i.test(current) &&
+        const dependent = /\b(?:do\s+not|don['’]t|must\s+not|never|without)\b/i.test(current) &&
           /^\s*(?:[a-z][\w-]*(?:\s+(?:[a-z][\w-]*|or|and))*\s*(?:;|\.|$))/i.test(rest) &&
           !/^\s*(?:and\s+)?(?:do|must|should|keep|ensure|include|provide|write|create)\b/i.test(rest);
         if (!dependent) add(i);
