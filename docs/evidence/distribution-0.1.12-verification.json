@@ -1,0 +1,79 @@
+{
+  "release": "0.1.12",
+  "verifiedAt": "2026-09-23",
+  "platform": "darwin-arm64",
+  "packageSourceCommit": "4de7578",
+  "sourceTests": {
+    "passed": 261,
+    "failed": 0,
+    "skipped": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "dependencyAudit": "zero shipping vulnerabilities",
+  "standaloneChecks": {
+    "adHoc": 12,
+    "developerID": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 946,
+    "mismatches": [],
+    "scope": [
+      "compiled server",
+      "compiled shared",
+      "dist",
+      "skills"
+    ]
+  },
+  "notarization": {
+    "submissionId": "f8a2c286-b60d-4b1d-88b6-70b191fc6bd1",
+    "status": "Accepted and stapled"
+  },
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "387a5c5dcdbb815085edf0baf79591f9d8894efe922bceaf3d75b1b08055229d",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG and Applications shortcut"
+  ],
+  "secrets": {
+    "repository": "Pinned scanner passed committed history and tracked files",
+    "packagePEMScan": {
+      "files": 19776,
+      "completePrivateKeyPEMMatches": [],
+      "limits": "Complete newline-delimited base64 PEM blocks only; not exhaustive credential detection",
+      "note": "Initial loose marker-only check also matched Node binary markers and npm documentation placeholders; no valid PEM body matched those."
+    }
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.11",
+    "toVersion": "0.1.12",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskWorkspaceSettingsModelsHashesPreserved": true,
+    "nativeWindowChecked": true
+  },
+  "assets": [
+    {
+      "path": "DUKE-Autorouter-0.1.12-mac-arm64.dmg",
+      "sha256": "dbeb3244d1a6416b40947a91823531f4e6962952b971c057c0575d5634e8b951"
+    },
+    {
+      "path": "DUKE-Autorouter-0.1.12-mac-arm64.zip",
+      "sha256": "cf078d10315f1a079446b073a8c3c61514a1bb216ecaf9d4ffebfa71c492949a"
+    }
+  ],
+  "limits": [
+    "One Mac only; second-Mac install unverified",
+    "Controlled recovery detected failure and invoked Luna Low, but repair exceeded maximum and task blocked",
+    "Word count supports narrow explicit single-text-output cases; follow-ups and ambiguous requirements are not deterministic checks",
+    "Semantic review and threshold calibration remain imperfect",
+    "No physical iPhone or broader proxy-origin validation"
+  ]
+}
