@@ -1,0 +1,74 @@
+{
+  "release": "0.1.9",
+  "verifiedAt": "2026-09-23",
+  "platform": "darwin-arm64",
+  "packageSourceCommit": "52d55652294ca751b076954cb35862047f08e475",
+  "sourceTests": {
+    "passed": 237,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "dependencyAudit": "zero vulnerabilities",
+  "standaloneChecks": {
+    "adHoc": 12,
+    "developerID": 12,
+    "usesInference": false
+  },
+  "packageSourceMatch": {
+    "matchedFiles": 945,
+    "mismatches": [],
+    "scope": [
+      "compiled server",
+      "compiled shared",
+      "dist",
+      "skills"
+    ],
+    "sourceCommit": "52d55652294ca751b076954cb35862047f08e475"
+  },
+  "notarization": {
+    "submissionId": "eba1ddc9-474b-44ae-b008-b485d49ebd29",
+    "status": "Accepted and stapled"
+  },
+  "preservedRuntime": {
+    "path": "Contents/Resources/app/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+    "sha256": "387a5c5dcdbb815085edf0baf79591f9d8894efe922bceaf3d75b1b08055229d",
+    "publisher": "Anthropic PBC",
+    "signaturePreserved": true
+  },
+  "distributionChecks": [
+    "Developer ID signature",
+    "Gatekeeper",
+    "stapled ticket",
+    "mounted DMG and Applications shortcut"
+  ],
+  "secrets": {
+    "repository": "Pinned scanner passed full history and tracked files",
+    "packagePEMScan": {
+      "files": 19754,
+      "completePrivateKeyPEMMatches": [],
+      "limits": "Complete PEM pattern scan only; library header strings excluded; not exhaustive credential detection"
+    }
+  },
+  "installedUpgrade": {
+    "fromVersion": "0.1.8",
+    "toVersion": "0.1.9",
+    "savedTasks": 14,
+    "projects": 2,
+    "taskWorkspaceSettingsHashesPreserved": true,
+    "nativeWindowChecked": true,
+    "enabledChoices": [
+      "codex:gpt-6-sol",
+      "codex:gpt-6-luna",
+      "claude:claude-opus-5-5"
+    ]
+  },
+  "liveScope": "Authenticated provider model discovery only; zero inference tasks",
+  "limits": [
+    "No new model quality or efficiency claim",
+    "No second physical Mac",
+    "iPhone gateway off; no physical iPhone validation or iOS release",
+    "Earlier review and recovery limits remain",
+    "PR13 excluded"
+  ]
+}

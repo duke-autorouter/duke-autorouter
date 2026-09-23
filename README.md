@@ -18,10 +18,12 @@ and work not yet included in the downloadable release.
 
 ## Version 0.1
 
-The current prerelease is **0.1.8 for Apple Silicon Macs running
+The current prerelease is **0.1.9 for Apple Silicon Macs running
 macOS 14 or newer**. [Download the signed, notarized Mac app](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.9/DUKE-Autorouter-0.1.9-mac-arm64.dmg).
 This repository contains the source, tests, design decisions, and verification
 records.
+
+Version 0.1.9 updates model discovery for GPT-6 Sol, GPT-6 Luna and Opus 5.5. Refresh models in Connections & setup, then choose which to include. Existing choices stay selected; new models start with separate, unevaluated profiles. See the [model refresh record](docs/MODEL_REFRESH_20260923.md).
 
 Version 0.1.8 separates a targeted correction at unchanged effort from a higher-effort retry. Both use the existing recovery allowance. Jev must approve the correction using available facts and tools; missing essential context and uncertain judgments still pause. See the [correction validation](docs/CORRECTION_VALIDATION_20260921.md) for the successful checks, blocked attempts and detection limits.
 
@@ -72,8 +74,8 @@ records the earlier browser-boundary and scoring fixes.
   files, checks, and checkpoints remain available after a restart.
 - **Optional iPhone companion foundation.** The source includes a native SwiftUI
   client for paired, project-scoped task control over a private Tailscale
-  connection. The gateway is disabled by default and is not part of the 0.1.8
-  Mac download or an iOS release. See the [companion guide](docs/IOS_COMPANION.md).
+  connection. The gateway is included in the Mac download and disabled by default.
+  The iPhone client is not an iOS release. See the [companion guide](docs/IOS_COMPANION.md).
 
 Version 0.1 runs one task at a time. Interrupted tasks require an explicit
 resume. Imported agent definitions provide instructions; automatic teams,
@@ -132,7 +134,7 @@ currently supports subscription execution. See the
 
 ## Download and install
 
-**[Download DUKE 0.1.8 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.9/DUKE-Autorouter-0.1.9-mac-arm64.dmg)**
+**[Download DUKE 0.1.9 for Apple Silicon](https://github.com/duke-autorouter/duke-autorouter/releases/download/v0.1.9/DUKE-Autorouter-0.1.9-mac-arm64.dmg)**
 
 The [release page](https://github.com/duke-autorouter/duke-autorouter/releases/tag/v0.1.9)
 also includes a ZIP, SHA-256 checksums, release notes, and a build manifest.
@@ -202,7 +204,7 @@ reader is experimental. See the [usage guide](docs/USAGE.md).
 The [frozen 0.1.6 comparison](docs/FROZEN_VALIDATION_20260921.md) records substantial model-priced savings in a four-task development sample, alongside artifact-quality and workflow limits. Version 0.1.7 fixes the missing verifier evidence found during that comparison; the [live diagnostic report](docs/EXECUTION_REVIEW_VALIDATION_20260921.md) retains both runs.
 
 
-The current source passes 233 automated tests. The 0.1.8 package passes 12
+The current source passes 237 automated tests. The 0.1.9 package passes 12
 standalone checks. Earlier 0.1 browser coverage includes 15 workflows with
 synthetic workers; earlier live Codex and Claude checks cover coding, research,
 writing, basic documents, fallback, and cancellation/resume. These historical

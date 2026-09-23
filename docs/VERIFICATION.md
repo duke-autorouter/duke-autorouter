@@ -1,5 +1,9 @@
 # Verification
 
+Current 0.1.9 checks: 237 automated tests and 12 standalone checks passed. See the [model refresh](MODEL_REFRESH_20260923.md) and [distribution receipt](evidence/distribution-0.1.9-verification.json). No new inference task was submitted for this update. The dated results below retain their original scope.
+
+## Historical 0.1.2 verification
+
 The 0.1.2 source passes **182 automated tests** after the
 [workflow patch](WORKFLOW_PATCH.md).
 The interface passed **15 browser workflows**, and the final signed release
@@ -31,7 +35,7 @@ phase deadlines, late callbacks, review-only retries and mixed-precision respons
 Its new Jev judgments use synthetic transport; no additional live model quality
 or savings claim follows from these tests.
 
-## Current checks
+## Historical 0.1.2 checks
 
 | Check | Result and scope |
 | --- | --- |

@@ -1,23 +1,23 @@
 # Version 0.1 release record
 
 DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app.
-The current maintenance release is 0.1.8. This page separates current checks from
+The current maintenance release is 0.1.9. This page separates current checks from
 historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 233 automated tests, TypeScript, the production
-  build and evaluation-corpus validation. GitHub also scans source history for
+- The integrated source passes 237 automated tests, TypeScript, the production
+  build. The existing evaluation corpus was not rerun against live models. GitHub also scans source history for
   secrets on each push.
-- The 0.1.8 package passes 12 standalone checks with isolated state and no
+- The 0.1.9 package passes 12 standalone checks with isolated state and no
   developer PATH. These cover bundled workers and browser startup, native
   document tools, project setup, imports, persistence and restart. They do not
   call provider models.
-- Updating the installed app from 0.1.7 to 0.1.8 preserved all 14 saved tasks,
+- The earlier update from 0.1.7 to 0.1.8 preserved all 14 saved tasks,
   two projects, existing settings, preferences and selected models by hash comparison.
   The native window loaded the saved work and passed visual inspection.
 - The packaged application files match the generated build output. The
-  [distribution receipt](evidence/distribution-0.1.8-verification.json) records the
+  [distribution receipt](evidence/distribution-0.1.9-verification.json) records the
   signing, notarization, checksums and final package audit.
 - [The evidence audit](SOURCE_FIDELITY_AUDIT.md) records repaired web revision
   markers and Word table structure. The [diagnostic protocol](FAILURE_AUDIT_AND_REPAIR_PROTOCOL_20260921.md)
@@ -55,7 +55,7 @@ Earlier 0.1 checks exercised Codex and Claude on coding, research, writing and
 basic documents. Fifteen browser workflows used synthetic workers. Nine Jev
 review diagnostics met their expected outcomes after the probability correction.
 These are scoped historical checks, not a fresh live validation of every adapter
-for 0.1.8. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
+for 0.1.9. See [verification](VERIFICATION.md), the [tool audit](TOOL_AUDIT.md),
 [workflow validation](CURRENT_STATUS.md#live-workflow-validation), and the
 [review-scoring record](REVIEW_SCORING.md).
 
@@ -91,7 +91,7 @@ The [distribution guide](MAC_DISTRIBUTION.md) covers maintainer commands.
 - **Coverage remains bounded.** No multi-day reliability result, Intel, Windows
   or Linux release is claimed. Setup-import prompt injection, concurrent failure
   recovery and accounting completeness still need broader adversarial coverage.
-- **The iOS companion is a mergeable foundation, not a released iOS product.**
+- **The iOS companion is a merged foundation, not a released iOS product.**
   Simulator and synthetic-host checks do not establish physical iPhone,
   Wi-Fi-to-cellular, background/Keychain, live-provider or TestFlight behavior.
 
