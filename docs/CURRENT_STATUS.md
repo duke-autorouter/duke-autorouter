@@ -2,7 +2,7 @@
 
 Updated September 23, 2026.
 
-The desktop maintenance release is **0.1.11**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. The packaged 0.1.11 verification passed 255 local tests.
+The desktop maintenance release is **0.1.12**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. The 0.1.12 source passes 261 local tests.
 
 The iOS gateway foundation is merged and packaged, disabled by default. Physical iPhone checks and iOS distribution remain unfinished. The bounded factory trial is paused after three assignments: historical evidence replay merged in PR12; PR13 was closed without merging its runtime changes; [ADR0022](adr/0022-defer-requirement-coverage-metadata.md) preserves the verifier trust boundary and revisit criteria.
 
@@ -16,7 +16,9 @@ The [first fresh factory cycle](FACTORY_CYCLE_1_20260923.md) ran twelve tasks wi
 
 The [second factory cycle](FACTORY_CYCLE_2_20260923.md) validates numbered-field and ownership checks on fresh inputs. In nine synthetic-evidence probes, three correct outputs stayed unverified solely on completion. A separate six-case check through the real file verifier matched all six expected outcomes: both correct files passed and all four negative controls failed. This did not reproduce the synthetic completion uncertainty; it is not broad calibration or generation-success evidence. The earlier cropped-preview finding is withdrawn: saved first-page images contain the expected content and an original Astra PNG is byte-identical to a new render. No renderer or threshold change was made. Full-document pagination remains outside thumbnail coverage.
 
-The [third factory cycle](FACTORY_CYCLE_3_20260923.md) ran two fresh worker tasks. Jev selected Sol Low for code and Luna Low for a status file. The code met its brief; the status file preserved facts but missed the requested word range. Both reviews remained unverified, with no recovery attempt. This identifies deterministic length checking as the next narrow improvement; no threshold or runtime changes were made. The PR19 parser correction is ready for maintenance packaging, but is still absent from the installed/public 0.1.11 app.
+The [third factory cycle](FACTORY_CYCLE_3_20260923.md) ran two fresh worker tasks. Jev selected Sol Low for code and Luna Low for a status file. The code met its brief; the status file preserved facts but missed the requested word range. Both reviews remained unverified, with no recovery attempt. This identifies deterministic length checking as the next narrow improvement; no threshold or runtime changes were made. The PR19 parser correction is ready for maintenance packaging, and is included in 0.1.12.
+
+The [0.1.12 maintenance update](WORD_COUNT_0_1_12.md) packages the parser correction and adds conservative word-range checks. A controlled short draft triggered a real Luna Low correction; the revision exceeded the maximum and was blocked. Detection and handoff passed; repair did not. Review policy is v12, with routing and recovery gates unchanged. Historical statements below describe their original run dates.
 
 ## Historical development results
 
@@ -143,4 +145,4 @@ Latest completed evaluation: [frozen 0.1.6 validation](FROZEN_VALIDATION_2026092
 
 ## Unreleased parser correction
 
-A narrow follow-up preserves numeric list markers and conservatively extracts literal ownership pairs. Review policy is v11 and focused review v10; routing policy and thresholds are unchanged. See [ADR0025](adr/0025-conservative-literal-review-extraction.md). All 256 local tests pass for this correction, along with TypeScript. This is source development, not a new desktop release or proof of improved live judgment. Installed and public downloads remain 0.1.11.
+A narrow follow-up preserves numeric list markers and conservatively extracts literal ownership pairs. Review policy is v11 and focused review v10; routing policy and thresholds are unchanged. See [ADR0025](adr/0025-conservative-literal-review-extraction.md). All 256 local tests pass for this correction, along with TypeScript. This is source development, not a new desktop release or proof of improved live judgment. The subsequent 0.1.12 maintenance release packages this correction.
