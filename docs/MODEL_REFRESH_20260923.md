@@ -6,7 +6,7 @@ Codex discovery reports `gpt-6-sol` and `gpt-6-luna` without a Codex dependency 
 
 The installed 0.1.8 Claude runtime reports its Opus alias as Opus 5. An app update is needed for Opus 5.5; changing a label is insufficient. Anthropic documents a minimum Claude Code version of 2.1.280.
 
-This release also packages the already-merged, disabled-by-default iOS gateway foundation and offline correction evidence replay. Physical iPhone testing and iOS distribution remain outstanding. PR13 is not included. No new live model task was run for this update.
+This release also packages the already-merged, disabled-by-default iOS gateway foundation and offline correction evidence replay. Physical iPhone testing and iOS distribution remain outstanding. PR13 is not included. No new live model task was run during release preparation. The subsequent [live integration checks](MODEL_VALIDATION_20260923.md) exercised all three models separately.
 
 Validation: 237 tests passed; TypeScript and production build passed; npm dependency audit found zero vulnerabilities. Control-only discovery used the signed-in provider account without submitting a model prompt. Signing and distribution results are recorded separately.
 

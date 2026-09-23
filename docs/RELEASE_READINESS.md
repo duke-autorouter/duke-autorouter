@@ -6,7 +6,7 @@ historical live coverage and the gaps that remain.
 
 ## Current source and package checks
 
-- The integrated source passes 237 automated tests, TypeScript, the production
+- The integrated source passes 238 automated tests, TypeScript, the production
   build. The existing evaluation corpus was not rerun against live models. GitHub also scans source history for
   secrets on each push.
 - The 0.1.9 package passes 12 standalone checks with isolated state and no

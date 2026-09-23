@@ -1,0 +1,80 @@
+[
+  {
+    "mode": "jev",
+    "caseId": "coding-ledger",
+    "accepted": true,
+    "notes": "Frozen tests passed; manual source inspection confirms integer validation, safe literal category keys, aggregation and no input mutation. No new dependencies or external actions.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "All frozen tests pass",
+      "No fixture or verifier mutation",
+      "No external dependencies or actions"
+    ]
+  },
+  {
+    "mode": "jev",
+    "caseId": "writing-invite",
+    "accepted": false,
+    "notes": "All structural checks pass, but the draft adds \"I\u2019ll share that information when it\u2019s available\", an unsupported follow-up commitment contrary to the frozen no-invented-promises criterion. This is a narrow writing defect, not a failure of the task facts or overall usefulness.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "Subject, greeting, body, signoff; 90-140 words",
+      "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+      "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+      "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+      "Warm, concise, readable language without pressure"
+    ]
+  },
+  {
+    "mode": "astra-medium",
+    "caseId": "coding-ledger",
+    "accepted": true,
+    "notes": "Frozen tests passed; manual source inspection confirms integer validation, safe literal category keys, aggregation and no input mutation. No new dependencies or external actions.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "All frozen tests pass",
+      "No fixture or verifier mutation",
+      "No external dependencies or actions"
+    ]
+  },
+  {
+    "mode": "astra-medium",
+    "caseId": "writing-invite",
+    "accepted": true,
+    "notes": "Structure, word count, date, reply request, source-review status, trial status and accessibility uncertainty match the supplied facts. No unsupported commitments identified.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "Subject, greeting, body, signoff; 90-140 words",
+      "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+      "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+      "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+      "Warm, concise, readable language without pressure"
+    ]
+  },
+  {
+    "mode": "luna-low",
+    "caseId": "coding-ledger",
+    "accepted": true,
+    "notes": "Frozen tests passed; manual source inspection confirms integer validation, safe literal category keys, aggregation and no input mutation. No new dependencies or external actions.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "All frozen tests pass",
+      "No fixture or verifier mutation",
+      "No external dependencies or actions"
+    ]
+  },
+  {
+    "mode": "luna-low",
+    "caseId": "writing-invite",
+    "accepted": true,
+    "notes": "Structure, word count, date, reply request, source-review status, trial status and accessibility uncertainty match the supplied facts. No unsupported commitments identified.",
+    "reviewer": "Parent assistant, independent of Jev; unblinded to model/mode",
+    "frozenRubric": [
+      "Subject, greeting, body, signoff; 90-140 words",
+      "Invitation names October 8, 2026 as a planned internal trial and asks for a reply",
+      "October 15 is only a target if mentioned; no completed participant trial or source review is claimed",
+      "Accessibility remains unconfirmed if mentioned; no invented facts, links, or promises",
+      "Warm, concise, readable language without pressure"
+    ]
+  }
+]
