@@ -2,7 +2,7 @@
 
 Updated September 23, 2026.
 
-The desktop maintenance release is **0.1.11**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. All 255 current-source local tests passed.
+The desktop maintenance release is **0.1.11**, with GPT-6 Sol, GPT-6 Luna and Opus 5.5 model choices. The [model refresh record](MODEL_REFRESH_20260923.md) separates provider discovery from live task verification. The packaged 0.1.11 verification passed 255 local tests.
 
 The iOS gateway foundation is merged and packaged, disabled by default. Physical iPhone checks and iOS distribution remain unfinished. The bounded factory trial is paused after three assignments: historical evidence replay merged in PR12; PR13 was closed without merging its runtime changes; [ADR0022](adr/0022-defer-requirement-coverage-metadata.md) preserves the verifier trust boundary and revisit criteria.
 
@@ -136,3 +136,7 @@ and experimental findings explicitly distinguished. A release claim requires a
 matching packaged artifact and verification record.
 
 Latest completed evaluation: [frozen 0.1.6 validation](FROZEN_VALIDATION_20260921.md).
+
+## Unreleased parser correction
+
+A narrow follow-up preserves numeric list markers and conservatively extracts literal ownership pairs. Review policy is v11 and focused review v10; routing policy and thresholds are unchanged. See [ADR0025](adr/0025-conservative-literal-review-extraction.md). All 256 local tests pass for this correction, along with TypeScript. This is source development, not a new desktop release or proof of improved live judgment. Installed and public downloads remain 0.1.11.

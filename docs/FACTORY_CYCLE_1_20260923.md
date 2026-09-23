@@ -1,6 +1,6 @@
 # Factory cycle 1: routing, output quality, and review defects
 
-The first fresh cycle ran four development tasks once each through automatic Jev routing, fixed Luna Low, and fixed Astra Medium. Automatic routing selected **Sol Low for coding, writing, and documents; Sol Medium for research**. It used actual Jev selection, not the economical outage fallback.
+The first fresh cycle ran four development tasks once each through automatic Jev routing, fixed Luna Low, and fixed Astra Medium. Automatic routing selected **Sol Low for coding, writing, and documents; Sol Medium for research**. It used actual Jev selection, not the economical outage fallback. All seventeen Luna/Sol/Astra effort configurations remained eligible for each task; Luna was not excluded. Jev assessed the local research synthesis as complex writing and the other three tasks as standard. These are recorded judgments, not ground-truth difficulty labels.
 
 Opus 5.5 accepted the content of all four automatic outputs and all four Astra outputs. Luna met three content rubrics; its writing output was 90 words against the requested 100–150. All three coding outputs passed the frozen tests without input or verifier changes. Word content and tool provenance passed, but complete document layout/pagination remains unverified because native previews were inconsistent. These are content results, not four fully verified end-to-end successes.
 
@@ -39,4 +39,4 @@ Opus received randomly labeled outputs, the original briefs, source files and ru
 
 ## Bounded improvement
 
-The next correction addresses the two literal parsing defects, with fresh-format regression tests and conservative refusal to extract ambiguous ownership pairs. It must preserve thresholds, economical fallback, user ceilings, provenance rules and recovery limits. The frozen comparison will not be rerun selectively or relabeled as post-fix evidence. A parser fix can establish correct extraction locally; improvement in live Jev judgments requires a separate fresh check. Preview reliability and remaining review calibration are still open.
+The unreleased source correction in [ADR0025](adr/0025-conservative-literal-review-extraction.md) addresses the two literal parsing defects, with fresh-format regression tests and conservative refusal to extract ambiguous ownership pairs. All 256 local tests pass. It must preserve thresholds, economical fallback, user ceilings, provenance rules and recovery limits. The frozen comparison will not be rerun selectively or relabeled as post-fix evidence. A parser fix can establish correct extraction locally; improvement in live Jev judgments requires a separate fresh check. Preview reliability and remaining review calibration are still open.

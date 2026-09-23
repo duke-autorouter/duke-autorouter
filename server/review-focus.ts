@@ -1,6 +1,6 @@
 import type { ReviewEvidence } from './task-evidence.js';
 
-export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v9';
+export const FOCUSED_REVIEW_POLICY = 'duke-focused-review-v10';
 
 // Scan the literal request once, before splitting it into requirements. Keep
 // punctuation within quoted examples, code, brackets, abbreviations and list
@@ -43,6 +43,8 @@ export function reviewRequirementClauses(text: string): string[] {
         if (!dependent) add(i);
       } else if (char === '\n') add(i);
       else if (/[.!?]/.test(char) && /\s/.test(rest[0] ?? '') && /^\s+[A-Z]/.test(rest)) {
+        // A leading numbered-list marker belongs to its following text.
+        if (char === '.' && /^\d+$/.test(current)) continue;
         const token = current.match(/(?:^|\s)([\p{L}]+)$/u)?.[1]?.toLowerCase();
         const abbreviation = (!!token && /^(?:mr|mrs|ms|dr|prof|sr|jr|vs|etc|e|g|i|a|u|s)$/.test(token)) || /\b(?:e\.g|i\.e)$/i.test(current);
         const initials = /(?:\b[A-Z]\.){2,}$/.test(current + char);
@@ -149,17 +151,23 @@ export function sourceWindows(claim: string, sources: ReviewSource[], expanded =
 // Only parse literal assignment-shaped text. These are candidate claims, never facts.
 export function ownershipClaim(text: string): { item: string; person: string } | undefined {
   if (/\b(proposal|proposed|suggested|suggestion)\b/i.test(text)) return;
-  const clean = text.replace(/^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])?\s*/, '');
-  const match =
-    clean.match(/^(.+?)\s+[—–]\s+([^;()]+)(?:\([^)]*\))?(?:;.*)?$/) ??
-    clean.match(
-      /(?:^|[.!?]\s+)([^.!?]+?)\s+(?:owner|assignee|responsible person):\s*([^.;]+)(?:[.;]|$)/i,
-    );
-  if (!match) return;
-  const item = match[1].trim(),
-    person = match[2].trim();
-  if (!item || !person || /^(?:TBD|unknown|unassigned|unresolved|not assigned)$/i.test(person))
-    return;
+  const clean = text.replace(/^\s*(?:[-*]\s*)?(?:\[[ xX]\]|[☐☑])?\s*/, '').trim().replace(/^\*\*(.*?)\*\*$/, '$1');
+  if ([...clean.matchAll(/\b(?:owner|assignee|responsible person):/gi)].length > 1 ||
+    /;\s*[^.;]+\s+[—–]\s+/.test(clean)) return;
+  const stripMarkup = (value: string) => value.trim().replace(/^\*\*([^*]+)\*\*/, '$1').trim();
+  const itemText = (value: string) => stripMarkup(value).replace(/:\s*(?:pending|unresolved|incomplete)\s*;?$/i, '').trim();
+  const personText = (value: string) => stripMarkup(value).replace(/\s*\([^()]*\)$/, '').trim();
+  // A period may end the assignment before another sentence. Other trailing
+  // prose is ambiguous, so only accept an explicit delimiter and a name.
+  const candidate = clean.match(/^(.+?)\s+[—–]\s+(?:owner:\s*)?([^.;]+?)(?:\s*\([^()]*\))?(?:\s*[.;](?:\s|$).*|\s*)$/i) ??
+    clean.match(/^(.+?)\s*;\s*(?:owner|assignee|responsible person):\s*([^.;]+)(?:[.;](?:\s|$).*|\s*)$/i) ??
+    clean.match(/^(.+?)\s+(?:owner|assignee|responsible person):\s*([^.;]+)(?:[.;](?:\s|$).*|\s*)$/i);
+  if (!candidate) return;
+  const item = itemText(candidate[1]);
+  const person = personText(candidate[2]);
+  if (!item || !person || /[;.!?]/.test(item) || /\b(?:TBD|unknown|unassigned|unresolved|not|no|none|and|or)\b/i.test(person) ||
+    /^(?:Dr|Mr|Mrs|Ms|Prof|Sr|Jr)$/i.test(person) ||
+    !/^[\p{Lu}][\p{L}'’\-]*(?:\s+[\p{Lu}][\p{L}'’\-]*){0,3}$/u.test(person)) return;
   return { item, person };
 }
 export const unresolvedChecklistAction = (text: string) =>

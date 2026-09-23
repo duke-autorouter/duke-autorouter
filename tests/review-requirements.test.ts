@@ -56,3 +56,15 @@ test('smart apostrophes and alternate prohibitions retain shared list scope', ()
     'Never add comments; logging; or new dependencies.',
   ]) assert.deepEqual(reviewRequirementClauses(text), [text]);
 });
+
+test('keeps numbered list markers with their requirement text', () => {
+  assert.deepEqual(
+    reviewRequirementClauses('1. Conditional recommendation; 2. Pilot dates. Confirm owner.'),
+    ['1. Conditional recommendation', '2. Pilot dates.', 'Confirm owner.'],
+  );
+  assert.deepEqual(reviewRequirementClauses('Version 1. Next step.'), ['Version 1.', 'Next step.']);
+  assert.deepEqual(reviewRequirementClauses('Use 1.2.3 and `1. Split`; then "2. Stay".'),
+    ['Use 1.2.3 and `1. Split`', 'then "2. Stay".']);
+  assert.deepEqual(reviewRequirementClauses('1. Audit the inventory\n2. Confirm the owner\n3. Note open dates.'),
+    ['1. Audit the inventory', '2. Confirm the owner', '3. Note open dates.']);
+});
