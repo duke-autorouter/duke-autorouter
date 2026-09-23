@@ -72,3 +72,5 @@ when superseded and link their replacement. Open validation gates belong in
 [release readiness](RELEASE_READINESS.md), not in an invented historical success
 claim. This log describes the entire project; the tool audit is one supporting
 record.
+
+- [ADR 0023: Ordinal difficulty and review clauses](adr/0023-ordinal-difficulty-and-review-clauses.md) records the 0.1.10 judgment maintenance policy and its development evidence.
