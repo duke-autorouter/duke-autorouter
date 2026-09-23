@@ -74,3 +74,4 @@ claim. This log describes the entire project; the tool audit is one supporting
 record.
 
 - [ADR 0023: Ordinal difficulty and review clauses](adr/0023-ordinal-difficulty-and-review-clauses.md) records the 0.1.10 judgment maintenance policy and its development evidence.
+- [ADR 0024: Context-preserving requirement batches](adr/0024-context-preserving-requirement-batches.md) records the 0.1.11 parser and review coverage changes, costs and remaining difficulty-tail limitation.
