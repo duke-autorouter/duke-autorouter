@@ -1,0 +1,206 @@
+{
+  "scope": "Controlled injected short file; no initial worker inference, forced Luna Low initial route; real Jev recovery and subsequent Luna worker",
+  "frozenCommit": "4de75781207e3a994537d1bb7ab9378b78270903",
+  "fixtureHash": "ee3882c3d0f0a5e323188c5997fd67cfc49ee1792a2ac6d016c48be362cfa30f",
+  "status": "blocked",
+  "apiCostUSD": 0.000137,
+  "unresolvedRequests": 0,
+  "usage": {
+    "reportedTokens": 87718,
+    "inputTokens": 87201,
+    "outputTokens": 517,
+    "cachedInputTokens": 66304,
+    "cacheWriteInputTokens": 0,
+    "reasoningOutputTokens": 0,
+    "complete": true,
+    "missingReports": 0,
+    "records": 4,
+    "byRole": {
+      "routing": 0,
+      "worker": 84361,
+      "review": 3357
+    },
+    "byProvider": {
+      "codex": 84361,
+      "jev": 3357
+    }
+  },
+  "events": [
+    {
+      "id": 14,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "route",
+      "data": {
+        "modelId": "codex:gpt-6-luna",
+        "provider": "codex",
+        "model": "gpt-6-luna",
+        "effort": "low",
+        "kind": "writing",
+        "assessment": {
+          "kind": "writing",
+          "difficulty": "routine",
+          "source": "jev"
+        },
+        "selectionSource": "jev",
+        "reason": "Routine writing task \u00b7 Jev selected this model \u00b7 initial profile and preferences; collecting results for this type of work",
+        "fallbacks": [],
+        "policy": "duke-routing-v15"
+      },
+      "at": "2026-09-23T17:41:17.687Z"
+    },
+    {
+      "id": 17,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "controlled_failure_injected",
+      "data": {
+        "reason": "Wrong first artifact; no first worker inference"
+      },
+      "at": "2026-09-23T17:41:17.688Z"
+    },
+    {
+      "id": 26,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "verification",
+      "data": {
+        "status": "failed",
+        "checks": [
+          {
+            "name": "Response",
+            "status": "passed",
+            "detail": "The worker returned a response or deliverable."
+          },
+          {
+            "name": "status.md",
+            "status": "passed",
+            "detail": "Read file contents."
+          },
+          {
+            "name": "Word count",
+            "status": "failed",
+            "detail": "status.md: 14 words; required 90\u2013110. Markdown syntax is excluded."
+          }
+        ],
+        "limitations": [],
+        "at": "2026-09-23T17:41:17.705Z",
+        "policy": "duke-review-v12",
+        "evidence": {
+          "files": [
+            {
+              "path": "status.md",
+              "sha256": "626084b9d17bea27dc9256a6848cc88b9ab3bb1d747edd1115a26489c750b582"
+            }
+          ],
+          "complete": true
+        },
+        "summary": "Word count: status.md: 14 words; required 90\u2013110. Markdown syntax is excluded."
+      },
+      "at": "2026-09-23T17:41:17.705Z"
+    },
+    {
+      "id": 31,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "recovery_judged",
+      "data": {
+        "policy": "duke-recovery-v3",
+        "stage": "correction",
+        "answer": {
+          "type": "choice",
+          "choice": "correction",
+          "confidence": 1,
+          "probabilities": {
+            "missing_context": 0,
+            "unknown": 0,
+            "tool_failure": 0,
+            "correction": 1
+          }
+        },
+        "threshold": 0.8
+      },
+      "at": "2026-09-23T17:41:18.051Z"
+    },
+    {
+      "id": 44,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "route",
+      "data": {
+        "modelId": "codex:gpt-6-luna",
+        "provider": "codex",
+        "model": "gpt-6-luna",
+        "effort": "low",
+        "kind": "writing",
+        "assessment": {
+          "kind": "writing",
+          "difficulty": "routine",
+          "source": "jev"
+        },
+        "selectionSource": "jev",
+        "reason": "Jev approved one targeted correction on the same model at unchanged low effort.",
+        "fallbacks": [],
+        "policy": "duke-routing-v15"
+      },
+      "at": "2026-09-23T17:41:18.069Z"
+    },
+    {
+      "id": 127,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "verification",
+      "data": {
+        "status": "failed",
+        "checks": [
+          {
+            "name": "Response",
+            "status": "passed",
+            "detail": "The worker returned a response or deliverable."
+          },
+          {
+            "name": "status.md",
+            "status": "passed",
+            "detail": "Read file contents."
+          },
+          {
+            "name": "Word count",
+            "status": "failed",
+            "detail": "status.md: 121 words; required 90\u2013110. Markdown syntax is excluded."
+          }
+        ],
+        "limitations": [],
+        "at": "2026-09-23T17:41:56.014Z",
+        "policy": "duke-review-v12",
+        "evidence": {
+          "files": [
+            {
+              "path": "status.md",
+              "sha256": "f0ada3be1b1dee4567bccf46c4f6dc0b548c262906e2fa45564ae75b9504c36b"
+            }
+          ],
+          "complete": true
+        },
+        "summary": "Word count: status.md: 121 words; required 90\u2013110. Markdown syntax is excluded."
+      },
+      "at": "2026-09-23T17:41:56.014Z"
+    },
+    {
+      "id": 132,
+      "taskId": "57fbd332-9306-4ad3-a692-b75ceab8d726",
+      "kind": "recovery_judged",
+      "data": {
+        "policy": "duke-recovery-v3",
+        "stage": "escalation",
+        "answer": {
+          "type": "choice",
+          "choice": "reasoning",
+          "confidence": 0.82,
+          "probabilities": {
+            "tool_failure": 0.01,
+            "reasoning": 0.87,
+            "missing_context": 0,
+            "unknown": 0.12
+          }
+        },
+        "threshold": 0.9
+      },
+      "at": "2026-09-23T17:41:56.350Z"
+    }
+  ],
+  "outcome": "14-word planted draft failed; real Luna Low correction made 121 words, above90\u2013110; escalation reasoning probability0.87 below0.9 gate; task blocked. Detection and handoff observed, no successful recovery."
+}

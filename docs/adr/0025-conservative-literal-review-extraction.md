@@ -1,6 +1,6 @@
 # ADR 0025: Conservative literal extraction before review
 
-Status: Accepted for source development; not part of the installed 0.1.11 package.
+Status: Accepted; included in 0.1.12.
 Date: September 23, 2026.
 
 ## Context
