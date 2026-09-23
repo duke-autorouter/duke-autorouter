@@ -74,6 +74,11 @@ test('real task verification fails short status file from expected result and le
     assert.equal((await verify(task)).checks.find((c) => c.name === 'Word count'), undefined);
     await writeFile(join(work, 'status.md'), 'word '.repeat(10000));
     assert.equal((await verify(task)).checks.find((c) => c.name === 'Word count'), undefined);
+    const conflict = { ...task, prompt: 'Write 90–130 words. Write 50–60 words instead.' };
+    await writeFile(join(work, 'status.md'), 'short');
+    assert.equal((await verify(conflict)).checks.find((c) => c.name === 'Word count'), undefined);
+    const negated = { ...task, prompt: 'Do not write 90–130 words.' };
+    assert.equal((await verify(negated)).checks.find((c) => c.name === 'Word count'), undefined);
     const multiple = { ...task, verification: { files: ['status.md', 'other.md'], command: '' } };
     assert.equal((await verify(multiple)).checks.find((c) => c.name === 'Word count'), undefined);
     const changed = { ...task, continuation: { text: 'Ignore the earlier word count; keep it concise.', previousLength: task.prompt.length, resolved: true, supersededFiles: [] } };

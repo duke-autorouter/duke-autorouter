@@ -253,7 +253,10 @@ export async function verifyTask(
   const textPaths = paths.filter((p) => /\.(?:md|markdown|txt)$/i.test(p));
   const promptRange = statedWordRange(task.prompt, textPaths[0] ?? '');
   const expectedRange = statedWordRange(task.expectedResult, textPaths[0] ?? '', true);
-  const range = task.continuation ? undefined : (
+  const mentionsRange = (text: string) => /\b\d{1,4}\s*[-–—]\s*\d{1,4}\s*words?\b|\bbetween\s+\d{1,4}\s+and\s+\d{1,4}\s+words\b/i.test(text);
+  const ambiguousRange = (mentionsRange(task.prompt) && !promptRange) ||
+    (mentionsRange(task.expectedResult) && !expectedRange);
+  const range = task.continuation || ambiguousRange ? undefined : (
     promptRange && expectedRange && (promptRange.min !== expectedRange.min || promptRange.max !== expectedRange.max)
       ? undefined
       : promptRange ?? expectedRange
