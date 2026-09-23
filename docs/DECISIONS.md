@@ -79,3 +79,5 @@ record.
 - [ADR0025: Conservative literal review extraction](adr/0025-conservative-literal-review-extraction.md) — preserve numbered requirements and omit ambiguous ownership pairs; source-only follow-up to the first fresh factory cycle.
 
 - [ADR0026: Deterministic explicit word ranges](adr/0026-deterministic-word-ranges.md): enforce narrow mechanical constraints without changing recovery thresholds.
+
+- [ADR 0027: Worker word measurement](adr/0027-worker-word-measurement.md): share the verifier's saved-file count with workers without expanding permissions or retry limits.

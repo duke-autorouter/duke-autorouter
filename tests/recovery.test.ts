@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { nextRecoveryEffort, sameEffortCorrectionAllowed } from '../server/recovery.js';
+import { correctionFeedback, nextRecoveryEffort, sameEffortCorrectionAllowed } from '../server/recovery.js';
 import { ModelInput, defaults, type Task } from '../server/types.js';
 import { Store } from '../server/store.js';
 import { Jev } from '../server/adapters/jev.js';
@@ -117,6 +117,14 @@ test('same-effort correction honors retry limits, fixed effort and changed effor
     sameEffortCorrectionAllowed({ attempt: 0 }, { ...model, effort: undefined }, model, defaults),
     false,
   );
+});
+
+test('word-range correction asks for saved-file measurement without guessed count', () => {
+  const task = { review: { checks: [{ name: 'Word count', status: 'failed', detail: 'status.md: 79 words; required 90–130.' }] } } as any;
+  const guidance = correctionFeedback(task);
+  assert.match(guidance, /count_words on the complete saved file/);
+  assert.match(guidance, /existing tool budget/);
+  assert.match(guidance, /never claim a guessed count/);
 });
 
 test('correction asks about available evidence at unchanged effort and retains the probability gate', async () => {

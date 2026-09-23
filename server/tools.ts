@@ -6,6 +6,7 @@ import { researchBrowser } from './research-browser.js';
 import { wordArtifact, pdfArtifact } from './artifacts.js';
 import { makeSpreadsheet } from './spreadsheets.js';
 import { fileContent, decodeText } from './file-content.js';
+import { countWords, countableText } from './word-count.js';
 import { searchFiles } from './file-search.js';
 import { previewFile, imageResult } from './previews.js';
 import { toolReceipt } from './tool-results.js';
@@ -40,6 +41,7 @@ export const toolSchemas = {
     start_line: z.number().int().min(1).default(1),
     max_lines: z.number().int().min(1).max(2000).default(500),
   }),
+  count_words: z.object({ path: z.string() }),
   search_files: z.object({ path: z.string().default('.'), query: z.string().min(1).max(500) }),
   write_file: z.object({ path: z.string(), content: z.string().max(500000) }),
   edit_file: z.object({
@@ -98,6 +100,7 @@ const info: Record<keyof typeof toolSchemas, [Cap | null, string]> = {
     'files',
     'Read bounded lines of UTF-8 text, PDF text, Word main text or spreadsheet cell values/formulas. Returns extraction notes and truncation. Use preview_file for images or layout.',
   ],
+  count_words: ['files', 'Count words in one complete saved UTF-8 .txt, .md or .markdown workspace file. Uses the verifier Markdown convention; unavailable for partial or unsupported text. Returns the file hash and count, not a task verdict.'],
   search_files: [
     'files',
     'Search literal text recursively in project files. Returns line numbers and explicit coverage limits; skips binary files, credentials and dependency trees.',
@@ -230,6 +233,25 @@ export class ToolService {
             args.start_line > 1 ||
             args.start_line - 1 + args.max_lines < lines.length ||
             excerpt.length > 50000,
+        };
+        break;
+      }
+      case 'count_words': {
+        const p = await path();
+        if (!/\.(?:txt|md|markdown)$/i.test(p))
+          throw new Blocked('Word measurement supports saved .txt, .md and .markdown files only.');
+        const metadata = await stat(p);
+        if (!metadata.isFile() || metadata.size > 2_000_000)
+          throw new Blocked('Word measurement requires a complete file under 2 MB.');
+        const bytes = await readFile(p, { signal });
+        const content = decodeText(bytes);
+        if (content.length > 200000 || !countableText(content))
+          throw new Blocked('Word measurement unavailable for partial text, HTML or entities.');
+        result = {
+          path: args.path,
+          words: countWords(content),
+          sha256: createHash('sha256').update(bytes).digest('hex'),
+          convention: 'Markdown syntax excluded; Unicode letters and numbers, with internal apostrophes and hyphens, count as words.',
         };
         break;
       }

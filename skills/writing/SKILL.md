@@ -13,3 +13,8 @@ guides take precedence over these defaults.
 Save a file when requested and read the saved copy. Use the document skill for
 Word, PDF or spreadsheet output. Report any unresolved fact or requirement with
 the result, without claiming checks you did not perform.
+
+For an explicit word range on a saved .txt, .md or .markdown deliverable, use
+count_words on the complete saved file. Revise and measure again within the
+available tool budget before finishing. If measurement is unavailable, report
+that limit and do not claim a guessed count or that the range is satisfied.

@@ -4,9 +4,11 @@ DUKE 0.1 is a portfolio release with inspectable source and a standalone Mac app
 The current maintenance release is 0.1.12. This page separates current checks from
 historical live coverage and the gaps that remain.
 
+The [saved-file measurement change](WORKER_MEASUREMENT_20260923.md) is newer than the 0.1.12 package. It has one successful controlled Luna Low repair; it is not yet in the downloadable app.
+
 ## Current source and package checks
 
-- The integrated source passes 261 automated tests, TypeScript, the production
+- The integrated source passes 263 automated tests, TypeScript, the production
   build. The existing evaluation corpus was not rerun against live models. GitHub also scans source history for
   secrets on each push.
 - The 0.1.12 package passes 12 standalone checks with isolated state and no

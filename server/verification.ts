@@ -8,7 +8,7 @@ import { scoped } from './paths.js';
 import { inspectFile, type ReviewEvidence, type RoutingContext } from './task-evidence.js';
 import { REVIEW_POLICY } from './outcomes.js';
 import { currentEvents, taskInputKey } from './task-revisions.js';
-import { countWords, statedWordRange } from './word-count.js';
+import { countWords, countableText, statedWordRange } from './word-count.js';
 import { Blocked, now, type Task, type Workspace, type TaskReview, type Check } from './types.js';
 
 function urlKey(raw: string) {
@@ -263,7 +263,7 @@ export async function verifyTask(
   );
   if (range && paths.length === 1 && textPaths.length === 1 && !task.continuation?.uncertain) {
     const file = evidence.files.find((f) => f.path === range.path);
-    if (file && !file.incomplete && typeof file.text === 'string' && !/<\/?[a-z][^>]*>|&(?:#\d+|#x[0-9a-f]+|[a-z]+);/i.test(file.text)) {
+    if (file && !file.incomplete && typeof file.text === 'string' && countableText(file.text)) {
       const words = countWords(file.text);
       checks.push({
         name: 'Word count',
