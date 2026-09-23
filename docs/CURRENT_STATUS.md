@@ -14,6 +14,8 @@ The 0.1.11 update protects quoted and dependent requirements, checks up to 24 re
 
 The [first fresh factory cycle](FACTORY_CYCLE_1_20260923.md) ran twelve tasks with blinded Opus content review. Automatic routing selected Sol and matched Astra's 4/4 content acceptance at about 77% lower API-equivalent cost; Luna met 3/4 content rubrics at a much lower cost. Full Word layout remains unverified, and DUKE itself passed none of the twelve reviews. The cycle exposed numbered-requirement and ownership-extraction defects. This is a small development sample, not general efficiency or end-to-end success evidence. The original scheduled pilot remains paused.
 
+The [second factory cycle](FACTORY_CYCLE_2_20260923.md) validates numbered-field and ownership checks on fresh inputs. In nine synthetic-evidence probes, three correct outputs stayed unverified solely on completion. A separate six-case check through the real file verifier matched all six expected outcomes: both correct files passed and all four negative controls failed. This did not reproduce the synthetic completion uncertainty; it is not broad calibration or generation-success evidence. The earlier cropped-preview finding is withdrawn: saved first-page images contain the expected content and an original Astra PNG is byte-identical to a new render. No renderer or threshold change was made. Full-document pagination remains outside thumbnail coverage.
+
 ## Historical development results
 
 ## Same-effort correction

@@ -1,0 +1,193 @@
+{
+  "sourceCommit": "c5c3c008c4d338ffe61da351f386998d4623f5ca",
+  "helperSourceSHA256": "09038cb27d0dcf308e5c7f710d927a4a86c531bc36388eda60f86f03dce38501",
+  "rendererChanged": false,
+  "renders": [
+    {
+      "file": "astra-medium-orig-0.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-medium-orig-1.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-medium-orig-2.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-new-0.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-new-1.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-new-2.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "astra-new-3.png",
+      "sha256": "b694e741b11add7a0c93822c25f5e88adf40c5b308ee4b8868a790a0ac79b824",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1075,
+        592
+      ]
+    },
+    {
+      "file": "jev-orig-0.png",
+      "sha256": "1f7e9331b35afe3fd54deab652ef8953c816aeaef866cfa8b7dccd150948338c",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        564
+      ]
+    },
+    {
+      "file": "jev-orig-1.png",
+      "sha256": "1f7e9331b35afe3fd54deab652ef8953c816aeaef866cfa8b7dccd150948338c",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        564
+      ]
+    },
+    {
+      "file": "jev-orig-2.png",
+      "sha256": "1f7e9331b35afe3fd54deab652ef8953c816aeaef866cfa8b7dccd150948338c",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        564
+      ]
+    },
+    {
+      "file": "luna-low-orig-0.png",
+      "sha256": "949ddd61f7b7637d966b0c713274282183cd07ff6d3d84ca619cb3efa91888be",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        607
+      ]
+    },
+    {
+      "file": "luna-low-orig-1.png",
+      "sha256": "949ddd61f7b7637d966b0c713274282183cd07ff6d3d84ca619cb3efa91888be",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        607
+      ]
+    },
+    {
+      "file": "luna-low-orig-2.png",
+      "sha256": "949ddd61f7b7637d966b0c713274282183cd07ff6d3d84ca619cb3efa91888be",
+      "dimensions": [
+        1200,
+        1553
+      ],
+      "nonwhiteBounds": [
+        104,
+        127,
+        1060,
+        607
+      ]
+    }
+  ],
+  "priorAstraPNGByteIdenticalToNewRender": true,
+  "priorCropFinding": "Withdrawn. Original saved images contain the title and full visible first-page text; earlier visual reading was incorrect. Pixel bounds and SHA-256 confirm nonblank identical Astra images.",
+  "coverage": "First-page Quick Look thumbnails only, not full document pagination or validation in Word.",
+  "workerExperiment": "An unused .preview variant failed compilation; all recorded renders used the unmodified repository .thumbnail helper."
+}
