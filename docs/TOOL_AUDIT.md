@@ -70,3 +70,7 @@ does not establish that every page, sheet or interactive behavior was inspected.
 
 No paired model benchmark or efficiency claim is part of this audit. Those
 require the separate [benchmark protocol](BENCHMARK_PROTOCOL.md).
+
+## Source-only word measurement follow-up
+
+`count_words` now shares the verifier counting convention for complete saved text/Markdown under files access. The [control and limits](WORKER_MEASUREMENT_20260923.md) record a successful Luna Low repair. This tool is not in the 0.1.12 package.

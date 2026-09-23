@@ -1,0 +1,3 @@
+Linden Repair Cafe — Internal Status
+
+The visitor checklist draft is complete, giving the team a prepared item to carry forward. The tool inventory remains pending. Ada owns that inventory, with October 8 as its due date; no completion result is recorded yet. The volunteer briefing is also outstanding, and it currently has neither an assigned owner nor a date. No cafe session has started. The decision about opening remains undecided, so this update does not imply approval or a confirmed launch. Once the pending work and briefing arrangements are addressed, the team can revisit the opening decision using the information then available.

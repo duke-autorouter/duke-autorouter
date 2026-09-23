@@ -1,6 +1,8 @@
 # Verification
 
-Current 0.1.11 checks: 255 automated tests and 12 standalone checks before and after Developer ID signing passed. Three fresh Jev-only dependent-instruction controls passed their expected outcomes, with no worker execution. See the [maintenance record](OPUS_FOLLOWUP_20260923.md) and [distribution receipt](evidence/distribution-0.1.11-verification.json). These probes do not establish general review accuracy. The dated results below retain their original scope.
+Current source passes 263 Mac tests, TypeScript and the production build. The [worker measurement control](WORKER_MEASUREMENT_20260923.md) records one successful live Luna Low repair. Installed/downloadable 0.1.12 retains its [separate distribution evidence](evidence/distribution-0.1.12-verification.json); it does not contain the new measurement tool.
+
+Historical 0.1.11 checks: 255 automated tests and 12 standalone checks before and after Developer ID signing passed. Three fresh Jev-only dependent-instruction controls passed their expected outcomes, with no worker execution. See the [maintenance record](OPUS_FOLLOWUP_20260923.md) and [distribution receipt](evidence/distribution-0.1.11-verification.json). These probes do not establish general review accuracy. The dated results below retain their original scope.
 
 ## Historical 0.1.2 verification
 
