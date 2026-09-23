@@ -419,11 +419,19 @@ test('the default fallback cannot silently select a provider flagship', () => {
   assert.equal(selected.modelId, 'a-qualified');
 });
 
-test('uncertain difficulty uses the configured fallback without asking for a model', async () => {
+test('uncertain task type uses the configured fallback without asking for a model', async () => {
   const f = await fixture();
   try {
     f.add(model('quick', 'routine'), model('deep'));
-    f.answer(() => assessment(1, 0.2));
+    f.answer(() => ({
+      ...assessment(1),
+      kind: {
+        type: 'choice',
+        choice: 'coding',
+        confidence: 0.2,
+        probabilities: { coding: 0.5, writing: 0.5, research: 0, documents: 0 },
+      },
+    }));
     const task = await f.run();
     assert.equal(task.status, 'completed');
     assert.deepEqual(f.runs, ['deep']);
@@ -721,3 +729,41 @@ test('Jev receives only selected profiles with scoped work preferences and an ef
     await f.close();
   }
 });
+
+for (const [probabilities, expected] of [
+  [{ '0': 0.4, '1': 0.6, '2': 0 }, 'standard'],
+  [{ '0': 0, '1': 0.6, '2': 0.4 }, 'complex'],
+  [{ '0': 0.34, '1': 0.33, '2': 0.33 }, 'complex'],
+  [{ '0': 0.8, '1': 0.2, '2': 0 }, 'standard'],
+  [{ '0': 0.82, '1': 0.18, '2': 0 }, 'routine'],
+] as const) {
+  test(`ordinal difficulty ${JSON.stringify(probabilities)} retains Jev selection at ${expected}`, async () => {
+    const f = await fixture();
+    try {
+      f.add(model('worker'));
+      f.answer((body) =>
+        body.questions.difficulty
+          ? {
+              ...assessment(0),
+              difficulty: {
+                type: 'score',
+                score: probabilities['1'] + 2 * probabilities['2'],
+                probabilities,
+                confidence: 0.2,
+              },
+            }
+          : {
+              model: choice(Object.keys(body.questions.model.criteria), 'candidate_0'),
+            },
+      );
+      const task = await f.run();
+      assert.equal(task.status, 'completed');
+      assert.equal(task.route?.assessment.source, 'jev');
+      assert.equal(task.route?.assessment.difficulty, expected);
+      assert.equal(f.calls.length, 2);
+      assert.equal(task.route?.selectionSource, 'jev');
+    } finally {
+      await f.close();
+    }
+  });
+}
