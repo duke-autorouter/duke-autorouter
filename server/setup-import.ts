@@ -55,6 +55,7 @@ const toolAliases: Record<string, string> = {
   websearch: 'web',
   list_files: 'files',
   read_file: 'files',
+  count_words: 'files',
   write_file: 'files',
   remove_file: 'files',
   shell: 'shell',

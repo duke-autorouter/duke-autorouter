@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { resource } from './runtime.js';
 import type { TaskKind } from './types.js';
 
-export const TOOLCHAIN_POLICY = 'duke-tools-v2';
+export const TOOLCHAIN_POLICY = 'duke-tools-v3';
 const kinds: TaskKind[] = ['coding', 'research', 'writing', 'documents'];
 export const coreSkills = kinds.map((kind) => {
   const content = readFileSync(resource('skills', kind, 'SKILL.md'), 'utf8');

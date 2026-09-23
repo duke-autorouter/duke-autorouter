@@ -32,3 +32,8 @@ export function countWords(text: string) {
   const plain = html.replace(/<[^>]*>/g, ' ').replace(/&(?:amp|lt|gt|quot|apos|#39);/g, ' ');
   return plain.match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*/gu)?.length ?? 0;
 }
+
+// The verifier and worker measurement must agree on inspectable input.
+export function countableText(text: string) {
+  return !/<\/?[a-z][^>]*>|&(?:#\d+|#x[0-9a-f]+|[a-z]+);/i.test(text);
+}

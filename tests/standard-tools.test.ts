@@ -1,12 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdtemp, mkdir, readFile, writeFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import ExcelJS from 'exceljs';
 import { PDFDocument } from 'pdf-lib';
 import { Store } from '../server/store.js';
-import { ToolService } from '../server/tools.js';
+import { ToolService, definitions } from '../server/tools.js';
+import { countWords } from '../server/word-count.js';
 import { Approvals } from '../server/approval.js';
 import { TaskInput } from '../server/types.js';
 import { calculateWorkbook, makeSpreadsheet } from '../server/spreadsheets.js';
@@ -93,6 +95,34 @@ test('bounded reads, search and precise edits preserve project boundaries and pr
     await assert.rejects(f.call('search_files', { path: '..', query: 'needle' }), /outside/);
     await writeFile(join(f.path, 'binary.bin'), Buffer.from([0, 255, 0]));
     await assert.rejects(f.call('read_file', { path: 'binary.bin' }), /binary/);
+  } finally {
+    await f.close();
+  }
+});
+
+test('count_words measures only complete supported saved files under files capability', async () => {
+  const f = await fixture();
+  try {
+    const body = '# Title\n\n- **One** [two](https://example.com) three';
+    await writeFile(join(f.path, 'draft.md'), body);
+    const counted = await f.call('count_words', { path: 'draft.md' });
+    assert.equal(counted.words, countWords(body));
+    assert.equal(counted.sha256, createHash('sha256').update(body).digest('hex'));
+    assert.match(counted.convention, /Markdown/);
+    assert.equal(definitions(['files']).some((d) => d.name === 'count_words'), true);
+    assert.equal(definitions([]).some((d) => d.name === 'count_words'), false);
+    await assert.rejects(f.call('count_words', { path: '../outside.md' }), /outside/);
+    await assert.rejects(f.call('count_words', { path: 'draft.html' }), /only/);
+    await writeFile(join(f.path, 'html.md'), 'One <b>two</b> three');
+    await assert.rejects(f.call('count_words', { path: 'html.md' }), /unavailable/);
+    await writeFile(join(f.path, 'entity.txt'), 'One &amp; two');
+    await assert.rejects(f.call('count_words', { path: 'entity.txt' }), /unavailable/);
+    await writeFile(join(f.path, 'long.markdown'), 'word '.repeat(41000));
+    await assert.rejects(f.call('count_words', { path: 'long.markdown' }), /unavailable/);
+    const task = f.store.task('t');
+    f.store.update('t', { required: ['artifacts'] });
+    await assert.rejects(f.call('count_words', { path: 'draft.md' }), /capability/);
+    f.store.update('t', { required: task.required });
   } finally {
     await f.close();
   }
