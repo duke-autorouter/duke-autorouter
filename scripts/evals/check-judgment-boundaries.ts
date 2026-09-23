@@ -5,13 +5,15 @@ import { join, resolve } from 'node:path';
 import { Store } from '../../server/store.js';
 import { Secrets } from '../../server/secrets.js';
 import { Jev } from '../../server/adapters/jev.js';
-import { TaskInput, type Task } from '../../server/types.js';
+import { TaskInput, ModelInput, type Task } from '../../server/types.js';
 import { summarizeSpending } from '../../server/spending.js';
 if (!process.argv.includes('--run')) {
   console.log('No calls made. --run and an empty output directory are required.');
   process.exit(0);
 }
-const out = resolve(process.argv[process.argv.indexOf('--out') + 1]);
+const outIndex = process.argv.indexOf('--out');
+if (outIndex < 0 || !process.argv[outIndex + 1]) throw Error('--out required');
+const out = resolve(process.argv[outIndex + 1]);
 await mkdir(out, { recursive: false });
 const store = new Store(join(out, 'private.sqlite'));
 store.put('settings', 'main', { ...store.settings(), dailyLimit: 0.01, monthlyLimit: 0.01,
@@ -28,7 +30,31 @@ const cases = [
 ];
 const results: any[] = [];
 try {
-  for (const probe of cases) {
+  if (process.argv.includes('--routing-only')) {
+    const models = [
+      ['gpt-6-luna', 'Small efficient model for routine and bounded work'],
+      ['gpt-6-sol', 'General purpose model for coding and writing'],
+      ['gpt-6-astra', 'Strong model for demanding reasoning'],
+    ].map(([name, description]) => ModelInput.parse({ id: `codex:${name}`, provider: 'codex',
+      model: name, label: name, enabled: true, evaluated: false, quality: {},
+      capabilities: ['files'], efforts: ['low', 'medium'], routingNotes: description }));
+    for (const model of models) store.put('model', model.id, model);
+    for (const [id, brief] of [
+      ['route-copy', 'Rewrite these three labels in sentence case, retaining the order: ACCOUNT SETTINGS, TEAM MEMBERS, SAVE CHANGES. Return only the three revised labels.'],
+      ['route-code', 'Implement a pure JavaScript function that groups an array of strings by their first character. Return a Map, skip empty strings, preserve input order within groups, and include tests for an empty array and repeated first characters.'],
+    ]) {
+      const task: Task = { ...TaskInput.parse({ prompt: brief, workspaceId: 'fixture' }),
+        id, title: id, status: 'running', attempt: 1,
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      const decision = await jev.decide(task, models, AbortSignal.timeout(30000), {
+        attachments: [], project: { entries: 0, fileTypes: {}, hasTests: false }, incomplete: false,
+      });
+      results.push({ id, brief, decision, observations: store.events(id).filter(e => ['jev_assessment', 'jev_selection', 'jev_unavailable'].includes(e.kind)).map(e => ({kind:e.kind,data:e.data})),
+        ...summarizeSpending(store.spending().filter(s => s.taskId === id)) });
+      await writeFile(join(out, 'results.json'), JSON.stringify({ scope: 'Fresh invented Jev-only routing probes; no worker execution or suitability proof', results }, null, 2));
+    }
+  }
+  for (const probe of process.argv.includes('--routing-only') ? [] : cases) {
     const task: Task = { ...TaskInput.parse({ prompt, expectedResult, workspaceId: 'fixture' }),
       id: probe.id, title: probe.id, status: 'running', attempt: 1,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
